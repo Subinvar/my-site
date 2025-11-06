@@ -1,8 +1,13 @@
-// keystatic.config.ts
 import { config, fields, collection } from '@keystatic/core';
 
 export default config({
-  storage: { kind: 'local' }, // позже переключим на 'github'
+  storage: {
+    kind: 'github',
+    // можно строкой "owner/name" ИЛИ объектом { owner, name }
+    repo: 'Subinvar/my-site',
+    // опционально: ограничить видимые ветки префиксом
+    // branchPrefix: 'content/', 
+  },
   collections: {
     posts: collection({
       label: 'Posts',
