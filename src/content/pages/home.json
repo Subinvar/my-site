@@ -1,31 +1,31 @@
 {
   "slugKey": "home",
+  "status": "published",
+  "datePublished": "2024-01-15T09:00",
+  "updatedAt": "2024-02-01T10:00",
   "title": {
     "ru": "Главная",
     "en": "Home"
   },
   "slug": {
     "ru": {
-          "slug": "__root__",
+      "slug": "__root__",
       "name": "home-ru"
     },
     "en": {
-          "slug": "__root__",
+      "slug": "__root__",
       "name": "home-en"
     }
   },
   "excerpt": {
-    "ru": "Добро пожаловать на демо-сайт.",
-    "en": "Welcome to the demo site."
+    "ru": "StroyTech реализует промышленные проекты полного цикла — от концепции до пусконаладки.",
+    "en": "StroyTech delivers end-to-end industrial engineering projects from concept to commissioning."
   },
-  "seo": {
-    "ru": {
-      "title": "Главная",
-      "description": "Описание главной страницы."
-    },
-    "en": {
-      "title": "Home",
-      "description": "Homepage description."
+  "cover": {
+    "image": "uploads/home-cover.svg",
+    "alt": {
+      "ru": "Инженеры StroyTech обсуждают планы на фоне чертежей",
+      "en": "StroyTech engineers reviewing blueprints"
     }
   },
   "content": {
@@ -68,7 +68,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Привет!"
+                      "content": "Добро пожаловать в StroyTech!"
                     },
                     "children": [],
                     "type": "text",
@@ -138,7 +138,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Это главная страница."
+                      "content": "Здесь мы делимся ключевыми новостями и этапами проектов."
                     },
                     "children": [],
                     "type": "text",
@@ -326,7 +326,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Hello!"
+                      "content": "Welcome to StroyTech!"
                     },
                     "children": [],
                     "type": "text",
@@ -396,7 +396,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "This is the homepage."
+                      "content": "Explore project milestones, research updates, and engineering insights."
                     },
                     "children": [],
                     "type": "text",
@@ -543,6 +543,24 @@
         "type": "document",
         "annotations": [],
         "slots": {}
+      }
+    }
+  },
+  "seo": {
+    "ru": {
+      "title": "StroyTech — промышленное проектирование и стройка",
+      "description": "Комплексные решения для заводов, логистических центров и научных комплексов.",
+      "ogImage": {
+        "image": "uploads/og-default.svg",
+        "alt": "StroyTech — команда инженеров"
+      }
+    },
+    "en": {
+      "title": "StroyTech — industrial design and construction",
+      "description": "Integrated solutions for factories, logistics hubs, and research campuses.",
+      "ogImage": {
+        "image": "uploads/og-default.svg",
+        "alt": "StroyTech engineering team"
       }
     }
   }

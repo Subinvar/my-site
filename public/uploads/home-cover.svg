@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img">
+  <rect width="960" height="540" rx="24" fill="#f8fafc" />
+  <path d="M120 420L360 120l180 300H120z" fill="#1d4ed8" opacity="0.2" />
+  <text x="140" y="200" font-family="'Inter', sans-serif" font-size="48" font-weight="600" fill="#0f172a">
+    Инженерные решения
+  </text>
+  <text x="140" y="260" font-family="'Inter', sans-serif" font-size="28" fill="#334155">
+    Воплощаем сложные проекты
+  </text>
+</svg>

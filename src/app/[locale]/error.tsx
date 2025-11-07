@@ -19,8 +19,8 @@ const ErrorComponentImpl = ({ reset }: LocaleErrorProps) => {
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-6 px-4 py-16 text-center">
       <div className="space-y-3" role="alert" aria-live="assertive">
-        <h1 className="text-3xl font-bold text-zinc-900">{dictionary.errors.errorTitle}</h1>
-        <p className="text-base text-zinc-600">{dictionary.errors.errorDescription}</p>
+        <h1 className="text-3xl font-bold text-zinc-900">{dictionary.messages.errors.errorTitle}</h1>
+        <p className="text-base text-zinc-600">{dictionary.messages.errors.errorDescription}</p>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-4">
         <button
@@ -28,14 +28,14 @@ const ErrorComponentImpl = ({ reset }: LocaleErrorProps) => {
           onClick={reset}
           className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700"
         >
-          {dictionary.buttons.retry}
+          {dictionary.common.buttons.retry}
         </button>
         <Link
           href={localizePath(locale, '')}
           aria-label={dictionary.header.homeAriaLabel}
           className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900"
         >
-          {dictionary.buttons.goHome}
+          {dictionary.common.buttons.goHome}
         </Link>
       </div>
     </div>

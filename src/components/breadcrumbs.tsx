@@ -10,7 +10,7 @@ export type BreadcrumbItem = {
 type BreadcrumbsProps = {
   locale: Locale;
   items: BreadcrumbItem[];
-  dictionary: Pick<UiDictionary, 'breadcrumbs'>;
+  dictionary: UiDictionary['common']['breadcrumbs'];
 };
 
 export function Breadcrumbs({ locale, items, dictionary }: BreadcrumbsProps) {
@@ -20,7 +20,7 @@ export function Breadcrumbs({ locale, items, dictionary }: BreadcrumbsProps) {
 
   const trail = [
     {
-      label: dictionary.breadcrumbs.rootLabel,
+      label: dictionary.rootLabel,
       href: localizePath(locale, ''),
     },
     ...items.slice(0, -1).map((item) => ({
@@ -31,7 +31,7 @@ export function Breadcrumbs({ locale, items, dictionary }: BreadcrumbsProps) {
   const current = items[items.length - 1];
 
   return (
-    <nav aria-label={dictionary.breadcrumbs.ariaLabel} className="text-xs text-zinc-500">
+    <nav aria-label={dictionary.ariaLabel} className="text-xs text-zinc-500">
       <ol className="flex flex-wrap items-center gap-2">
         {trail.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex items-center gap-2">

@@ -1,40 +1,136 @@
-import { config, fields, collection, singleton } from '@keystatic/core';
+import { collection, config, fields, singleton } from '@keystatic/core';
 
-const localizedText = (label: string, options: { multiline?: boolean } = {}) =>
-  fields.object({
-    ru: fields.text({ label: `${label} (RU)`, multiline: options.multiline ?? false }),
-    en: fields.text({ label: `${label} (EN)`, multiline: options.multiline ?? false }),
+const locales = ['ru', 'en'] as const;
+
+type Locale = (typeof locales)[number];
+
+type LocalizedFieldOptions = {
+  multiline?: boolean;
+  isRequired?: boolean;
+};
+
+const imageField = (label: string) =>
+  fields.image({
+    label,
+    directory: 'public/uploads',
+    publicPath: '/uploads/',
   });
+
+const localizedText = (label: string, options: LocalizedFieldOptions = {}) =>
+  fields.object(
+    locales.reduce(
+      (acc, locale) => ({
+        ...acc,
+        [locale]: fields.text({
+          label: `${label} (${locale.toUpperCase()})`,
+          multiline: options.multiline ?? false,
+          validation: options.isRequired ? { isRequired: true } : undefined,
+        }),
+      }),
+      {} as Record<Locale, ReturnType<typeof fields.text>>
+    ),
+    { label }
+  );
 
 const localizedSlug = (label: string) =>
-  fields.object({
-    ru: fields.slug({ name: { label: `${label} (RU)` } }),
-    en: fields.slug({ name: { label: `${label} (EN)` } }),
-  });
-
-const localizedSeo = () =>
-  fields.object({
-    ru: fields.object({
-      title: fields.text({ label: 'SEO-заголовок (RU)', validation: { isRequired: true } }),
-      description: fields.text({ label: 'SEO-описание (RU)', multiline: true }),
-    }),
-    en: fields.object({
-      title: fields.text({ label: 'SEO-заголовок (EN)', validation: { isRequired: true } }),
-      description: fields.text({ label: 'SEO-описание (EN)', multiline: true }),
-    }),
-  });
-
-const localizedRichText = (label: string, options: { multiline?: boolean } = {}) =>
-  fields.object({
-    ru: fields.text({ label: `${label} (RU)`, multiline: options.multiline ?? false }),
-    en: fields.text({ label: `${label} (EN)`, multiline: options.multiline ?? false }),
-  });
+  fields.object(
+    locales.reduce(
+      (acc, locale) => ({
+        ...acc,
+        [locale]: fields.slug({
+          name: { label: `${label} (${locale.toUpperCase()})`, validation: { isRequired: true } },
+        }),
+      }),
+      {} as Record<Locale, ReturnType<typeof fields.slug>>
+    ),
+    { label }
+  );
 
 const localizedMarkdoc = (label: string) =>
-  fields.object({
-    ru: fields.markdoc({ label: `${label} (RU)` }),
-    en: fields.markdoc({ label: `${label} (EN)` }),
-  });
+  fields.object(
+    locales.reduce(
+      (acc, locale) => ({
+        ...acc,
+        [locale]: fields.markdoc({ label: `${label} (${locale.toUpperCase()})` }),
+      }),
+      {} as Record<Locale, ReturnType<typeof fields.markdoc>>
+    ),
+    { label }
+  );
+
+const localizedSeo = (labelPrefix: string) =>
+  fields.object(
+    locales.reduce(
+      (acc, locale) => ({
+        ...acc,
+        [locale]: fields.object({
+          title: fields.text({
+            label: `${labelPrefix} — заголовок (${locale.toUpperCase()})`,
+            validation: { isRequired: true },
+          }),
+          description: fields.text({
+            label: `${labelPrefix} — описание (${locale.toUpperCase()})`,
+            multiline: true,
+            validation: { isRequired: true },
+          }),
+          ogImage: fields.object(
+            {
+              image: imageField(`OG-изображение (${locale.toUpperCase()})`),
+              alt: fields.text({
+                label: `Alt для OG-изображения (${locale.toUpperCase()})`,
+                validation: { isRequired: true },
+              }),
+            },
+            { label: `OG-изображение (${locale.toUpperCase()})` }
+          ),
+        }),
+      }),
+      {} as Record<Locale, ReturnType<typeof fields.object>>
+    ),
+    { label: `${labelPrefix} — SEO` }
+  );
+
+const navigationLinks = (label: string) =>
+  fields.array(
+    fields.object({
+      label: localizedText('Подпись ссылки', { isRequired: true }),
+      link: fields.conditional(
+        fields.select({
+          label: 'Тип ссылки',
+          options: [
+            { label: 'Внутренняя страница', value: 'internal' },
+            { label: 'Внешняя ссылка', value: 'external' },
+          ],
+          defaultValue: 'internal',
+        }),
+        {
+          internal: fields.object({
+            page: fields.relationship({
+              label: 'Страница',
+              collection: 'pages',
+              validation: { isRequired: true },
+            }),
+          }),
+          external: fields.object({
+            url: fields.text({
+              label: 'URL',
+              validation: { isRequired: true },
+            }),
+            newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: false }),
+          }),
+        }
+      ),
+      order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
+    }),
+    {
+      label,
+      itemLabel: (props) => {
+        const labelField = props.fields.label as unknown as { value?: { ru?: string; en?: string } };
+        const value = labelField?.value;
+        return value?.ru || value?.en || 'Ссылка';
+      },
+    }
+  );
 
 export default config({
   storage: {
@@ -42,74 +138,58 @@ export default config({
     repo: 'Subinvar/my-site',
   },
   singletons: {
-    dictionary: singleton({
-      label: 'Словарь',
-      path: 'src/content/dictionary',
-      schema: {
-        brandName: localizedText('Название бренда'),
-        header: fields.object({
-          navigationAriaLabel: localizedText('Подпись навигации в шапке'),
-          homeAriaLabel: localizedText('Подпись ссылки «На главную» в шапке'),
-        }),
-        footer: fields.object({
-          navigationTitle: localizedText('Заголовок навигации в подвале'),
-          contactsTitle: localizedText('Заголовок контактов в подвале'),
-          copyright: localizedText('Копирайт в подвале'),
-        }),
-        buttons: fields.object({
-          goHome: localizedText('Текст кнопки «На главную»'),
-          retry: localizedText('Текст кнопки «Повторить»'),
-        }),
-        states: fields.object({
-          loading: localizedText('Сообщение о загрузке'),
-          emptyPosts: localizedRichText('Сообщение при отсутствии постов', { multiline: true }),
-          emptyPages: localizedRichText('Сообщение при отсутствии страниц', { multiline: true }),
-          nothingFound: localizedRichText('Сообщение «Ничего не найдено»', { multiline: true }),
-        }),
-        pagination: fields.object({
-          previous: localizedText('Подпись кнопки «Назад»'),
-          next: localizedText('Подпись кнопки «Вперёд»'),
-        }),
-        breadcrumbs: fields.object({
-          ariaLabel: localizedText('Подпись хлебных крошек'),
-          rootLabel: localizedText('Подпись корневой крошки'),
-        }),
-        languageSwitcher: fields.object({
-          ariaLabel: localizedText('Подпись переключателя языка'),
-          availableLabel: localizedText('Описание списка языков'),
-        }),
-        errors: fields.object({
-          notFoundTitle: localizedText('Заголовок страницы 404'),
-          notFoundDescription: localizedRichText('Описание страницы 404', { multiline: true }),
-          errorTitle: localizedText('Заголовок общей ошибки'),
-          errorDescription: localizedRichText('Описание общей ошибки', { multiline: true }),
-        }),
-        seo: fields.object({
-          ogImageAlt: localizedText('Альтернативный текст Open Graph'),
-        }),
-        markdoc: fields.object({
-          calloutTitle: localizedText('Заголовок callout-блока'),
-          noteLabel: localizedText('Подпись callout «Примечание»'),
-          warningLabel: localizedText('Подпись callout «Предупреждение»'),
-          infoLabel: localizedText('Подпись callout «Информация»'),
-        }),
-      },
-    }),
     site: singleton({
       label: 'Сайт',
       path: 'src/content/site',
       schema: {
-        seo: localizedSeo(),
-        contacts: fields.object({
-          ru: fields.object({
-            address: fields.text({ label: 'Адрес (RU)', multiline: true }),
-            phone: fields.text({ label: 'Телефон (RU)' }),
+        brand: fields.object({
+          logo: fields.object({
+            image: imageField('Логотип'),
+            alt: localizedText('Alt логотипа', { isRequired: true }),
           }),
-          en: fields.object({
-            address: fields.text({ label: 'Адрес (EN)', multiline: true }),
-            phone: fields.text({ label: 'Телефон (EN)' }),
+          companyName: fields.text({ label: 'Название компании', validation: { isRequired: true } }),
+          siteName: localizedText('Имя сайта', { isRequired: true }),
+          tagline: localizedText('Слоган', { multiline: true }),
+          contacts: fields.object({
+            phone: fields.text({ label: 'Телефон' }),
+            email: fields.text({ label: 'Электронная почта', validation: { isRequired: true } }),
+            address: localizedText('Адрес', { multiline: true }),
           }),
-          email: fields.text({ label: 'Электронная почта' }),
+          socials: fields.array(
+            fields.object({
+              label: fields.text({ label: 'Название', validation: { isRequired: true } }),
+              url: fields.text({ label: 'URL', validation: { isRequired: true } }),
+              newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: true }),
+            }),
+            {
+              label: 'Социальные сети',
+              itemLabel: (props) => props.fields.label?.value || 'Ссылка',
+            }
+          ),
+        }),
+        defaultSeo: localizedSeo('SEO по умолчанию'),
+        twitter: fields.object({
+          card: fields.select({
+            label: 'Тип карточки Twitter',
+            options: [
+              { label: 'summary', value: 'summary' },
+              { label: 'summary_large_image', value: 'summary_large_image' },
+            ],
+            defaultValue: 'summary_large_image',
+          }),
+          site: fields.text({ label: 'Twitter Site' }),
+          creator: fields.text({ label: 'Twitter Creator' }),
+        }),
+        meta: fields.object({
+          domain: fields.text({ label: 'Домен', validation: { isRequired: true } }),
+          robots: fields.object({
+            index: fields.checkbox({ label: 'Разрешить индексировать', defaultValue: true }),
+            follow: fields.checkbox({ label: 'Разрешить переход по ссылкам', defaultValue: true }),
+          }),
+          organization: fields.object({
+            legalName: fields.text({ label: 'Юридическое название', validation: { isRequired: true } }),
+            taxId: fields.text({ label: 'ИНН / Tax ID' }),
+          }),
         }),
       },
     }),
@@ -117,24 +197,71 @@ export default config({
       label: 'Навигация',
       path: 'src/content/navigation',
       schema: {
-        header: fields.array(
-          fields.object({
-            label: localizedText('Подпись'),
-            slug: localizedSlug('Слаг'),
+        headerLinks: navigationLinks('Ссылки в шапке'),
+        footerLinks: navigationLinks('Ссылки в подвале'),
+      },
+    }),
+    dictionary: singleton({
+      label: 'Словарь',
+      path: 'src/content/dictionary',
+      schema: {
+        common: fields.object({
+          siteName: localizedText('Название сайта', { isRequired: true }),
+          tagline: localizedText('Слоган сайта', { multiline: true }),
+          buttons: fields.object({
+            goHome: localizedText('Кнопка «На главную»', { isRequired: true }),
+            retry: localizedText('Кнопка «Повторить»', { isRequired: true }),
           }),
-          {
-            label: 'Ссылки в шапке',
-          }
-        ),
-        footer: fields.array(
-          fields.object({
-            label: localizedText('Подпись'),
-            slug: localizedSlug('Слаг'),
+          pagination: fields.object({
+            previous: localizedText('Кнопка «Назад»', { isRequired: true }),
+            next: localizedText('Кнопка «Вперёд»', { isRequired: true }),
           }),
-          {
-            label: 'Ссылки в подвале',
-          }
-        ),
+          breadcrumbs: fields.object({
+            ariaLabel: localizedText('Название хлебных крошек', { isRequired: true }),
+            rootLabel: localizedText('Корневая крошка', { isRequired: true }),
+          }),
+          languageSwitcher: fields.object({
+            ariaLabel: localizedText('Переключатель языка', { isRequired: true }),
+            availableLabel: localizedText('Список языков', { isRequired: true }),
+          }),
+        }),
+        header: fields.object({
+          navigationAriaLabel: localizedText('Подпись навигации', { isRequired: true }),
+          homeAriaLabel: localizedText('Подпись ссылки «На главную»', { isRequired: true }),
+        }),
+        footer: fields.object({
+          navigationTitle: localizedText('Заголовок навигации', { isRequired: true }),
+          contactsTitle: localizedText('Заголовок контактов', { isRequired: true }),
+          copyright: localizedText('Копирайт', { isRequired: true }),
+        }),
+        forms: fields.object({
+          nameLabel: localizedText('Поле «Имя»', { isRequired: true }),
+          emailLabel: localizedText('Поле «E-mail»', { isRequired: true }),
+          messageLabel: localizedText('Поле «Сообщение»', { isRequired: true }),
+          submitLabel: localizedText('Кнопка отправки', { isRequired: true }),
+        }),
+        seo: fields.object({
+          ogImageAlt: localizedText('Alt для OG-изображения', { isRequired: true }),
+          shareTitle: localizedText('Подпись для шаринга', { multiline: true }),
+        }),
+        messages: fields.object({
+          loading: localizedText('Сообщение о загрузке', { isRequired: true }),
+          emptyPosts: localizedText('Нет постов', { multiline: true, isRequired: true }),
+          emptyPages: localizedText('Нет страниц', { multiline: true, isRequired: true }),
+          nothingFound: localizedText('Ничего не найдено', { multiline: true, isRequired: true }),
+          errors: fields.object({
+            notFoundTitle: localizedText('Заголовок 404', { isRequired: true }),
+            notFoundDescription: localizedText('Описание 404', { multiline: true, isRequired: true }),
+            errorTitle: localizedText('Заголовок ошибки', { isRequired: true }),
+            errorDescription: localizedText('Описание ошибки', { multiline: true, isRequired: true }),
+          }),
+          markdoc: fields.object({
+            calloutTitle: localizedText('Заголовок callout', { isRequired: true }),
+            noteLabel: localizedText('Подпись «Примечание»', { isRequired: true }),
+            warningLabel: localizedText('Подпись «Предупреждение»', { isRequired: true }),
+            infoLabel: localizedText('Подпись «Информация»', { isRequired: true }),
+          }),
+        }),
       },
     }),
   },
@@ -145,14 +272,26 @@ export default config({
       slugField: 'slugKey',
       format: { data: 'json' },
       schema: {
-        slugKey: fields.slug({
-          name: { label: 'Идентификатор страницы' },
+        slugKey: fields.slug({ name: { label: 'ID страницы', validation: { isRequired: true } } }),
+        status: fields.select({
+          label: 'Статус',
+          options: [
+            { label: 'Черновик', value: 'draft' },
+            { label: 'Опубликовано', value: 'published' },
+          ],
+          defaultValue: 'draft',
         }),
-        title: localizedText('Заголовок'),
+        datePublished: fields.datetime({ label: 'Дата публикации' }),
+        updatedAt: fields.datetime({ label: 'Обновлено' }),
+        title: localizedText('Заголовок', { isRequired: true }),
         slug: localizedSlug('Слаг'),
         excerpt: localizedText('Краткое описание', { multiline: true }),
-        seo: localizedSeo(),
+        cover: fields.object({
+          image: imageField('Обложка'),
+          alt: localizedText('Alt обложки', { isRequired: true }),
+        }),
         content: localizedMarkdoc('Контент'),
+        seo: localizedSeo('Страница'),
       },
     }),
     posts: collection({
@@ -161,15 +300,53 @@ export default config({
       slugField: 'slugKey',
       format: { data: 'json' },
       schema: {
-        slugKey: fields.slug({
-          name: { label: 'Идентификатор поста' },
+        slugKey: fields.slug({ name: { label: 'ID поста', validation: { isRequired: true } } }),
+        status: fields.select({
+          label: 'Статус',
+          options: [
+            { label: 'Черновик', value: 'draft' },
+            { label: 'Опубликовано', value: 'published' },
+          ],
+          defaultValue: 'draft',
         }),
-        title: localizedText('Заголовок'),
+        datePublished: fields.datetime({ label: 'Дата публикации' }),
+        updatedAt: fields.datetime({ label: 'Обновлено' }),
+        title: localizedText('Заголовок', { isRequired: true }),
         slug: localizedSlug('Слаг'),
         excerpt: localizedText('Краткое описание', { multiline: true }),
-        seo: localizedSeo(),
+        cover: fields.object({
+          image: imageField('Обложка'),
+          alt: localizedText('Alt обложки', { isRequired: true }),
+        }),
         content: localizedMarkdoc('Контент'),
-        publishedAt: fields.datetime({ label: 'Дата публикации' }),
+        tags: fields.array(fields.text({ label: 'Тег', validation: { isRequired: true } }), {
+          label: 'Теги',
+          itemLabel: (props) => props.value ?? 'Тег',
+        }),
+        author: fields.text({ label: 'Автор' }),
+        readingTime: fields.integer({ label: 'Время чтения (мин)' }),
+        canonicalUrl: localizedText('Канонический URL'),
+        seo: localizedSeo('Пост'),
+      },
+    }),
+    redirects: collection({
+      label: 'Редиректы',
+      path: 'src/content/redirects/*',
+      slugField: 'slugKey',
+      format: { data: 'json' },
+      schema: {
+        slugKey: fields.slug({ name: { label: 'ID правила', validation: { isRequired: true } } }),
+        fromPath: fields.text({ label: 'Откуда', validation: { isRequired: true } }),
+        toPath: fields.text({ label: 'Куда', validation: { isRequired: true } }),
+        code: fields.select({
+          label: 'Код',
+          options: [
+            { label: '301 — постоянный', value: '301' },
+            { label: '302 — временный', value: '302' },
+          ],
+          defaultValue: '301',
+        }),
+        enabled: fields.checkbox({ label: 'Включено', defaultValue: true }),
       },
     }),
   },

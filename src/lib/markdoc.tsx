@@ -28,14 +28,14 @@ type RenderOptions = {
   dictionary?: UiDictionary;
 };
 
-const defaultCalloutDictionary: UiDictionary['markdoc'] = {
+const defaultCalloutDictionary: UiDictionary['messages']['markdoc'] = {
   calloutTitle: 'Callout',
   noteLabel: 'Note',
   warningLabel: 'Warning',
   infoLabel: 'Info',
 };
 
-function createCalloutComponent(dictionary: UiDictionary['markdoc']) {
+function createCalloutComponent(dictionary: UiDictionary['messages']['markdoc']) {
   return function Callout({ type, children }: { type?: string; children?: ReactNode }) {
     const palette = {
       note: 'border-sky-500 bg-sky-50 text-sky-900',
@@ -79,7 +79,7 @@ export function renderMarkdoc(content: MarkdocContent, options: RenderOptions = 
   }
 
   const transformed = Markdoc.transform(node as MarkdocNode, markdocConfig);
-  const markdocDictionary = options.dictionary?.markdoc ?? defaultCalloutDictionary;
+  const markdocDictionary = options.dictionary?.messages.markdoc ?? defaultCalloutDictionary;
   const components = {
     Callout: createCalloutComponent(markdocDictionary),
   };

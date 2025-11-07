@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { localizePath, type Locale } from '@/lib/i18n';
-import type { UiDictionary } from '@/lib/keystatic';
+import type { NavigationLink, UiDictionary } from '@/lib/keystatic';
 
 type FooterProps = {
   locale: Locale;
-  links: { label: string; slug: string }[];
+  links: NavigationLink[];
   contacts?: { address?: string; phone?: string };
   email?: string;
   dictionary: Pick<UiDictionary, 'footer'>;
@@ -22,10 +22,21 @@ export function SiteFooter({ locale, links, contacts, email, dictionary }: Foote
           <h2 className="text-sm font-semibold text-zinc-900">{footer.navigationTitle}</h2>
           <ul className="mt-3 space-y-2 text-sm text-zinc-600" aria-label={footer.navigationTitle}>
             {links.map((link) => (
-              <li key={`${locale}-${link.slug}`}>
-                <Link href={localizePath(locale, link.slug)} className="transition-colors hover:text-zinc-900">
-                  {link.label}
-                </Link>
+              <li key={link.kind === 'internal' ? `${locale}-${link.slug}` : link.url}>
+                {link.kind === 'internal' ? (
+                  <Link href={localizePath(locale, link.slug)} className="transition-colors hover:text-zinc-900">
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.url}
+                    target={link.newTab ? '_blank' : undefined}
+                    rel={link.newTab ? 'noopener noreferrer' : undefined}
+                    className="transition-colors hover:text-zinc-900"
+                  >
+                    {link.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>

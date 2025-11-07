@@ -26,9 +26,9 @@ export default async function manifest({
   const startUrl = startUrlPath.endsWith('/') ? startUrlPath : `${startUrlPath}/`;
 
   return {
-    name: dictionary.brandName,
-    short_name: dictionary.brandName,
-    description: site.seo?.description ?? dictionary.brandName,
+    name: site.brand.siteName,
+    short_name: site.brand.siteName,
+    description: site.defaultSeo?.description ?? dictionary.common.tagline,
     lang: toLanguageTag(locale),
     start_url: startUrl,
     scope: startUrl,

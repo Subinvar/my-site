@@ -14,15 +14,15 @@ export default function LocaleNotFound() {
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-6 px-4 py-16 text-center">
       <div className="space-y-3" role="status" aria-live="polite">
-        <h1 className="text-3xl font-bold text-zinc-900">{dictionary.errors.notFoundTitle}</h1>
-        <p className="text-base text-zinc-600">{dictionary.errors.notFoundDescription}</p>
+        <h1 className="text-3xl font-bold text-zinc-900">{dictionary.messages.errors.notFoundTitle}</h1>
+        <p className="text-base text-zinc-600">{dictionary.messages.errors.notFoundDescription}</p>
       </div>
       <Link
         href={localizePath(locale, '')}
         aria-label={dictionary.header.homeAriaLabel}
         className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700"
       >
-        {dictionary.buttons.goHome}
+        {dictionary.common.buttons.goHome}
       </Link>
     </div>
   );

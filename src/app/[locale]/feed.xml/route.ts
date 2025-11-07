@@ -42,8 +42,8 @@ export async function GET(
   const siteUrl = getSiteUrl();
   const languageTag = toLanguageTag(locale);
   const feedUrl = buildAbsoluteUrl(localizePath(locale, 'feed.xml'));
-  const title = site.seo?.title ?? dictionary.brandName;
-  const description = site.seo?.description ?? dictionary.brandName;
+  const title = site.seo?.title ?? site.brand.siteName;
+  const description = site.seo?.description ?? site.defaultSeo?.description ?? dictionary.common.tagline;
 
   const sortedPosts = posts
     .filter((post) => Boolean(post.publishedAt))
@@ -62,11 +62,11 @@ export async function GET(
       const modified = post.updatedAt ?? post.publishedAt ?? published;
       const summary = post.seo?.description ?? post.excerpt ?? '';
 
-      return `    <entry>\n      <title>${escapeXml(post.seo?.title ?? post.title)}</title>\n      <id>${escapeXml(postUrl)}</id>\n      <link href="${escapeXml(postUrl)}" rel="alternate" type="text/html"/>\n      <published>${published}</published>\n      <updated>${modified}</updated>\n      <summary type="html">${escapeXml(summary)}</summary>\n      <author><name>${escapeXml(dictionary.brandName)}</name><uri>${escapeXml(siteUrl)}</uri></author>\n    </entry>`;
+      return `    <entry>\n      <title>${escapeXml(post.seo?.title ?? post.title)}</title>\n      <id>${escapeXml(postUrl)}</id>\n      <link href="${escapeXml(postUrl)}" rel="alternate" type="text/html"/>\n      <published>${published}</published>\n      <updated>${modified}</updated>\n      <summary type="html">${escapeXml(summary)}</summary>\n      <author><name>${escapeXml(site.brand.siteName)}</name><uri>${escapeXml(siteUrl)}</uri></author>\n    </entry>`;
     })
     .join('\n');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="${escapeXml(languageTag)}">\n  <title>${escapeXml(title)}</title>\n  <id>${escapeXml(feedUrl)}</id>\n  <link href="${escapeXml(feedUrl)}" rel="self" type="application/atom+xml"/>\n  <link href="${escapeXml(siteUrl)}" rel="alternate" type="text/html"/>\n  <updated>${updated}</updated>\n  <subtitle>${escapeXml(description)}</subtitle>\n  <author><name>${escapeXml(dictionary.brandName)}</name><uri>${escapeXml(siteUrl)}</uri></author>\n${entriesXml ? `${entriesXml}\n` : ''}</feed>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="${escapeXml(languageTag)}">\n  <title>${escapeXml(title)}</title>\n  <id>${escapeXml(feedUrl)}</id>\n  <link href="${escapeXml(feedUrl)}" rel="self" type="application/atom+xml"/>\n  <link href="${escapeXml(siteUrl)}" rel="alternate" type="text/html"/>\n  <updated>${updated}</updated>\n  <subtitle>${escapeXml(description)}</subtitle>\n  <author><name>${escapeXml(site.brand.siteName)}</name><uri>${escapeXml(siteUrl)}</uri></author>\n${entriesXml ? `${entriesXml}\n` : ''}</feed>`;
 
   return new NextResponse(xml, {
     status: 200,

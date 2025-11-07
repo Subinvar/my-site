@@ -42,7 +42,7 @@ export default async function StaticPage({ params }: StaticPageProps) {
   const currentPath = localizePath(locale, page.slug);
   const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
     locale,
-    rootLabel: dictionary.breadcrumbs.rootLabel,
+    rootLabel: dictionary.common.breadcrumbs.rootLabel,
     items: [],
     current: {
       name: page.title,
@@ -56,10 +56,10 @@ export default async function StaticPage({ params }: StaticPageProps) {
         locale={locale}
         localizedSlugs={page.localizedSlugs}
         currentSlug={page.slug}
-        dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
+        dictionary={dictionary.common.languageSwitcher}
       />
       <JsonLd id={`ld-json-breadcrumb-${page.slugKey}`} data={breadcrumbJsonLd} />
-      <Breadcrumbs locale={locale} items={[{ label: page.title }]} dictionary={{ breadcrumbs: dictionary.breadcrumbs }} />
+      <Breadcrumbs locale={locale} items={[{ label: page.title }]} dictionary={dictionary.common.breadcrumbs} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
@@ -91,7 +91,8 @@ export async function generateMetadata({ params }: StaticPageProps): Promise<Met
     siteSeo: site.seo,
     pageSeo: page.seo,
     localizedSlugs: page.localizedSlugs,
-    siteName: dictionary.brandName,
+    siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
+    twitter: site.twitter,
   });
 }

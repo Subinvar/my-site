@@ -26,7 +26,7 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
         locale={locale}
         localizedSlugs={page.localizedSlugs}
         currentSlug={page.slug}
-        dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
+        dictionary={dictionary.common.languageSwitcher}
       />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
@@ -60,7 +60,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     siteSeo: site.seo,
     pageSeo: page.seo,
     localizedSlugs: page.localizedSlugs,
-    siteName: dictionary.brandName,
+    siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
+    twitter: site.twitter,
   });
 }

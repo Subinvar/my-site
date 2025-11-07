@@ -1,31 +1,31 @@
 {
   "slugKey": "first-post",
+  "status": "published",
+  "datePublished": "2024-02-05T07:00",
+  "updatedAt": "2024-02-12T12:15",
   "title": {
-    "ru": "Первый пост",
-    "en": "First Post"
+    "ru": "Как мы модернизировали производство за 90 дней",
+    "en": "How we modernised a plant in 90 days"
   },
   "slug": {
     "ru": {
-      "slug": "pervyj-post",
-      "name": "pervyj-post"
+      "slug": "modernizaciya-proizvodstva",
+      "name": "first-post-ru"
     },
     "en": {
-      "slug": "first-post",
-      "name": "first-post"
+      "slug": "modernising-the-plant",
+      "name": "first-post-en"
     }
   },
   "excerpt": {
-    "ru": "Короткое описание первого поста.",
-    "en": "Short description of the first post."
+    "ru": "Разбираем этапы и инструменты ускоренной модернизации крупного производственного комплекса.",
+    "en": "A breakdown of the tools and milestones behind our fast-track industrial upgrade."
   },
-  "seo": {
-    "ru": {
-      "title": "Первый пост",
-      "description": "SEO описание первого поста."
-    },
-    "en": {
-      "title": "First Post",
-      "description": "SEO description of the first post."
+  "cover": {
+    "image": "uploads/post-cover.svg",
+    "alt": {
+      "ru": "Инженеры проверяют цифровой план модернизации",
+      "en": "Engineers reviewing the digital modernisation plan"
     }
   },
   "content": {
@@ -68,7 +68,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Привет из блога"
+                      "content": "Цифровая трансформация линии окраски"
                     },
                     "children": [],
                     "type": "text",
@@ -138,7 +138,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Это "
+                      "content": "В этом материале мы делимся "
                     },
                     "children": [],
                     "type": "text",
@@ -174,7 +174,7 @@
                         ],
                         "inline": true,
                         "attributes": {
-                          "content": "локализованный"
+                          "content": "ключевыми"
                         },
                         "children": [],
                         "type": "text",
@@ -211,7 +211,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": " контент."
+                      "content": " шагами программы."
                     },
                     "children": [],
                     "type": "text",
@@ -297,7 +297,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Hello from the blog"
+                      "content": "Digital transformation of the coating line"
                     },
                     "children": [],
                     "type": "text",
@@ -403,7 +403,7 @@
                         ],
                         "inline": true,
                         "attributes": {
-                          "content": "localized"
+                          "content": "the essential"
                         },
                         "children": [],
                         "type": "text",
@@ -485,6 +485,35 @@
         "type": "document",
         "annotations": [],
         "slots": {}
+      }
+    }
+  },
+  "tags": [
+    "modernisation",
+    "digital twin",
+    "lean-construction"
+  ],
+  "author": "Мария Петрова",
+  "readingTime": 6,
+  "canonicalUrl": {
+    "ru": "https://stroytech.io/ru/blog/modernizaciya-proizvodstva",
+    "en": "https://stroytech.io/en/blog/modernising-the-plant"
+  },
+  "seo": {
+    "ru": {
+      "title": "Модернизация производства за 90 дней — опыт StroyTech",
+      "description": "Какие решения помогли сократить простой и повысить эффективность линии на 27%.",
+      "ogImage": {
+        "image": "uploads/post-cover.svg",
+        "alt": "Производственная линия после модернизации"
+      }
+    },
+    "en": {
+      "title": "Modernising a production line in 90 days — the StroyTech approach",
+      "description": "How we reduced downtime and increased line productivity by 27%.",
+      "ogImage": {
+        "image": "uploads/post-cover.svg",
+        "alt": "Production line after modernisation"
       }
     }
   }

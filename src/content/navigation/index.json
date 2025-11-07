@@ -1,70 +1,86 @@
 {
-  "header": [
+  "headerLinks": [
     {
       "label": {
         "ru": "Главная",
         "en": "Home"
       },
-      "slug": {
-        "ru": {
-          "slug": "__root__",
-          "name": "home-ru"
-        },
-        "en": {
-          "slug": "__root__",
-          "name": "home-en"
+      "link": {
+        "discriminant": "internal",
+        "value": {
+          "page": "home"
         }
-      }
-    },
-    {
-      "label": {
-        "ru": "Блог",
-        "en": "Blog"
       },
-      "slug": {
-        "ru": {
-          "slug": "posts",
-          "name": "posts-ru"
-        },
-        "en": {
-          "slug": "posts",
-          "name": "posts-en"
-        }
-      }
+      "order": 0
     },
     {
       "label": {
-        "ru": "О проекте",
+        "ru": "О компании",
         "en": "About"
       },
-      "slug": {
-        "ru": {
-          "slug": "about",
-          "name": "about-ru"
-        },
-        "en": {
-          "slug": "about",
-          "name": "about-en"
+      "link": {
+        "discriminant": "internal",
+        "value": {
+          "page": "about"
         }
-      }
+      },
+      "order": 10
+    },
+    {
+      "label": {
+        "ru": "LinkedIn",
+        "en": "LinkedIn"
+      },
+      "link": {
+        "discriminant": "external",
+        "value": {
+          "url": "https://www.linkedin.com/company/stroytech",
+          "newTab": true
+        }
+      },
+      "order": 20
     }
   ],
-  "footer": [
+  "footerLinks": [
+    {
+      "label": {
+        "ru": "Главная",
+        "en": "Home"
+      },
+      "link": {
+        "discriminant": "internal",
+        "value": {
+          "page": "home"
+        }
+      },
+      "order": 0
+    },
+    {
+      "label": {
+        "ru": "Новости",
+        "en": "News"
+      },
+      "link": {
+        "discriminant": "external",
+        "value": {
+          "url": "https://www.linkedin.com/company/stroytech/posts/",
+          "newTab": true
+        }
+      },
+      "order": 10
+    },
     {
       "label": {
         "ru": "Контакты",
-        "en": "Contacts"
+        "en": "Contact"
       },
-      "slug": {
-        "ru": {
-          "slug": "contacts",
-          "name": "contacts-ru"
-        },
-        "en": {
-          "slug": "contacts",
-          "name": "contacts-en"
+      "link": {
+        "discriminant": "internal",
+        "value": {
+          "page": "about"
         }
-      }
+      },
+      "order": 20
     }
   ]
 }

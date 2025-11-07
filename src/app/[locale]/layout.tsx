@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { DictionaryProvider } from '@/lib/use-dictionary';
 import { getDictionary, getNavigation, getSite } from '@/lib/keystatic';
+import { buildPageMetadata } from '@/lib/metadata';
 import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
 import { JsonLd } from '@/components/json-ld';
 import { buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/lib/json-ld';
@@ -34,22 +35,22 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     getDictionary(locale),
   ]);
 
-  const logoUrl = buildAbsoluteUrl(`/og-${locale}.svg`);
+  const logoUrl = site.brand.logo?.src ? buildAbsoluteUrl(site.brand.logo.src) : buildAbsoluteUrl(`/og-${locale}.svg`);
   const organizationJsonLd = buildOrganizationJsonLd({
     locale,
-    name: dictionary.brandName,
-    description: site.seo?.description,
-    email: site.email,
-    phone: site.contacts?.phone,
-    address: site.contacts?.address,
+    name: site.brand.companyName || site.brand.siteName,
+    description: site.defaultSeo?.description ?? dictionary.common.tagline,
+    email: site.brand.contacts.email,
+    phone: site.brand.contacts.phone,
+    address: site.brand.contacts.address,
     logoUrl,
   });
 
   const alternateLocales = SUPPORTED_LOCALES.filter((candidate) => candidate !== locale);
   const websiteJsonLd = buildWebsiteJsonLd({
     locale,
-    name: dictionary.brandName,
-    description: site.seo?.description,
+    name: site.brand.siteName,
+    description: site.defaultSeo?.description,
     alternateLocales,
     searchUrl: null,
   });
@@ -61,17 +62,18 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <JsonLd id="ld-json-website" data={websiteJsonLd} />
         <SiteHeader
           locale={locale}
-          links={navigation.header.map(({ label, slug }) => ({ label, slug }))}
-          dictionary={{ brandName: dictionary.brandName, header: dictionary.header }}
+          links={navigation.header}
+          brandName={site.brand.siteName}
+          dictionary={{ header: dictionary.header }}
         />
         <div className="flex-1">
           {children}
         </div>
         <SiteFooter
           locale={locale}
-          links={navigation.footer.map(({ label, slug }) => ({ label, slug }))}
-          contacts={site.contacts}
-          email={site.email}
+          links={navigation.footer}
+          contacts={{ address: site.brand.contacts.address, phone: site.brand.contacts.phone }}
+          email={site.brand.contacts.email}
           dictionary={{ footer: dictionary.footer }}
         />
       </div>
@@ -86,11 +88,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return {};
   }
   const locale = rawLocale as Locale;
-  const site = await getSite(locale);
+  const [site, dictionary] = await Promise.all([getSite(locale), getDictionary(locale)]);
+
+  const metadata = buildPageMetadata({
+    locale,
+    slug: '',
+    siteSeo: site.seo,
+    siteName: site.brand.siteName,
+    ogImageAlt: dictionary.seo.ogImageAlt,
+    twitter: site.twitter,
+  });
 
   return {
-    title: site.seo?.title,
-    description: site.seo?.description,
+    ...metadata,
     manifest: localizePath(locale, 'manifest.webmanifest'),
   };
 }

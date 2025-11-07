@@ -2,9 +2,15 @@ import type { Metadata } from 'next';
 import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './i18n';
 import { buildAbsoluteUrl } from './site-url';
 
+type OgImage = {
+  src: string;
+  alt?: string;
+};
+
 type SeoInfo = {
   title?: string;
   description?: string;
+  ogImage?: OgImage;
 };
 
 type MetadataParams = {
@@ -15,9 +21,23 @@ type MetadataParams = {
   localizedSlugs?: Partial<Record<Locale, string>>;
   siteName?: string;
   ogImageAlt?: string;
+  twitter?: {
+    card?: 'summary' | 'summary_large_image' | 'player' | 'app';
+    site?: string;
+    creator?: string;
+  } | null;
 };
 
-export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlugs, siteName, ogImageAlt }: MetadataParams): Metadata {
+export function buildPageMetadata({
+  locale,
+  slug,
+  siteSeo,
+  pageSeo,
+  localizedSlugs,
+  siteName,
+  ogImageAlt,
+  twitter,
+}: MetadataParams): Metadata {
   const title = pageSeo?.title ?? siteSeo?.title;
   const description = pageSeo?.description ?? siteSeo?.description;
   const canonicalPath = localizePath(locale, slug);
@@ -36,15 +56,22 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
     languages['x-default'] = languages[DEFAULT_LOCALE];
   }
 
-  const ogImages = ogImageAlt
+  const ogImage = pageSeo?.ogImage ?? siteSeo?.ogImage;
+  const ogImages = ogImage
     ? [
         {
-          url: buildAbsoluteUrl(`/og-${locale}.svg`),
-          alt: ogImageAlt,
-          type: 'image/svg+xml',
+          url: buildAbsoluteUrl(ogImage.src),
+          alt: ogImage.alt ?? ogImageAlt,
         },
       ]
-    : undefined;
+    : ogImageAlt
+      ? [
+          {
+            url: buildAbsoluteUrl(`/og-${locale}.svg`),
+            alt: ogImageAlt,
+          },
+        ]
+      : undefined;
 
   return {
     title,
@@ -63,10 +90,12 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
       images: ogImages,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: twitter?.card ?? 'summary_large_image',
       title: title ?? undefined,
       description: description ?? undefined,
       images: ogImages?.map((image) => image.url),
+      site: twitter?.site ?? undefined,
+      creator: twitter?.creator ?? undefined,
     },
   };
 }

@@ -30,9 +30,10 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
   const locale = params.locale as Locale;
-  const [post, dictionary] = await Promise.all([
+  const [post, dictionary, site] = await Promise.all([
     getPostBySlug(locale, params.slug),
     getDictionary(locale),
+    getSite(locale),
   ]);
   if (!post) {
     notFound();
@@ -49,23 +50,24 @@ export default async function PostPage({ params }: PostPageProps) {
   const canonicalPath = localizePath(locale, `posts/${post.slug}`);
   const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
     locale,
-    rootLabel: dictionary.breadcrumbs.rootLabel,
+    rootLabel: dictionary.common.breadcrumbs.rootLabel,
     items: [],
     current: {
       name: post.title,
       href: canonicalPath,
     },
   });
+  const ogImage = post.seo?.ogImage ?? site.defaultSeo?.ogImage;
   const articleJsonLd = buildArticleJsonLd({
     locale,
     headline: post.seo?.title ?? post.title,
     description: post.seo?.description ?? post.excerpt,
     url: buildAbsoluteUrl(canonicalPath),
-    imageUrl: buildAbsoluteUrl(`/og-${locale}.svg`),
-    imageAlt: dictionary.seo.ogImageAlt,
+    imageUrl: ogImage ? buildAbsoluteUrl(ogImage.src) : buildAbsoluteUrl(`/og-${locale}.svg`),
+    imageAlt: ogImage?.alt ?? dictionary.seo.ogImageAlt,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
-    publisherName: dictionary.brandName,
+    publisherName: site.brand.siteName,
   });
 
   return (
@@ -74,11 +76,11 @@ export default async function PostPage({ params }: PostPageProps) {
         locale={locale}
         localizedSlugs={post.localizedSlugs}
         currentSlug={post.slug}
-        dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
+        dictionary={dictionary.common.languageSwitcher}
       />
       <JsonLd id={`ld-json-breadcrumb-${post.slugKey}`} data={breadcrumbJsonLd} />
       <JsonLd id={`ld-json-article-${post.slugKey}`} data={articleJsonLd} />
-      <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={{ breadcrumbs: dictionary.breadcrumbs }} />
+      <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={dictionary.common.breadcrumbs} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{post.title}</h1>
@@ -114,7 +116,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     localizedSlugs: Object.fromEntries(
       Object.entries(post.localizedSlugs ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
     ) as Partial<Record<Locale, string>>,
-    siteName: dictionary.brandName,
+    siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
+    twitter: site.twitter,
   });
 }

@@ -6,7 +6,7 @@ type LanguageSwitcherProps = {
   locale: Locale;
   localizedSlugs: Partial<Record<Locale, string>>;
   currentSlug?: string;
-  dictionary: Pick<UiDictionary, 'languageSwitcher'>;
+  dictionary: UiDictionary['common']['languageSwitcher'];
 };
 
 export function LanguageSwitcher({ locale, localizedSlugs, currentSlug, dictionary }: LanguageSwitcherProps) {
@@ -25,7 +25,7 @@ export function LanguageSwitcher({ locale, localizedSlugs, currentSlug, dictiona
         lang={candidate}
         rel="alternate"
         title={LOCALE_LABELS[candidate]}
-        aria-label={`${dictionary.languageSwitcher.ariaLabel}: ${LOCALE_LABELS[candidate]}`}
+        aria-label={`${dictionary.ariaLabel}: ${LOCALE_LABELS[candidate]}`}
       >
         {candidate.toUpperCase()}
       </Link>,
@@ -35,8 +35,8 @@ export function LanguageSwitcher({ locale, localizedSlugs, currentSlug, dictiona
   const hiddenDefault = localizedSlugs[DEFAULT_LOCALE] ?? currentSlug ?? '';
 
   return (
-    <nav aria-label={dictionary.languageSwitcher.ariaLabel} className="flex items-center gap-3">
-      <span className="sr-only">{dictionary.languageSwitcher.availableLabel}</span>
+    <nav aria-label={dictionary.ariaLabel} className="flex items-center gap-3">
+      <span className="sr-only">{dictionary.availableLabel}</span>
       <span className="sr-only">
         <Link href={localizePath(DEFAULT_LOCALE, hiddenDefault)} hrefLang={DEFAULT_LOCALE} lang={DEFAULT_LOCALE}>
           {DEFAULT_LOCALE.toUpperCase()}

@@ -1,12 +1,15 @@
 {
   "slugKey": "about",
+  "status": "published",
+  "datePublished": "2024-01-22T11:00",
+  "updatedAt": "2024-02-10T08:30",
   "title": {
-    "ru": "О проекте",
+    "ru": "О компании",
     "en": "About"
   },
   "slug": {
     "ru": {
-      "slug": "about",
+      "slug": "o-kompanii",
       "name": "about-ru"
     },
     "en": {
@@ -15,17 +18,14 @@
     }
   },
   "excerpt": {
-    "ru": "Немного информации о проекте.",
-    "en": "A bit about the project."
+    "ru": "Рассказываем, кто мы, какие проекты ведём и в чём наша экспертиза.",
+    "en": "Learn who we are, the projects we manage, and what makes our expertise unique."
   },
-  "seo": {
-    "ru": {
-      "title": "О проекте",
-      "description": "Страница о проекте."
-    },
-    "en": {
-      "title": "About",
-      "description": "About this project."
+  "cover": {
+    "image": "uploads/about-cover.svg",
+    "alt": {
+      "ru": "Команда StroyTech на производственной площадке",
+      "en": "The StroyTech team on an industrial site"
     }
   },
   "content": {
@@ -138,7 +138,7 @@
                     ],
                     "inline": true,
                     "attributes": {
-                      "content": "Проект демонстрирует локализацию с Keystatic."
+                      "content": "Мы объединяем инженеров, архитекторов и специалистов по автоматизации, чтобы запускать производственные объекты быстрее."
                     },
                     "children": [],
                     "type": "text",
@@ -339,6 +339,24 @@
         "type": "document",
         "annotations": [],
         "slots": {}
+      }
+    }
+  },
+  "seo": {
+    "ru": {
+      "title": "О компании StroyTech",
+      "description": "15 лет опыта в промышленном проектировании и строительстве сложных объектов.",
+      "ogImage": {
+        "image": "uploads/og-default.svg",
+        "alt": "Офис StroyTech и команда инженеров"
+      }
+    },
+    "en": {
+      "title": "About StroyTech",
+      "description": "15 years of experience delivering complex industrial facilities worldwide.",
+      "ogImage": {
+        "image": "uploads/og-default.svg",
+        "alt": "StroyTech office and engineering team"
       }
     }
   }
