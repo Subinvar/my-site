@@ -4,23 +4,41 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(SUPPORTED_LOCALES);
 
-function hasLocale(pathname: string): boolean {
+function extractLocale(pathname: string): (typeof SUPPORTED_LOCALES)[number] | null {
   const segments = pathname.split("/").filter(Boolean);
-  return segments.length > 0 && LOCALE_PREFIXES.has(segments[0] as (typeof SUPPORTED_LOCALES)[number]);
+  if (segments.length === 0) {
+    return null;
+  }
+
+  const [candidate] = segments;
+  return LOCALE_PREFIXES.has(candidate as (typeof SUPPORTED_LOCALES)[number])
+    ? (candidate as (typeof SUPPORTED_LOCALES)[number])
+    : null;
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (hasLocale(pathname)) {
+  const locale = extractLocale(pathname);
+
+  if (locale === DEFAULT_LOCALE) {
+    const url = request.nextUrl.clone();
+    const segments = pathname.split("/").filter(Boolean).slice(1);
+    const normalized = segments.length > 0 ? `/${segments.join("/")}` : "/";
+    url.pathname = normalized;
+    return NextResponse.redirect(url, { status: 308 });
+  }
+
+  if (locale) {
     return NextResponse.next();
   }
 
-  const locale = DEFAULT_LOCALE;
   const url = request.nextUrl.clone();
-  const suffix = pathname === "/" ? "" : pathname;
-  url.pathname = `/${locale}${suffix}`;
-  return NextResponse.redirect(url);
+  url.pathname =
+    pathname === "/"
+      ? `/${DEFAULT_LOCALE}`
+      : `/${DEFAULT_LOCALE}${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
