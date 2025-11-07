@@ -3,7 +3,10 @@ import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { DictionaryProvider } from '@/lib/use-dictionary';
 import { getDictionary, getNavigation, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
+import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { JsonLd } from '@/components/json-ld';
+import { buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/lib/json-ld';
+import { buildAbsoluteUrl } from '@/lib/site-url';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 
@@ -31,9 +34,31 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     getDictionary(locale),
   ]);
 
+  const logoUrl = buildAbsoluteUrl(`/og-${locale}.svg`);
+  const organizationJsonLd = buildOrganizationJsonLd({
+    locale,
+    name: dictionary.brandName,
+    description: site.seo?.description,
+    email: site.email,
+    phone: site.contacts?.phone,
+    address: site.contacts?.address,
+    logoUrl,
+  });
+
+  const alternateLocales = SUPPORTED_LOCALES.filter((candidate) => candidate !== locale);
+  const websiteJsonLd = buildWebsiteJsonLd({
+    locale,
+    name: dictionary.brandName,
+    description: site.seo?.description,
+    alternateLocales,
+    searchUrl: null,
+  });
+
   return (
     <DictionaryProvider value={dictionary}>
       <div className="flex min-h-screen flex-col bg-white text-zinc-900">
+        <JsonLd id="ld-json-organization" data={organizationJsonLd} />
+        <JsonLd id="ld-json-website" data={websiteJsonLd} />
         <SiteHeader
           locale={locale}
           links={navigation.header.map(({ label, slug }) => ({ label, slug }))}
@@ -66,5 +91,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: site.seo?.title,
     description: site.seo?.description,
+    manifest: localizePath(locale, 'manifest.webmanifest'),
   };
 }

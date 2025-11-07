@@ -15,6 +15,15 @@ export function isLocale(value: string | undefined | null): value is Locale {
   return !!value && SUPPORTED_LOCALES.includes(value as Locale);
 }
 
+const LOCALE_LANGUAGE_TAG: Record<Locale, string> = {
+  ru: "ru-RU",
+  en: "en-US",
+};
+
+export function toLanguageTag(locale: Locale): string {
+  return LOCALE_LANGUAGE_TAG[locale] ?? locale;
+}
+
 export function localizePath(locale: Locale, slug: string | string[] | undefined): string {
   const normalized = Array.isArray(slug)
     ? slug.filter(Boolean).join("/")

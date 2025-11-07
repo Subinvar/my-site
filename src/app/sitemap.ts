@@ -1,8 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getSitemapContentEntries } from '@/lib/keystatic';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+import { buildAbsoluteUrl } from '@/lib/site-url';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
@@ -16,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         continue;
       }
       const localizedPath = entry.collection === 'posts' ? `posts/${localizedSlug}` : localizedSlug;
-      languageAlternates[locale] = new URL(localizePath(locale, localizedPath), siteUrl).toString();
+      languageAlternates[locale] = buildAbsoluteUrl(localizePath(locale, localizedPath));
     }
 
     if (languageAlternates[DEFAULT_LOCALE]) {
@@ -30,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
 
       const localizedPath = entry.collection === 'posts' ? `posts/${localizedSlug}` : localizedSlug;
-      const url = new URL(localizePath(locale, localizedPath), siteUrl).toString();
+      const url = buildAbsoluteUrl(localizePath(locale, localizedPath));
 
       entries.push({
         url,

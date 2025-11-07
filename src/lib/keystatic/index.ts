@@ -306,6 +306,21 @@ async function getPagesEntries(): Promise<PageEntryRecord[]> {
 
 type PostEntryRecord = { entry: PostEntry; slugKey: string };
 
+export type PagePayload = {
+  slugKey: string;
+  title: string;
+  content?: { node: unknown };
+  excerpt?: string;
+  seo?: SeoEntry;
+  slug: string;
+  localizedSlugs: Partial<Record<Locale, string>>;
+};
+
+export type PostPayload = PagePayload & {
+  publishedAt: string | null;
+  updatedAt: string | null;
+};
+
 async function getPostsEntries(): Promise<PostEntryRecord[]> {
   const reader = getReader();
   const entries = await reader.collections.posts.all({ resolveLinkedFiles: true });
@@ -329,7 +344,7 @@ function findEntryBySlug<T extends PageEntry | PostEntry>(entries: { entry: T }[
   });
 }
 
-export async function getHomePage(locale: Locale) {
+export async function getHomePage(locale: Locale): Promise<PagePayload | null> {
   const entries = await getPagesEntries();
   const match = entries.find(({ entry }) => normalizeSlug(pickLocalized(entry.slug, locale, { fallback: false })) === '');
   if (!match) {
@@ -338,7 +353,7 @@ export async function getHomePage(locale: Locale) {
   return buildPagePayload(locale, match.entry);
 }
 
-function buildPagePayload(locale: Locale, entry: PageEntry) {
+function buildPagePayload(locale: Locale, entry: PageEntry): PagePayload {
   const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, FALLBACK_LOCALE) ?? '';
   const content = pickLocalized(entry.content, locale) ?? pickLocalized(entry.content, FALLBACK_LOCALE);
   const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, FALLBACK_LOCALE);
@@ -388,7 +403,7 @@ function mergeLatestDate(...dates: (Date | undefined)[]): Date | undefined {
   return new Date(Math.max(...validDates.map((date) => date.getTime())));
 }
 
-export async function getPageBySlug(locale: Locale, slug: string) {
+export async function getPageBySlug(locale: Locale, slug: string): Promise<PagePayload | null> {
   const entries = await getPagesEntries();
   const match = findEntryBySlug(entries, locale, slug);
   if (!match) {
@@ -408,21 +423,30 @@ export async function getAllPageSlugs(locale: Locale) {
     .filter((slug, index, self) => self.indexOf(slug) === index);
 }
 
-function buildPostPayload(locale: Locale, entry: PostEntry) {
+function buildPostPayload(locale: Locale, entry: PostEntry): PostPayload {
   const base = buildPagePayload(locale, entry);
   return {
     ...base,
     publishedAt: entry.publishedAt ?? null,
+    updatedAt: null,
   };
 }
 
-export async function getPostBySlug(locale: Locale, slug: string) {
+export async function getPostBySlug(locale: Locale, slug: string): Promise<PostPayload | null> {
   const entries = await getPostsEntries();
   const match = findEntryBySlug(entries, locale, slug);
   if (!match) {
     return null;
   }
-  return buildPostPayload(locale, match.entry);
+  const payload = buildPostPayload(locale, match.entry);
+  const fileDate = await getContentFileStat('posts', match.slugKey);
+  const publishedAtDate = toValidDate(match.entry.publishedAt ?? undefined);
+  const latest = mergeLatestDate(fileDate, publishedAtDate);
+  return {
+    ...payload,
+    publishedAt: payload.publishedAt,
+    updatedAt: latest?.toISOString() ?? null,
+  };
 }
 
 export async function getAllPostSlugs(locale: Locale) {
@@ -434,6 +458,25 @@ export async function getAllPostSlugs(locale: Locale) {
     })
     .filter((slug): slug is string => Boolean(slug))
     .filter((slug, index, self) => self.indexOf(slug) === index);
+}
+
+export async function getAllPosts(locale: Locale): Promise<PostPayload[]> {
+  const entries = await getPostsEntries();
+  const posts = await Promise.all(
+    entries.map(async ({ entry, slugKey }) => {
+      const payload = buildPostPayload(locale, entry);
+      const fileDate = await getContentFileStat('posts', slugKey);
+      const publishedAtDate = toValidDate(entry.publishedAt ?? undefined);
+      const latest = mergeLatestDate(fileDate, publishedAtDate);
+      return {
+        ...payload,
+        publishedAt: payload.publishedAt,
+        updatedAt: latest?.toISOString() ?? null,
+      } satisfies PostPayload;
+    })
+  );
+
+  return posts.filter((post) => Boolean(post.slug));
 }
 
 export type SitemapContentEntry = {

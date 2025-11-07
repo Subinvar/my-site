@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './i18n';
+import { buildAbsoluteUrl } from './site-url';
 
 type SeoInfo = {
   title?: string;
@@ -16,13 +17,11 @@ type MetadataParams = {
   ogImageAlt?: string;
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
 export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlugs, siteName, ogImageAlt }: MetadataParams): Metadata {
   const title = pageSeo?.title ?? siteSeo?.title;
   const description = pageSeo?.description ?? siteSeo?.description;
   const canonicalPath = localizePath(locale, slug);
-  const canonical = new URL(canonicalPath, siteUrl).toString();
+  const canonical = buildAbsoluteUrl(canonicalPath);
 
   const languages: Record<string, string> = {};
   for (const candidate of SUPPORTED_LOCALES) {
@@ -30,7 +29,7 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
     if (translatedSlug === undefined) {
       continue;
     }
-    languages[candidate] = new URL(localizePath(candidate, translatedSlug), siteUrl).toString();
+    languages[candidate] = buildAbsoluteUrl(localizePath(candidate, translatedSlug));
   }
 
   if (languages[DEFAULT_LOCALE]) {
@@ -40,7 +39,7 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
   const ogImages = ogImageAlt
     ? [
         {
-          url: new URL(`/og-${locale}.svg`, siteUrl).toString(),
+          url: buildAbsoluteUrl(`/og-${locale}.svg`),
           alt: ogImageAlt,
           type: 'image/svg+xml',
         },

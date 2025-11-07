@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { JsonLd } from '@/components/json-ld';
 import { renderMarkdoc } from '@/lib/markdoc';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPostSlugs, getDictionary, getPostBySlug, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
+import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { buildArticleJsonLd, buildBreadcrumbListJsonLd } from '@/lib/json-ld';
+import { buildAbsoluteUrl } from '@/lib/site-url';
 
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
@@ -43,6 +46,28 @@ export default async function PostPage({ params }: PostPageProps) {
       }).format(new Date(post.publishedAt))
     : null;
 
+  const canonicalPath = localizePath(locale, `posts/${post.slug}`);
+  const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
+    locale,
+    rootLabel: dictionary.breadcrumbs.rootLabel,
+    items: [],
+    current: {
+      name: post.title,
+      href: canonicalPath,
+    },
+  });
+  const articleJsonLd = buildArticleJsonLd({
+    locale,
+    headline: post.seo?.title ?? post.title,
+    description: post.seo?.description ?? post.excerpt,
+    url: buildAbsoluteUrl(canonicalPath),
+    imageUrl: buildAbsoluteUrl(`/og-${locale}.svg`),
+    imageAlt: dictionary.seo.ogImageAlt,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    publisherName: dictionary.brandName,
+  });
+
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
       <LanguageSwitcher
@@ -51,6 +76,8 @@ export default async function PostPage({ params }: PostPageProps) {
         currentSlug={post.slug}
         dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
       />
+      <JsonLd id={`ld-json-breadcrumb-${post.slugKey}`} data={breadcrumbJsonLd} />
+      <JsonLd id={`ld-json-article-${post.slugKey}`} data={articleJsonLd} />
       <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={{ breadcrumbs: dictionary.breadcrumbs }} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.excerpt}</p>

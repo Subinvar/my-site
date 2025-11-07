@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { JsonLd } from '@/components/json-ld';
 import { renderMarkdoc } from '@/lib/markdoc';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPageSlugs, getDictionary, getPageBySlug, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
+import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { buildBreadcrumbListJsonLd } from '@/lib/json-ld';
 
 export async function generateStaticParams() {
   const params: { locale: string; static: string[] }[] = [];
@@ -35,6 +37,17 @@ export default async function StaticPage({ params }: StaticPageProps) {
     notFound();
   }
 
+  const currentPath = localizePath(locale, page.slug);
+  const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
+    locale,
+    rootLabel: dictionary.breadcrumbs.rootLabel,
+    items: [],
+    current: {
+      name: page.title,
+      href: currentPath,
+    },
+  });
+
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
       <LanguageSwitcher
@@ -43,6 +56,7 @@ export default async function StaticPage({ params }: StaticPageProps) {
         currentSlug={page.slug}
         dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
       />
+      <JsonLd id={`ld-json-breadcrumb-${page.slugKey}`} data={breadcrumbJsonLd} />
       <Breadcrumbs locale={locale} items={[{ label: page.title }]} dictionary={{ breadcrumbs: dictionary.breadcrumbs }} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
