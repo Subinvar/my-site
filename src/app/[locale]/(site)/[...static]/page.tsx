@@ -22,15 +22,17 @@ export async function generateStaticParams() {
 }
 
 type StaticPageProps = {
-  params: { locale: string; static?: string[] };
+  params: Promise<{ locale: string; static?: string[] }>;
 };
 
 export default async function StaticPage({ params }: StaticPageProps) {
-  if (!isLocale(params.locale)) {
+  const { locale: localeParam, static: staticSegments } = await params;
+
+  if (!isLocale(localeParam)) {
     notFound();
   }
-  const locale = params.locale as Locale;
-  const slugSegments = params.static ?? [];
+  const locale = localeParam as Locale;
+  const slugSegments = staticSegments ?? [];
   const slug = slugSegments.join('/');
   const [page, dictionary] = await Promise.all([getPageBySlug(locale, slug), getDictionary(locale)]);
   if (!page) {
@@ -68,11 +70,13 @@ export default async function StaticPage({ params }: StaticPageProps) {
 }
 
 export async function generateMetadata({ params }: StaticPageProps): Promise<Metadata> {
-  if (!isLocale(params.locale)) {
+  const { locale: localeParam, static: staticSegments } = await params;
+
+  if (!isLocale(localeParam)) {
     return {};
   }
-  const locale = params.locale as Locale;
-  const slug = (params.static ?? []).join('/');
+  const locale = localeParam as Locale;
+  const slug = (staticSegments ?? []).join('/');
   const [site, page, dictionary] = await Promise.all([
     getSite(locale),
     getPageBySlug(locale, slug),
