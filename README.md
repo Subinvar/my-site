@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Site
+
+Это многоязычный сайт на Next.js 16 с интеграцией [Keystatic](https://keystatic.com) для редактирования контента через GitHub.
 
 ## Getting Started
 
-First, run the development server:
+## Быстрый старт
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
+```
+Приложение будет доступно на [http://localhost:3000](http://localhost:3000).
+
+## Переменные окружения
+
+Для сборки и работы Keystatic в GitHub-режиме необходимо добавить переменные в `.env.local` (локально) и в настройках окружений (например, на Vercel):
+
+```ini
+KEYSTATIC_GITHUB_CLIENT_ID=...
+KEYSTATIC_GITHUB_CLIENT_SECRET=...
+KEYSTATIC_SECRET=...
+NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `KEYSTATIC_GITHUB_CLIENT_ID` и `KEYSTATIC_GITHUB_CLIENT_SECRET` — параметры OAuth-приложения GitHub.
+- `KEYSTATIC_SECRET` — секрет для подписи токенов Keystatic.
+- `NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` — slug установленного GitHub App.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> ⚠️ Не коммитьте реальные значения секретов в репозиторий.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Для совместимости с локальными сертификатами Node.js при желании можно включить:
 
-## Learn More
+```ini
+NEXT_TURBOPACK_EXPERIMENTAL_USE_SYSTEM_TLS_CERTS=1
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Полезные команды
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Задача | Команда |
+| --- | --- |
+| Проверка типов | `pnpm exec tsc -b --noEmit` |
+| Линтер (поймать проблемы с код-стайлом и импортами) | `pnpm lint` |
+| Production-сборка | `pnpm build` |
+| Проверка production-сборки локально | `pnpm start` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Перед релизом убедитесь, что проверки (`tsc`, `lint`, `build`) проходят без ошибок, а `pnpm start` запускает собранное приложение без падений.
 
-## Deploy on Vercel
+## Дополнительные ссылки
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Документация Next.js](https://nextjs.org/docs)
+- [Документация Keystatic](https://keystatic.com/docs)
