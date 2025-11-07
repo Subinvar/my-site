@@ -1,0 +1,23 @@
+{
+  "seo": {
+    "ru": {
+      "title": "Мой сайт",
+      "description": "Пример локализованного сайта на Next.js и Keystatic"
+    },
+    "en": {
+      "title": "My site",
+      "description": "Sample localized site built with Next.js and Keystatic"
+    }
+  },
+  "contacts": {
+    "ru": {
+      "address": "Москва, ул. Пушкина, 10",
+      "phone": "+7 (495) 123-45-67"
+    },
+    "en": {
+      "address": "10 Pushkin St, Moscow",
+      "phone": "+7 (495) 123-45-67"
+    },
+    "email": "hello@example.com"
+  }
+}

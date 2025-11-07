@@ -1,0 +1,55 @@
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { renderMarkdoc } from '@/lib/markdoc';
+import { buildPageMetadata } from '@/lib/metadata';
+import { getHomePage, getSite } from '@/lib/keystatic';
+import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
+
+export default async function LocaleHomePage({ params }: { params: { locale: string } }) {
+  if (!isLocale(params.locale)) {
+    notFound();
+  }
+
+  const locale = params.locale as Locale;
+  const page = await getHomePage(locale);
+
+  if (!page) {
+    notFound();
+  }
+
+  return (
+    <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
+      <LanguageSwitcher locale={locale} localizedSlugs={page.localizedSlugs} currentSlug={page.slug} />
+      <header className="space-y-3">
+        <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
+        <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
+      </header>
+      <div className="space-y-4 text-base leading-relaxed">
+        {renderMarkdoc(page.content)}
+      </div>
+    </article>
+  );
+}
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  if (!isLocale(params.locale)) {
+    return {};
+  }
+  const locale = params.locale as Locale;
+  const [site, page] = await Promise.all([getSite(locale), getHomePage(locale)]);
+  if (!page) {
+    return {};
+  }
+  return buildPageMetadata({
+    locale,
+    slug: page.slug,
+    siteSeo: site.seo,
+    pageSeo: page.seo,
+    localizedSlugs: page.localizedSlugs,
+  });
+}

@@ -1,0 +1,549 @@
+{
+  "slugKey": "home",
+  "title": {
+    "ru": "Главная",
+    "en": "Home"
+  },
+  "slug": {
+    "ru": {
+      "slug": "",
+      "name": "home-ru"
+    },
+    "en": {
+      "slug": "",
+      "name": "home-en"
+    }
+  },
+  "excerpt": {
+    "ru": "Добро пожаловать на демо-сайт.",
+    "en": "Welcome to the demo site."
+  },
+  "seo": {
+    "ru": {
+      "title": "Главная",
+      "description": "Описание главной страницы."
+    },
+    "en": {
+      "title": "Home",
+      "description": "Homepage description."
+    }
+  },
+  "content": {
+    "ru": {
+      "node": {
+        "$$mdtype": "Node",
+        "errors": [],
+        "lines": [],
+        "inline": false,
+        "attributes": {},
+        "children": [
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              0,
+              1
+            ],
+            "inline": false,
+            "attributes": {
+              "level": 1
+            },
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  0,
+                  1
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      0,
+                      1
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "Привет!"
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 0
+                      },
+                      "end": {
+                        "line": 1
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 0
+                  },
+                  "end": {
+                    "line": 1
+                  }
+                }
+              }
+            ],
+            "type": "heading",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 0
+              },
+              "end": {
+                "line": 1
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              2,
+              3
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  2,
+                  3
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      2,
+                      3
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "Это главная страница."
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 2
+                      },
+                      "end": {
+                        "line": 3
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 2
+                  },
+                  "end": {
+                    "line": 3
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 2
+              },
+              "end": {
+                "line": 3
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              4,
+              5
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  4,
+                  5
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      4,
+                      5
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "type": "note"
+                    },
+                    "children": [
+                      {
+                        "$$mdtype": "Node",
+                        "errors": [],
+                        "lines": [
+                          4,
+                          5
+                        ],
+                        "inline": true,
+                        "attributes": {
+                          "content": "Содержимое управляется из Keystatic."
+                        },
+                        "children": [],
+                        "type": "text",
+                        "annotations": [],
+                        "slots": {},
+                        "location": {
+                          "start": {
+                            "line": 4
+                          },
+                          "end": {
+                            "line": 5
+                          }
+                        }
+                      }
+                    ],
+                    "type": "tag",
+                    "tag": "callout",
+                    "annotations": [
+                      {
+                        "type": "attribute",
+                        "name": "type",
+                        "value": "note"
+                      }
+                    ],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 4
+                      },
+                      "end": {
+                        "line": 5
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 4
+                  },
+                  "end": {
+                    "line": 5
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 4
+              },
+              "end": {
+                "line": 5
+              }
+            }
+          }
+        ],
+        "type": "document",
+        "annotations": [],
+        "slots": {}
+      }
+    },
+    "en": {
+      "node": {
+        "$$mdtype": "Node",
+        "errors": [],
+        "lines": [],
+        "inline": false,
+        "attributes": {},
+        "children": [
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              0,
+              1
+            ],
+            "inline": false,
+            "attributes": {
+              "level": 1
+            },
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  0,
+                  1
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      0,
+                      1
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "Hello!"
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 0
+                      },
+                      "end": {
+                        "line": 1
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 0
+                  },
+                  "end": {
+                    "line": 1
+                  }
+                }
+              }
+            ],
+            "type": "heading",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 0
+              },
+              "end": {
+                "line": 1
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              2,
+              3
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  2,
+                  3
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      2,
+                      3
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "This is the homepage."
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 2
+                      },
+                      "end": {
+                        "line": 3
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 2
+                  },
+                  "end": {
+                    "line": 3
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 2
+              },
+              "end": {
+                "line": 3
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              4,
+              5
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  4,
+                  5
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      4,
+                      5
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "type": "note"
+                    },
+                    "children": [
+                      {
+                        "$$mdtype": "Node",
+                        "errors": [],
+                        "lines": [
+                          4,
+                          5
+                        ],
+                        "inline": true,
+                        "attributes": {
+                          "content": "Content is managed in Keystatic."
+                        },
+                        "children": [],
+                        "type": "text",
+                        "annotations": [],
+                        "slots": {},
+                        "location": {
+                          "start": {
+                            "line": 4
+                          },
+                          "end": {
+                            "line": 5
+                          }
+                        }
+                      }
+                    ],
+                    "type": "tag",
+                    "tag": "callout",
+                    "annotations": [
+                      {
+                        "type": "attribute",
+                        "name": "type",
+                        "value": "note"
+                      }
+                    ],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 4
+                      },
+                      "end": {
+                        "line": 5
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 4
+                  },
+                  "end": {
+                    "line": 5
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 4
+              },
+              "end": {
+                "line": 5
+              }
+            }
+          }
+        ],
+        "type": "document",
+        "annotations": [],
+        "slots": {}
+      }
+    }
+  }
+}

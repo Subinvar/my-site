@@ -1,0 +1,70 @@
+{
+  "header": [
+    {
+      "label": {
+        "ru": "Главная",
+        "en": "Home"
+      },
+      "slug": {
+        "ru": {
+          "slug": "",
+          "name": "home-ru"
+        },
+        "en": {
+          "slug": "",
+          "name": "home-en"
+        }
+      }
+    },
+    {
+      "label": {
+        "ru": "Блог",
+        "en": "Blog"
+      },
+      "slug": {
+        "ru": {
+          "slug": "posts",
+          "name": "posts-ru"
+        },
+        "en": {
+          "slug": "posts",
+          "name": "posts-en"
+        }
+      }
+    },
+    {
+      "label": {
+        "ru": "О проекте",
+        "en": "About"
+      },
+      "slug": {
+        "ru": {
+          "slug": "about",
+          "name": "about-ru"
+        },
+        "en": {
+          "slug": "about",
+          "name": "about-en"
+        }
+      }
+    }
+  ],
+  "footer": [
+    {
+      "label": {
+        "ru": "Контакты",
+        "en": "Contacts"
+      },
+      "slug": {
+        "ru": {
+          "slug": "contacts",
+          "name": "contacts-ru"
+        },
+        "en": {
+          "slug": "contacts",
+          "name": "contacts-en"
+        }
+      }
+    }
+  ]
+}

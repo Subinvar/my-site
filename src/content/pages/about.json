@@ -1,0 +1,345 @@
+{
+  "slugKey": "about",
+  "title": {
+    "ru": "О проекте",
+    "en": "About"
+  },
+  "slug": {
+    "ru": {
+      "slug": "about",
+      "name": "about-ru"
+    },
+    "en": {
+      "slug": "about",
+      "name": "about-en"
+    }
+  },
+  "excerpt": {
+    "ru": "Немного информации о проекте.",
+    "en": "A bit about the project."
+  },
+  "seo": {
+    "ru": {
+      "title": "О проекте",
+      "description": "Страница о проекте."
+    },
+    "en": {
+      "title": "About",
+      "description": "About this project."
+    }
+  },
+  "content": {
+    "ru": {
+      "node": {
+        "$$mdtype": "Node",
+        "errors": [],
+        "lines": [],
+        "inline": false,
+        "attributes": {},
+        "children": [
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              0,
+              1
+            ],
+            "inline": false,
+            "attributes": {
+              "level": 2
+            },
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  0,
+                  1
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      0,
+                      1
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "О проекте"
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 0
+                      },
+                      "end": {
+                        "line": 1
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 0
+                  },
+                  "end": {
+                    "line": 1
+                  }
+                }
+              }
+            ],
+            "type": "heading",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 0
+              },
+              "end": {
+                "line": 1
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              2,
+              3
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  2,
+                  3
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      2,
+                      3
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "Проект демонстрирует локализацию с Keystatic."
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 2
+                      },
+                      "end": {
+                        "line": 3
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 2
+                  },
+                  "end": {
+                    "line": 3
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 2
+              },
+              "end": {
+                "line": 3
+              }
+            }
+          }
+        ],
+        "type": "document",
+        "annotations": [],
+        "slots": {}
+      }
+    },
+    "en": {
+      "node": {
+        "$$mdtype": "Node",
+        "errors": [],
+        "lines": [],
+        "inline": false,
+        "attributes": {},
+        "children": [
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              0,
+              1
+            ],
+            "inline": false,
+            "attributes": {
+              "level": 2
+            },
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  0,
+                  1
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      0,
+                      1
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "About"
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 0
+                      },
+                      "end": {
+                        "line": 1
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 0
+                  },
+                  "end": {
+                    "line": 1
+                  }
+                }
+              }
+            ],
+            "type": "heading",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 0
+              },
+              "end": {
+                "line": 1
+              }
+            }
+          },
+          {
+            "$$mdtype": "Node",
+            "errors": [],
+            "lines": [
+              2,
+              3
+            ],
+            "inline": false,
+            "attributes": {},
+            "children": [
+              {
+                "$$mdtype": "Node",
+                "errors": [],
+                "lines": [
+                  2,
+                  3
+                ],
+                "inline": false,
+                "attributes": {},
+                "children": [
+                  {
+                    "$$mdtype": "Node",
+                    "errors": [],
+                    "lines": [
+                      2,
+                      3
+                    ],
+                    "inline": true,
+                    "attributes": {
+                      "content": "This project showcases localization with Keystatic."
+                    },
+                    "children": [],
+                    "type": "text",
+                    "annotations": [],
+                    "slots": {},
+                    "location": {
+                      "start": {
+                        "line": 2
+                      },
+                      "end": {
+                        "line": 3
+                      }
+                    }
+                  }
+                ],
+                "type": "inline",
+                "annotations": [],
+                "slots": {},
+                "location": {
+                  "start": {
+                    "line": 2
+                  },
+                  "end": {
+                    "line": 3
+                  }
+                }
+              }
+            ],
+            "type": "paragraph",
+            "annotations": [],
+            "slots": {},
+            "location": {
+              "start": {
+                "line": 2
+              },
+              "end": {
+                "line": 3
+              }
+            }
+          }
+        ],
+        "type": "document",
+        "annotations": [],
+        "slots": {}
+      }
+    }
+  }
+}
