@@ -333,7 +333,11 @@ async function getPostsEntries(): Promise<PostEntryRecord[]> {
   });
 }
 
-function findEntryBySlug<T extends PageEntry | PostEntry>(entries: { entry: T }[], locale: Locale, target: string) {
+function findEntryBySlug<T extends PageEntry | PostEntry>(
+  entries: { entry: T; slugKey: string }[],
+  locale: Locale,
+  target: string,
+) {
   const normalizedTarget = normalizeSlug(target);
   return entries.find(({ entry }) => {
     const localizedSlug = pickLocalized(entry.slug, locale, { fallback: false });

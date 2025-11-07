@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 type JsonLdProps = {
   id?: string;
   data: Record<string, unknown> | Record<string, unknown>[];
@@ -12,7 +14,7 @@ function serialize(value: JsonLdProps['data']): string {
   });
 }
 
-export function JsonLd({ id, data }: JsonLdProps): JSX.Element {
+export function JsonLd({ id, data }: JsonLdProps): ReactElement {
   const json = serialize(data);
   return (
     <script

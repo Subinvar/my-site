@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAllPosts, getDictionary, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath, toLanguageTag } from '@/lib/i18n';
 import { buildAbsoluteUrl, getSiteUrl } from '@/lib/site-url';
@@ -22,7 +22,12 @@ function escapeXml(value: string | undefined | null): string {
     .replace(/'/g, '&apos;');
 }
 
-export async function GET(_request: Request, { params }: { params: { locale: string } }) {
+export async function GET(
+  _request: NextRequest,
+  context: { params: Promise<{ locale: string }> },
+) {
+  const params = await context.params;
+
   if (!isLocale(params.locale)) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
