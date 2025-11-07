@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 import { renderMarkdoc } from '@/lib/markdoc';
 import { buildPageMetadata } from '@/lib/metadata';
-import { getAllPostSlugs, getPostBySlug, getSite } from '@/lib/keystatic';
+import { getAllPostSlugs, getDictionary, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
 export async function generateStaticParams() {
@@ -26,24 +27,41 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
   const locale = params.locale as Locale;
-  const post = await getPostBySlug(locale, params.slug);
+  const [post, dictionary] = await Promise.all([
+    getPostBySlug(locale, params.slug),
+    getDictionary(locale),
+  ]);
   if (!post) {
     notFound();
   }
 
+  const formattedDate = post.publishedAt
+    ? new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+        day: locale === 'ru' ? '2-digit' : 'numeric',
+        month: locale === 'ru' ? '2-digit' : 'short',
+        year: 'numeric',
+      }).format(new Date(post.publishedAt))
+    : null;
+
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LanguageSwitcher locale={locale} localizedSlugs={post.localizedSlugs} currentSlug={post.slug} />
+      <LanguageSwitcher
+        locale={locale}
+        localizedSlugs={post.localizedSlugs}
+        currentSlug={post.slug}
+        dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
+      />
+      <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={{ breadcrumbs: dictionary.breadcrumbs }} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{post.title}</h1>
-        {post.publishedAt ? (
-          <time dateTime={post.publishedAt} className="text-xs uppercase tracking-wider text-muted-foreground">
-            {new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(post.publishedAt))}
+        {formattedDate ? (
+          <time dateTime={post.publishedAt ?? undefined} className="text-xs uppercase tracking-wider text-muted-foreground">
+            {formattedDate}
           </time>
         ) : null}
       </header>
-      <div className="space-y-4 text-base leading-relaxed">{renderMarkdoc(post.content)}</div>
+      <div className="space-y-4 text-base leading-relaxed">{renderMarkdoc(post.content, { dictionary })}</div>
     </article>
   );
 }
@@ -53,7 +71,11 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     return {};
   }
   const locale = params.locale as Locale;
-  const [site, post] = await Promise.all([getSite(locale), getPostBySlug(locale, params.slug)]);
+  const [site, post, dictionary] = await Promise.all([
+    getSite(locale),
+    getPostBySlug(locale, params.slug),
+    getDictionary(locale),
+  ]);
   if (!post) {
     return {};
   }
@@ -65,5 +87,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     localizedSlugs: Object.fromEntries(
       Object.entries(post.localizedSlugs ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
     ) as Partial<Record<Locale, string>>,
+    siteName: dictionary.brandName,
+    ogImageAlt: dictionary.seo.ogImageAlt,
   });
 }

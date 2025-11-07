@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { localizePath, type Locale, SUPPORTED_LOCALES } from './i18n';
+import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './i18n';
 
 type SeoInfo = {
   title?: string;
@@ -12,11 +12,13 @@ type MetadataParams = {
   siteSeo?: SeoInfo;
   pageSeo?: SeoInfo;
   localizedSlugs?: Partial<Record<Locale, string>>;
+  siteName?: string;
+  ogImageAlt?: string;
 };
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlugs }: MetadataParams): Metadata {
+export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlugs, siteName, ogImageAlt }: MetadataParams): Metadata {
   const title = pageSeo?.title ?? siteSeo?.title;
   const description = pageSeo?.description ?? siteSeo?.description;
   const canonicalPath = localizePath(locale, slug);
@@ -31,6 +33,20 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
     languages[candidate] = new URL(localizePath(candidate, translatedSlug), siteUrl).toString();
   }
 
+  if (languages[DEFAULT_LOCALE]) {
+    languages['x-default'] = languages[DEFAULT_LOCALE];
+  }
+
+  const ogImages = ogImageAlt
+    ? [
+        {
+          url: new URL(`/og-${locale}.svg`, siteUrl).toString(),
+          alt: ogImageAlt,
+          type: 'image/svg+xml',
+        },
+      ]
+    : undefined;
+
   return {
     title,
     description,
@@ -44,6 +60,14 @@ export function buildPageMetadata({ locale, slug, siteSeo, pageSeo, localizedSlu
       locale,
       alternateLocale: Object.keys(languages).filter((code) => code !== locale),
       url: canonical,
+      siteName: siteName ?? undefined,
+      images: ogImages,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: title ?? undefined,
+      description: description ?? undefined,
+      images: ogImages?.map((image) => image.url),
     },
   };
 }

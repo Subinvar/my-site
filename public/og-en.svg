@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="enGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e7490" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="32" fill="url(#enGradient)" />
+  <text x="600" y="260" fill="#f8fafc" font-size="88" font-family="'Inter', 'Segoe UI', sans-serif" text-anchor="middle" font-weight="700">
+    My Site
+  </text>
+  <text x="600" y="360" fill="#bae6fd" font-size="40" font-family="'Inter', 'Segoe UI', sans-serif" text-anchor="middle">
+    Localized content and experience
+  </text>
+  <text x="600" y="440" fill="#e0f2fe" font-size="32" font-family="'Inter', 'Segoe UI', sans-serif" text-anchor="middle">
+    English version
+  </text>
+</svg>

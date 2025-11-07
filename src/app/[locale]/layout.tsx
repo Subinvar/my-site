@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import { getNavigation, getSite } from '@/lib/keystatic';
+import { DictionaryProvider } from '@/lib/use-dictionary';
+import { getDictionary, getNavigation, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -24,21 +25,32 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   const locale = rawLocale as Locale;
 
-  const [navigation, site] = await Promise.all([getNavigation(locale), getSite(locale)]);
+  const [navigation, site, dictionary] = await Promise.all([
+    getNavigation(locale),
+    getSite(locale),
+    getDictionary(locale),
+  ]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-zinc-900">
-      <SiteHeader locale={locale} links={navigation.header.map(({ label, slug }) => ({ label, slug }))} />
-      <div className="flex-1">
-        {children}
+    <DictionaryProvider value={dictionary}>
+      <div className="flex min-h-screen flex-col bg-white text-zinc-900">
+        <SiteHeader
+          locale={locale}
+          links={navigation.header.map(({ label, slug }) => ({ label, slug }))}
+          dictionary={{ brandName: dictionary.brandName, header: dictionary.header }}
+        />
+        <div className="flex-1">
+          {children}
+        </div>
+        <SiteFooter
+          locale={locale}
+          links={navigation.footer.map(({ label, slug }) => ({ label, slug }))}
+          contacts={site.contacts}
+          email={site.email}
+          dictionary={{ footer: dictionary.footer }}
+        />
       </div>
-      <SiteFooter
-        locale={locale}
-        links={navigation.footer.map(({ label, slug }) => ({ label, slug }))}
-        contacts={site.contacts}
-        email={site.email}
-      />
-    </div>
+    </DictionaryProvider>
   );
 }
 

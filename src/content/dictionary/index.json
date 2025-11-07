@@ -1,0 +1,130 @@
+{
+  "brandName": {
+    "ru": "Мой сайт",
+    "en": "My Site"
+  },
+  "header": {
+    "navigationAriaLabel": {
+      "ru": "Главная навигация",
+      "en": "Main navigation"
+    },
+    "homeAriaLabel": {
+      "ru": "На главную страницу",
+      "en": "Go to homepage"
+    }
+  },
+  "footer": {
+    "navigationTitle": {
+      "ru": "Навигация",
+      "en": "Navigation"
+    },
+    "contactsTitle": {
+      "ru": "Контакты",
+      "en": "Contacts"
+    },
+    "copyright": {
+      "ru": "© {year} Мой сайт",
+      "en": "© {year} My Site"
+    }
+  },
+  "buttons": {
+    "goHome": {
+      "ru": "На главную",
+      "en": "Back to home"
+    },
+    "retry": {
+      "ru": "Попробовать снова",
+      "en": "Try again"
+    }
+  },
+  "states": {
+    "loading": {
+      "ru": "Загрузка…",
+      "en": "Loading…"
+    },
+    "emptyPosts": {
+      "ru": "Пока нет опубликованных постов.",
+      "en": "There are no published posts yet."
+    },
+    "emptyPages": {
+      "ru": "Страница ещё не готова.",
+      "en": "This page is not ready yet."
+    },
+    "nothingFound": {
+      "ru": "Ничего не найдено.",
+      "en": "Nothing found."
+    }
+  },
+  "pagination": {
+    "previous": {
+      "ru": "Предыдущая",
+      "en": "Previous"
+    },
+    "next": {
+      "ru": "Следующая",
+      "en": "Next"
+    }
+  },
+  "breadcrumbs": {
+    "ariaLabel": {
+      "ru": "Хлебные крошки",
+      "en": "Breadcrumbs"
+    },
+    "rootLabel": {
+      "ru": "Главная",
+      "en": "Home"
+    }
+  },
+  "languageSwitcher": {
+    "ariaLabel": {
+      "ru": "Выбор языка",
+      "en": "Language switcher"
+    },
+    "availableLabel": {
+      "ru": "Доступные языки",
+      "en": "Available languages"
+    }
+  },
+  "errors": {
+    "notFoundTitle": {
+      "ru": "Страница не найдена",
+      "en": "Page not found"
+    },
+    "notFoundDescription": {
+      "ru": "Мы не нашли такой страницы. Проверьте ссылку или вернитесь на главную.",
+      "en": "We couldn’t find this page. Check the link or go back home."
+    },
+    "errorTitle": {
+      "ru": "Что-то пошло не так",
+      "en": "Something went wrong"
+    },
+    "errorDescription": {
+      "ru": "Попробуйте обновить страницу или вернитесь на главную.",
+      "en": "Try refreshing the page or go back home."
+    }
+  },
+  "seo": {
+    "ogImageAlt": {
+      "ru": "Обложка сайта для социальных сетей на русском языке",
+      "en": "Social sharing cover image for the site in English"
+    }
+  },
+  "markdoc": {
+    "calloutTitle": {
+      "ru": "Блок",
+      "en": "Callout"
+    },
+    "noteLabel": {
+      "ru": "Примечание",
+      "en": "Note"
+    },
+    "warningLabel": {
+      "ru": "Предупреждение",
+      "en": "Warning"
+    },
+    "infoLabel": {
+      "ru": "Информация",
+      "en": "Info"
+    }
+  }
+}

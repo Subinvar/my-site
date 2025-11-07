@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { renderMarkdoc } from '@/lib/markdoc';
 import { buildPageMetadata } from '@/lib/metadata';
-import { getHomePage, getSite } from '@/lib/keystatic';
+import { getDictionary, getHomePage, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
 export default async function LocaleHomePage({ params }: { params: Promise<{ locale: string }> | { locale: string } }) {
@@ -14,7 +14,7 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
   }
 
   const locale = rawLocale as Locale;
-  const page = await getHomePage(locale);
+  const [page, dictionary] = await Promise.all([getHomePage(locale), getDictionary(locale)]);
 
   if (!page) {
     notFound();
@@ -22,13 +22,18 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LanguageSwitcher locale={locale} localizedSlugs={page.localizedSlugs} currentSlug={page.slug} />
+      <LanguageSwitcher
+        locale={locale}
+        localizedSlugs={page.localizedSlugs}
+        currentSlug={page.slug}
+        dictionary={{ languageSwitcher: dictionary.languageSwitcher }}
+      />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
       </header>
       <div className="space-y-4 text-base leading-relaxed">
-        {renderMarkdoc(page.content)}
+        {renderMarkdoc(page.content, { dictionary })}
       </div>
     </article>
   );
@@ -45,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return {};
   }
   const locale = rawLocale as Locale;
-  const [site, page] = await Promise.all([getSite(locale), getHomePage(locale)]);
+  const [site, page, dictionary] = await Promise.all([getSite(locale), getHomePage(locale), getDictionary(locale)]);
   if (!page) {
     return {};
   }
@@ -55,5 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     siteSeo: site.seo,
     pageSeo: page.seo,
     localizedSlugs: page.localizedSlugs,
+    siteName: dictionary.brandName,
+    ogImageAlt: dictionary.seo.ogImageAlt,
   });
 }
