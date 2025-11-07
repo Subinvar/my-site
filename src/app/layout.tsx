@@ -20,14 +20,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(metadataBaseUrl),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
   children: ReactNode;
-  params: { locale?: string };
+  params: Promise<{ locale?: string }> | { locale?: string };
 }) {
-  const locale = isLocale(params?.locale) ? params!.locale : DEFAULT_LOCALE;
+  const { locale: rawLocale } = await params;
+  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>

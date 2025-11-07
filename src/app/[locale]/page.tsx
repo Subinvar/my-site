@@ -6,12 +6,14 @@ import { buildPageMetadata } from '@/lib/metadata';
 import { getHomePage, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export default async function LocaleHomePage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
+export default async function LocaleHomePage({ params }: { params: Promise<{ locale: string }> | { locale: string } }) {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = rawLocale as Locale;
   const page = await getHomePage(locale);
 
   if (!page) {
@@ -36,11 +38,13 @@ export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  if (!isLocale(params.locale)) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> | { locale: string } }): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
     return {};
   }
-  const locale = params.locale as Locale;
+  const locale = rawLocale as Locale;
   const [site, page] = await Promise.all([getSite(locale), getHomePage(locale)]);
   if (!page) {
     return {};

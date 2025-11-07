@@ -12,15 +12,17 @@ export function generateStaticParams() {
 
 type LocaleLayoutProps = {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }> | { locale: string };
 };
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  if (!isLocale(params.locale)) {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = rawLocale as Locale;
 
   const [navigation, site] = await Promise.all([getNavigation(locale), getSite(locale)]);
 
@@ -40,11 +42,13 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   );
 }
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  if (!isLocale(params.locale)) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> | { locale: string } }): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
     return {};
   }
-  const locale = params.locale as Locale;
+  const locale = rawLocale as Locale;
   const site = await getSite(locale);
 
   return {
