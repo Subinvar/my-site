@@ -3,6 +3,8 @@ import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
 import { DEFAULT_LOCALE, FALLBACK_LOCALE, Locale } from '../i18n';
 
+const ROOT_SLUG_PLACEHOLDER = '__root__';
+
 type Localized<T> = Partial<Record<Locale, T>>;
 
 type SlugFieldValue = {
@@ -59,7 +61,7 @@ function toSlugString(value: SlugFieldValue | string | undefined | null): string
 
 function normalizeSlug(slug: SlugFieldValue | string | undefined | null): string {
   const value = toSlugString(slug);
-  if (!value) return '';
+  if (!value || value === ROOT_SLUG_PLACEHOLDER) return '';
   return value.replace(/^\/+/, '').replace(/\/+$/, '');
 }
 

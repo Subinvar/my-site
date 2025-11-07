@@ -6,11 +6,11 @@
   },
   "slug": {
     "ru": {
-      "slug": "/",
+          "slug": "__root__",
       "name": "home-ru"
     },
     "en": {
-      "slug": "/",
+          "slug": "__root__",
       "name": "home-en"
     }
   },
