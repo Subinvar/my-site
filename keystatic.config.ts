@@ -32,6 +32,21 @@ const localizedText = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
+const localizedPath = (label: string, options: LocalizedFieldOptions = {}) =>
+  fields.object(
+    locales.reduce(
+      (acc, locale) => ({
+        ...acc,
+        [locale]: fields.text({
+          label: `${label} (${locale.toUpperCase()})`,
+          validation: options.isRequired ? { isRequired: true } : undefined,
+        }),
+      }),
+      {} as Record<Locale, ReturnType<typeof fields.text>>
+    ),
+    { label }
+  );
+
 const localizedSlug = (label: string) =>
   fields.object(
     locales.reduce(
@@ -96,33 +111,12 @@ const localizedSeo = (labelPrefix: string) =>
 const navigationLinks = (label: string) =>
   fields.array(
     fields.object({
+      id: fields.slug({
+        name: { label: 'ID ссылки', validation: { isRequired: true } },
+      }),
       label: localizedText('Подпись ссылки', { isRequired: true }),
-      link: fields.conditional(
-        fields.select({
-          label: 'Тип ссылки',
-          options: [
-            { label: 'Внутренняя страница', value: 'internal' },
-            { label: 'Внешняя ссылка', value: 'external' },
-          ],
-          defaultValue: 'internal',
-        }),
-        {
-          internal: fields.object({
-            page: fields.relationship({
-              label: 'Страница',
-              collection: 'pages',
-              validation: { isRequired: true },
-            }),
-          }),
-          external: fields.object({
-            url: fields.text({
-              label: 'URL',
-              validation: { isRequired: true },
-            }),
-            newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: false }),
-          }),
-        }
-      ),
+      path: localizedPath('Путь или URL', { isRequired: true }),
+      newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: false }),
       order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
     }),
     {
@@ -214,6 +208,8 @@ export default config({
           buttons: fields.object({
             goHome: localizedText('Кнопка «На главную»', { isRequired: true }),
             retry: localizedText('Кнопка «Повторить»', { isRequired: true }),
+            readMore: localizedText('Кнопка «Читать далее»', { isRequired: true }),
+            goBack: localizedText('Кнопка «Назад»', { isRequired: true }),
           }),
           pagination: fields.object({
             previous: localizedText('Кнопка «Назад»', { isRequired: true }),
@@ -226,6 +222,11 @@ export default config({
           languageSwitcher: fields.object({
             ariaLabel: localizedText('Переключатель языка', { isRequired: true }),
             availableLabel: localizedText('Список языков', { isRequired: true }),
+          }),
+          labels: fields.object({
+            author: localizedText('Подпись «Автор»', { isRequired: true }),
+            search: localizedText('Подпись поиска', { isRequired: true }),
+            searchPlaceholder: localizedText('Placeholder поиска', { isRequired: true }),
           }),
         }),
         header: fields.object({
@@ -277,6 +278,7 @@ export default config({
         data: 'json',
       },
       schema: {
+        id: fields.text({ label: 'Стабильный ID' }),
         slugKey: fields.slug({ name: { label: 'ID страницы', validation: { isRequired: true } } }),
         status: fields.select({
           label: 'Статус',
@@ -307,6 +309,7 @@ export default config({
         data: 'json',
       },
       schema: {
+        id: fields.text({ label: 'Стабильный ID' }),
         slugKey: fields.slug({ name: { label: 'ID поста', validation: { isRequired: true } } }),
         status: fields.select({
           label: 'Статус',

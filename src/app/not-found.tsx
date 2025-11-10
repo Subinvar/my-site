@@ -1,15 +1,9 @@
-'use client';
-
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useDictionary } from '@/lib/use-dictionary';
-import { defaultLocale, isLocale, localizePath, type Locale } from '@/lib/i18n';
+import { getDictionary } from '@/lib/keystatic';
+import { defaultLocale, localizePath } from '@/lib/i18n';
 
-export default function LocaleNotFound() {
-  const params = useParams();
-  const localeParam = typeof params?.locale === 'string' ? params.locale : Array.isArray(params?.locale) ? params?.locale[0] : undefined;
-  const locale = (isLocale(localeParam) ? localeParam : defaultLocale) as Locale;
-  const dictionary = useDictionary();
+export default async function NotFound() {
+  const dictionary = await getDictionary(defaultLocale);
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-6 px-4 py-16 text-center">
@@ -18,7 +12,7 @@ export default function LocaleNotFound() {
         <p className="text-base text-zinc-600">{dictionary.messages.errors.notFoundDescription}</p>
       </div>
       <Link
-        href={localizePath(locale, '')}
+        href={localizePath(defaultLocale, '')}
         aria-label={dictionary.header.homeAriaLabel}
         className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700"
       >

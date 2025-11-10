@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useDictionary } from '@/lib/use-dictionary';
-import { DEFAULT_LOCALE, isLocale, localizePath, type Locale } from '@/lib/i18n';
+import { defaultLocale, isLocale, localizePath, type Locale } from '@/lib/i18n';
 
 type LocaleErrorProps = {
   error: Error & { digest?: string };
@@ -13,7 +13,7 @@ type LocaleErrorProps = {
 const ErrorComponentImpl = ({ reset }: LocaleErrorProps) => {
   const params = useParams();
   const localeParam = typeof params?.locale === 'string' ? params.locale : Array.isArray(params?.locale) ? params?.locale[0] : undefined;
-  const locale = (isLocale(localeParam) ? localeParam : DEFAULT_LOCALE) as Locale;
+  const locale = (isLocale(localeParam) ? localeParam : defaultLocale) as Locale;
   const dictionary = useDictionary();
 
   return (

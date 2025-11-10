@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE, toLanguageTag } from './i18n';
+import { locales, type Locale, toLanguageTag } from './i18n';
 import { buildAbsoluteUrl } from './site-url';
+import { buildAlternates } from './seo';
 
 type OgImage = {
   src: string;
@@ -18,7 +19,7 @@ type MetadataParams = {
   slug: string;
   siteSeo?: SeoInfo;
   pageSeo?: SeoInfo;
-  localizedSlugs?: Partial<Record<Locale, string>>;
+  slugByLocale?: Partial<Record<Locale, string>>;
   siteName?: string;
   ogImageAlt?: string;
   twitter?: {
@@ -33,40 +34,21 @@ export function buildPageMetadata({
   slug,
   siteSeo,
   pageSeo,
-  localizedSlugs,
+  slugByLocale,
   siteName,
   ogImageAlt,
   twitter,
 }: MetadataParams): Metadata {
   const title = pageSeo?.title ?? siteSeo?.title;
   const description = pageSeo?.description ?? siteSeo?.description;
-  const canonicalPath = localizePath(locale, slug);
-  const canonical = buildAbsoluteUrl(canonicalPath);
+  const slugMap = { ...(slugByLocale ?? {}), [locale]: slug } satisfies Partial<Record<Locale, string>>;
+  const { canonical, languages } = buildAlternates({ locale, slugByLocale: slugMap });
 
-  const languages: Record<string, string> = {};
-  const openGraphAlternateLocales: string[] = [];
   const languageTag = toLanguageTag(locale);
   const openGraphLocale = languageTag.replace('-', '_');
-  const defaultLanguageTag = toLanguageTag(DEFAULT_LOCALE);
-  for (const candidate of SUPPORTED_LOCALES) {
-    const translatedSlug = localizedSlugs?.[candidate];
-    if (translatedSlug === undefined || translatedSlug === null) {
-      continue;
-    }
-    const languageTag = toLanguageTag(candidate);
-    languages[languageTag] = buildAbsoluteUrl(localizePath(candidate, translatedSlug));
-    if (candidate !== locale) {
-      openGraphAlternateLocales.push(languageTag.replace('-', '_'));
-    }
-  }
-
-  if (!languages[languageTag]) {
-    languages[languageTag] = canonical;
-  }
-
-  if (languages[defaultLanguageTag]) {
-    languages['x-default'] = languages[defaultLanguageTag];
-  }
+  const openGraphAlternateLocales = locales
+    .filter((candidate) => candidate !== locale && slugMap[candidate] !== undefined)
+    .map((candidate) => toLanguageTag(candidate).replace('-', '_'));
 
   const ogImage = pageSeo?.ogImage ?? siteSeo?.ogImage;
   const ogImages = ogImage

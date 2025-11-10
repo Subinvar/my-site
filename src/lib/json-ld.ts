@@ -61,42 +61,6 @@ export function buildOrganizationJsonLd({
   };
 }
 
-export function buildWebsiteJsonLd({
-  locale,
-  name,
-  description,
-  alternateLocales,
-  searchUrl,
-}: {
-  locale: Locale;
-  name: string;
-  description?: string;
-  alternateLocales: Locale[];
-  searchUrl?: string | null;
-}) {
-  const languageTag = toLanguageTag(locale);
-  const siteUrl = getSiteUrl();
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name,
-    description,
-    url: siteUrl,
-    inLanguage: languageTag,
-    alternateName: alternateLocales.length
-      ? alternateLocales.map((item) => `${name} (${toLanguageTag(item)})`)
-      : undefined,
-    potentialAction: searchUrl
-      ? {
-          '@type': 'SearchAction',
-          target: `${searchUrl}?q={search_term_string}`,
-          'query-input': 'required name=search_term_string',
-        }
-      : undefined,
-  };
-}
-
 export function buildBreadcrumbListJsonLd({
   locale,
   rootLabel,
@@ -135,70 +99,5 @@ export function buildBreadcrumbListJsonLd({
     '@type': 'BreadcrumbList',
     inLanguage: languageTag,
     itemListElement: list,
-  };
-}
-
-export function buildArticleJsonLd({
-  locale,
-  headline,
-  description,
-  url,
-  imageUrl,
-  imageAlt,
-  datePublished,
-  dateModified,
-  publisherName,
-}: {
-  locale: Locale;
-  headline: string;
-  description?: string;
-  url: string;
-  imageUrl?: string;
-  imageAlt?: string;
-  datePublished?: string | null;
-  dateModified?: string | null;
-  publisherName: string;
-}) {
-  const languageTag = toLanguageTag(locale);
-  const normalizedDateModified = dateModified ?? datePublished ?? null;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline,
-    description,
-    inLanguage: languageTag,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': url,
-    },
-    url,
-    datePublished: datePublished ?? undefined,
-    dateModified: normalizedDateModified ?? undefined,
-    image: imageUrl
-      ? [
-          {
-            '@type': 'ImageObject',
-            url: imageUrl,
-            description: imageAlt,
-          },
-        ]
-      : undefined,
-    author: {
-      '@type': 'Organization',
-      name: publisherName,
-      url: getSiteUrl(),
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: publisherName,
-      logo: imageUrl
-        ? {
-            '@type': 'ImageObject',
-            url: imageUrl,
-            description: imageAlt,
-          }
-        : undefined,
-    },
   };
 }

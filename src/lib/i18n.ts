@@ -1,23 +1,27 @@
-export const SUPPORTED_LOCALES = ["ru", "en"] as const;
+export const locales = ['ru', 'en'] as const;
 
-export type Locale = (typeof SUPPORTED_LOCALES)[number];
+export type Locale = (typeof locales)[number];
 
-export const DEFAULT_LOCALE: Locale = "ru";
+export const defaultLocale: Locale = 'ru';
 
-export const LOCALE_LABELS: Record<Locale, string> = {
-  ru: "Русский",
-  en: "English",
+export const fallbackLocale: Locale = defaultLocale;
+
+export const localeLabels: Record<Locale, string> = {
+  ru: 'Русский',
+  en: 'English',
 };
 
-export const FALLBACK_LOCALE: Locale = DEFAULT_LOCALE;
-
 export function isLocale(value: string | undefined | null): value is Locale {
-  return !!value && SUPPORTED_LOCALES.includes(value as Locale);
+  return typeof value === 'string' && (locales as readonly string[]).includes(value);
+}
+
+export function otherLocale(locale: Locale): Locale {
+  return locales.find((candidate) => candidate !== locale) ?? defaultLocale;
 }
 
 const LOCALE_LANGUAGE_TAG: Record<Locale, string> = {
-  ru: "ru-RU",
-  en: "en-US",
+  ru: 'ru-RU',
+  en: 'en-US',
 };
 
 export function toLanguageTag(locale: Locale): string {
@@ -26,8 +30,27 @@ export function toLanguageTag(locale: Locale): string {
 
 export function localizePath(locale: Locale, slug: string | string[] | undefined): string {
   const normalized = Array.isArray(slug)
-    ? slug.filter(Boolean).join("/")
-    : (slug ?? "");
-  const suffix = normalized ? `/${normalized}` : "";
-  return `/${locale}${suffix}` || "/";
+    ? slug.filter(Boolean).join('/')
+    : slug ?? '';
+  const suffix = normalized ? `/${normalized}` : '';
+  return `/${locale}${suffix}` || '/';
+}
+
+export function formatDate(
+  date: string | number | Date | null | undefined,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions
+): string | null {
+  if (!date) {
+    return null;
+  }
+
+  const value = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+    return null;
+  }
+
+  const languageTag = toLanguageTag(locale);
+  const formatter = new Intl.DateTimeFormat(languageTag, options ?? { day: 'numeric', month: 'short', year: 'numeric' });
+  return formatter.format(value);
 }

@@ -2,12 +2,12 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Markdoc from '@markdoc/markdoc';
 import React from 'react';
-import { LanguageSwitcher } from '@/components/language-switcher';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import markdocConfig from '@/lib/markdoc-config';
 import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getDictionary, getHomePage, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
+import { isLocale, type Locale, locales } from '@/lib/i18n';
 
 type LocalePageParams = {
   params: Promise<{ locale: string }>;
@@ -46,12 +46,7 @@ export default async function LocaleHomePage({ params }: LocalePageParams) {
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LanguageSwitcher
-        locale={locale}
-        localizedSlugs={page.localizedSlugs}
-        currentSlug={page.slug}
-        dictionary={dictionary.common.languageSwitcher}
-      />
+      <LocaleSwitcher locale={locale} entry={{ id: page.id, slugByLocale: page.slugByLocale }} />
       <header className="space-y-3">
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
@@ -62,7 +57,7 @@ export default async function LocaleHomePage({ params }: LocalePageParams) {
 }
 
 export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({ params }: LocalePageParams): Promise<Metadata> {
@@ -81,7 +76,7 @@ export async function generateMetadata({ params }: LocalePageParams): Promise<Me
     slug: page.slug,
     siteSeo: site.seo,
     pageSeo: page.seo,
-    localizedSlugs: page.localizedSlugs,
+    slugByLocale: page.slugByLocale,
     siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
     twitter: site.twitter,

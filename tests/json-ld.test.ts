@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildArticleJsonLd, buildBreadcrumbListJsonLd, buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/lib/json-ld';
-import { localizePath, type Locale } from '@/lib/i18n';
+import { buildBreadcrumbListJsonLd, buildOrganizationJsonLd } from '@/lib/json-ld';
+import { buildArticleJsonLd, buildWebsiteJsonLd } from '@/lib/seo';
+import { localizePath } from '@/lib/i18n';
 import { buildAbsoluteUrl } from '@/lib/site-url';
 
 test('buildOrganizationJsonLd returns schema.org organization payload', () => {
@@ -25,15 +26,16 @@ test('buildOrganizationJsonLd returns schema.org organization payload', () => {
 test('buildWebsiteJsonLd produces localized website data', () => {
   const data = buildWebsiteJsonLd({
     locale: 'en',
+    slugByLocale: { en: '', ru: '' },
     name: 'My Site',
     description: 'Example',
-    alternateLocales: ['ru' as Locale],
     searchUrl: null,
   });
 
   assert.equal(data['@type'], 'WebSite');
   assert.equal(data.name, 'My Site');
   assert.equal(data.inLanguage, 'en-US');
+  assert.equal(data.url, 'http://localhost:3000/en');
   assert.equal(data.potentialAction, undefined);
 });
 
@@ -54,17 +56,16 @@ test('buildBreadcrumbListJsonLd adds root and current items', () => {
 });
 
 test('buildArticleJsonLd keeps publication metadata', () => {
-  const url = buildAbsoluteUrl('/ru/posts/pervyj-post');
   const data = buildArticleJsonLd({
     locale: 'ru',
+    slugByLocale: { ru: 'posts/pervyj-post', en: 'posts/first-post' },
     headline: 'Первый пост',
     description: 'Описание',
-    url,
-    imageUrl: buildAbsoluteUrl('/og-ru.svg'),
-    imageAlt: 'OG',
+    image: { url: buildAbsoluteUrl('/og-ru.svg'), alt: 'OG' },
     datePublished: '2024-01-01T00:00:00.000Z',
     dateModified: '2024-02-01T00:00:00.000Z',
-    publisherName: 'Мой сайт',
+    siteName: 'Мой сайт',
+    authorName: 'Автор',
   });
 
   assert.equal(data['@type'], 'Article');
@@ -72,5 +73,7 @@ test('buildArticleJsonLd keeps publication metadata', () => {
   assert.equal(data.inLanguage, 'ru-RU');
   assert.equal(data.datePublished, '2024-01-01T00:00:00.000Z');
   assert.equal(data.dateModified, '2024-02-01T00:00:00.000Z');
+  assert.equal(data.url, 'http://localhost:3000/ru/posts/pervyj-post');
   assert.equal(data.publisher?.name, 'Мой сайт');
+  assert.equal(data.author?.name, 'Автор');
 });

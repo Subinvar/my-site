@@ -1,40 +1,35 @@
 import type { MetadataRoute } from 'next';
 import { getSitemapContentEntries } from '@/lib/keystatic';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { defaultLocale, locales, localizePath, type Locale } from '@/lib/i18n';
 import { buildAbsoluteUrl } from '@/lib/site-url';
+import { buildAlternates } from '@/lib/seo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
   const contentEntries = await getSitemapContentEntries();
 
   for (const entry of contentEntries) {
-    const languageAlternates: Record<string, string> = {};
-    for (const locale of SUPPORTED_LOCALES) {
-      const localizedSlug = entry.localizedSlugs[locale];
-      if (localizedSlug === undefined) {
-        continue;
-      }
-      const localizedPath = entry.collection === 'posts' ? `posts/${localizedSlug}` : localizedSlug;
-      languageAlternates[locale] = buildAbsoluteUrl(localizePath(locale, localizedPath));
-    }
+    const slugByLocale = Object.fromEntries(
+      Object.entries(entry.slugByLocale).map(([key, value]) => [
+        key,
+        entry.collection === 'posts' && value ? `posts/${value}` : value,
+      ])
+    ) as Partial<Record<Locale, string>>;
 
-    if (languageAlternates[DEFAULT_LOCALE]) {
-      languageAlternates['x-default'] = languageAlternates[DEFAULT_LOCALE];
-    }
+    const { languages } = buildAlternates({ locale: defaultLocale, slugByLocale });
 
-    for (const locale of SUPPORTED_LOCALES) {
-      const localizedSlug = entry.localizedSlugs[locale];
+    for (const locale of locales) {
+      const localizedSlug = slugByLocale[locale];
       if (localizedSlug === undefined) {
         continue;
       }
 
-      const localizedPath = entry.collection === 'posts' ? `posts/${localizedSlug}` : localizedSlug;
-      const url = buildAbsoluteUrl(localizePath(locale, localizedPath));
+      const url = languages[locale] ?? buildAbsoluteUrl(localizePath(locale, localizedSlug));
 
       entries.push({
         url,
         alternates: {
-          languages: languageAlternates,
+          languages,
         },
         changeFrequency: localizedSlug === '' ? 'weekly' : 'monthly',
         priority: localizedSlug === '' ? 0.9 : undefined,

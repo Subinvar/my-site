@@ -2,20 +2,21 @@ import Markdoc from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
-import { LanguageSwitcher } from '@/components/language-switcher';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { JsonLd } from '@/components/json-ld';
 import markdocConfig from '@/lib/markdoc-config';
 import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPostSlugs, getDictionary, getPostBySlug, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
-import { buildArticleJsonLd, buildBreadcrumbListJsonLd } from '@/lib/json-ld';
+import { formatDate, isLocale, type Locale, locales, localizePath } from '@/lib/i18n';
+import { buildBreadcrumbListJsonLd } from '@/lib/json-ld';
+import { buildArticleJsonLd } from '@/lib/seo';
 import { buildAbsoluteUrl } from '@/lib/site-url';
 
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
-  for (const locale of SUPPORTED_LOCALES) {
+  for (const locale of locales) {
     const slugs = await getAllPostSlugs(locale);
     for (const slug of slugs) {
       params.push({ locale, slug });
@@ -61,15 +62,16 @@ export default async function PostPage({ params }: PostPageProps) {
     return Markdoc.renderers.react(transformed, React, { components: markdocComponents });
   })();
 
-  const formattedDate = post.publishedAt
-    ? new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
-        day: locale === 'ru' ? '2-digit' : 'numeric',
-        month: locale === 'ru' ? '2-digit' : 'short',
-        year: 'numeric',
-      }).format(new Date(post.publishedAt))
-    : null;
+  const formattedDate = formatDate(post.publishedAt, locale, {
+    day: '2-digit',
+    month: locale === 'ru' ? '2-digit' : 'short',
+    year: 'numeric',
+  });
 
   const canonicalPath = localizePath(locale, `posts/${post.slug}`);
+  const slugByLocaleWithPrefix = Object.fromEntries(
+    Object.entries(post.slugByLocale ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
+  ) as Partial<Record<Locale, string>>;
   const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
     locale,
     rootLabel: dictionary.common.breadcrumbs.rootLabel,
@@ -82,24 +84,21 @@ export default async function PostPage({ params }: PostPageProps) {
   const ogImage = post.seo?.ogImage ?? site.defaultSeo?.ogImage;
   const articleJsonLd = buildArticleJsonLd({
     locale,
+    slugByLocale: slugByLocaleWithPrefix,
     headline: post.seo?.title ?? post.title,
     description: post.seo?.description ?? post.excerpt,
-    url: buildAbsoluteUrl(canonicalPath),
-    imageUrl: ogImage ? buildAbsoluteUrl(ogImage.src) : buildAbsoluteUrl(`/og-${locale}.svg`),
-    imageAlt: ogImage?.alt ?? dictionary.seo.ogImageAlt,
+    image: ogImage
+      ? { url: buildAbsoluteUrl(ogImage.src), alt: ogImage.alt ?? dictionary.seo.ogImageAlt }
+      : { url: buildAbsoluteUrl(`/og-${locale}.svg`), alt: dictionary.seo.ogImageAlt },
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
-    publisherName: site.brand.siteName,
+    siteName: site.brand.siteName,
+    authorName: post.author ?? undefined,
   });
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LanguageSwitcher
-        locale={locale}
-        localizedSlugs={post.localizedSlugs}
-        currentSlug={post.slug}
-        dictionary={dictionary.common.languageSwitcher}
-      />
+      <LocaleSwitcher locale={locale} entry={{ id: post.id, slugByLocale: slugByLocaleWithPrefix }} />
       <JsonLd id={`ld-json-breadcrumb-${post.slugKey}`} data={breadcrumbJsonLd} />
       <JsonLd id={`ld-json-article-${post.slugKey}`} data={articleJsonLd} />
       <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={dictionary.common.breadcrumbs} />
@@ -132,14 +131,15 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   if (!post) {
     return {};
   }
+  const slugByLocaleWithPrefix = Object.fromEntries(
+    Object.entries(post.slugByLocale ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
+  ) as Partial<Record<Locale, string>>;
   return buildPageMetadata({
     locale,
     slug: `posts/${post.slug}`,
     siteSeo: site.seo,
     pageSeo: post.seo,
-    localizedSlugs: Object.fromEntries(
-      Object.entries(post.localizedSlugs ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
-    ) as Partial<Record<Locale, string>>,
+    slugByLocale: slugByLocaleWithPrefix,
     siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
     twitter: site.twitter,

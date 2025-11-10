@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "./src/lib/i18n";
+import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
-const LOCALE_PREFIXES = new Set(SUPPORTED_LOCALES);
+const LOCALE_PREFIXES = new Set(locales);
 const LOCALE_AWARE_EXTENSIONS = new Set([".xml", ".webmanifest"]);
 
 function getExtension(pathname: string): string | null {
@@ -14,15 +14,15 @@ function getExtension(pathname: string): string | null {
   return lastSegment.slice(dotIndex);
 }
 
-function extractLocale(pathname: string): (typeof SUPPORTED_LOCALES)[number] | null {
+function extractLocale(pathname: string): Locale | null {
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) {
     return null;
   }
 
   const [candidate] = segments;
-  return LOCALE_PREFIXES.has(candidate as (typeof SUPPORTED_LOCALES)[number])
-    ? (candidate as (typeof SUPPORTED_LOCALES)[number])
+  return LOCALE_PREFIXES.has(candidate as Locale)
+    ? (candidate as Locale)
     : null;
 }
 
@@ -49,7 +49,7 @@ export function middleware(request: NextRequest) {
   }
 
   const url = request.nextUrl.clone();
-  url.pathname = pathname === "/" ? `/${DEFAULT_LOCALE}` : `/${DEFAULT_LOCALE}${pathname}`;
+  url.pathname = pathname === "/" ? `/${defaultLocale}` : `/${defaultLocale}${pathname}`;
   return NextResponse.redirect(url, { status: 308 });
 }
 

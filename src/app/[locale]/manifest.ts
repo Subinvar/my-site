@@ -1,13 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { notFound } from 'next/navigation';
 import { getDictionary, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath, toLanguageTag } from '@/lib/i18n';
+import { isLocale, type Locale, locales, localizePath, toLanguageTag } from '@/lib/i18n';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
 
 export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
 export default async function manifest({

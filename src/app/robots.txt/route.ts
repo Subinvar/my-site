@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { DEFAULT_LOCALE } from '@/lib/i18n';
+import { defaultLocale } from '@/lib/i18n';
 import { getSite } from '@/lib/keystatic';
 import { getSiteUrl } from '@/lib/site-url';
 
@@ -21,7 +21,7 @@ function resolveDomainOrigin(domain?: string | null): { origin: string; host: st
 }
 
 export async function GET() {
-  const site = await getSite(DEFAULT_LOCALE);
+  const site = await getSite(defaultLocale);
   const robots = site.meta?.robots ?? {};
   const shouldIndex = robots.index !== false;
   const shouldFollow = robots.follow !== false;

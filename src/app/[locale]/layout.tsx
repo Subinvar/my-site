@@ -4,15 +4,17 @@ import { notFound } from 'next/navigation';
 import { DictionaryProvider } from '@/lib/use-dictionary';
 import { getDictionary, getNavigation, getSite } from '@/lib/keystatic';
 import { buildPageMetadata } from '@/lib/metadata';
-import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { isLocale, type Locale, locales, localizePath } from '@/lib/i18n';
 import { JsonLd } from '@/components/json-ld';
-import { buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/lib/json-ld';
+import { buildOrganizationJsonLd } from '@/lib/json-ld';
+import { buildWebsiteJsonLd } from '@/lib/seo';
 import { buildAbsoluteUrl } from '@/lib/site-url';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 
 export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
 type LocaleLayoutProps = {
@@ -46,12 +48,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     logoUrl,
   });
 
-  const alternateLocales = SUPPORTED_LOCALES.filter((candidate) => candidate !== locale);
   const websiteJsonLd = buildWebsiteJsonLd({
     locale,
+    slugByLocale: Object.fromEntries(locales.map((candidate) => [candidate, ''])) as Partial<Record<Locale, string>>,
     name: site.brand.siteName,
     description: site.defaultSeo?.description,
-    alternateLocales,
     searchUrl: null,
   });
 
@@ -65,6 +66,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           links={navigation.header}
           brandName={site.brand.siteName}
           dictionary={{ header: dictionary.header }}
+          languageSwitcher={<LocaleSwitcher locale={locale} />}
         />
         <div className="flex-1">
           {children}
@@ -94,9 +96,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     slug: '',
     siteSeo: site.seo,
-    localizedSlugs: Object.fromEntries(
-      SUPPORTED_LOCALES.map((candidate) => [candidate, ''] as const)
-    ) as Partial<Record<Locale, string>>,
+    slugByLocale: Object.fromEntries(locales.map((candidate) => [candidate, ''] as const)) as Partial<Record<Locale, string>>,
     siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
     twitter: site.twitter,

@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
-import { FALLBACK_LOCALE, Locale, SUPPORTED_LOCALES } from '../i18n';
+import { fallbackLocale, locales, type Locale } from '../i18n';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
@@ -38,18 +38,10 @@ type TwitterMeta = {
 const TWITTER_CARDS: readonly TwitterCardType[] = ['summary', 'summary_large_image', 'player', 'app'];
 
 type NavigationEntry = {
+  id?: string;
   label?: Localized<string>;
-  link?: {
-    discriminant: 'internal' | 'external';
-    value?:
-      | {
-          page?: string | null;
-        }
-      | {
-          url?: string | null;
-          newTab?: boolean | null;
-        };
-  } | null;
+  path?: Localized<string>;
+  newTab?: boolean | null;
   order?: number | null;
 };
 
@@ -65,6 +57,8 @@ type DictionaryEntry = {
     buttons?: {
       goHome?: Localized<string>;
       retry?: Localized<string>;
+      readMore?: Localized<string>;
+      goBack?: Localized<string>;
     };
     pagination?: {
       previous?: Localized<string>;
@@ -77,6 +71,11 @@ type DictionaryEntry = {
     languageSwitcher?: {
       ariaLabel?: Localized<string>;
       availableLabel?: Localized<string>;
+    };
+    labels?: {
+      author?: Localized<string>;
+      search?: Localized<string>;
+      searchPlaceholder?: Localized<string>;
     };
   };
   header?: {
@@ -165,6 +164,7 @@ type SiteEntry = {
 } | null;
 
 type PageEntry = {
+  id?: string;
   slugKey: string;
   status?: 'draft' | 'published';
   datePublished?: string | null;
@@ -201,7 +201,7 @@ type NavigationLinkInternal = {
   kind: 'internal';
   label: string;
   slug: string;
-  localizedSlugs: Partial<Record<Locale, string>>;
+  slugByLocale: Partial<Record<Locale, string>>;
   order: number;
 };
 
@@ -227,6 +227,8 @@ export type UiDictionary = {
     buttons: {
       goHome: string;
       retry: string;
+      readMore: string;
+      goBack: string;
     };
     pagination: {
       previous: string;
@@ -239,6 +241,11 @@ export type UiDictionary = {
     languageSwitcher: {
       ariaLabel: string;
       availableLabel: string;
+    };
+    labels: {
+      author: string;
+      search: string;
+      searchPlaceholder: string;
     };
   };
   header: {
@@ -316,11 +323,12 @@ export type SiteData = {
 };
 
 export type PagePayload = {
+  id: string;
   slugKey: string;
   status: 'draft' | 'published';
   title: string;
   slug: string;
-  localizedSlugs: Partial<Record<Locale, string>>;
+  slugByLocale: Partial<Record<Locale, string>>;
   excerpt?: string;
   content?: string | null;
   seo?: SeoEntry;
@@ -338,7 +346,7 @@ export type PostPayload = PagePayload & {
 
 export type SitemapContentEntry = {
   collection: 'pages' | 'posts';
-  localizedSlugs: Partial<Record<Locale, string>>;
+  slugByLocale: Partial<Record<Locale, string>>;
   lastModified?: string;
 };
 
@@ -405,7 +413,7 @@ function pickLocalized<T>(
   const isMeaningful = options?.isMeaningful ?? ((candidate?: T) => hasLocalizedContent(candidate));
   const localized = value[locale];
 
-  if (locale === FALLBACK_LOCALE) {
+  if (locale === fallbackLocale) {
     return localized ?? undefined;
   }
 
@@ -417,7 +425,7 @@ function pickLocalized<T>(
     return undefined;
   }
 
-  const fallbackValue = value[FALLBACK_LOCALE];
+  const fallbackValue = value[fallbackLocale];
 
   if (fallbackValue === undefined) {
     return undefined;
@@ -436,7 +444,7 @@ function mapLocalizedSlugRecord(slugs: Localized<SlugFieldValue | string> | unde
     return record;
   }
 
-  for (const locale of SUPPORTED_LOCALES) {
+  for (const locale of locales) {
     const localizedSlug = pickLocalized(slugs, locale, { allowEmptyFallback: true });
     if (localizedSlug === undefined) {
       continue;
@@ -495,7 +503,7 @@ async function resolveLocalizedMarkdoc(
   locale: Locale
 ): Promise<{ value: string | null; reference?: ContentReference }> {
   const exactReference = normalizeContentReference(pickLocalized(content, locale, { fallback: false }));
-  const fallbackReference = exactReference ? undefined : normalizeContentReference(pickLocalized(content, FALLBACK_LOCALE));
+  const fallbackReference = exactReference ? undefined : normalizeContentReference(pickLocalized(content, fallbackLocale));
   const reference = exactReference ?? fallbackReference;
   const value = await readMarkdocFile(reference);
   return { value: value ?? null, reference };
@@ -593,50 +601,65 @@ export async function getSite(locale: Locale): Promise<SiteData> {
   };
 }
 
-function mapNavigationEntry(
-  locale: Locale,
-  entry: NavigationEntry,
-  pageIndex: Map<string, { entry: PageEntry; slugs: Partial<Record<Locale, string>> }>
-): NavigationLink | null {
+function normalizeNavigationPath(value: string | undefined | null): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  const normalized = trimmed.replace(/^\/+/, '').replace(/\/+$/, '');
+  return normalized;
+}
+
+function buildNavigationSlugRecord(entry: NavigationEntry): Partial<Record<Locale, string>> {
+  const record: Partial<Record<Locale, string>> = {};
+  for (const candidate of locales) {
+    const path = pickLocalized(entry.path, candidate, { allowEmptyFallback: true });
+    const normalized = normalizeNavigationPath(path ?? undefined);
+    if (!normalized || /^https?:\/\//i.test(normalized)) {
+      continue;
+    }
+    record[candidate] = normalized;
+  }
+  return record;
+}
+
+function mapNavigationEntry(locale: Locale, entry: NavigationEntry): NavigationLink | null {
   const label = pickLocalized(entry.label, locale);
   if (!label) {
     return null;
   }
+
   const order = entry.order ?? 0;
-  const link = entry.link;
-  if (!link) {
+  const rawPath = pickLocalized(entry.path, locale);
+  const normalized = normalizeNavigationPath(rawPath);
+
+  if (!normalized) {
     return null;
   }
-  if (link.discriminant === 'external') {
-    const value = link.value as { url?: string | null; newTab?: boolean | null } | undefined;
-    if (!value?.url) {
-      return null;
-    }
+
+  if (/^https?:\/\//i.test(normalized)) {
     return {
       kind: 'external',
       label,
-      url: value.url,
-      newTab: Boolean(value.newTab),
+      url: normalized,
+      newTab: Boolean(entry.newTab),
       order,
     } satisfies NavigationLinkExternal;
   }
-  const value = link.value as { page?: string | null } | undefined;
-  if (!value?.page) {
-    return null;
-  }
-  const linked = pageIndex.get(value.page);
-  if (!linked) {
-    return null;
-  }
-  const slug = linked.slugs[locale];
-  if (slug === undefined) {
-    return null;
-  }
+
+  const slugByLocale = buildNavigationSlugRecord(entry);
+
   return {
     kind: 'internal',
     label,
-    slug,
-    localizedSlugs: linked.slugs,
+    slug: normalized,
+    slugByLocale,
     order,
   } satisfies NavigationLinkInternal;
 }
@@ -647,21 +670,12 @@ function sortNavigationLinks(links: NavigationLink[]): NavigationLink[] {
 
 export async function getNavigation(locale: Locale): Promise<NavigationResult> {
   const reader = getReader();
-  const [nav, pages] = await Promise.all([
-    reader.singletons.navigation.read({ resolveLinkedFiles: true }) as Promise<NavigationSingleton>,
-    getPagesEntries(),
-  ]);
-
-  const pageIndex = new Map<string, { entry: PageEntry; slugs: Partial<Record<Locale, string>> }>();
-  for (const { entry } of pages) {
-    const slugs = mapLocalizedSlugRecord(entry.slug);
-    pageIndex.set(entry.slugKey, { entry, slugs });
-  }
+  const nav = (await reader.singletons.navigation.read({ resolveLinkedFiles: true })) as NavigationSingleton;
 
   const build = (entries: NavigationEntry[] | undefined) =>
     sortNavigationLinks(
       (entries ?? [])
-        .map((entry) => mapNavigationEntry(locale, entry, pageIndex))
+        .map((entry) => mapNavigationEntry(locale, entry))
         .filter((item): item is NavigationLink => item !== null)
     );
 
@@ -684,6 +698,8 @@ export const getDictionary = cache(async (locale: Locale): Promise<UiDictionary>
       buttons: {
         goHome: resolve(dictionary?.common?.buttons?.goHome),
         retry: resolve(dictionary?.common?.buttons?.retry),
+        readMore: resolve(dictionary?.common?.buttons?.readMore),
+        goBack: resolve(dictionary?.common?.buttons?.goBack),
       },
       pagination: {
         previous: resolve(dictionary?.common?.pagination?.previous),
@@ -696,6 +712,11 @@ export const getDictionary = cache(async (locale: Locale): Promise<UiDictionary>
       languageSwitcher: {
         ariaLabel: resolve(dictionary?.common?.languageSwitcher?.ariaLabel),
         availableLabel: resolve(dictionary?.common?.languageSwitcher?.availableLabel),
+      },
+      labels: {
+        author: resolve(dictionary?.common?.labels?.author),
+        search: resolve(dictionary?.common?.labels?.search),
+        searchPlaceholder: resolve(dictionary?.common?.labels?.searchPlaceholder),
       },
     },
     header: {
@@ -781,8 +802,10 @@ async function buildPagePayload(locale: Locale, entry: PageEntry): Promise<PageP
   const slug = slugRecord[locale] ?? '';
   const seo = buildSeoPayload(entry, locale);
   const cover = buildCoverPayload(entry, locale);
+  const entryId = typeof entry.id === 'string' ? entry.id.trim() : '';
 
   return {
+    id: entryId || entry.slugKey,
     slugKey: entry.slugKey,
     status: entry.status ?? 'draft',
     title,
@@ -791,7 +814,7 @@ async function buildPagePayload(locale: Locale, entry: PageEntry): Promise<PageP
     seo,
     cover,
     slug,
-    localizedSlugs: slugRecord,
+    slugByLocale: slugRecord,
     publishedAt: entry.datePublished ?? null,
     updatedAt: entry.updatedAt ?? null,
   } satisfies PagePayload;
@@ -970,7 +993,7 @@ export async function getSitemapContentEntries(): Promise<SitemapContentEntry[]>
       const latest = mergeLatestDate(fileDate, updatedAtDate);
       return {
         collection: 'pages' as const,
-        localizedSlugs: slugRecord,
+        slugByLocale: slugRecord,
         lastModified: latest?.toISOString(),
       } satisfies SitemapContentEntry;
     })
@@ -985,7 +1008,7 @@ export async function getSitemapContentEntries(): Promise<SitemapContentEntry[]>
       const latest = mergeLatestDate(fileDate, updatedAtDate, publishedAtDate);
       return {
         collection: 'posts' as const,
-        localizedSlugs: slugRecord,
+        slugByLocale: slugRecord,
         lastModified: latest?.toISOString(),
       } satisfies SitemapContentEntry;
     })

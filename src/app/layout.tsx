@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n";
+import { defaultLocale, isLocale } from "@/lib/i18n";
 
 import { geistMono, geistSans } from "./fonts";
 
@@ -18,7 +18,7 @@ type RootLayoutProps = {
 
 export default async function RootLayout({ children, params }: RootLayoutProps) {
   const { locale: rawLocale } = await params;
-  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
+  const locale = isLocale(rawLocale) ? rawLocale : defaultLocale;
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>

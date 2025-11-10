@@ -2,19 +2,19 @@ import Markdoc from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
-import { LanguageSwitcher } from '@/components/language-switcher';
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { JsonLd } from '@/components/json-ld';
 import markdocConfig from '@/lib/markdoc-config';
 import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPageSlugs, getDictionary, getPageBySlug, getSite } from '@/lib/keystatic';
-import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
+import { isLocale, type Locale, locales, localizePath } from '@/lib/i18n';
 import { buildBreadcrumbListJsonLd } from '@/lib/json-ld';
 
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
-  for (const locale of SUPPORTED_LOCALES) {
+  for (const locale of locales) {
     const slugs = await getAllPageSlugs(locale);
     for (const slug of slugs) {
       if (!slug) continue;
@@ -76,12 +76,7 @@ export default async function StaticPage({ params }: StaticPageProps) {
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LanguageSwitcher
-        locale={locale}
-        localizedSlugs={page.localizedSlugs}
-        currentSlug={page.slug}
-        dictionary={dictionary.common.languageSwitcher}
-      />
+      <LocaleSwitcher locale={locale} entry={{ id: page.id, slugByLocale: page.slugByLocale }} />
       <JsonLd id={`ld-json-breadcrumb-${page.slugKey}`} data={breadcrumbJsonLd} />
       <Breadcrumbs locale={locale} items={[{ label: page.title }]} dictionary={dictionary.common.breadcrumbs} />
       <header className="space-y-3">
@@ -116,7 +111,7 @@ export async function generateMetadata({ params }: StaticPageProps): Promise<Met
     slug: page.slug,
     siteSeo: site.seo,
     pageSeo: page.seo,
-    localizedSlugs: page.localizedSlugs,
+    slugByLocale: page.slugByLocale,
     siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
     twitter: site.twitter,
