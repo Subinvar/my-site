@@ -1,147 +1,132 @@
-import Markdoc from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import React from 'react';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { JsonLd } from '@/components/json-ld';
-import markdocConfig from '@/lib/markdoc-config';
-import { createMarkdocComponents } from '@/lib/markdoc-components';
-import { buildPageMetadata } from '@/lib/metadata';
-import { getAllPostSlugs, getDictionary, getPostBySlug, getSite } from '@/lib/keystatic';
-import { formatDate, isLocale, type Locale, locales, localizePath } from '@/lib/i18n';
-import { buildBreadcrumbListJsonLd } from '@/lib/json-ld';
-import { buildArticleJsonLd } from '@/lib/seo';
-import { buildAbsoluteUrl } from '@/lib/site-url';
+import { render } from '@/lib/markdoc';
+import { buildPath } from '@/lib/paths';
+import { getAllPosts, getPostAlternates, getPostBySlug, getSite } from '@/lib/keystatic';
+import { isLocale, locales, type Locale } from '@/lib/i18n';
+
+type PostPageProps = {
+  params: Promise<{ locale: string; slug: string }>;
+};
+
+function resolveAlternates(slugByLocale: Partial<Record<Locale, string>>) {
+  const languages: Record<string, string> = {};
+  for (const locale of locales) {
+    const slug = slugByLocale[locale];
+    if (!slug) {
+      continue;
+    }
+    languages[locale] = buildPath(locale, ['posts', slug]);
+  }
+  return { languages };
+}
+
+function resolveOpenGraph({
+  locale,
+  slug,
+  title,
+  description,
+  ogImage,
+  publishedAt,
+}: {
+  locale: Locale;
+  slug: string;
+  title?: string | null;
+  description?: string | null;
+  ogImage?: { src: string; alt?: string | null } | null;
+  publishedAt?: string | null;
+}): Metadata['openGraph'] {
+  const url = buildPath(locale, ['posts', slug]);
+  return {
+    type: 'article',
+    locale,
+    url,
+    title: title ?? undefined,
+    description: description ?? undefined,
+    publishedTime: publishedAt ?? undefined,
+    images: ogImage ? [{ url: ogImage.src, alt: ogImage.alt ?? undefined }] : undefined,
+  };
+}
+
+export default async function PostPage({ params }: PostPageProps) {
+  const { locale: rawLocale, slug } = await params;
+
+  if (!isLocale(rawLocale)) {
+    notFound();
+  }
+
+  const locale = rawLocale;
+  const post = await getPostBySlug(slug, locale);
+  if (!post) {
+    notFound();
+  }
+
+  const content = await render(post.content, locale);
+
+  return (
+    <article className="prose prose-zinc max-w-none dark:prose-invert">
+      <header className="mb-8 space-y-3">
+        <p className="text-sm uppercase tracking-wide text-zinc-500">{post.date}</p>
+        <h1 className="text-3xl font-semibold text-zinc-900">{post.title}</h1>
+        {post.excerpt ? <p className="text-base text-zinc-600">{post.excerpt}</p> : null}
+      </header>
+      <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
+      {post.tags.length ? (
+        <ul className="mt-10 flex flex-wrap gap-2 text-sm text-zinc-500">
+          {post.tags.map((tag) => (
+            <li key={tag} className="rounded-full border border-zinc-200 px-3 py-1">
+              #{tag}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </article>
+  );
+}
 
 export async function generateStaticParams() {
-  const params: { locale: string; slug: string }[] = [];
-  for (const locale of locales) {
-    const slugs = await getAllPostSlugs(locale);
-    for (const slug of slugs) {
+  const posts = await getAllPosts();
+  const params: { locale: Locale; slug: string }[] = [];
+  for (const post of posts) {
+    if (!post.published) {
+      continue;
+    }
+    for (const locale of locales) {
+      const slug = post.slugByLocale[locale];
+      if (!slug) {
+        continue;
+      }
       params.push({ locale, slug });
     }
   }
   return params;
 }
 
-type PostPageProps = {
-  params: Promise<{ locale: string; slug: string }>;
-};
-
-export default async function PostPage({ params }: PostPageProps) {
-  const { locale: localeParam, slug } = await params;
-
-  if (!isLocale(localeParam)) {
-    notFound();
-  }
-  const locale = localeParam as Locale;
-  const [post, dictionary, site] = await Promise.all([
-    getPostBySlug(locale, slug),
-    getDictionary(locale),
-    getSite(locale),
-  ]);
-  if (!post) {
-    notFound();
-  }
-
-  const markdocComponents = createMarkdocComponents({
-    title: dictionary.messages.markdoc.calloutTitle,
-    note: dictionary.messages.markdoc.noteLabel,
-    info: dictionary.messages.markdoc.infoLabel,
-    warning: dictionary.messages.markdoc.warningLabel,
-    success: null,
-  });
-
-  const markdocContent = (() => {
-    if (!post.content) {
-      return null;
-    }
-    const ast = Markdoc.parse(post.content);
-    const transformed = Markdoc.transform(ast, markdocConfig);
-    return Markdoc.renderers.react(transformed, React, { components: markdocComponents });
-  })();
-
-  const formattedDate = formatDate(post.publishedAt, locale, {
-    day: '2-digit',
-    month: locale === 'ru' ? '2-digit' : 'short',
-    year: 'numeric',
-  });
-
-  const canonicalPath = localizePath(locale, `posts/${post.slug}`);
-  const slugByLocaleWithPrefix = Object.fromEntries(
-    Object.entries(post.slugByLocale ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
-  ) as Partial<Record<Locale, string>>;
-  const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
-    locale,
-    rootLabel: dictionary.common.breadcrumbs.rootLabel,
-    items: [],
-    current: {
-      name: post.title,
-      href: canonicalPath,
-    },
-  });
-  const ogImage = post.seo?.ogImage ?? site.defaultSeo?.ogImage;
-  const articleJsonLd = buildArticleJsonLd({
-    locale,
-    slugByLocale: slugByLocaleWithPrefix,
-    headline: post.seo?.title ?? post.title,
-    description: post.seo?.description ?? post.excerpt,
-    image: ogImage
-      ? { url: buildAbsoluteUrl(ogImage.src), alt: ogImage.alt ?? dictionary.seo.ogImageAlt }
-      : { url: buildAbsoluteUrl(`/og-${locale}.svg`), alt: dictionary.seo.ogImageAlt },
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    siteName: site.brand.siteName,
-    authorName: post.author ?? undefined,
-  });
-
-  return (
-    <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
-      <LocaleSwitcher locale={locale} entry={{ id: post.id, slugByLocale: slugByLocaleWithPrefix }} />
-      <JsonLd id={`ld-json-breadcrumb-${post.slugKey}`} data={breadcrumbJsonLd} />
-      <JsonLd id={`ld-json-article-${post.slugKey}`} data={articleJsonLd} />
-      <Breadcrumbs locale={locale} items={[{ label: post.title }]} dictionary={dictionary.common.breadcrumbs} />
-      <header className="space-y-3">
-        <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.excerpt}</p>
-        <h1 className="text-3xl font-bold sm:text-4xl">{post.title}</h1>
-        {formattedDate ? (
-          <time dateTime={post.publishedAt ?? undefined} className="text-xs uppercase tracking-wider text-muted-foreground">
-            {formattedDate}
-          </time>
-        ) : null}
-      </header>
-      <div className="prose-markdoc">{markdocContent}</div>
-    </article>
-  );
-}
-
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const { locale: localeParam, slug } = await params;
-
-  if (!isLocale(localeParam)) {
+  const { locale: rawLocale, slug } = await params;
+  if (!isLocale(rawLocale)) {
     return {};
   }
-  const locale = localeParam as Locale;
-  const [site, post, dictionary] = await Promise.all([
-    getSite(locale),
-    getPostBySlug(locale, slug),
-    getDictionary(locale),
-  ]);
+  const locale = rawLocale;
+  const [site, post] = await Promise.all([getSite(locale), getPostBySlug(slug, locale)]);
   if (!post) {
     return {};
   }
-  const slugByLocaleWithPrefix = Object.fromEntries(
-    Object.entries(post.slugByLocale ?? {}).map(([key, value]) => [key, value ? `posts/${value}` : value])
-  ) as Partial<Record<Locale, string>>;
-  return buildPageMetadata({
-    locale,
-    slug: `posts/${post.slug}`,
-    siteSeo: site.seo,
-    pageSeo: post.seo,
-    slugByLocale: slugByLocaleWithPrefix,
-    siteName: site.brand.siteName,
-    ogImageAlt: dictionary.seo.ogImageAlt,
-    twitter: site.twitter,
-  });
+  const alternates = await getPostAlternates(post.id);
+  const title = post.seo?.title ?? post.title ?? site.defaultSeo?.title ?? undefined;
+  const description = post.seo?.description ?? site.defaultSeo?.description ?? undefined;
+  const ogImage = post.seo?.ogImage ?? site.defaultSeo?.ogImage ?? undefined;
+  return {
+    title,
+    description,
+    alternates: resolveAlternates(alternates),
+    openGraph: resolveOpenGraph({
+      locale,
+      slug: post.slug,
+      title,
+      description,
+      ogImage,
+      publishedAt: post.date ?? undefined,
+    }),
+  } satisfies Metadata;
 }

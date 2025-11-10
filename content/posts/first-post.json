@@ -1,32 +1,18 @@
 {
-  "slugKey": "first-post",
-  "status": "published",
-  "datePublished": "2024-02-05T07:00",
-  "updatedAt": "2024-02-12T12:15",
+  "id": "first-post",
+  "published": true,
+  "date": "2024-02-05T07:00:00.000Z",
+  "slug": {
+    "ru": "modernizaciya-proizvodstva",
+    "en": "modernising-the-plant"
+  },
   "title": {
     "ru": "Как мы модернизировали производство за 90 дней",
     "en": "How we modernised a plant in 90 days"
   },
-  "slug": {
-    "ru": {
-      "slug": "modernizaciya-proizvodstva",
-      "name": "first-post-ru"
-    },
-    "en": {
-      "slug": "modernising-the-plant",
-      "name": "first-post-en"
-    }
-  },
   "excerpt": {
     "ru": "Разбираем этапы и инструменты ускоренной модернизации крупного производственного комплекса.",
     "en": "A breakdown of the tools and milestones behind our fast-track industrial upgrade."
-  },
-  "cover": {
-    "image": "uploads/post-cover.svg",
-    "alt": {
-      "ru": "Инженеры проверяют цифровой план модернизации",
-      "en": "Engineers reviewing the digital modernisation plan"
-    }
   },
   "content": {
     "ru": "content/markdoc/ru/posts/first-post.mdoc",
@@ -37,11 +23,12 @@
     "digital twin",
     "lean-construction"
   ],
-  "author": "Мария Петрова",
-  "readingTime": 6,
-  "canonicalUrl": {
-    "ru": "https://stroytech.io/ru/blog/modernizaciya-proizvodstva",
-    "en": "https://stroytech.io/en/blog/modernising-the-plant"
+  "cover": {
+    "image": "uploads/post-cover.svg",
+    "alt": {
+      "ru": "Инженеры проверяют цифровой план модернизации",
+      "en": "Engineers reviewing the digital modernisation plan"
+    }
   },
   "seo": {
     "ru": {
@@ -60,5 +47,6 @@
         "alt": "Production line after modernisation"
       }
     }
-  }
+  },
+  "updatedAt": "2024-02-12T12:15:00.000Z"
 }

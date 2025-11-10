@@ -1,23 +1,18 @@
 import Link from 'next/link';
-import { getDictionary } from '@/lib/keystatic';
-import { defaultLocale, localizePath } from '@/lib/i18n';
+import { buildPath } from '@/lib/paths';
+import { defaultLocale } from '@/lib/i18n';
 
-export default async function NotFound() {
-  const dictionary = await getDictionary(defaultLocale);
-
+export default function RootNotFound() {
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center gap-6 px-4 py-16 text-center">
-      <div className="space-y-3" role="status" aria-live="polite">
-        <h1 className="text-3xl font-bold text-zinc-900">{dictionary.messages.errors.notFoundTitle}</h1>
-        <p className="text-base text-zinc-600">{dictionary.messages.errors.notFoundDescription}</p>
-      </div>
+    <section className="mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 py-24 text-center">
+      <h1 className="text-4xl font-semibold text-zinc-900">Страница не найдена</h1>
+      <p className="text-lg text-zinc-600">Мы не смогли найти запрошенный адрес. Попробуйте начать с главной страницы.</p>
       <Link
-        href={localizePath(defaultLocale, '')}
-        aria-label={dictionary.header.homeAriaLabel}
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700"
+        href={buildPath(defaultLocale)}
+        className="rounded-full border border-zinc-900 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       >
-        {dictionary.common.buttons.goHome}
+        На главную
       </Link>
-    </div>
+    </section>
   );
 }

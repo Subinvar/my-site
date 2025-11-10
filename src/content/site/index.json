@@ -1,41 +1,19 @@
 {
-  "brand": {
-    "logo": {
-      "image": "uploads/logo.svg",
-      "alt": {
-        "ru": "Логотип компании StroyTech",
-        "en": "StroyTech company logo"
-      }
-    },
-    "companyName": "ООО «СтройТех Инжиниринг»",
-    "siteName": {
-      "ru": "StroyTech",
-      "en": "StroyTech"
-    },
-    "tagline": {
-      "ru": "Инженерные решения для промышленного строительства",
-      "en": "Industrial engineering solutions"
-    },
-    "contacts": {
-      "phone": "+7 (495) 123-45-67",
-      "email": "hello@stroytech.io",
-      "address": {
-        "ru": "Москва, Пресненская наб., 12",
-        "en": "12 Presnenskaya emb., Moscow"
-      }
-    },
-    "socials": [
-      {
-        "label": "LinkedIn",
-        "url": "https://www.linkedin.com/company/stroytech",
-        "newTab": true
-      },
-      {
-        "label": "YouTube",
-        "url": "https://www.youtube.com/@stroytech",
-        "newTab": true
-      }
-    ]
+  "siteName": {
+    "ru": "StroyTech",
+    "en": "StroyTech"
+  },
+  "tagline": {
+    "ru": "Инженерные решения для промышленного строительства",
+    "en": "Industrial engineering solutions"
+  },
+  "contacts": {
+    "email": "hello@stroytech.io",
+    "phone": "+7 (495) 123-45-67",
+    "address": {
+      "ru": "Москва, Пресненская наб., 12",
+      "en": "12 Presnenskaya emb., Moscow"
+    }
   },
   "defaultSeo": {
     "ru": {
@@ -55,20 +33,11 @@
       }
     }
   },
-  "twitter": {
-    "card": "summary_large_image",
-    "site": "@stroytech",
-    "creator": "@stroytech_ceo"
-  },
   "meta": {
-    "domain": "stroytech.io",
+    "domain": "https://stroytech.io",
     "robots": {
       "index": true,
       "follow": true
-    },
-    "organization": {
-      "legalName": "ООО «СтройТех Инжиниринг»",
-      "taxId": "7700000000"
     }
   }
 }

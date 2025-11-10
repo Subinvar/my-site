@@ -1,85 +1,89 @@
 {
   "headerLinks": [
     {
+      "id": "home",
       "label": {
         "ru": "Главная",
         "en": "Home"
       },
-      "link": {
-        "discriminant": "internal",
-        "value": {
-          "page": "home"
-        }
+      "path": {
+        "ru": "",
+        "en": ""
       },
+      "externalUrl": null,
+      "newTab": false,
       "order": 0
     },
     {
+      "id": "about",
       "label": {
         "ru": "О компании",
         "en": "About"
       },
-      "link": {
-        "discriminant": "internal",
-        "value": {
-          "page": "about"
-        }
+      "path": {
+        "ru": "o-kompanii",
+        "en": "about"
       },
+      "externalUrl": null,
+      "newTab": false,
       "order": 10
     },
     {
+      "id": "linkedin",
       "label": {
         "ru": "LinkedIn",
         "en": "LinkedIn"
       },
-      "link": {
-        "discriminant": "external",
-        "value": {
-          "url": "https://www.linkedin.com/company/stroytech",
-          "newTab": true
-        }
+      "path": {
+        "ru": "",
+        "en": ""
       },
+      "externalUrl": "https://www.linkedin.com/company/stroytech",
+      "newTab": true,
       "order": 20
     }
   ],
   "footerLinks": [
     {
+      "id": "footer-home",
       "label": {
         "ru": "Главная",
         "en": "Home"
       },
-      "link": {
-        "discriminant": "internal",
-        "value": {
-          "page": "home"
-        }
+      "path": {
+        "ru": "",
+        "en": ""
       },
+      "externalUrl": null,
+      "newTab": false,
       "order": 0
     },
     {
+      "id": "footer-news",
       "label": {
         "ru": "Новости",
         "en": "News"
       },
-      "link": {
-        "discriminant": "external",
-        "value": {
-          "url": "https://www.linkedin.com/company/stroytech/posts/",
-          "newTab": true
-        }
+      "path": {
+        "ru": "",
+        "en": ""
       },
+      "externalUrl": "https://www.linkedin.com/company/stroytech/posts/",
+      "newTab": true,
       "order": 10
     },
     {
+      "id": "footer-contacts",
       "label": {
         "ru": "Контакты",
         "en": "Contact"
       },
-      "link": {
-        "discriminant": "internal",
-        "value": {
-          "page": "about"
-        }
+      "path": {
+        "ru": "o-kompanii",
+        "en": "about"
       },
+      "externalUrl": null,
+      "newTab": false,
       "order": 20
     }
   ]

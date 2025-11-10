@@ -1,32 +1,17 @@
 {
-  "slugKey": "home",
-  "status": "published",
-  "datePublished": "2024-01-15T09:00",
-  "updatedAt": "2024-02-01T10:00",
+  "id": "home",
+  "published": true,
+  "slug": {
+    "ru": "",
+    "en": ""
+  },
   "title": {
     "ru": "Главная",
     "en": "Home"
   },
-  "slug": {
-    "ru": {
-      "slug": "__root__",
-      "name": "home-ru"
-    },
-    "en": {
-      "slug": "__root__",
-      "name": "home-en"
-    }
-  },
   "excerpt": {
     "ru": "StroyTech реализует промышленные проекты полного цикла — от концепции до пусконаладки.",
     "en": "StroyTech delivers end-to-end industrial engineering projects from concept to commissioning."
-  },
-  "cover": {
-    "image": "uploads/home-cover.svg",
-    "alt": {
-      "ru": "Инженеры StroyTech обсуждают планы на фоне чертежей",
-      "en": "StroyTech engineers reviewing blueprints"
-    }
   },
   "content": {
     "ru": "content/markdoc/ru/pages/home.mdoc",
@@ -49,5 +34,6 @@
         "alt": "StroyTech engineering team"
       }
     }
-  }
+  },
+  "updatedAt": "2024-02-01T10:00:00.000Z"
 }
