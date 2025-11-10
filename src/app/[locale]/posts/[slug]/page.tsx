@@ -22,16 +22,18 @@ export async function generateStaticParams() {
 }
 
 type PostPageProps = {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export default async function PostPage({ params }: PostPageProps) {
-  if (!isLocale(params.locale)) {
+  const { locale: localeParam, slug } = await params;
+
+  if (!isLocale(localeParam)) {
     notFound();
   }
-  const locale = params.locale as Locale;
+  const locale = localeParam as Locale;
   const [post, dictionary, site] = await Promise.all([
-    getPostBySlug(locale, params.slug),
+    getPostBySlug(locale, slug),
     getDictionary(locale),
     getSite(locale),
   ]);
@@ -96,13 +98,15 @@ export default async function PostPage({ params }: PostPageProps) {
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  if (!isLocale(params.locale)) {
+  const { locale: localeParam, slug } = await params;
+
+  if (!isLocale(localeParam)) {
     return {};
   }
-  const locale = params.locale as Locale;
+  const locale = localeParam as Locale;
   const [site, post, dictionary] = await Promise.all([
     getSite(locale),
-    getPostBySlug(locale, params.slug),
+    getPostBySlug(locale, slug),
     getDictionary(locale),
   ]);
   if (!post) {
