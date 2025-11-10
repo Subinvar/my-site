@@ -1,5 +1,6 @@
 import Markdoc from '@markdoc/markdoc';
 import type { Config } from '@markdoc/markdoc';
+import Image from 'next/image';
 import React, { type ReactNode } from 'react';
 import { locales, type Locale } from './i18n';
 
@@ -30,6 +31,16 @@ export const config: Config = {
         language: { type: String },
       },
     },
+    image: {
+      render: 'MarkdocImage',
+      attributes: {
+        src: { type: String },
+        alt: { type: String },
+        title: { type: String },
+        width: { type: String },
+        height: { type: String },
+      },
+    },
   },
   tags: {
     callout: {
@@ -49,6 +60,37 @@ export const config: Config = {
     },
   },
 };
+
+const DEFAULT_IMAGE_WIDTH = 800;
+const DEFAULT_IMAGE_HEIGHT = 450;
+
+function normalizeImageSrc(src: string): string {
+  const trimmed = src.trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+  if (/^(?:[a-z]+:)?\/\//i.test(trimmed) || trimmed.startsWith('/')) {
+    return trimmed;
+  }
+  const withoutPrefix = trimmed.replace(/^\.\//, '').replace(/^\/+/, '');
+  if (withoutPrefix.startsWith('uploads/')) {
+    return `/${withoutPrefix}`;
+  }
+  return `/uploads/${withoutPrefix}`;
+}
+
+function parseDimension(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return undefined;
+}
 
 function createComponents(locale: Locale) {
   const calloutTitleFallback = Object.fromEntries(
@@ -127,6 +169,34 @@ function createComponents(locale: Locale) {
         { href, className: `${baseClass} ${variantClass}` },
         children ?? computedLabel
       );
+    },
+    MarkdocImage({
+      src,
+      alt,
+      title,
+      width,
+      height,
+    }: {
+      src?: string;
+      alt?: string;
+      title?: string;
+      width?: number | string;
+      height?: number | string;
+    }) {
+      if (!src) {
+        return null;
+      }
+      const normalizedSrc = normalizeImageSrc(src);
+      const resolvedWidth = parseDimension(width) ?? DEFAULT_IMAGE_WIDTH;
+      const resolvedHeight = parseDimension(height) ?? DEFAULT_IMAGE_HEIGHT;
+      return React.createElement(Image, {
+        src: normalizedSrc,
+        alt: alt ?? '',
+        title: title ?? undefined,
+        width: resolvedWidth,
+        height: resolvedHeight,
+        sizes: '(min-width: 768px) 720px, 100vw',
+      });
     },
   } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }

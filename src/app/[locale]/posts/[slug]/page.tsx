@@ -6,19 +6,33 @@ import { getAllPosts, getPostAlternates, getPostBySlug, getSite } from '@/lib/ke
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 
 type PostPageProps = {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: Locale; slug: string }>;
 };
 
-function resolveAlternates(slugByLocale: Partial<Record<Locale, string>>) {
+const OPEN_GRAPH_LOCALE: Record<Locale, string> = { ru: 'ru_RU', en: 'en_US' };
+
+function resolveAlternates(
+  slugByLocale: Partial<Record<Locale, string>>,
+  currentLocale: Locale,
+  currentSlug: string
+) {
   const languages: Record<string, string> = {};
+  const availableLocales: Locale[] = [];
   for (const locale of locales) {
     const slug = slugByLocale[locale];
     if (!slug) {
       continue;
     }
+    availableLocales.push(locale);
     languages[locale] = buildPath(locale, ['posts', slug]);
   }
-  return { languages };
+  const canonicalSlug = slugByLocale[currentLocale] ?? currentSlug;
+  const canonicalSegments = canonicalSlug ? ['posts', canonicalSlug] : ['posts'];
+  return {
+    canonical: buildPath(currentLocale, canonicalSegments),
+    languages,
+    availableLocales,
+  };
 }
 
 function resolveOpenGraph({
@@ -28,6 +42,7 @@ function resolveOpenGraph({
   description,
   ogImage,
   publishedAt,
+  availableLocales,
 }: {
   locale: Locale;
   slug: string;
@@ -35,11 +50,16 @@ function resolveOpenGraph({
   description?: string | null;
   ogImage?: { src: string; alt?: string | null } | null;
   publishedAt?: string | null;
+  availableLocales: Locale[];
 }): Metadata['openGraph'] {
   const url = buildPath(locale, ['posts', slug]);
+  const alternateLocales = availableLocales
+    .filter((candidate) => candidate !== locale)
+    .map((candidate) => OPEN_GRAPH_LOCALE[candidate]);
   return {
     type: 'article',
-    locale,
+    locale: OPEN_GRAPH_LOCALE[locale],
+    alternateLocale: alternateLocales.length ? alternateLocales : undefined,
     url,
     title: title ?? undefined,
     description: description ?? undefined,
@@ -84,9 +104,10 @@ export default async function PostPage({ params }: PostPageProps) {
   );
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ locale: Locale; slug: string }>> {
   const posts = await getAllPosts();
   const params: { locale: Locale; slug: string }[] = [];
+  const seen = new Set<string>();
   for (const post of posts) {
     if (!post.published) {
       continue;
@@ -96,6 +117,11 @@ export async function generateStaticParams() {
       if (!slug) {
         continue;
       }
+      const key = `${locale}:${slug}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
       params.push({ locale, slug });
     }
   }
@@ -113,13 +139,17 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     return {};
   }
   const alternates = await getPostAlternates(post.id);
+  const { canonical, languages, availableLocales } = resolveAlternates(alternates, locale, post.slug);
   const title = post.seo?.title ?? post.title ?? site.defaultSeo?.title ?? undefined;
   const description = post.seo?.description ?? site.defaultSeo?.description ?? undefined;
   const ogImage = post.seo?.ogImage ?? site.defaultSeo?.ogImage ?? undefined;
   return {
     title,
     description,
-    alternates: resolveAlternates(alternates),
+    alternates: {
+      canonical,
+      languages,
+    },
     openGraph: resolveOpenGraph({
       locale,
       slug: post.slug,
@@ -127,6 +157,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       description,
       ogImage,
       publishedAt: post.date ?? undefined,
+      availableLocales,
     }),
   } satisfies Metadata;
 }
