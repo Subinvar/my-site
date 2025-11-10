@@ -29,8 +29,5 @@ export function localizePath(locale: Locale, slug: string | string[] | undefined
     ? slug.filter(Boolean).join("/")
     : (slug ?? "");
   const suffix = normalized ? `/${normalized}` : "";
-  if (locale === DEFAULT_LOCALE) {
-    return suffix || "/";
-  }
-  return `/${locale}${suffix}`;
+  return `/${locale}${suffix}` || "/";
 }
