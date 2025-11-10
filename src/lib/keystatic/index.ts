@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
-import { DEFAULT_LOCALE, FALLBACK_LOCALE, Locale } from '../i18n';
+import { FALLBACK_LOCALE, Locale } from '../i18n';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
@@ -396,7 +396,7 @@ function normalizeAssetPath(value: MediaFieldValue): string | undefined {
   return normalized.startsWith('/') ? normalized : `/${normalized}`;
 }
 
-function mapSeo(value: { title?: string; description?: string; ogImage?: { image?: MediaFieldValue; alt?: string | null } | null } | undefined, locale: Locale): SeoEntry | undefined {
+function mapSeo(value: { title?: string; description?: string; ogImage?: { image?: MediaFieldValue; alt?: string | null } | null } | undefined): SeoEntry | undefined {
   if (!value) {
     return undefined;
   }
@@ -461,8 +461,8 @@ export async function getSite(locale: Locale): Promise<SiteData> {
 
   return {
     brand,
-    defaultSeo: mapSeo(seo, locale),
-    seo: mapSeo(seo, locale),
+    defaultSeo: mapSeo(seo),
+    seo: mapSeo(seo),
     twitter,
     meta: {
       domain: site?.meta?.domain,
@@ -640,7 +640,7 @@ async function getPostsEntries(): Promise<PostEntryRecord[]> {
 
 function buildSeoPayload(entry: PageEntry, locale: Locale): SeoEntry | undefined {
   const localized = pickLocalized(entry.seo, locale) ?? pickLocalized(entry.seo, FALLBACK_LOCALE);
-  return mapSeo(localized, locale);
+  return mapSeo(localized);
 }
 
 function buildCoverPayload(entry: PageEntry, locale: Locale): SeoImage | undefined {
