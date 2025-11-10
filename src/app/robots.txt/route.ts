@@ -1,18 +1,51 @@
 import { NextResponse } from 'next/server';
+import { DEFAULT_LOCALE } from '@/lib/i18n';
+import { getSite } from '@/lib/keystatic';
+import { getSiteUrl } from '@/lib/site-url';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+function resolveDomainOrigin(domain?: string | null): { origin: string; host: string } | null {
+  if (!domain) {
+    return null;
+  }
+  const trimmed = domain.trim().replace(/\/+$/, '');
+  if (!trimmed) {
+    return null;
+  }
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    const url = new URL(withProtocol);
+    return { origin: url.origin, host: url.host };
+  } catch {
+    return null;
+  }
+}
 
-export function GET() {
-  const content = [
+export async function GET() {
+  const site = await getSite(DEFAULT_LOCALE);
+  const robots = site.meta?.robots ?? {};
+  const shouldIndex = robots.index !== false;
+  const shouldFollow = robots.follow !== false;
+
+  const domain = resolveDomainOrigin(site.meta?.domain);
+  const fallbackUrl = new URL(getSiteUrl());
+  const origin = domain?.origin ?? fallbackUrl.origin;
+  const host = domain?.host ?? fallbackUrl.host;
+
+  const lines = [
     'User-agent: *',
-    'Allow: /',
-    `Sitemap: ${new URL('/sitemap.xml', siteUrl).toString()}`,
-  ].join('\n');
+    shouldIndex ? 'Allow: /' : 'Disallow: /',
+    `Host: ${host}`,
+    `Sitemap: ${new URL('/sitemap.xml', origin).toString()}`,
+  ];
+
+  const content = lines.join('\n');
+  const robotsTag = `${shouldIndex ? 'index' : 'noindex'},${shouldFollow ? 'follow' : 'nofollow'}`;
 
   return new NextResponse(content, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',
+      'X-Robots-Tag': robotsTag,
     },
   });
 }

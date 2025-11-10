@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createReader } from '@keystatic/core/reader';
 import config from '../../../keystatic.config';
-import { FALLBACK_LOCALE, Locale } from '../i18n';
+import { FALLBACK_LOCALE, Locale, SUPPORTED_LOCALES } from '../i18n';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
@@ -358,15 +358,76 @@ function normalizeSlug(slug: SlugFieldValue | string | undefined | null): string
   return value.replace(/^\/+/, '').replace(/\/+$/, '');
 }
 
-function pickLocalized<T>(value: Localized<T> | undefined | null, locale: Locale, options?: { fallback?: boolean }): T | undefined {
-  if (!value) return undefined;
-  if (value[locale] !== undefined) {
-    return value[locale];
+type PickLocalizedOptions<T> = {
+  fallback?: boolean;
+  allowEmptyFallback?: boolean;
+  isMeaningful?: (candidate: T | undefined) => boolean;
+};
+
+function hasLocalizedContent(value: unknown): boolean {
+  if (value === null || value === undefined) {
+    return false;
   }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(record, 'slug')) {
+      const slugValue = record.slug;
+      if (typeof slugValue === 'string') {
+        return slugValue.trim().length > 0;
+      }
+      return slugValue !== null && slugValue !== undefined;
+    }
+
+    return Object.values(record).some((nested) => hasLocalizedContent(nested));
+  }
+
+  return true;
+}
+
+function pickLocalized<T>(
+  value: Localized<T> | undefined | null,
+  locale: Locale,
+  options?: PickLocalizedOptions<T>
+): T | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const isMeaningful = options?.isMeaningful ?? ((candidate?: T) => hasLocalizedContent(candidate));
+  const localized = value[locale];
+
+  if (locale === FALLBACK_LOCALE) {
+    return localized ?? undefined;
+  }
+
+  if (localized !== undefined && isMeaningful(localized)) {
+    return localized;
+  }
+
   if (options?.fallback === false) {
     return undefined;
   }
-  return value[FALLBACK_LOCALE];
+
+  const fallbackValue = value[FALLBACK_LOCALE];
+
+  if (fallbackValue === undefined) {
+    return undefined;
+  }
+
+  if (options?.allowEmptyFallback) {
+    return fallbackValue;
+  }
+
+  return isMeaningful(fallbackValue) ? fallbackValue : undefined;
 }
 
 function mapLocalizedSlugRecord(slugs: Localized<SlugFieldValue | string> | undefined | null): Partial<Record<Locale, string>> {
@@ -374,10 +435,15 @@ function mapLocalizedSlugRecord(slugs: Localized<SlugFieldValue | string> | unde
   if (!slugs) {
     return record;
   }
-  for (const locale of Object.keys(slugs) as Locale[]) {
-    const slug = normalizeSlug(slugs[locale] ?? undefined);
-    record[locale] = slug;
+
+  for (const locale of SUPPORTED_LOCALES) {
+    const localizedSlug = pickLocalized(slugs, locale, { allowEmptyFallback: true });
+    if (localizedSlug === undefined) {
+      continue;
+    }
+    record[locale] = normalizeSlug(localizedSlug);
   }
+
   return record;
 }
 
@@ -470,20 +536,20 @@ export async function getSite(locale: Locale): Promise<SiteData> {
   const brandEntry = site?.brand ?? {};
   const brand: SiteBrand = {
     companyName: brandEntry.companyName ?? '',
-    siteName: pickLocalized(brandEntry.siteName, locale) ?? pickLocalized(brandEntry.siteName, FALLBACK_LOCALE) ?? brandEntry.companyName ?? '',
+    siteName: pickLocalized(brandEntry.siteName, locale) ?? brandEntry.companyName ?? '',
     tagline: pickLocalized(brandEntry.tagline, locale),
     logo: (() => {
       const src = normalizeAssetPath(brandEntry.logo?.image ?? null);
       if (!src) {
         return undefined;
       }
-      const alt = pickLocalized(brandEntry.logo?.alt, locale) ?? pickLocalized(brandEntry.logo?.alt, FALLBACK_LOCALE);
+      const alt = pickLocalized(brandEntry.logo?.alt, locale);
       return { src, alt: alt ?? undefined } satisfies SeoImage;
     })(),
     contacts: {
       phone: brandEntry.contacts?.phone ?? undefined,
       email: brandEntry.contacts?.email ?? undefined,
-      address: pickLocalized(brandEntry.contacts?.address, locale) ?? pickLocalized(brandEntry.contacts?.address, FALLBACK_LOCALE),
+      address: pickLocalized(brandEntry.contacts?.address, locale),
     },
     socials: (brandEntry.socials ?? [])
       .map((item) => {
@@ -499,9 +565,7 @@ export async function getSite(locale: Locale): Promise<SiteData> {
       .filter((item): item is NonNullable<typeof item> => item !== null),
   };
 
-  const localizedSeo = pickLocalized(site?.defaultSeo, locale);
-  const fallbackSeo = pickLocalized(site?.defaultSeo, FALLBACK_LOCALE);
-  const seo = localizedSeo ?? fallbackSeo ?? undefined;
+  const seo = pickLocalized(site?.defaultSeo, locale) ?? undefined;
   const twitterSource = site?.twitter ?? null;
   const twitter = twitterSource
     ? {
@@ -534,7 +598,7 @@ function mapNavigationEntry(
   entry: NavigationEntry,
   pageIndex: Map<string, { entry: PageEntry; slugs: Partial<Record<Locale, string>> }>
 ): NavigationLink | null {
-  const label = pickLocalized(entry.label, locale) ?? pickLocalized(entry.label, FALLBACK_LOCALE);
+  const label = pickLocalized(entry.label, locale);
   if (!label) {
     return null;
   }
@@ -693,7 +757,7 @@ async function getPostsEntries(): Promise<PostEntryRecord[]> {
 }
 
 function buildSeoPayload(entry: PageEntry, locale: Locale): SeoEntry | undefined {
-  const localized = pickLocalized(entry.seo, locale) ?? pickLocalized(entry.seo, FALLBACK_LOCALE);
+  const localized = pickLocalized(entry.seo, locale);
   return mapSeo(localized);
 }
 
@@ -705,14 +769,14 @@ function buildCoverPayload(entry: PageEntry, locale: Locale): SeoImage | undefin
   if (!src) {
     return undefined;
   }
-  const alt = pickLocalized(entry.cover.alt, locale) ?? pickLocalized(entry.cover?.alt, FALLBACK_LOCALE);
+  const alt = pickLocalized(entry.cover.alt, locale);
   return { src, alt: alt ?? undefined };
 }
 
 async function buildPagePayload(locale: Locale, entry: PageEntry): Promise<PagePayload> {
-  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, FALLBACK_LOCALE) ?? '';
+  const title = pickLocalized(entry.title, locale) ?? '';
   const { value: content } = await resolveLocalizedMarkdoc(entry.content, locale);
-  const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, FALLBACK_LOCALE);
+  const excerpt = pickLocalized(entry.excerpt, locale);
   const slugRecord = mapLocalizedSlugRecord(entry.slug);
   const slug = slugRecord[locale] ?? '';
   const seo = buildSeoPayload(entry, locale);
@@ -735,7 +799,7 @@ async function buildPagePayload(locale: Locale, entry: PageEntry): Promise<PageP
 
 async function buildPostPayload(locale: Locale, entry: PostEntry): Promise<PostPayload> {
   const base = await buildPagePayload(locale, entry);
-  const canonicalUrl = pickLocalized(entry.canonicalUrl, locale) ?? pickLocalized(entry.canonicalUrl, FALLBACK_LOCALE);
+  const canonicalUrl = pickLocalized(entry.canonicalUrl, locale);
   return {
     ...base,
     tags: entry.tags ?? [],
@@ -798,20 +862,28 @@ function mergeLatestDate(...dates: (Date | undefined)[]): Date | undefined {
   return new Date(Math.max(...validDates.map((date) => date.getTime())));
 }
 
-function findEntryBySlug<T extends PageEntry | PostEntry>(entries: { entry: T; slugKey: string }[], locale: Locale, target: string) {
+function findEntryBySlug<T extends PageEntry | PostEntry>(
+  entries: { entry: T; slugKey: string }[],
+  locale: Locale,
+  target: string
+) {
   const normalizedTarget = normalizeSlug(target);
   return entries.find(({ entry }) => {
-    const localizedSlug = pickLocalized(entry.slug, locale, { fallback: false });
-    if (localizedSlug === undefined) {
+    const slugRecord = mapLocalizedSlugRecord(entry.slug);
+    const candidate = slugRecord[locale];
+    if (candidate === undefined) {
       return false;
     }
-    return normalizeSlug(localizedSlug) === normalizedTarget;
+    return candidate === normalizedTarget;
   });
 }
 
 export async function getHomePage(locale: Locale): Promise<PagePayload | null> {
   const entries = await getPagesEntries();
-  const match = entries.find(({ entry }) => normalizeSlug(pickLocalized(entry.slug, locale, { fallback: false })) === '');
+  const match = entries.find(({ entry }) => {
+    const slugRecord = mapLocalizedSlugRecord(entry.slug);
+    return (slugRecord[locale] ?? undefined) === '';
+  });
   if (!match) {
     return null;
   }

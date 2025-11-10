@@ -94,6 +94,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     slug: '',
     siteSeo: site.seo,
+    localizedSlugs: Object.fromEntries(
+      SUPPORTED_LOCALES.map((candidate) => [candidate, ''] as const)
+    ) as Partial<Record<Locale, string>>,
     siteName: site.brand.siteName,
     ogImageAlt: dictionary.seo.ogImageAlt,
     twitter: site.twitter,

@@ -29,6 +29,14 @@ function extractLocale(pathname: string): (typeof SUPPORTED_LOCALES)[number] | n
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/keystatic" || pathname.startsWith("/keystatic/")) {
+    return NextResponse.next();
+  }
+
+  if (pathname === "/api/keystatic" || pathname.startsWith("/api/keystatic/")) {
+    return NextResponse.next();
+  }
+
   const extension = getExtension(pathname);
   if (extension && !LOCALE_AWARE_EXTENSIONS.has(extension)) {
     return NextResponse.next();
