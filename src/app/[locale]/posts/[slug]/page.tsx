@@ -1,9 +1,12 @@
+import Markdoc from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import React from 'react';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { JsonLd } from '@/components/json-ld';
-import { renderMarkdoc } from '@/lib/markdoc';
+import markdocConfig from '@/lib/markdoc-config';
+import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPostSlugs, getDictionary, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
@@ -40,6 +43,23 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) {
     notFound();
   }
+
+  const markdocComponents = createMarkdocComponents({
+    title: dictionary.messages.markdoc.calloutTitle,
+    note: dictionary.messages.markdoc.noteLabel,
+    info: dictionary.messages.markdoc.infoLabel,
+    warning: dictionary.messages.markdoc.warningLabel,
+    success: null,
+  });
+
+  const markdocContent = (() => {
+    if (!post.content) {
+      return null;
+    }
+    const ast = Markdoc.parse(post.content);
+    const transformed = Markdoc.transform(ast, markdocConfig);
+    return Markdoc.renderers.react(transformed, React, { components: markdocComponents });
+  })();
 
   const formattedDate = post.publishedAt
     ? new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
@@ -92,7 +112,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </time>
         ) : null}
       </header>
-      <div className="space-y-4 text-base leading-relaxed">{renderMarkdoc(post.content, { dictionary })}</div>
+      <div className="prose-markdoc">{markdocContent}</div>
     </article>
   );
 }

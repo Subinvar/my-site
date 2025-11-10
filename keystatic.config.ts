@@ -51,9 +51,12 @@ const localizedMarkdoc = (label: string) =>
     locales.reduce(
       (acc, locale) => ({
         ...acc,
-        [locale]: fields.markdoc({ label: `${label} (${locale.toUpperCase()})` }),
+        [locale]: fields.pathReference({
+          label: `${label} (${locale.toUpperCase()})`,
+          pattern: `content/markdoc/${locale}/**/*.mdoc`,
+        }),
       }),
-      {} as Record<Locale, ReturnType<typeof fields.markdoc>>
+      {} as Record<Locale, ReturnType<typeof fields.pathReference>>
     ),
     { label }
   );
@@ -268,9 +271,11 @@ export default config({
   collections: {
     pages: collection({
       label: 'Страницы',
-      path: 'src/content/pages/*',
+      path: 'content/pages/*',
       slugField: 'slugKey',
-      format: { data: 'json' },
+      format: {
+        data: 'json',
+      },
       schema: {
         slugKey: fields.slug({ name: { label: 'ID страницы', validation: { isRequired: true } } }),
         status: fields.select({
@@ -296,9 +301,11 @@ export default config({
     }),
     posts: collection({
       label: 'Посты',
-      path: 'src/content/posts/*',
+      path: 'content/posts/*',
       slugField: 'slugKey',
-      format: { data: 'json' },
+      format: {
+        data: 'json',
+      },
       schema: {
         slugKey: fields.slug({ name: { label: 'ID поста', validation: { isRequired: true } } }),
         status: fields.select({

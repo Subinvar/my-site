@@ -1,12 +1,19 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Markdoc from '@markdoc/markdoc';
+import React from 'react';
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { renderMarkdoc } from '@/lib/markdoc';
+import markdocConfig from '@/lib/markdoc-config';
+import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getDictionary, getHomePage, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export default async function LocaleHomePage({ params }: { params: Promise<{ locale: string }> | { locale: string } }) {
+type LocalePageParams = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function LocaleHomePage({ params }: LocalePageParams) {
   const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {
@@ -20,6 +27,23 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
     notFound();
   }
 
+  const markdocComponents = createMarkdocComponents({
+    title: dictionary.messages.markdoc.calloutTitle,
+    note: dictionary.messages.markdoc.noteLabel,
+    info: dictionary.messages.markdoc.infoLabel,
+    warning: dictionary.messages.markdoc.warningLabel,
+    success: null,
+  });
+
+  const markdocContent = (() => {
+    if (!page.content) {
+      return null;
+    }
+    const ast = Markdoc.parse(page.content);
+    const transformed = Markdoc.transform(ast, markdocConfig);
+    return Markdoc.renderers.react(transformed, React, { components: markdocComponents });
+  })();
+
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6">
       <LanguageSwitcher
@@ -32,9 +56,7 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
       </header>
-      <div className="space-y-4 text-base leading-relaxed">
-        {renderMarkdoc(page.content, { dictionary })}
-      </div>
+      <div className="prose-markdoc">{markdocContent}</div>
     </article>
   );
 }
@@ -43,7 +65,7 @@ export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> | { locale: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: LocalePageParams): Promise<Metadata> {
   const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {

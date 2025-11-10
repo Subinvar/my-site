@@ -1,0 +1,64 @@
+{
+  "slugKey": "first-post",
+  "status": "published",
+  "datePublished": "2024-02-05T07:00",
+  "updatedAt": "2024-02-12T12:15",
+  "title": {
+    "ru": "Как мы модернизировали производство за 90 дней",
+    "en": "How we modernised a plant in 90 days"
+  },
+  "slug": {
+    "ru": {
+      "slug": "modernizaciya-proizvodstva",
+      "name": "first-post-ru"
+    },
+    "en": {
+      "slug": "modernising-the-plant",
+      "name": "first-post-en"
+    }
+  },
+  "excerpt": {
+    "ru": "Разбираем этапы и инструменты ускоренной модернизации крупного производственного комплекса.",
+    "en": "A breakdown of the tools and milestones behind our fast-track industrial upgrade."
+  },
+  "cover": {
+    "image": "uploads/post-cover.svg",
+    "alt": {
+      "ru": "Инженеры проверяют цифровой план модернизации",
+      "en": "Engineers reviewing the digital modernisation plan"
+    }
+  },
+  "content": {
+    "ru": "content/markdoc/ru/posts/first-post.mdoc",
+    "en": "content/markdoc/en/posts/first-post.mdoc"
+  },
+  "tags": [
+    "modernisation",
+    "digital twin",
+    "lean-construction"
+  ],
+  "author": "Мария Петрова",
+  "readingTime": 6,
+  "canonicalUrl": {
+    "ru": "https://stroytech.io/ru/blog/modernizaciya-proizvodstva",
+    "en": "https://stroytech.io/en/blog/modernising-the-plant"
+  },
+  "seo": {
+    "ru": {
+      "title": "Модернизация производства за 90 дней — опыт StroyTech",
+      "description": "Какие решения помогли сократить простой и повысить эффективность линии на 27%.",
+      "ogImage": {
+        "image": "uploads/post-cover.svg",
+        "alt": "Производственная линия после модернизации"
+      }
+    },
+    "en": {
+      "title": "Modernising a production line in 90 days — the StroyTech approach",
+      "description": "How we reduced downtime and increased line productivity by 27%.",
+      "ogImage": {
+        "image": "uploads/post-cover.svg",
+        "alt": "Production line after modernisation"
+      }
+    }
+  }
+}

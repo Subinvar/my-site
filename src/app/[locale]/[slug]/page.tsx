@@ -1,43 +1,67 @@
+import Markdoc from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import React from 'react';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { JsonLd } from '@/components/json-ld';
-import { renderMarkdoc } from '@/lib/markdoc';
+import markdocConfig from '@/lib/markdoc-config';
+import { createMarkdocComponents } from '@/lib/markdoc-components';
 import { buildPageMetadata } from '@/lib/metadata';
 import { getAllPageSlugs, getDictionary, getPageBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale, SUPPORTED_LOCALES, localizePath } from '@/lib/i18n';
 import { buildBreadcrumbListJsonLd } from '@/lib/json-ld';
 
 export async function generateStaticParams() {
-  const params: { locale: string; static: string[] }[] = [];
+  const params: { locale: string; slug: string }[] = [];
   for (const locale of SUPPORTED_LOCALES) {
     const slugs = await getAllPageSlugs(locale);
     for (const slug of slugs) {
       if (!slug) continue;
-      params.push({ locale, static: slug.split('/') });
+      params.push({ locale, slug });
     }
   }
   return params;
 }
 
 type StaticPageProps = {
-  params: Promise<{ locale: string; static?: string[] }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export default async function StaticPage({ params }: StaticPageProps) {
-  const { locale: localeParam, static: staticSegments } = await params;
+  const { locale: localeParam, slug } = await params;
 
   if (!isLocale(localeParam)) {
     notFound();
   }
+
+  if (!slug) {
+    notFound();
+  }
+
   const locale = localeParam as Locale;
-  const slugSegments = staticSegments ?? [];
-  const slug = slugSegments.join('/');
   const [page, dictionary] = await Promise.all([getPageBySlug(locale, slug), getDictionary(locale)]);
+
   if (!page) {
     notFound();
   }
+
+  const markdocComponents = createMarkdocComponents({
+    title: dictionary.messages.markdoc.calloutTitle,
+    note: dictionary.messages.markdoc.noteLabel,
+    info: dictionary.messages.markdoc.infoLabel,
+    warning: dictionary.messages.markdoc.warningLabel,
+    success: null,
+  });
+
+  const markdocContent = (() => {
+    if (!page.content) {
+      return null;
+    }
+    const ast = Markdoc.parse(page.content);
+    const transformed = Markdoc.transform(ast, markdocConfig);
+    return Markdoc.renderers.react(transformed, React, { components: markdocComponents });
+  })();
 
   const currentPath = localizePath(locale, page.slug);
   const breadcrumbJsonLd = buildBreadcrumbListJsonLd({
@@ -64,27 +88,29 @@ export default async function StaticPage({ params }: StaticPageProps) {
         <p className="text-sm uppercase tracking-wide text-muted-foreground">{page.excerpt}</p>
         <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
       </header>
-      <div className="space-y-4 text-base leading-relaxed">{renderMarkdoc(page.content, { dictionary })}</div>
+      <div className="prose-markdoc">{markdocContent}</div>
     </article>
   );
 }
 
 export async function generateMetadata({ params }: StaticPageProps): Promise<Metadata> {
-  const { locale: localeParam, static: staticSegments } = await params;
+  const { locale: localeParam, slug } = await params;
 
   if (!isLocale(localeParam)) {
     return {};
   }
+
   const locale = localeParam as Locale;
-  const slug = (staticSegments ?? []).join('/');
   const [site, page, dictionary] = await Promise.all([
     getSite(locale),
     getPageBySlug(locale, slug),
     getDictionary(locale),
   ]);
+
   if (!page) {
     return {};
   }
+
   return buildPageMetadata({
     locale,
     slug: page.slug,

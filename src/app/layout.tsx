@@ -11,13 +11,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(metadataBaseUrl),
 };
 
-export default async function RootLayout({
-  children,
-  params,
-}: {
+type RootLayoutProps = {
   children: ReactNode;
-  params: Promise<{ locale?: string }> | { locale?: string };
-}) {
+  params: Promise<{ locale?: string }>;
+};
+
+export default async function RootLayout({ children, params }: RootLayoutProps) {
   const { locale: rawLocale } = await params;
   const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
 

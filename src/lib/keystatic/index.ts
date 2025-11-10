@@ -176,7 +176,7 @@ type PageEntry = {
     image?: MediaFieldValue;
     alt?: Localized<string>;
   } | null;
-  content?: Localized<{ node: unknown }>;
+  content?: Localized<string>;
   seo?: Localized<{
     title?: string;
     description?: string;
@@ -322,7 +322,7 @@ export type PagePayload = {
   slug: string;
   localizedSlugs: Partial<Record<Locale, string>>;
   excerpt?: string;
-  content?: { node: unknown };
+  content?: string | null;
   seo?: SeoEntry;
   cover?: SeoImage;
   publishedAt?: string | null;
@@ -379,6 +379,60 @@ function mapLocalizedSlugRecord(slugs: Localized<SlugFieldValue | string> | unde
     record[locale] = slug;
   }
   return record;
+}
+
+type ContentReference = {
+  relative: string;
+  absolute: string;
+};
+
+function normalizeContentReference(value: string | undefined | null): ContentReference | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  const relative = trimmed.startsWith('content/') ? trimmed : `content/${trimmed.replace(/^\/+/, '')}`;
+  const absolute = path.join(process.cwd(), relative);
+  return { relative, absolute } satisfies ContentReference;
+}
+
+function collectContentReferences(content: Localized<string> | undefined | null): ContentReference[] {
+  if (!content) {
+    return [];
+  }
+  const entries = new Map<string, ContentReference>();
+  for (const locale of Object.keys(content) as Locale[]) {
+    const reference = normalizeContentReference(content[locale]);
+    if (reference && !entries.has(reference.absolute)) {
+      entries.set(reference.absolute, reference);
+    }
+  }
+  return Array.from(entries.values());
+}
+
+async function readMarkdocFile(reference: ContentReference | undefined): Promise<string | undefined> {
+  if (!reference) {
+    return undefined;
+  }
+  try {
+    return await fs.readFile(reference.absolute, 'utf8');
+  } catch {
+    return undefined;
+  }
+}
+
+async function resolveLocalizedMarkdoc(
+  content: Localized<string> | undefined,
+  locale: Locale
+): Promise<{ value: string | null; reference?: ContentReference }> {
+  const exactReference = normalizeContentReference(pickLocalized(content, locale, { fallback: false }));
+  const fallbackReference = exactReference ? undefined : normalizeContentReference(pickLocalized(content, FALLBACK_LOCALE));
+  const reference = exactReference ?? fallbackReference;
+  const value = await readMarkdocFile(reference);
+  return { value: value ?? null, reference };
 }
 
 function normalizeAssetPath(value: MediaFieldValue): string | undefined {
@@ -655,9 +709,9 @@ function buildCoverPayload(entry: PageEntry, locale: Locale): SeoImage | undefin
   return { src, alt: alt ?? undefined };
 }
 
-function buildPagePayload(locale: Locale, entry: PageEntry): PagePayload {
+async function buildPagePayload(locale: Locale, entry: PageEntry): Promise<PagePayload> {
   const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, FALLBACK_LOCALE) ?? '';
-  const content = pickLocalized(entry.content, locale) ?? pickLocalized(entry.content, FALLBACK_LOCALE);
+  const { value: content } = await resolveLocalizedMarkdoc(entry.content, locale);
   const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, FALLBACK_LOCALE);
   const slugRecord = mapLocalizedSlugRecord(entry.slug);
   const slug = slugRecord[locale] ?? '';
@@ -668,7 +722,7 @@ function buildPagePayload(locale: Locale, entry: PageEntry): PagePayload {
     slugKey: entry.slugKey,
     status: entry.status ?? 'draft',
     title,
-    content,
+    content: content ?? null,
     excerpt,
     seo,
     cover,
@@ -679,8 +733,8 @@ function buildPagePayload(locale: Locale, entry: PageEntry): PagePayload {
   } satisfies PagePayload;
 }
 
-function buildPostPayload(locale: Locale, entry: PostEntry): PostPayload {
-  const base = buildPagePayload(locale, entry);
+async function buildPostPayload(locale: Locale, entry: PostEntry): Promise<PostPayload> {
+  const base = await buildPagePayload(locale, entry);
   const canonicalUrl = pickLocalized(entry.canonicalUrl, locale) ?? pickLocalized(entry.canonicalUrl, FALLBACK_LOCALE);
   return {
     ...base,
@@ -691,17 +745,38 @@ function buildPostPayload(locale: Locale, entry: PostEntry): PostPayload {
   } satisfies PostPayload;
 }
 
-async function getContentFileStat(collection: 'pages' | 'posts', slugKey: string): Promise<Date | undefined> {
+async function getContentFileStat(
+  collection: 'pages' | 'posts',
+  slugKey: string,
+  content?: Localized<string>
+): Promise<Date | undefined> {
   if (!slugKey) {
     return undefined;
   }
-  const filePath = path.join(process.cwd(), 'src/content', collection, `${slugKey}.json`);
-  try {
-    const stats = await fs.stat(filePath);
-    return stats.mtime;
-  } catch {
+
+  const basePath = path.join(process.cwd(), 'content', collection, `${slugKey}.json`);
+  const contentReferences = collectContentReferences(content);
+  const candidates = [basePath, ...contentReferences.map((reference) => reference.absolute)];
+
+  const stats = await Promise.all(
+    candidates.map(async (candidate) => {
+      try {
+        return await fs.stat(candidate);
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  const timestamps = stats
+    .filter((stat): stat is NonNullable<typeof stat> => Boolean(stat))
+    .map((stat) => stat.mtime.getTime());
+
+  if (timestamps.length === 0) {
     return undefined;
   }
+
+  return new Date(Math.max(...timestamps));
 }
 
 function toValidDate(value?: string | null): Date | undefined {
@@ -769,8 +844,8 @@ export async function getPostBySlug(locale: Locale, slug: string): Promise<PostP
   if (!match) {
     return null;
   }
-  const payload = buildPostPayload(locale, match.entry);
-  const fileDate = await getContentFileStat('posts', match.slugKey);
+  const payload = await buildPostPayload(locale, match.entry);
+  const fileDate = await getContentFileStat('posts', match.slugKey, match.entry.content);
   const publishedAtDate = toValidDate(match.entry.datePublished ?? null);
   const updatedAtDate = toValidDate(match.entry.updatedAt ?? null);
   const latest = mergeLatestDate(fileDate, updatedAtDate, publishedAtDate);
@@ -796,8 +871,8 @@ export async function getAllPosts(locale: Locale): Promise<PostPayload[]> {
   const entries = await getPostsEntries();
   const posts = await Promise.all(
     entries.map(async ({ entry, slugKey }) => {
-      const payload = buildPostPayload(locale, entry);
-      const fileDate = await getContentFileStat('posts', slugKey);
+      const payload = await buildPostPayload(locale, entry);
+      const fileDate = await getContentFileStat('posts', slugKey, entry.content);
       const publishedAtDate = toValidDate(entry.datePublished ?? null);
       const updatedAtDate = toValidDate(entry.updatedAt ?? null);
       const latest = mergeLatestDate(fileDate, updatedAtDate, publishedAtDate);
@@ -818,7 +893,7 @@ export async function getSitemapContentEntries(): Promise<SitemapContentEntry[]>
   const pages = await Promise.all(
     pageEntries.map(async ({ entry, slugKey }) => {
       const slugRecord = mapLocalizedSlugRecord(entry.slug);
-      const fileDate = await getContentFileStat('pages', slugKey);
+      const fileDate = await getContentFileStat('pages', slugKey, entry.content);
       const updatedAtDate = toValidDate(entry.updatedAt ?? null);
       const latest = mergeLatestDate(fileDate, updatedAtDate);
       return {
@@ -832,7 +907,7 @@ export async function getSitemapContentEntries(): Promise<SitemapContentEntry[]>
   const posts = await Promise.all(
     postEntries.map(async ({ entry, slugKey }) => {
       const slugRecord = mapLocalizedSlugRecord(entry.slug);
-      const fileDate = await getContentFileStat('posts', slugKey);
+      const fileDate = await getContentFileStat('posts', slugKey, entry.content);
       const publishedAtDate = toValidDate(entry.datePublished ?? null);
       const updatedAtDate = toValidDate(entry.updatedAt ?? null);
       const latest = mergeLatestDate(fileDate, updatedAtDate, publishedAtDate);
