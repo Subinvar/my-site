@@ -29,6 +29,7 @@ type RawPageEntry = {
   status?: 'draft' | 'published';
   updatedAt?: string | null;
   excerpt?: Localized<string>;
+  slugKey?: string | null;
 };
 
 type RawPostEntry = RawPageEntry & {
@@ -237,14 +238,46 @@ async function resolveLocalizedContent(content: Localized<string | { content?: s
   return readMarkdoc(content[defaultLocale] ?? null);
 }
 
-const readSiteSingleton = cache(async () => {
+type SiteSingleton = {
+  siteName?: Localized<string>;
+  brand?: {
+    siteName?: Localized<string>;
+    tagline?: Localized<string>;
+    contacts?: {
+      email?: string | null;
+      phone?: string | null;
+      address?: Localized<string>;
+    } | null;
+  } | null;
+  tagline?: Localized<string>;
+  contacts?: {
+    email?: string | null;
+    phone?: string | null;
+    address?: Localized<string>;
+  } | null;
+  defaultSeo?: Localized<RawSeo>;
+  meta?: {
+    domain?: string | null;
+    robots?: {
+      index?: boolean | null;
+      follow?: boolean | null;
+    } | null;
+  } | null;
+};
+
+type NavigationSingleton = {
+  headerLinks?: NavigationEntry[];
+  footerLinks?: NavigationEntry[];
+};
+
+const readSiteSingleton = cache(async (): Promise<SiteSingleton | null> => {
   const reader = getReader();
-  return (await reader.singletons.site.read()) as any;
+  return ((await reader.singletons.site.read()) ?? null) as SiteSingleton | null;
 });
 
-const readNavigationSingleton = cache(async () => {
+const readNavigationSingleton = cache(async (): Promise<NavigationSingleton | null> => {
   const reader = getReader();
-  return (await reader.singletons.navigation.read()) as any;
+  return ((await reader.singletons.navigation.read()) ?? null) as NavigationSingleton | null;
 });
 
 const readPagesCollection = cache(async () => {
@@ -266,7 +299,7 @@ function resolveNavigationLinks(
   if (!Array.isArray(links)) {
     return [];
   }
-  return links
+  const withOrder = links
     .map((link, index) => {
       const id = toOptionalString(link.id) ?? `link-${index}`;
       const label = pickLocalized(link.label, locale) ?? '';
@@ -278,7 +311,7 @@ function resolveNavigationLinks(
         return null;
       }
       const order = typeof link.order === 'number' ? link.order : Number.POSITIVE_INFINITY;
-      return {
+      const orderedLink: NavigationLink & { order: number } = {
         id,
         label: label || href,
         href,
@@ -286,11 +319,20 @@ function resolveNavigationLinks(
         newTab: Boolean(link.newTab),
         localizedPath,
         order,
-      } as NavigationLink & { order: number };
+      };
+      return orderedLink;
     })
-    .filter((value): value is (NavigationLink & { order: number }) => value !== null)
-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
-    .map(({ order: _order, ...link }) => link);
+    .filter((value): value is NavigationLink & { order: number } => value !== null)
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+
+  return withOrder.map(({ id, label, href, isExternal, newTab, localizedPath }) => ({
+    id,
+    label,
+    href,
+    isExternal,
+    newTab,
+    localizedPath,
+  } satisfies NavigationLink));
 }
 
 function buildInternalPath(locale: Locale, pathValue: string): string {
@@ -303,7 +345,7 @@ function computeEntryId(entry: RawPageEntry | RawPostEntry, fallback: string): s
   if (id) {
     return id;
   }
-  const slugFallback = toOptionalString((entry as any).slugKey ?? undefined);
+  const slugFallback = toOptionalString(entry.slugKey ?? undefined);
   if (slugFallback) {
     return slugFallback;
   }
@@ -385,6 +427,36 @@ export async function getAllPages(): Promise<PageSummary[]> {
   });
 }
 
+export async function getPageBySlug(slug: string, locale: Locale): Promise<PageContent | null> {
+  const entries = await readPagesCollection();
+  const record = entries.find(({ entry }) => {
+    const slugByLocale = mapLocalizedSlugs(entry.slug);
+    return slugByLocale[locale] === slug;
+  });
+  if (!record) {
+    return null;
+  }
+  if (!isPublished(record.entry)) {
+    return null;
+  }
+  const slugByLocale = mapLocalizedSlugs(record.entry.slug);
+  const title = pickLocalized(record.entry.title, locale) ?? '';
+  const content = await resolveLocalizedContent(record.entry.content, locale);
+  const seo = mapSeo(pickLocalized(record.entry.seo, locale));
+  const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
+  return {
+    id: computeEntryId(record.entry, record.key),
+    locale,
+    title,
+    slug,
+    slugByLocale,
+    content,
+    seo,
+    excerpt,
+    updatedAt: record.entry.updatedAt ?? null,
+  } satisfies PageContent;
+}
+
 export async function getAllPosts(): Promise<PostSummary[]> {
   const entries = await readPostsCollection();
   return entries.map(({ entry, key }) => {
@@ -439,6 +511,15 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
 
 export async function getPostAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
   const entries = await readPostsCollection();
+  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
+  if (!record) {
+    return {};
+  }
+  return mapLocalizedSlugs(record.entry.slug);
+}
+
+export async function getPageAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
+  const entries = await readPagesCollection();
   const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
   if (!record) {
     return {};

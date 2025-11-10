@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { findTargetLocale, switchLocalePath, type EntityWithLocalizedSlugs } from '@/lib/paths';
 import { getAllPosts, getNavigation, getNavigationEntityByPath, getSite, type NavigationLink } from '@/lib/keystatic';
-import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
+import { isLocale, type Locale } from '@/lib/i18n';
 
 type LocaleLayoutProps = {
   children: ReactNode;

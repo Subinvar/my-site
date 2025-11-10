@@ -128,7 +128,7 @@ function createComponents(locale: Locale) {
         children ?? computedLabel
       );
     },
-  } satisfies Record<string, (props: any) => ReactNode>;
+  } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }
 
 export async function render(content: MarkdocContent, locale: Locale): Promise<ReactNode> {

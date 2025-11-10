@@ -2,8 +2,6 @@ import { collection, config, fields, singleton } from '@keystatic/core';
 
 const locales = ['ru', 'en'] as const;
 
-type Locale = (typeof locales)[number];
-
 type LocalizedFieldOptions = {
   multiline?: boolean;
   isRequired?: boolean;
