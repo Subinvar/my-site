@@ -22,6 +22,10 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
 
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <link rel="alternate" type="application/atom+xml" href="/ru/feed.xml" title="Atom feed (ru-RU)" />
+        <link rel="alternate" type="application/atom+xml" href="/en/feed.xml" title="Atom feed (en-US)" />
+      </head>
       <body className="bg-white text-zinc-900 antialiased font-sans">
         {children}
       </body>

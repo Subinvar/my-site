@@ -17,6 +17,7 @@ test('buildOrganizationJsonLd returns schema.org organization payload', () => {
 
   assert.equal(data['@type'], 'Organization');
   assert.equal(data.name, 'Мой сайт');
+  assert.equal(data.inLanguage, 'ru-RU');
   assert.equal(data.telephone, '+7 123 456-78-90');
   assert.equal(data.logo?.['@type'], 'ImageObject');
 });
@@ -48,6 +49,7 @@ test('buildBreadcrumbListJsonLd adds root and current items', () => {
   assert.equal(data['@type'], 'BreadcrumbList');
   assert.equal(data.itemListElement.length, 2);
   assert.equal(data.itemListElement[0].position, 1);
+  assert.equal(data.inLanguage, 'ru-RU');
   assert.equal(data.itemListElement[1].name, 'О проекте');
 });
 
@@ -67,6 +69,7 @@ test('buildArticleJsonLd keeps publication metadata', () => {
 
   assert.equal(data['@type'], 'Article');
   assert.equal(data.headline, 'Первый пост');
+  assert.equal(data.inLanguage, 'ru-RU');
   assert.equal(data.datePublished, '2024-01-01T00:00:00.000Z');
   assert.equal(data.dateModified, '2024-02-01T00:00:00.000Z');
   assert.equal(data.publisher?.name, 'Мой сайт');

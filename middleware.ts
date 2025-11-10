@@ -54,5 +54,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|keystatic).*)"],
+  matcher: [
+    "/((?!_next|api|keystatic|.*\\.[^/]+$).*)",
+    "/((?=.+\\.(?:xml|webmanifest)$).*)",
+  ],
 };

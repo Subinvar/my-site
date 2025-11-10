@@ -41,6 +41,7 @@ export function buildOrganizationJsonLd({
     '@type': 'Organization',
     name,
     description,
+    inLanguage: languageTag,
     url: getSiteUrl(),
     email,
     telephone: phone,
@@ -83,7 +84,9 @@ export function buildWebsiteJsonLd({
     description,
     url: siteUrl,
     inLanguage: languageTag,
-    alternateName: alternateLocales.length ? alternateLocales.map((item) => `${name} (${item})`) : undefined,
+    alternateName: alternateLocales.length
+      ? alternateLocales.map((item) => `${name} (${toLanguageTag(item)})`)
+      : undefined,
     potentialAction: searchUrl
       ? {
           '@type': 'SearchAction',

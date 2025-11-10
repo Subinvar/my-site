@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './i18n';
+import { localizePath, type Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE, toLanguageTag } from './i18n';
 import { buildAbsoluteUrl } from './site-url';
 
 type OgImage = {
@@ -44,16 +44,28 @@ export function buildPageMetadata({
   const canonical = buildAbsoluteUrl(canonicalPath);
 
   const languages: Record<string, string> = {};
+  const openGraphAlternateLocales: string[] = [];
+  const languageTag = toLanguageTag(locale);
+  const openGraphLocale = languageTag.replace('-', '_');
+  const defaultLanguageTag = toLanguageTag(DEFAULT_LOCALE);
   for (const candidate of SUPPORTED_LOCALES) {
     const translatedSlug = localizedSlugs?.[candidate];
-    if (translatedSlug === undefined) {
+    if (translatedSlug === undefined || translatedSlug === null) {
       continue;
     }
-    languages[candidate] = buildAbsoluteUrl(localizePath(candidate, translatedSlug));
+    const languageTag = toLanguageTag(candidate);
+    languages[languageTag] = buildAbsoluteUrl(localizePath(candidate, translatedSlug));
+    if (candidate !== locale) {
+      openGraphAlternateLocales.push(languageTag.replace('-', '_'));
+    }
   }
 
-  if (languages[DEFAULT_LOCALE]) {
-    languages['x-default'] = languages[DEFAULT_LOCALE];
+  if (!languages[languageTag]) {
+    languages[languageTag] = canonical;
+  }
+
+  if (languages[defaultLanguageTag]) {
+    languages['x-default'] = languages[defaultLanguageTag];
   }
 
   const ogImage = pageSeo?.ogImage ?? siteSeo?.ogImage;
@@ -83,8 +95,8 @@ export function buildPageMetadata({
     openGraph: {
       title: title ?? undefined,
       description: description ?? undefined,
-      locale,
-      alternateLocale: Object.keys(languages).filter((code) => code !== locale),
+      locale: openGraphLocale,
+      alternateLocale: openGraphAlternateLocales,
       url: canonical,
       siteName: siteName ?? undefined,
       images: ogImages,
