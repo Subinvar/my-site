@@ -1,5 +1,6 @@
 import { getSite } from '@/lib/keystatic';
 import { defaultLocale } from '@/lib/i18n';
+import { resolveRobotsMeta } from '@/lib/seo';
 import { resolveSiteOrigin } from '@/lib/origin';
 
 function buildRobotsContent({
@@ -23,7 +24,8 @@ function buildRobotsContent({
 export async function GET() {
   const site = await getSite(defaultLocale);
   const origin = resolveSiteOrigin(site.domain);
-  const body = buildRobotsContent({ allowIndexing: site.robots.index, origin });
+  const robots = resolveRobotsMeta(site.robots);
+  const body = buildRobotsContent({ allowIndexing: robots.index, origin });
   return new Response(body, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',

@@ -4,31 +4,18 @@ import { render } from '@/lib/markdoc';
 import { buildPath } from '@/lib/paths';
 import { getAllPages, getPageBySlug, getSite } from '@/lib/keystatic';
 import { buildAlternates, mergeSeo } from '@/lib/seo';
-import { isLocale, locales, type Locale } from '@/lib/i18n';
+import {
+  HREFLANG_CODE,
+  OPEN_GRAPH_LOCALE,
+  buildAlternates,
+  mergeSeo,
+  resolveAlternateOgLocales,
+  resolveOpenGraphImage,
+  resolveRobotsMeta,
+} from '@/lib/seo';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
-};
-
-const OPEN_GRAPH_LOCALE: Record<Locale, string> = { ru: 'ru_RU', en: 'en_US' };
-
-const HREFLANG_CODE: Record<Locale, string> = {
-  ru: 'ru-RU',
-  en: 'en-US',
-};
-
-const toAbsoluteUrl = (value: string | undefined, canonicalBase?: string | null): string | undefined => {
-  if (!value) {
-    return undefined;
-  }
-  if (/^https?:\/\//.test(value)) {
-    return value;
-  }
-  if (!canonicalBase) {
-    return value;
-  }
-  const base = canonicalBase.replace(/\/+$/, '');
-  return `${base}${value}`;
 };
 
 const buildSlugMap = (slugByLocale: Partial<Record<Locale, string>>): Partial<Record<Locale, string>> => {
@@ -124,7 +111,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const currentHrefLang = HREFLANG_CODE[locale];
   const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
-  const ogImageUrl = toAbsoluteUrl(merged.ogImage?.src, site.seo.canonicalBase);
+  const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
+  const alternateOgLocales = resolveAlternateOgLocales(locale, slugMap);
   const descriptionFallback = merged.description ?? page.description ?? page.excerpt ?? undefined;
   const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
   const ogTitleFallback = merged.ogTitle ?? merged.title ?? page.title;
@@ -133,29 +121,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: merged.title ?? page.title,
     description: descriptionFallback,
     alternates: alternatesData,
+    robots: resolveRobotsMeta(site.robots),
     openGraph: {
       type: 'website',
       locale: OPEN_GRAPH_LOCALE[locale],
       url: preferredUrl,
       title: ogTitleFallback,
       description: ogDescriptionFallback,
-      images: merged.ogImage
-        ? [
-            {
-              url: ogImageUrl ?? merged.ogImage.src,
-              width: merged.ogImage.width ?? undefined,
-              height: merged.ogImage.height ?? undefined,
-              alt: merged.ogImage.alt ?? undefined,
-            },
-          ]
-        : undefined,
+      alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
+      images: ogImage ? [ogImage] : undefined,
     },
     twitter: {
       card: merged.ogImage ? 'summary_large_image' : 'summary',
       site: merged.twitterHandle,
       title: ogTitleFallback,
       description: ogDescriptionFallback,
-      images: merged.ogImage ? [ogImageUrl ?? merged.ogImage.src] : undefined,
+      images: ogImage ? [ogImage.url] : undefined,
     },
   } satisfies Metadata;
 }

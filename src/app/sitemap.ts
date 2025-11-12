@@ -1,35 +1,54 @@
 import type { MetadataRoute } from 'next';
 import { buildPath } from '@/lib/paths';
-import { getAllPages, getAllPosts } from '@/lib/keystatic';
-import { locales, type Locale } from '@/lib/i18n';
+import { getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
+import { defaultLocale, locales, type Locale } from '@/lib/i18n';
+import { HREFLANG_CODE, toAbsoluteUrl } from '@/lib/seo';
 
-function buildAlternates(collection: 'pages' | 'posts', slugByLocale: Partial<Record<Locale, string>>) {
+function buildAlternateLanguages(
+  collection: 'pages' | 'posts',
+  slugByLocale: Partial<Record<Locale, string>>,
+  canonicalBase?: string | null
+) {
   const languages: Record<string, string> = {};
   for (const locale of locales) {
     const slug = slugByLocale[locale];
-    if (slug === undefined) {
+    if (slug === undefined || slug === null) {
+      continue;
+    }
+    if (collection === 'posts' && !slug) {
       continue;
     }
     const segments = collection === 'posts' ? ['posts', slug] : slug ? [slug] : [];
-    languages[locale] = buildPath(locale, segments);
+    const relative = buildPath(locale, segments);
+    languages[HREFLANG_CODE[locale]] = toAbsoluteUrl(relative, canonicalBase) ?? relative;
   }
+
+  const defaultSlug = slugByLocale[defaultLocale];
+  if (defaultSlug !== undefined && defaultSlug !== null) {
+    const segments = collection === 'posts' ? ['posts', defaultSlug] : defaultSlug ? [defaultSlug] : [];
+    const relative = buildPath(defaultLocale, segments);
+    languages['x-default'] = toAbsoluteUrl(relative, canonicalBase) ?? relative;
+  }
+
   return languages;
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [pages, posts] = await Promise.all([getAllPages(), getAllPosts()]);
+  const [pages, posts, site] = await Promise.all([getAllPages(), getAllPosts(), getSite(defaultLocale)]);
+  const canonicalBase = site.seo.canonicalBase;
   const entries: MetadataRoute.Sitemap = [];
 
   for (const page of pages) {
     if (!page.published) {
       continue;
     }
-    const languages = buildAlternates('pages', page.slugByLocale);
+    const languages = buildAlternateLanguages('pages', page.slugByLocale, canonicalBase);
     for (const locale of locales) {
-      if (!(locale in languages)) {
+      const hrefLang = HREFLANG_CODE[locale];
+      const url = languages[hrefLang];
+      if (!url) {
         continue;
       }
-      const url = languages[locale];
       entries.push({
         url,
         alternates: { languages },
@@ -44,12 +63,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (!post.published) {
       continue;
     }
-    const languages = buildAlternates('posts', post.slugByLocale);
+    const languages = buildAlternateLanguages('posts', post.slugByLocale, canonicalBase);
     for (const locale of locales) {
-      if (!(locale in languages)) {
+      const hrefLang = HREFLANG_CODE[locale];
+      const url = languages[hrefLang];
+      if (!url) {
         continue;
       }
-      const url = languages[locale];
       entries.push({
         url,
         alternates: { languages },

@@ -12,18 +12,26 @@ import {
   getSite,
   type NavigationLink,
 } from '@/lib/keystatic';
-import { buildAlternates, mergeSeo } from '@/lib/seo';
+import {
+  HREFLANG_CODE,
+  OPEN_GRAPH_LOCALE,
+  buildAlternates,
+  mergeSeo,
+  resolveAlternateOgLocales,
+  resolveOpenGraphImage,
+  resolveRobotsMeta,
+} from '@/lib/seo';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { geistMono, geistSans } from '../fonts';
 
-const OPEN_GRAPH_LOCALE: Record<Locale, string> = {
-  ru: 'ru_RU',
-  en: 'en_US',
+const SKIP_LINK_COPY: Record<Locale, string> = {
+  ru: 'Пропустить к основному контенту',
+  en: 'Skip to main content',
 };
 
-const HREFLANG_CODE: Record<Locale, string> = {
-  ru: 'ru-RU',
-  en: 'en-US',
+const NAVIGATION_LABEL: Record<Locale, string> = {
+  ru: 'Главная навигация',
+  en: 'Primary navigation',
 };
 
 type LocaleLayoutProps = {
@@ -43,13 +51,13 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-function SkipToContentLink() {
+function SkipToContentLink({ locale }: { locale: Locale }) {
   return (
     <a
       href="#main"
-      className="sr-only focus:absolute focus:left-4 focus:top-4 focus:not-sr-only focus:rounded focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-blue-600 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
     >
-      Пропустить к основному контенту
+      {SKIP_LINK_COPY[locale]}
     </a>
   );
 }
@@ -57,9 +65,11 @@ function SkipToContentLink() {
 function NavigationList({
   links,
   currentPath,
+  locale,
 }: {
   links: NavigationLink[];
   currentPath: string;
+  locale: Locale;
 }) {
   if (!links.length) {
     return null;
@@ -68,13 +78,13 @@ function NavigationList({
   const normalizedCurrent = normalizePathname(currentPath);
 
   return (
-    <nav aria-label="Главная навигация">
+    <nav aria-label={NAVIGATION_LABEL[locale]}>
       <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
         {links.map((link) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
-          const className = `inline-flex items-center gap-1 rounded px-2 py-1 text-zinc-700 transition-colors hover:text-zinc-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
+          const className = `inline-flex items-center gap-1 rounded px-2 py-1 text-zinc-700 transition-colors hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
             isActive ? 'text-zinc-900 underline underline-offset-4' : ''
           }`;
 
@@ -133,20 +143,6 @@ async function resolveEntityForPath(locale: Locale, pathname: string): Promise<E
   return undefined;
 }
 
-const toAbsoluteUrl = (value: string | undefined, canonicalBase?: string | null): string | undefined => {
-  if (!value) {
-    return undefined;
-  }
-  if (/^https?:\/\//.test(value)) {
-    return value;
-  }
-  if (!canonicalBase) {
-    return value;
-  }
-  const base = canonicalBase.replace(/\/+$/, '');
-  return `${base}${value}`;
-};
-
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) {
@@ -169,36 +165,30 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   });
 
   const currentHrefLang = HREFLANG_CODE[locale];
-  const pageUrl = alternates.languages[currentHrefLang];
-  const ogImageUrl = toAbsoluteUrl(merged.ogImage?.src, site.seo.canonicalBase);
+  const pageUrl = alternates.languages[currentHrefLang] ?? alternates.canonical;
+  const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
+  const alternateOgLocales = resolveAlternateOgLocales(locale, slugMap);
 
   return {
     title: merged.title,
     description: merged.description,
     alternates,
+    robots: resolveRobotsMeta(site.robots),
     openGraph: {
       type: 'website',
       locale: OPEN_GRAPH_LOCALE[locale],
       url: pageUrl,
       title: merged.ogTitle ?? merged.title,
       description: merged.ogDescription ?? merged.description,
-      images: merged.ogImage
-        ? [
-            {
-              url: ogImageUrl ?? merged.ogImage.src,
-              width: merged.ogImage.width ?? undefined,
-              height: merged.ogImage.height ?? undefined,
-              alt: merged.ogImage.alt ?? undefined,
-            },
-          ]
-        : undefined,
+      alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
+      images: ogImage ? [ogImage] : undefined,
     },
     twitter: {
       card: merged.ogImage ? 'summary_large_image' : 'summary',
       site: merged.twitterHandle,
       title: merged.ogTitle ?? merged.title,
       description: merged.ogDescription ?? merged.description,
-      images: merged.ogImage ? [ogImageUrl ?? merged.ogImage.src] : undefined,
+      images: ogImage ? [ogImage.url] : undefined,
     },
   } satisfies Metadata;
 }
@@ -228,7 +218,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="flex min-h-screen flex-col bg-white text-zinc-900 antialiased">
-        <SkipToContentLink />
+        <SkipToContentLink locale={locale} />
         <header className="border-b border-zinc-200 bg-white">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-6 px-6 py-6">
             <div>
@@ -236,11 +226,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
               <p className="text-lg font-semibold text-zinc-900">{site.tagline}</p>
             </div>
             <div className="flex items-center gap-6">
-              <NavigationList links={navigation.header} currentPath={pathname} />
+              <NavigationList links={navigation.header} currentPath={pathname} locale={locale} />
               {switcherHref ? (
                 <Link
                   href={switcherHref}
-                  className="rounded-full border border-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+                  className="rounded-full border border-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                 >
                   {targetLocale.toUpperCase()}
                 </Link>
@@ -253,11 +243,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         </main>
         <footer className="border-t border-zinc-200 bg-white">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-8 text-sm text-zinc-600">
-            <NavigationList links={navigation.footer} currentPath={pathname} />
+            <NavigationList links={navigation.footer} currentPath={pathname} locale={locale} />
             <div className="flex flex-wrap items-center gap-4">
               {site.contacts.email ? (
                 <a
-                  className="hover:text-zinc-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+                  className="hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                   href={`mailto:${site.contacts.email}`}
                 >
                   {site.contacts.email}
@@ -265,7 +255,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
               ) : null}
               {site.contacts.phone ? (
                 <a
-                  className="hover:text-zinc-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+                  className="hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
                   href={`tel:${site.contacts.phone}`}
                 >
                   {site.contacts.phone}

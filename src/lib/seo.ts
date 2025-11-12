@@ -1,17 +1,29 @@
-import { locales, type Locale } from './i18n';
+import { defaultLocale, locales, type Locale } from './i18n';
 import type { ResolvedSeo, SeoImage, SiteSeo } from './keystatic';
 
-const HREFLANG_MAP: Record<Locale, string> = {
+export const HREFLANG_CODE: Record<Locale, string> = {
   ru: 'ru-RU',
   en: 'en-US',
 };
 
-type SlugMap = Partial<Record<Locale, string | null | undefined>>;
+export const OPEN_GRAPH_LOCALE: Record<Locale, string> = {
+  ru: 'ru_RU',
+  en: 'en_US',
+};
 
-type BuildAlternatesOptions = {
-  locale: Locale;
-  slugMap: SlugMap;
-  canonicalBase?: string | null;
+const FALLBACK_OG_DIMENSIONS = {
+  width: 1200,
+  height: 630,
+};
+
+const MIME_BY_EXTENSION: Record<string, string> = {
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  avif: 'image/avif',
 };
 
 const normalizePath = (path: string): string => {
@@ -23,6 +35,14 @@ const normalizePath = (path: string): string => {
   }
   const trimmed = path.replace(/^\/+/g, '');
   return `/${trimmed}`;
+};
+
+type SlugMap = Partial<Record<Locale, string | null | undefined>>;
+
+type BuildAlternatesOptions = {
+  locale: Locale;
+  slugMap: SlugMap;
+  canonicalBase?: string | null;
 };
 
 export const buildAlternates = ({
@@ -43,7 +63,7 @@ export const buildAlternates = ({
     }
     const normalized = normalizePath(slug);
     const href = base ? `${base}${normalized}` : normalized || '/';
-    languages[HREFLANG_MAP[candidate]] = href;
+    languages[HREFLANG_CODE[candidate]] = href;
   }
 
   const canonicalSlug = slugMap[locale];
@@ -53,6 +73,13 @@ export const buildAlternates = ({
         return base ? `${base}${normalized}` : normalized || '/';
       })()
     : undefined;
+
+  const defaultSlug = slugMap[defaultLocale];
+  if (defaultSlug !== undefined && defaultSlug !== null) {
+    const normalized = normalizePath(defaultSlug);
+    const href = base ? `${base}${normalized}` : normalized || '/';
+    languages['x-default'] = href;
+  }
 
   return { canonical, languages };
 };
@@ -110,4 +137,96 @@ export const mergeSeo = ({ site, page, defaults }: MergeSeoInput): MergedSeo => 
     canonicalOverride,
     twitterHandle,
   } satisfies MergedSeo;
+};
+
+const toAbsolutePath = (value: string): string => {
+  if (value.startsWith('/')) {
+    return value;
+  }
+  const normalized = value.replace(/^\/+/g, '');
+  return `/${normalized}`;
+};
+
+export const toAbsoluteUrl = (
+  value: string | null | undefined,
+  canonicalBase?: string | null
+): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  const path = toAbsolutePath(trimmed);
+  if (!canonicalBase) {
+    return path;
+  }
+  const base = canonicalBase.replace(/\/+$/, '');
+  return `${base}${path}`;
+};
+
+const extractExtension = (src: string): string | undefined => {
+  const withoutParams = src.split('?')[0]?.split('#')[0];
+  if (!withoutParams) {
+    return undefined;
+  }
+  const segments = withoutParams.split('.');
+  const extension = segments.length > 1 ? segments.pop() : undefined;
+  return extension?.toLowerCase();
+};
+
+export const resolveOpenGraphImage = (
+  image: SeoImage | null | undefined,
+  canonicalBase?: string | null
+) => {
+  if (!image) {
+    return undefined;
+  }
+  const absoluteUrl = toAbsoluteUrl(image.src, canonicalBase) ?? image.src;
+  const width = image.width ?? FALLBACK_OG_DIMENSIONS.width;
+  const height = image.height ?? FALLBACK_OG_DIMENSIONS.height;
+  const extension = extractExtension(image.src ?? '');
+  const type = extension ? MIME_BY_EXTENSION[extension] ?? undefined : undefined;
+
+  return {
+    url: absoluteUrl,
+    width,
+    height,
+    alt: image.alt ?? undefined,
+    type,
+  };
+};
+
+export const resolveAlternateOgLocales = (
+  currentLocale: Locale,
+  slugMap: SlugMap
+): string[] => {
+  return locales
+    .filter((candidate) => candidate !== currentLocale && slugMap[candidate] !== undefined && slugMap[candidate] !== null)
+    .map((candidate) => OPEN_GRAPH_LOCALE[candidate]);
+};
+
+export const resolveRobotsMeta = ({
+  index,
+  follow,
+}: {
+  index: boolean;
+  follow: boolean;
+}) => {
+  const environment = process.env.VERCEL_ENV ?? process.env.NODE_ENV;
+  const isProduction = environment === 'production';
+  if (!isProduction) {
+    return {
+      index: false,
+      follow: false,
+    } as const;
+  }
+  return {
+    index,
+    follow,
+  } as const;
 };
