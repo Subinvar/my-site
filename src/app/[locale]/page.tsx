@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { render } from '@/lib/markdoc';
 import { buildPath } from '@/lib/paths';
 import { getAllPages, getPageById, getSite } from '@/lib/keystatic';
-import { buildAlternates, mergeSeo } from '@/lib/seo';
 import {
   HREFLANG_CODE,
   OPEN_GRAPH_LOCALE,
@@ -13,6 +12,7 @@ import {
   resolveOpenGraphImage,
   resolveRobotsMeta,
 } from '@/lib/seo';
+import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
 
 const HOME_PAGE_ID = 'home';
 

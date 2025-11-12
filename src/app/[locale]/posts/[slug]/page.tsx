@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { render } from '@/lib/markdoc';
 import { buildPath } from '@/lib/paths';
 import { getAllPosts, getPostBySlug, getSite } from '@/lib/keystatic';
-import { buildAlternates, mergeSeo } from '@/lib/seo';
 import {
   HREFLANG_CODE,
   OPEN_GRAPH_LOCALE,
@@ -13,6 +12,7 @@ import {
   resolveOpenGraphImage,
   resolveRobotsMeta,
 } from '@/lib/seo';
+import { isLocale, locales, type Locale } from '@/lib/i18n';
 
 type PostPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
