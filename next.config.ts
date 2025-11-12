@@ -1,6 +1,5 @@
 import type { NextConfig } from "next";
 import createMarkdocPlugin from "@markdoc/next.js";
-import { defaultLocale } from "./src/lib/i18n";
 
 const withMarkdoc = createMarkdocPlugin({
   schemaPath: './markdoc/config.ts',

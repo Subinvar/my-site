@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { locales, type Locale } from "./src/lib/i18n";
+import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(locales);
 const LOCALE_AWARE_EXTENSIONS = new Set([".xml", ".webmanifest"]);
@@ -45,7 +45,13 @@ export function middleware(request: NextRequest) {
   const locale = extractLocale(pathname);
 
   if (!locale) {
-    return NextResponse.next();
+    if (pathname === "/") {
+      return NextResponse.next();
+    }
+
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}${pathname}`;
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();
