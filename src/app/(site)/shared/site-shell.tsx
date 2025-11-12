@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
 import localFont from 'next/font/local';
 
 import { NavigationList } from '@/app/[locale]/navigation-list';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
+import { LanguageSwitcher } from './language-switcher';
 
 const brandFont = localFont({
   src: [
@@ -68,14 +68,11 @@ export function SiteShell({
           </div>
           <div className="flex items-center gap-6">
             <NavigationList links={navigation.header} locale={locale} />
-            {switcherHref ? (
-              <Link
-                href={switcherHref}
-                className="rounded-full border border-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                {targetLocale.toUpperCase()}
-              </Link>
-            ) : null}
+            <LanguageSwitcher
+              currentLocale={locale}
+              targetLocale={targetLocale}
+              href={switcherHref}
+            />
           </div>
         </div>
       </header>

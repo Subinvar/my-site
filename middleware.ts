@@ -5,13 +5,12 @@ import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(locales);
 
-function getExtension(pathname: string): string | null {
-  const lastSegment = pathname.split("/").pop() ?? "";
-  const dotIndex = lastSegment.lastIndexOf(".");
-  if (dotIndex === -1) {
-    return null;
+function hasFileExtension(pathname: string): boolean {
+  const trimmed = pathname.split("?")[0]?.replace(/\/$/, "") ?? "";
+  if (!trimmed) {
+    return false;
   }
-  return lastSegment.slice(dotIndex);
+  return /\.[^/]+$/.test(trimmed);
 }
 
 function extractLocale(pathname: string): Locale | null {
@@ -37,8 +36,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const extension = getExtension(pathname);
-  if (extension) {
+  if (hasFileExtension(pathname)) {
     return NextResponse.next();
   }
 
