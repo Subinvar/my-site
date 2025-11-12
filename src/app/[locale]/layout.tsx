@@ -1,18 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { headers } from 'next/headers';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { NavigationList } from './navigation-list';
 import { findTargetLocale, switchLocalePath, type EntityWithLocalizedSlugs } from '@/lib/paths';
-import {
-  getAllPosts,
-  getNavigation,
-  getNavigationEntityByPath,
-  getSite,
-  type NavigationLink,
-} from '@/lib/keystatic';
+import { getNavigation, getPageBySlug, getPostBySlug, getSite } from '@/lib/keystatic';
 import {
   HREFLANG_CODE,
   OPEN_GRAPH_LOCALE,
@@ -48,26 +42,14 @@ const SKIP_LINK_COPY: Record<Locale, string> = {
   en: 'Skip to main content',
 };
 
-const NAVIGATION_LABEL: Record<Locale, string> = {
-  ru: 'Главная навигация',
-  en: 'Primary navigation',
+type LocaleRouteParams = {
+  locale: string;
+  [key: string]: string | string[];
 };
 
 type LocaleLayoutProps = {
   children: ReactNode;
-  params: Promise<{ locale: string }>;
-};
-
-const normalizePathname = (value: string): string => {
-  const [pathWithoutQuery] = value.split('?');
-  const [path] = (pathWithoutQuery ?? '').split('#');
-  const trimmed = (path ?? '/').replace(/\/+$/, '');
-  return trimmed.length ? trimmed : '/';
-};
-
-const resolveHref = (href: string): string => {
-  const normalized = href.trim();
-  return normalized.length ? normalized : '/';
+  params: Promise<LocaleRouteParams>;
 };
 
 function SkipToContentLink({ locale }: { locale: Locale }) {
@@ -81,84 +63,29 @@ function SkipToContentLink({ locale }: { locale: Locale }) {
   );
 }
 
-function NavigationList({
-  links,
-  currentPath,
-  locale,
-}: {
-  links: NavigationLink[];
-  currentPath: string;
-  locale: Locale;
-}) {
-  if (!links.length) {
-    return null;
-  }
+async function resolveEntityForParams(
+  locale: Locale,
+  params: Partial<LocaleRouteParams>
+): Promise<EntityWithLocalizedSlugs | undefined> {
+  const slugParam = params.slug;
+  const slug = Array.isArray(slugParam) ? slugParam[slugParam.length - 1] : slugParam;
 
-  const normalizedCurrent = normalizePathname(currentPath);
+  if (typeof slug === 'string' && slug.length > 0) {
+    const page = await getPageBySlug(slug, locale);
+    if (page) {
+      return { collection: 'pages', slugs: page.slugByLocale };
+    }
 
-  return (
-    <nav aria-label={NAVIGATION_LABEL[locale]}>
-      <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
-        {links.map((link) => {
-          const href = resolveHref(link.href);
-          const normalizedHref = normalizePathname(href);
-          const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
-          const className = `inline-flex items-center gap-1 rounded px-2 py-1 text-zinc-700 transition-colors hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-            isActive ? 'text-zinc-900 underline underline-offset-4' : ''
-          }`;
-
-          if (link.isExternal) {
-            return (
-              <li key={link.id}>
-                <a
-                  href={href}
-                  target={link.newTab ? '_blank' : undefined}
-                  rel={link.newTab ? 'noopener noreferrer' : undefined}
-                  className={className}
-                >
-                  {link.label}
-                </a>
-              </li>
-            );
-          }
-
-          return (
-            <li key={link.id}>
-              <Link href={href} className={className} aria-current={isActive ? 'page' : undefined}>
-                {link.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
-
-async function resolveEntityForPath(locale: Locale, pathname: string): Promise<EntityWithLocalizedSlugs | undefined> {
-  const normalized = pathname.split('?')[0]?.split('#')[0] ?? '/';
-  const parts = normalized.split('/').filter(Boolean);
-  if (parts.length === 0) {
-    return { collection: 'pages', slugs: { [locale]: '' } };
-  }
-  const [segmentLocale, ...rest] = parts;
-  if (!isLocale(segmentLocale)) {
-    return undefined;
-  }
-  if (!rest.length) {
-    return { collection: 'pages', slugs: { [locale]: '' } };
-  }
-  if (rest[0] === 'posts' && rest[1]) {
-    const posts = await getAllPosts();
-    const match = posts.find((post) => post.slugByLocale[locale] === rest[1]);
-    if (match) {
-      return { collection: 'posts', slugs: match.slugByLocale };
+    const post = await getPostBySlug(slug, locale);
+    if (post) {
+      return { collection: 'posts', slugs: post.slugByLocale };
     }
   }
-  const navigationEntry = await getNavigationEntityByPath(locale, normalized);
-  if (navigationEntry) {
-    return { collection: 'pages', slugs: navigationEntry.slugByLocale };
+
+  if (typeof params.locale === 'string') {
+    return { collection: 'pages', slugs: { [locale]: '' } };
   }
+
   return undefined;
 }
 
@@ -213,7 +140,8 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
 }
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const { locale: rawLocale } = await params;
+  const paramsRecord = await params;
+  const { locale: rawLocale } = paramsRecord;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -222,13 +150,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const locale = rawLocale;
   const [site, navigation] = await Promise.all([getSite(locale), getNavigation(locale)]);
 
-  const headerList = await Promise.resolve(headers());
-  const pathname =
-    headerList.get('x-invoke-path') ??
-    headerList.get('x-matched-path') ??
-    headerList.get('x-next-url') ??
-    `/${locale}`;
-  const entity = await resolveEntityForPath(locale, pathname);
+  const entity = await resolveEntityForParams(locale, paramsRecord);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = entity
     ? switchLocalePath(locale, targetLocale, entity)
@@ -245,7 +167,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
               <p className="text-lg font-semibold text-zinc-900">{site.tagline}</p>
             </div>
             <div className="flex items-center gap-6">
-              <NavigationList links={navigation.header} currentPath={pathname} locale={locale} />
+              <NavigationList links={navigation.header} locale={locale} />
               {switcherHref ? (
                 <Link
                   href={switcherHref}
@@ -262,7 +184,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         </main>
         <footer className="border-t border-zinc-200 bg-white">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-8 text-sm text-zinc-600">
-            <NavigationList links={navigation.footer} currentPath={pathname} locale={locale} />
+            <NavigationList links={navigation.footer} locale={locale} />
             <div className="flex flex-wrap items-center gap-4">
               {site.contacts.email ? (
                 <a
