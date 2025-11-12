@@ -3,24 +3,64 @@ import type { Config } from '@markdoc/markdoc';
 import Image from 'next/image';
 import React, { type ReactNode } from 'react';
 import { locales, type Locale } from './i18n';
+import alertTag from '../../markdoc/tags/alert';
+import figureTag from '../../markdoc/tags/figure';
 
-type CalloutKind = 'note' | 'info' | 'warning';
+export type CalloutKind = 'note' | 'info' | 'warning';
+
+export const ALERT_TONES = ['info', 'success', 'warning', 'error'] as const;
+
+export type AlertTone = (typeof ALERT_TONES)[number];
 
 type MarkdocContent = string | null | undefined;
 
-const CALLOUT_LABELS: Record<CalloutKind, Record<Locale, string>> = {
+export const CALLOUT_LABELS: Record<CalloutKind, Record<Locale, string>> = {
   note: { ru: 'Заметка', en: 'Note' },
   info: { ru: 'Важно', en: 'Info' },
   warning: { ru: 'Предупреждение', en: 'Warning' },
 };
 
-const BUTTON_VARIANTS = ['primary', 'ghost'] as const;
+export const BUTTON_VARIANTS = ['primary', 'ghost'] as const;
 
-type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
+export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 
-const BUTTON_LABELS: Record<ButtonVariant, Record<Locale, string>> = {
+export const BUTTON_LABELS: Record<ButtonVariant, Record<Locale, string>> = {
   primary: { ru: 'Подробнее', en: 'Read more' },
   ghost: { ru: 'Узнать', en: 'Learn more' },
+};
+
+export const ALERT_LABELS: Record<AlertTone, Record<Locale, string>> = {
+  info: { ru: 'Информация', en: 'Info' },
+  success: { ru: 'Успех', en: 'Success' },
+  warning: { ru: 'Предупреждение', en: 'Warning' },
+  error: { ru: 'Ошибка', en: 'Error' },
+};
+
+export const ALERT_TONE_CLASSES: Record<AlertTone, { border: string; background: string; text: string; heading: string }> = {
+  info: {
+    border: 'border-sky-200 dark:border-sky-400/50',
+    background: 'bg-sky-50/80 dark:bg-sky-900/20',
+    text: 'text-sky-900 dark:text-sky-100',
+    heading: 'text-sky-700 dark:text-sky-200',
+  },
+  success: {
+    border: 'border-emerald-200 dark:border-emerald-500/50',
+    background: 'bg-emerald-50/80 dark:bg-emerald-900/20',
+    text: 'text-emerald-900 dark:text-emerald-50',
+    heading: 'text-emerald-700 dark:text-emerald-200',
+  },
+  warning: {
+    border: 'border-amber-200 dark:border-amber-500/50',
+    background: 'bg-amber-50/80 dark:bg-amber-900/20',
+    text: 'text-amber-900 dark:text-amber-100',
+    heading: 'text-amber-700 dark:text-amber-200',
+  },
+  error: {
+    border: 'border-rose-200 dark:border-rose-500/50',
+    background: 'bg-rose-50/80 dark:bg-rose-900/20',
+    text: 'text-rose-900 dark:text-rose-50',
+    heading: 'text-rose-700 dark:text-rose-200',
+  },
 };
 
 export const config: Config = {
@@ -58,13 +98,15 @@ export const config: Config = {
         label: { type: String },
       },
     },
+    alert: alertTag,
+    figure: figureTag,
   },
 };
 
-const DEFAULT_IMAGE_WIDTH = 800;
-const DEFAULT_IMAGE_HEIGHT = 450;
+export const DEFAULT_IMAGE_WIDTH = 800;
+export const DEFAULT_IMAGE_HEIGHT = 450;
 
-function normalizeImageSrc(src: string): string {
+export function normalizeImageSrc(src: string): string {
   const trimmed = src.trim();
   if (!trimmed) {
     return trimmed;
@@ -79,7 +121,7 @@ function normalizeImageSrc(src: string): string {
   return `/uploads/${withoutPrefix}`;
 }
 
-function parseDimension(value: unknown): number | undefined {
+export function parseDimension(value: unknown): number | undefined {
   if (typeof value === 'number' && Number.isFinite(value)) {
     return value;
   }
@@ -92,7 +134,7 @@ function parseDimension(value: unknown): number | undefined {
   return undefined;
 }
 
-function createComponents(locale: Locale) {
+export function createComponents(locale: Locale) {
   const calloutTitleFallback = Object.fromEntries(
     Object.entries(CALLOUT_LABELS).map(([kind, labels]) => [kind, labels[locale] ?? labels.ru])
   ) as Record<CalloutKind, string>;
@@ -100,6 +142,10 @@ function createComponents(locale: Locale) {
   const buttonLabelFallback = Object.fromEntries(
     Object.entries(BUTTON_LABELS).map(([variant, labels]) => [variant, labels[locale] ?? labels.ru])
   ) as Record<ButtonVariant, string>;
+
+  const alertTitleFallback = Object.fromEntries(
+    Object.entries(ALERT_LABELS).map(([tone, labels]) => [tone, labels[locale] ?? labels.ru])
+  ) as Record<AlertTone, string>;
 
   return {
     Callout({
@@ -197,6 +243,94 @@ function createComponents(locale: Locale) {
         height: resolvedHeight,
         sizes: '(min-width: 768px) 720px, 100vw',
       });
+    },
+    Alert({
+      tone = 'info',
+      title,
+      children,
+    }: {
+      tone?: AlertTone;
+      title?: string;
+      dismissible?: boolean;
+      children?: ReactNode;
+    }) {
+      const normalizedTone = ALERT_TONES.includes(tone ?? '') ? (tone as AlertTone) : 'info';
+      const classes = ALERT_TONE_CLASSES[normalizedTone];
+      const heading = title?.trim() || alertTitleFallback[normalizedTone];
+      return React.createElement(
+        'aside',
+        {
+          className: `rounded-lg border ${classes.border} ${classes.background} p-4 text-sm ${classes.text}`,
+        },
+        heading
+          ? React.createElement(
+              'strong',
+              {
+                className: `block text-xs font-semibold uppercase tracking-wide ${classes.heading}`,
+              },
+              heading
+            )
+          : null,
+        React.createElement(
+          'div',
+          { className: 'mt-2 space-y-2 leading-relaxed' },
+          children
+        )
+      );
+    },
+    Figure({
+      src,
+      alt,
+      caption,
+      title,
+      width,
+      height,
+      credit,
+      children,
+    }: {
+      src?: string;
+      alt?: string;
+      caption?: string;
+      title?: string;
+      width?: number | string;
+      height?: number | string;
+      credit?: string;
+      children?: ReactNode;
+    }) {
+      if (!src) {
+        return null;
+      }
+      const normalizedSrc = normalizeImageSrc(src);
+      const resolvedWidth = parseDimension(width) ?? DEFAULT_IMAGE_WIDTH;
+      const resolvedHeight = parseDimension(height) ?? DEFAULT_IMAGE_HEIGHT;
+      const captionContent = caption?.trim();
+      const creditContent = credit?.trim();
+      return React.createElement(
+        'figure',
+        { className: 'my-6 space-y-3 text-center' },
+        React.createElement(Image, {
+          src: normalizedSrc,
+          alt: alt ?? '',
+          title: title ?? undefined,
+          width: resolvedWidth,
+          height: resolvedHeight,
+          sizes: '(min-width: 768px) 720px, 100vw',
+          className: 'mx-auto rounded-md object-cover',
+        }),
+        children,
+        captionContent || creditContent
+          ? React.createElement(
+              'figcaption',
+              { className: 'text-sm text-zinc-600 dark:text-zinc-400' },
+              captionContent
+                ? React.createElement('span', { className: 'block' }, captionContent)
+                : null,
+              creditContent
+                ? React.createElement('span', { className: captionContent ? 'mt-1 block text-xs' : 'block text-xs' }, creditContent)
+                : null
+            )
+          : null
+      );
     },
   } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }

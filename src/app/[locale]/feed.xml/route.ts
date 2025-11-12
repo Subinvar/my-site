@@ -1,8 +1,7 @@
-import Markdoc from '@markdoc/markdoc';
 import { buildPath } from '@/lib/paths';
 import { getAllPosts, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale } from '@/lib/i18n';
-import { config as markdocConfig } from '@/lib/markdoc';
+import { renderToHtml } from '@/lib/markdoc-html';
 import { resolveSiteOrigin } from '@/lib/origin';
 
 type FeedContext = {
@@ -27,13 +26,8 @@ function escapeXml(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
-function renderContentToHtml(content: string | null): string | null {
-  if (!content) {
-    return null;
-  }
-  const ast = Markdoc.parse(content);
-  const transformed = Markdoc.transform(ast, markdocConfig);
-  return Markdoc.renderers.html(transformed);
+function renderContentToHtml(content: string | null, locale: Locale): string | null {
+  return renderToHtml(content, locale);
 }
 
 function toAtomEntry({
@@ -121,7 +115,7 @@ export async function GET(_request: Request, context: FeedContext) {
   });
 
   const feedEntries = sortedPosts.map((post) => {
-    const content = renderContentToHtml(post.content);
+    const content = renderContentToHtml(post.content, locale);
     return toAtomEntry({
       title: post.title,
       url: post.url,
