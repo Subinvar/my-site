@@ -1,5 +1,7 @@
+"use client";
+
 import Link from 'next/link';
-import { headers } from 'next/headers';
+import { useParams } from 'next/navigation';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
 
@@ -16,21 +18,17 @@ const NOT_FOUND_COPY: Record<Locale, { title: string; description: string; back:
   },
 };
 
-async function resolveLocaleFromHeaders(): Promise<Locale> {
-  const headerList = await Promise.resolve(headers());
-  const candidate =
-    headerList.get('x-invoke-path') ?? headerList.get('x-matched-path') ?? headerList.get('x-next-url') ?? `/${defaultLocale}`;
-  const segments = candidate.split('?')[0]?.split('#')[0]?.split('/') ?? [];
-  for (const segment of segments) {
-    if (isLocale(segment)) {
-      return segment;
-    }
+const resolveLocaleFromParams = (param: string | string[] | undefined): Locale => {
+  const candidate = Array.isArray(param) ? param[0] : param;
+  if (candidate && isLocale(candidate)) {
+    return candidate;
   }
   return defaultLocale;
-}
+};
 
-export default async function LocaleNotFound() {
-  const locale = await resolveLocaleFromHeaders();
+export default function LocaleNotFound() {
+  const params = useParams<{ locale?: string | string[] }>();
+  const locale = resolveLocaleFromParams(params?.locale);
   const copy = NOT_FOUND_COPY[locale];
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col items-start gap-6 py-24">
