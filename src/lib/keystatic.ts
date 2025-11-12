@@ -11,20 +11,33 @@ const getReader = cache(() => createReader(process.cwd(), config));
 
 type Localized<T> = Partial<Record<Locale, T | null | undefined>>;
 
-type RawMedia = string | { src?: string | null } | null | undefined;
+type RawMedia =
+  | string
+  | { src?: string | null; width?: number | null; height?: number | null }
+  | null
+  | undefined;
 
-type RawSeo = {
-  title?: string | null;
-  description?: string | null;
-  ogImage?: { image?: RawMedia; alt?: string | null } | null;
+type RawSeoImage = {
+  image?: RawMedia;
+  alt?: string | null;
+} | null;
+
+type RawSeoGroup = {
+  title?: Localized<string>;
+  description?: Localized<string>;
+  ogTitle?: Localized<string>;
+  ogDescription?: Localized<string>;
+  ogImage?: RawSeoImage;
+  canonicalOverride?: string | null;
 } | null;
 
 type RawPageEntry = {
   id?: string | null;
   slug?: Localized<string | { slug?: string | null } | null>;
   title?: Localized<string>;
+  description?: Localized<string>;
   content?: Localized<string | { content?: string | null } | null>;
-  seo?: Localized<RawSeo>;
+  seo?: RawSeoGroup;
   published?: boolean | null;
   status?: 'draft' | 'published';
   updatedAt?: string | null;
@@ -50,10 +63,25 @@ type NavigationEntry = {
   order?: number | null;
 };
 
-export type Seo = {
+export type SeoImage = {
+  src: string;
+  width?: number | null;
+  height?: number | null;
+  alt?: string | null;
+};
+
+export type ResolvedSeo = {
   title?: string | null;
   description?: string | null;
-  ogImage?: { src: string; alt?: string | null } | null;
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImage?: SeoImage | null;
+  canonicalOverride?: string | null;
+};
+
+export type SiteSeo = Omit<ResolvedSeo, 'canonicalOverride'> & {
+  canonicalBase: string | null;
+  twitterHandle: string | null;
 };
 
 export type SiteContent = {
@@ -65,7 +93,7 @@ export type SiteContent = {
     phone: string | null;
     address: string | null;
   };
-  defaultSeo: Seo | null;
+  seo: SiteSeo;
   domain: string | null;
   robots: { index: boolean; follow: boolean };
 };
@@ -91,7 +119,8 @@ export type PageContent = {
   slug: string;
   slugByLocale: Partial<Record<Locale, string>>;
   content: string | null;
-  seo: Seo | null;
+  description: string | null;
+  seo: ResolvedSeo | null;
   excerpt: string | null;
   updatedAt?: string | null;
 };
@@ -125,32 +154,71 @@ function toOptionalString(value: unknown): string | null {
   return trimmed.length ? trimmed : null;
 }
 
-function normalizeMedia(value: RawMedia): string | null {
+function normalizeImageAsset(value: RawMedia): { src: string; width?: number | null; height?: number | null } | null {
   if (!value) {
     return null;
   }
   if (typeof value === 'string') {
-    return value;
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+    return { src: normalizeImagePath(trimmed) };
   }
-  const src = value.src;
-  if (typeof src !== 'string') {
+  const src = typeof value.src === 'string' ? value.src.trim() : '';
+  if (!src) {
     return null;
   }
-  return src;
+  const width = typeof value.width === 'number' ? value.width : undefined;
+  const height = typeof value.height === 'number' ? value.height : undefined;
+  return { src: normalizeImagePath(src), width, height };
 }
 
-function mapSeo(value: RawSeo | undefined | null): Seo | null {
+function normalizeImagePath(src: string): string {
+  if (/^https?:\/\//.test(src)) {
+    return src;
+  }
+  const normalized = src.replace(/^\/+/g, '');
+  return `/${normalized}`;
+}
+
+function mapSeoImage(value: RawSeoImage): SeoImage | null {
   if (!value) {
     return null;
   }
-  const title = toOptionalString(value.title ?? undefined);
-  const description = toOptionalString(value.description ?? undefined);
-  const imageSrc = normalizeMedia(value.ogImage?.image);
-  const ogImage = imageSrc ? { src: imageSrc, alt: toOptionalString(value.ogImage?.alt ?? undefined) } : null;
-  if (!title && !description && !ogImage) {
+  const asset = normalizeImageAsset(value.image);
+  if (!asset) {
     return null;
   }
-  return { title, description, ogImage };
+  return {
+    src: asset.src,
+    width: asset.width,
+    height: asset.height,
+    alt: toOptionalString(value.alt ?? undefined) ?? undefined,
+  } satisfies SeoImage;
+}
+
+function mapResolvedSeo(value: RawSeoGroup | undefined | null, locale: Locale): ResolvedSeo | null {
+  if (!value) {
+    return null;
+  }
+  const title = toOptionalString(pickLocalized(value.title, locale));
+  const description = toOptionalString(pickLocalized(value.description, locale));
+  const ogTitle = toOptionalString(pickLocalized(value.ogTitle, locale));
+  const ogDescription = toOptionalString(pickLocalized(value.ogDescription, locale));
+  const ogImage = mapSeoImage(value.ogImage ?? null);
+  const canonicalOverride = toOptionalString(value.canonicalOverride ?? undefined);
+  if (!title && !description && !ogTitle && !ogDescription && !ogImage && !canonicalOverride) {
+    return null;
+  }
+  return {
+    title,
+    description,
+    ogTitle,
+    ogDescription,
+    ogImage,
+    canonicalOverride,
+  } satisfies ResolvedSeo;
 }
 
 function isPublished(entry: RawPageEntry | RawPostEntry): boolean {
@@ -255,7 +323,15 @@ type SiteSingleton = {
     phone?: string | null;
     address?: Localized<string>;
   } | null;
-  defaultSeo?: Localized<RawSeo>;
+  seo?: {
+    title?: Localized<string>;
+    description?: Localized<string>;
+    ogTitle?: Localized<string>;
+    ogDescription?: Localized<string>;
+    ogImage?: RawSeoImage;
+    canonicalBase?: string | null;
+    twitterHandle?: string | null;
+  } | null;
   meta?: {
     domain?: string | null;
     robots?: {
@@ -354,7 +430,8 @@ function computeEntryId(entry: RawPageEntry | RawPostEntry, fallback: string): s
 
 export async function getSite(locale: Locale): Promise<SiteContent> {
   const site = await readSiteSingleton();
-  const defaultSeo = mapSeo(pickLocalized(site?.defaultSeo, locale));
+  const seoGroup = site?.seo ?? null;
+  const resolvedSeo = mapResolvedSeo(seoGroup, locale);
   const contacts = site?.contacts ?? site?.brand?.contacts ?? {};
   return {
     locale,
@@ -365,7 +442,15 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
       phone: toOptionalString(contacts.phone ?? undefined),
       address: pickLocalized(contacts.address, locale) ?? null,
     },
-    defaultSeo,
+    seo: {
+      title: resolvedSeo?.title ?? null,
+      description: resolvedSeo?.description ?? null,
+      ogTitle: resolvedSeo?.ogTitle ?? null,
+      ogDescription: resolvedSeo?.ogDescription ?? null,
+      ogImage: resolvedSeo?.ogImage ?? null,
+      canonicalBase: toOptionalString(seoGroup?.canonicalBase ?? undefined),
+      twitterHandle: toOptionalString(seoGroup?.twitterHandle ?? undefined),
+    },
     domain: toOptionalString(site?.meta?.domain ?? undefined),
     robots: {
       index: site?.meta?.robots?.index !== false,
@@ -398,7 +483,8 @@ export async function getPageById(id: string, locale: Locale): Promise<PageConte
   const slug = slugByLocale[locale] ?? '';
   const title = pickLocalized(entryRecord.entry.title, locale) ?? '';
   const content = await resolveLocalizedContent(entryRecord.entry.content, locale);
-  const seo = mapSeo(pickLocalized(entryRecord.entry.seo, locale));
+  const seo = mapResolvedSeo(entryRecord.entry.seo ?? null, locale);
+  const description = pickLocalized(entryRecord.entry.description, locale) ?? null;
   const excerpt = pickLocalized(entryRecord.entry.excerpt, locale) ?? null;
   return {
     id,
@@ -407,6 +493,7 @@ export async function getPageById(id: string, locale: Locale): Promise<PageConte
     slug,
     slugByLocale,
     content,
+    description,
     seo,
     excerpt,
     updatedAt: entryRecord.entry.updatedAt ?? null,
@@ -442,7 +529,8 @@ export async function getPageBySlug(slug: string, locale: Locale): Promise<PageC
   const slugByLocale = mapLocalizedSlugs(record.entry.slug);
   const title = pickLocalized(record.entry.title, locale) ?? '';
   const content = await resolveLocalizedContent(record.entry.content, locale);
-  const seo = mapSeo(pickLocalized(record.entry.seo, locale));
+  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
+  const description = pickLocalized(record.entry.description, locale) ?? null;
   const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
   return {
     id: computeEntryId(record.entry, record.key),
@@ -451,6 +539,7 @@ export async function getPageBySlug(slug: string, locale: Locale): Promise<PageC
     slug,
     slugByLocale,
     content,
+    description,
     seo,
     excerpt,
     updatedAt: record.entry.updatedAt ?? null,
@@ -487,11 +576,12 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
   const slugByLocale = mapLocalizedSlugs(record.entry.slug);
   const title = pickLocalized(record.entry.title, locale) ?? '';
   const content = await resolveLocalizedContent(record.entry.content, locale);
-  const seo = mapSeo(pickLocalized(record.entry.seo, locale));
+  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
+  const description = pickLocalized(record.entry.description, locale) ?? null;
   const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
-  const coverSrc = normalizeMedia(record.entry.cover?.image);
-  const cover = coverSrc
-    ? { src: coverSrc, alt: pickLocalized(record.entry.cover?.alt, locale) ?? null }
+  const coverAsset = normalizeImageAsset(record.entry.cover?.image);
+  const cover = coverAsset
+    ? { src: coverAsset.src, alt: pickLocalized(record.entry.cover?.alt, locale) ?? null }
     : null;
   return {
     id: computeEntryId(record.entry, record.key),
@@ -500,6 +590,7 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
     slug,
     slugByLocale,
     content,
+    description,
     seo,
     excerpt,
     updatedAt: record.entry.updatedAt ?? null,

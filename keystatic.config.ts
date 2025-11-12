@@ -57,35 +57,35 @@ const localizedMarkdocReference = (label: string) =>
     { label }
   );
 
-const localizedSeo = (label: string) =>
+const localizedSeoTextFields = (label: string, options: LocalizedFieldOptions = {}) =>
   fields.object(
     Object.fromEntries(
       locales.map((locale) => [
         locale,
-        fields.object({
-          title: fields.text({
-            label: `Заголовок (${locale.toUpperCase()})`,
-            validation: { isRequired: true },
-          }),
-          description: fields.text({
-            label: `Описание (${locale.toUpperCase()})`,
-            multiline: true,
-            validation: { isRequired: true },
-          }),
-          ogImage: fields.object(
-            {
-              image: imageField(`OG-изображение (${locale.toUpperCase()})`),
-              alt: fields.text({
-                label: `Alt (${locale.toUpperCase()})`,
-              }),
-            },
-            { label: `OG (${locale.toUpperCase()})` }
-          ),
+        fields.text({
+          label: `${label} (${locale.toUpperCase()})`,
+          multiline: options.multiline,
         }),
       ])
     ),
     { label }
   );
+
+const localizedSeoGroup = () =>
+  fields.object({
+    title: localizedSeoTextFields('SEO заголовок'),
+    description: localizedSeoTextFields('SEO описание', { multiline: true }),
+    ogTitle: localizedSeoTextFields('OG заголовок'),
+    ogDescription: localizedSeoTextFields('OG описание', { multiline: true }),
+    ogImage: fields.object(
+      {
+        image: imageField('OG-изображение'),
+        alt: fields.text({ label: 'Alt для OG' }),
+      },
+      { label: 'OG-изображение' }
+    ),
+    canonicalOverride: fields.text({ label: 'Canonical override' }),
+  });
 
 const navigationLinks = (label: string) =>
   fields.array(
@@ -120,7 +120,24 @@ export default config({
           phone: fields.text({ label: 'Телефон' }),
           address: localizedText('Адрес', { multiline: true }),
         }),
-        defaultSeo: localizedSeo('SEO по умолчанию'),
+        seo: fields.object({
+          title: localizedSeoTextFields('Title по умолчанию'),
+          description: localizedSeoTextFields('Description по умолчанию', { multiline: true }),
+          ogTitle: localizedSeoTextFields('OG Title по умолчанию'),
+          ogDescription: localizedSeoTextFields('OG Description по умолчанию', { multiline: true }),
+          ogImage: fields.object(
+            {
+              image: imageField('OG-изображение по умолчанию'),
+              alt: fields.text({ label: 'Alt OG по умолчанию' }),
+            },
+            { label: 'OG по умолчанию' }
+          ),
+          canonicalBase: fields.text({
+            label: 'Canonical base URL',
+            validation: { isRequired: true },
+          }),
+          twitterHandle: fields.text({ label: 'Twitter @handle' }),
+        }),
         meta: fields.object({
           domain: fields.text({ label: 'Домен' }),
           robots: fields.object({
@@ -149,9 +166,10 @@ export default config({
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         slug: localizedSlug('Slug'),
         title: localizedText('Заголовок', { isRequired: true }),
+        description: localizedText('Описание', { multiline: true }),
         excerpt: localizedText('Краткое описание', { multiline: true }),
         content: localizedMarkdocReference('Контент (Markdoc)'),
-        seo: localizedSeo('SEO'),
+        seo: localizedSeoGroup(),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
@@ -165,6 +183,7 @@ export default config({
         date: fields.datetime({ label: 'Дата публикации' }),
         slug: localizedSlug('Slug'),
         title: localizedText('Заголовок', { isRequired: true }),
+        description: localizedText('Описание', { multiline: true }),
         excerpt: localizedText('Краткое описание', { multiline: true }),
         content: localizedMarkdocReference('Контент (Markdoc)'),
         tags: fields.array(fields.text({ label: 'Тег' }), {
@@ -175,7 +194,7 @@ export default config({
           image: imageField('Обложка'),
           alt: localizedText('Alt'),
         }),
-        seo: localizedSeo('SEO'),
+        seo: localizedSeoGroup(),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),

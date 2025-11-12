@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { render } from '@/lib/markdoc';
 import { buildPath } from '@/lib/paths';
 import { getAllPages, getPageById, getSite } from '@/lib/keystatic';
+import { buildAlternates, mergeSeo } from '@/lib/seo';
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
 
 const HOME_PAGE_ID = 'home';
@@ -13,56 +14,37 @@ type PageProps = {
 
 const OPEN_GRAPH_LOCALE: Record<Locale, string> = { ru: 'ru_RU', en: 'en_US' };
 
-function resolveAlternates(slugByLocale: Partial<Record<Locale, string>>, currentLocale: Locale) {
-  const languages: Record<string, string> = {};
-  const availableLocales: Locale[] = [];
+const HREFLANG_CODE: Record<Locale, string> = {
+  ru: 'ru-RU',
+  en: 'en-US',
+};
+
+const toAbsoluteUrl = (value: string | undefined, canonicalBase?: string | null): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+  if (/^https?:\/\//.test(value)) {
+    return value;
+  }
+  if (!canonicalBase) {
+    return value;
+  }
+  const base = canonicalBase.replace(/\/+$/, '');
+  return `${base}${value}`;
+};
+
+const buildSlugMap = (slugByLocale: Partial<Record<Locale, string>>): Partial<Record<Locale, string>> => {
+  const record: Partial<Record<Locale, string>> = {};
   for (const candidate of locales) {
     const slug = slugByLocale[candidate];
     if (slug === undefined) {
       continue;
     }
-    availableLocales.push(candidate);
     const segments = slug ? [slug] : [];
-    languages[candidate] = buildPath(candidate, segments);
+    record[candidate] = buildPath(candidate, segments);
   }
-  const canonicalSlug = slugByLocale[currentLocale];
-  const canonicalSegments = canonicalSlug ? [canonicalSlug] : [];
-  return {
-    canonical: buildPath(currentLocale, canonicalSegments),
-    languages,
-    availableLocales,
-  };
-}
-
-function resolveOpenGraph({
-  title,
-  description,
-  locale,
-  slug,
-  ogImage,
-  availableLocales,
-}: {
-  title?: string | null;
-  description?: string | null;
-  locale: Locale;
-  slug: string;
-  ogImage?: { src: string; alt?: string | null } | null;
-  availableLocales: Locale[];
-}): Metadata['openGraph'] {
-  const url = buildPath(locale, slug ? [slug] : []);
-  const alternateLocales = availableLocales
-    .filter((candidate) => candidate !== locale)
-    .map((candidate) => OPEN_GRAPH_LOCALE[candidate]);
-  return {
-    title: title ?? undefined,
-    description: description ?? undefined,
-    url,
-    locale: OPEN_GRAPH_LOCALE[locale],
-    alternateLocale: alternateLocales.length ? alternateLocales : undefined,
-    type: 'website',
-    images: ogImage ? [{ url: ogImage.src, alt: ogImage.alt ?? undefined }] : undefined,
-  };
-}
+  return record;
+};
 
 export default async function HomePage({ params }: PageProps) {
   const { locale: rawLocale } = await params;
@@ -78,12 +60,13 @@ export default async function HomePage({ params }: PageProps) {
   }
 
   const content = await render(page.content, locale);
+  const summary = page.description ?? page.excerpt;
 
   return (
     <article className="prose prose-zinc max-w-none dark:prose-invert">
       <header className="mb-10 space-y-2">
         <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-        {page.excerpt ? <p className="text-lg text-zinc-600">{page.excerpt}</p> : null}
+        {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
       </header>
       <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
     </article>
@@ -122,24 +105,63 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!page) {
     return {};
   }
-  const { canonical, languages, availableLocales } = resolveAlternates(page.slugByLocale, locale);
-  const title = page.seo?.title ?? page.title ?? site.defaultSeo?.title ?? undefined;
-  const description = page.seo?.description ?? site.defaultSeo?.description ?? undefined;
-  const ogImage = page.seo?.ogImage ?? site.defaultSeo?.ogImage ?? undefined;
-  return {
-    title,
-    description,
-    alternates: {
-      canonical,
-      languages,
+  const slugMap = buildSlugMap(page.slugByLocale);
+  const alternates = buildAlternates({
+    locale,
+    slugMap,
+    canonicalBase: site.seo.canonicalBase,
+  });
+  const merged = mergeSeo({
+    site: site.seo,
+    page: page.seo,
+    defaults: {
+      title: page.title,
+      description: page.description ?? page.excerpt ?? null,
     },
-    openGraph: resolveOpenGraph({
-      title,
-      description,
-      locale,
-      slug: page.slug,
-      ogImage,
-      availableLocales,
-    }),
+  });
+
+  const canonicalUrl = merged.canonicalOverride ?? alternates.canonical;
+  const alternatesData: Metadata['alternates'] = {
+    languages: alternates.languages,
+  };
+  if (canonicalUrl) {
+    alternatesData.canonical = canonicalUrl;
+  }
+
+  const currentHrefLang = HREFLANG_CODE[locale];
+  const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
+  const ogImageUrl = toAbsoluteUrl(merged.ogImage?.src, site.seo.canonicalBase);
+  const descriptionFallback = merged.description ?? page.description ?? page.excerpt ?? undefined;
+  const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
+  const ogTitleFallback = merged.ogTitle ?? merged.title ?? page.title;
+
+  return {
+    title: merged.title ?? page.title,
+    description: descriptionFallback,
+    alternates: alternatesData,
+    openGraph: {
+      type: 'website',
+      locale: OPEN_GRAPH_LOCALE[locale],
+      url: preferredUrl,
+      title: ogTitleFallback,
+      description: ogDescriptionFallback,
+      images: merged.ogImage
+        ? [
+            {
+              url: ogImageUrl ?? merged.ogImage.src,
+              width: merged.ogImage.width ?? undefined,
+              height: merged.ogImage.height ?? undefined,
+              alt: merged.ogImage.alt ?? undefined,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: merged.ogImage ? 'summary_large_image' : 'summary',
+      site: merged.twitterHandle,
+      title: ogTitleFallback,
+      description: ogDescriptionFallback,
+      images: merged.ogImage ? [ogImageUrl ?? merged.ogImage.src] : undefined,
+    },
   } satisfies Metadata;
 }

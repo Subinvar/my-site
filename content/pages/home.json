@@ -9,6 +9,10 @@
     "ru": "Главная",
     "en": "Home"
   },
+  "description": {
+    "ru": "StroyTech — инженерная компания, которая ведёт проекты от концепции до ввода в эксплуатацию.",
+    "en": "StroyTech is an engineering company delivering projects from concept to commissioning."
+  },
   "excerpt": {
     "ru": "StroyTech реализует промышленные проекты полного цикла — от концепции до пусконаладки.",
     "en": "StroyTech delivers end-to-end industrial engineering projects from concept to commissioning."
@@ -18,21 +22,29 @@
     "en": "content/markdoc/en/pages/home.mdoc"
   },
   "seo": {
-    "ru": {
-      "title": "StroyTech — промышленное проектирование и стройка",
-      "description": "Комплексные решения для заводов, логистических центров и научных комплексов.",
-      "ogImage": {
-        "image": "uploads/og-default.svg",
-        "alt": "StroyTech — команда инженеров"
-      }
+    "title": {
+      "ru": "StroyTech — промышленное проектирование и стройка",
+      "en": "StroyTech — industrial design and construction"
     },
-    "en": {
-      "title": "StroyTech — industrial design and construction",
-      "description": "Integrated solutions for factories, logistics hubs, and research campuses.",
-      "ogImage": {
-        "image": "uploads/og-default.svg",
-        "alt": "StroyTech engineering team"
-      }
+    "description": {
+      "ru": "Комплексные решения для заводов, логистических центров и научных комплексов.",
+      "en": "Integrated solutions for factories, logistics hubs, and research campuses."
+    },
+    "ogTitle": {
+      "ru": "StroyTech: цифровая трансформация промышленности",
+      "en": "StroyTech: digital transformation for industry"
+    },
+    "ogDescription": {
+      "ru": "Помогаем запускать новые производства быстрее и безопаснее.",
+      "en": "Helping manufacturers launch new facilities faster and safer."
+    },
+    "ogImage": {
+      "image": {
+        "src": "uploads/og-default.svg",
+        "width": 1200,
+        "height": 630
+      },
+      "alt": "StroyTech — команда инженеров"
     }
   },
   "updatedAt": "2024-02-01T10:00:00.000Z"

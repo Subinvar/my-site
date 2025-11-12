@@ -2,48 +2,47 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { render } from '@/lib/markdoc';
 import { buildPath } from '@/lib/paths';
-import { getAllPages, getPageAlternates, getPageBySlug, getSite } from '@/lib/keystatic';
+import { getAllPages, getPageBySlug, getSite } from '@/lib/keystatic';
+import { buildAlternates, mergeSeo } from '@/lib/seo';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-function resolveAlternates(slugByLocale: Partial<Record<Locale, string>>) {
-  const languages: Record<string, string> = {};
-  for (const locale of locales) {
-    const slug = slugByLocale[locale];
+const OPEN_GRAPH_LOCALE: Record<Locale, string> = { ru: 'ru_RU', en: 'en_US' };
+
+const HREFLANG_CODE: Record<Locale, string> = {
+  ru: 'ru-RU',
+  en: 'en-US',
+};
+
+const toAbsoluteUrl = (value: string | undefined, canonicalBase?: string | null): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+  if (/^https?:\/\//.test(value)) {
+    return value;
+  }
+  if (!canonicalBase) {
+    return value;
+  }
+  const base = canonicalBase.replace(/\/+$/, '');
+  return `${base}${value}`;
+};
+
+const buildSlugMap = (slugByLocale: Partial<Record<Locale, string>>): Partial<Record<Locale, string>> => {
+  const record: Partial<Record<Locale, string>> = {};
+  for (const candidate of locales) {
+    const slug = slugByLocale[candidate];
     if (slug === undefined) {
       continue;
     }
-    languages[locale] = buildPath(locale, slug ? [slug] : []);
+    const segments = slug ? [slug] : [];
+    record[candidate] = buildPath(candidate, segments);
   }
-  return { languages };
-}
-
-function resolveOpenGraph({
-  locale,
-  slug,
-  title,
-  description,
-  ogImage,
-}: {
-  locale: Locale;
-  slug: string;
-  title?: string | null;
-  description?: string | null;
-  ogImage?: { src: string; alt?: string | null } | null;
-}): Metadata['openGraph'] {
-  const url = buildPath(locale, slug ? [slug] : []);
-  return {
-    type: 'website',
-    locale,
-    url,
-    title: title ?? undefined,
-    description: description ?? undefined,
-    images: ogImage ? [{ url: ogImage.src, alt: ogImage.alt ?? undefined }] : undefined,
-  };
-}
+  return record;
+};
 
 export default async function Page({ params }: PageProps) {
   const { locale: rawLocale, slug } = await params;
@@ -59,12 +58,13 @@ export default async function Page({ params }: PageProps) {
   }
 
   const content = await render(page.content, locale);
+  const summary = page.description ?? page.excerpt;
 
   return (
     <article className="prose prose-zinc max-w-none dark:prose-invert">
       <header className="mb-10 space-y-2">
         <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-        {page.excerpt ? <p className="text-lg text-zinc-600">{page.excerpt}</p> : null}
+        {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
       </header>
       <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
     </article>
@@ -99,14 +99,63 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!page) {
     return {};
   }
-  const alternates = await getPageAlternates(page.id);
-  const title = page.seo?.title ?? page.title ?? site.defaultSeo?.title ?? undefined;
-  const description = page.seo?.description ?? site.defaultSeo?.description ?? undefined;
-  const ogImage = page.seo?.ogImage ?? site.defaultSeo?.ogImage ?? undefined;
+  const slugMap = buildSlugMap(page.slugByLocale);
+  const alternates = buildAlternates({
+    locale,
+    slugMap,
+    canonicalBase: site.seo.canonicalBase,
+  });
+  const merged = mergeSeo({
+    site: site.seo,
+    page: page.seo,
+    defaults: {
+      title: page.title,
+      description: page.description ?? page.excerpt ?? null,
+    },
+  });
+
+  const canonicalUrl = merged.canonicalOverride ?? alternates.canonical;
+  const alternatesData: Metadata['alternates'] = {
+    languages: alternates.languages,
+  };
+  if (canonicalUrl) {
+    alternatesData.canonical = canonicalUrl;
+  }
+
+  const currentHrefLang = HREFLANG_CODE[locale];
+  const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
+  const ogImageUrl = toAbsoluteUrl(merged.ogImage?.src, site.seo.canonicalBase);
+  const descriptionFallback = merged.description ?? page.description ?? page.excerpt ?? undefined;
+  const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
+  const ogTitleFallback = merged.ogTitle ?? merged.title ?? page.title;
+
   return {
-    title,
-    description,
-    alternates: resolveAlternates(alternates),
-    openGraph: resolveOpenGraph({ locale, slug: page.slug, title, description, ogImage }),
+    title: merged.title ?? page.title,
+    description: descriptionFallback,
+    alternates: alternatesData,
+    openGraph: {
+      type: 'website',
+      locale: OPEN_GRAPH_LOCALE[locale],
+      url: preferredUrl,
+      title: ogTitleFallback,
+      description: ogDescriptionFallback,
+      images: merged.ogImage
+        ? [
+            {
+              url: ogImageUrl ?? merged.ogImage.src,
+              width: merged.ogImage.width ?? undefined,
+              height: merged.ogImage.height ?? undefined,
+              alt: merged.ogImage.alt ?? undefined,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: merged.ogImage ? 'summary_large_image' : 'summary',
+      site: merged.twitterHandle,
+      title: ogTitleFallback,
+      description: ogDescriptionFallback,
+      images: merged.ogImage ? [ogImageUrl ?? merged.ogImage.src] : undefined,
+    },
   } satisfies Metadata;
 }

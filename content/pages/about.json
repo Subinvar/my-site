@@ -9,6 +9,10 @@
     "ru": "О компании",
     "en": "About"
   },
+  "description": {
+    "ru": "StroyTech строит и модернизирует промышленные объекты от проектирования до запуска.",
+    "en": "StroyTech designs, builds, and modernises industrial facilities from first sketch to commissioning."
+  },
   "excerpt": {
     "ru": "Рассказываем, кто мы, какие проекты ведём и в чём наша экспертиза.",
     "en": "Learn who we are, the projects we manage, and what makes our expertise unique."
@@ -18,21 +22,29 @@
     "en": "content/markdoc/en/pages/about.mdoc"
   },
   "seo": {
-    "ru": {
-      "title": "О компании StroyTech",
-      "description": "15 лет опыта в промышленном проектировании и строительстве сложных объектов.",
-      "ogImage": {
-        "image": "uploads/og-default.svg",
-        "alt": "Офис StroyTech и команда инженеров"
-      }
+    "title": {
+      "ru": "О компании StroyTech",
+      "en": "About StroyTech"
     },
-    "en": {
-      "title": "About StroyTech",
-      "description": "15 years of experience delivering complex industrial facilities worldwide.",
-      "ogImage": {
-        "image": "uploads/og-default.svg",
-        "alt": "StroyTech office and engineering team"
-      }
+    "description": {
+      "ru": "15 лет опыта в промышленном проектировании и строительстве сложных объектов.",
+      "en": "15 years of experience delivering complex industrial facilities worldwide."
+    },
+    "ogTitle": {
+      "ru": "StroyTech — команда инженеров и строителей",
+      "en": "StroyTech — engineers and builders united"
+    },
+    "ogDescription": {
+      "ru": "Реализуем крупные проекты от цифрового моделирования до ввода в эксплуатацию.",
+      "en": "We deliver major projects from digital modelling to operational launch."
+    },
+    "ogImage": {
+      "image": {
+        "src": "uploads/og-default.svg",
+        "width": 1200,
+        "height": 630
+      },
+      "alt": "Офис StroyTech и команда инженеров"
     }
   },
   "updatedAt": "2024-02-10T08:30:00.000Z"

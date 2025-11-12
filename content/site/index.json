@@ -1,0 +1,53 @@
+{
+  "siteName": {
+    "ru": "StroyTech",
+    "en": "StroyTech"
+  },
+  "tagline": {
+    "ru": "Инженерия промышленных проектов полного цикла",
+    "en": "End-to-end engineering for industrial projects"
+  },
+  "contacts": {
+    "email": "hello@stroytech.pro",
+    "phone": "+7 (495) 123-45-67",
+    "address": {
+      "ru": "Москва, Промышленный проспект, 12",
+      "en": "12 Industrial Ave, Moscow"
+    }
+  },
+  "seo": {
+    "title": {
+      "ru": "StroyTech — промышленное проектирование и строительство",
+      "en": "StroyTech — industrial engineering and construction"
+    },
+    "description": {
+      "ru": "Комплексные решения для заводов, логистических центров и исследовательских кампусов.",
+      "en": "Integrated solutions for factories, logistics hubs, and research campuses."
+    },
+    "ogTitle": {
+      "ru": "StroyTech: цифровая трансформация промышленности",
+      "en": "StroyTech: digital transformation for industry"
+    },
+    "ogDescription": {
+      "ru": "Команда инженеров и строителей, которая помогает запускать новые производства быстрее.",
+      "en": "A multidisciplinary team accelerating the launch of modern industrial facilities."
+    },
+    "ogImage": {
+      "image": {
+        "src": "uploads/og-default.svg",
+        "width": 1200,
+        "height": 630
+      },
+      "alt": "StroyTech — команда инженеров"
+    },
+    "canonicalBase": "https://stroytech.pro",
+    "twitterHandle": "@stroytech"
+  },
+  "meta": {
+    "domain": "stroytech.pro",
+    "robots": {
+      "index": true,
+      "follow": true
+    }
+  }
+}
