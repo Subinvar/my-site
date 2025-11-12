@@ -5,10 +5,92 @@ import { createReader } from '@keystatic/core/reader';
 import config from '../../keystatic.config';
 import { defaultLocale, locales, type Locale } from './i18n';
 import { isLocale } from '@/lib/i18n';
+import { buildPath } from '@/lib/paths';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
 const getReader = cache(() => createReader(process.cwd(), config));
+
+async function readJsonFile<T>(absolutePath: string): Promise<T | null> {
+  try {
+    const raw = await fs.readFile(absolutePath, 'utf8');
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ key: string; entry: T }>> {
+  const directory = path.join(process.cwd(), relativeDir);
+  const dirEntries = await fs.readdir(directory, { withFileTypes: true }).catch(() => null);
+  if (!dirEntries) {
+    return [];
+  }
+
+  const results: Array<{ key: string; entry: T }> = [];
+
+  for (const entry of dirEntries) {
+    let filePath: string | null = null;
+    let key: string;
+
+    if (entry.isDirectory()) {
+      filePath = path.join(directory, entry.name, 'index.json');
+      key = entry.name;
+    } else if (entry.isFile() && entry.name.endsWith('.json')) {
+      filePath = path.join(directory, entry.name);
+      key = entry.name.replace(/\.json$/i, '');
+    } else {
+      continue;
+    }
+
+    const data = await readJsonFile<T>(filePath);
+    if (!data) {
+      continue;
+    }
+
+    normalizeEntrySlugs(data);
+
+    results.push({ key, entry: data });
+  }
+
+  return results;
+}
+
+async function readFallbackSingleton<T>(relativePath: string): Promise<T | null> {
+  const absolute = path.join(process.cwd(), relativePath);
+  return readJsonFile<T>(absolute);
+}
+
+function normalizeEntrySlugs(entry: unknown): void {
+  if (!entry || typeof entry !== 'object') {
+    return;
+  }
+  const record = entry as { slug?: unknown; path?: unknown };
+  if (record.slug && typeof record.slug === 'object') {
+    normalizeSlugRecord(record.slug as Record<string, unknown>);
+  }
+  if (record.path && typeof record.path === 'object') {
+    normalizeSlugRecord(record.path as Record<string, unknown>);
+  }
+}
+
+function normalizeSlugRecord(record: Record<string, unknown>): void {
+  for (const key of Object.keys(record)) {
+    const value = record[key];
+    if (typeof value === 'string') {
+      if (!value.trim()) {
+        record[key] = ROOT_SLUG_PLACEHOLDER;
+      }
+      continue;
+    }
+    if (typeof value === 'object' && value !== null && 'slug' in value) {
+      const nested = value as { slug?: string | null };
+      if (typeof nested.slug === 'string' && !nested.slug.trim()) {
+        nested.slug = ROOT_SLUG_PLACEHOLDER;
+      }
+    }
+  }
+}
 
 type Localized<T> = Partial<Record<Locale, T | null | undefined>>;
 
@@ -349,24 +431,54 @@ type NavigationSingleton = {
 
 const readSiteSingleton = cache(async (): Promise<SiteSingleton | null> => {
   const reader = getReader();
-  return ((await reader.singletons.site.read()) ?? null) as SiteSingleton | null;
+  try {
+    const site = await reader.singletons.site.read();
+    if (site) {
+      return site as SiteSingleton;
+    }
+  } catch {
+    // fall back to file system
+  }
+  return (await readFallbackSingleton<SiteSingleton>('content/site/index.json')) ?? null;
 });
 
 const readNavigationSingleton = cache(async (): Promise<NavigationSingleton | null> => {
   const reader = getReader();
-  return ((await reader.singletons.navigation.read()) ?? null) as NavigationSingleton | null;
+  try {
+    const navigation = await reader.singletons.navigation.read();
+    if (navigation) {
+      return navigation as NavigationSingleton;
+    }
+  } catch {
+    // fall back to file system
+  }
+  return (await readFallbackSingleton<NavigationSingleton>('content/navigation/index.json')) ?? null;
 });
 
 const readPagesCollection = cache(async () => {
   const reader = getReader();
-  const entries = await reader.collections.pages.all({ resolveLinkedFiles: true });
-  return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPageEntry }));
+  try {
+    const entries = await reader.collections.pages.all({ resolveLinkedFiles: true });
+    if (entries.length > 0) {
+      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPageEntry }));
+    }
+  } catch {
+    // fall back to file system
+  }
+  return readFallbackCollection<RawPageEntry>('content/pages');
 });
 
 const readPostsCollection = cache(async () => {
   const reader = getReader();
-  const entries = await reader.collections.posts.all({ resolveLinkedFiles: true });
-  return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPostEntry }));
+  try {
+    const entries = await reader.collections.posts.all({ resolveLinkedFiles: true });
+    if (entries.length > 0) {
+      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPostEntry }));
+    }
+  } catch {
+    // fall back to file system
+  }
+  return readFallbackCollection<RawPostEntry>('content/posts');
 });
 
 function resolveNavigationLinks(
@@ -416,15 +528,16 @@ function buildInternalPath(locale: Locale, pathValue: string): string {
   const normalized = pathValue.trim().replace(/^\/+|\/+$/g, '');
 
   if (!normalized) {
-    return `/${locale}`;
+    return buildPath(locale);
   }
 
-  const [firstSegment] = normalized.split('/');
-  if (isLocale(firstSegment)) {
-    return `/${normalized}`;
+  const segments = normalized.split('/').filter(Boolean);
+  const [firstSegment] = segments;
+  if (firstSegment && isLocale(firstSegment)) {
+    return `/${segments.join('/')}`;
   }
 
-  return `/${locale}/${normalized}`;
+  return buildPath(locale, segments);
 }
 
 function computeEntryId(entry: RawPageEntry | RawPostEntry, fallback: string): string {
@@ -634,7 +747,10 @@ export async function getNavigationEntityByPath(
   pathname: string
 ): Promise<{ link: NavigationLink; slugByLocale: Partial<Record<Locale, string>> } | null> {
   const navigation = await getNavigation(locale);
-  const relative = pathname.replace(/^\/+/, '').split('/').slice(1).join('/');
+  const trimmed = pathname.replace(/^\/+/, '');
+  const segments = trimmed.split('/').filter(Boolean);
+  const relevantSegments = segments.length && isLocale(segments[0]) ? segments.slice(1) : segments;
+  const relative = relevantSegments.join('/');
   const match = [...navigation.header, ...navigation.footer].find((link) => {
     if (!link.localizedPath) {
       return false;
