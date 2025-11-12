@@ -4,6 +4,7 @@ import path from 'path';
 import { createReader } from '@keystatic/core/reader';
 import config from '../../keystatic.config';
 import { defaultLocale, locales, type Locale } from './i18n';
+import { isLocale } from '@/lib/i18n';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
@@ -412,8 +413,18 @@ function resolveNavigationLinks(
 }
 
 function buildInternalPath(locale: Locale, pathValue: string): string {
-  const trimmed = pathValue.trim().replace(/^\/+|\/+$/g, '');
-  return trimmed ? `/${locale}/${trimmed}` : `/${locale}`;
+  const normalized = pathValue.trim().replace(/^\/+|\/+$/g, '');
+
+  if (!normalized) {
+    return `/${locale}`;
+  }
+
+  const [firstSegment] = normalized.split('/');
+  if (isLocale(firstSegment)) {
+    return `/${normalized}`;
+  }
+
+  return `/${locale}/${normalized}`;
 }
 
 function computeEntryId(entry: RawPageEntry | RawPostEntry, fallback: string): string {
