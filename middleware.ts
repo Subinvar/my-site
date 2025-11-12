@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(locales);
+const DEFAULT_LOCALE_INTERNAL_PREFIX = "/_default";
 
 function hasFileExtension(pathname: string): boolean {
   const trimmed = pathname.split("?")[0]?.replace(/\/$/, "") ?? "";
@@ -25,6 +26,22 @@ function extractLocale(pathname: string): Locale | null {
     : null;
 }
 
+function removeDefaultLocalePrefix(pathname: string): string {
+  if (!pathname.startsWith(`/${defaultLocale}`)) {
+    return pathname;
+  }
+
+  const stripped = pathname.slice(defaultLocale.length + 1) || "/";
+  return stripped.startsWith("/") ? stripped : `/${stripped}`;
+}
+
+function shouldBypass(pathname: string): boolean {
+  if (pathname === DEFAULT_LOCALE_INTERNAL_PREFIX) {
+    return true;
+  }
+  return pathname.startsWith(`${DEFAULT_LOCALE_INTERNAL_PREFIX}/`);
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -36,20 +53,36 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (hasFileExtension(pathname)) {
+  if (shouldBypass(pathname)) {
     return NextResponse.next();
   }
 
   const locale = extractLocale(pathname);
 
-  if (!locale) {
+  if (locale === defaultLocale) {
     const url = request.nextUrl.clone();
-    const suffix = pathname === "/" ? "" : pathname;
-    url.pathname = `/${defaultLocale}${suffix}`;
-    return NextResponse.rewrite(url);
+    url.pathname = removeDefaultLocalePrefix(pathname);
+    if (url.pathname === pathname) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(url, { status: 308 });
   }
 
-  return NextResponse.next();
+  if (hasFileExtension(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (locale) {
+    return NextResponse.next();
+  }
+
+  if (pathname === "/") {
+    return NextResponse.next();
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = `${DEFAULT_LOCALE_INTERNAL_PREFIX}${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {

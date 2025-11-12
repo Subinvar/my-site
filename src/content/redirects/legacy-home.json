@@ -1,7 +1,7 @@
 {
   "slugKey": "legacy-home",
   "fromPath": "/ru/staryj-razdel",
-  "toPath": "/ru/o-kompanii",
+  "toPath": "/o-kompanii",
   "code": "301",
   "enabled": true
 }
