@@ -4,7 +4,6 @@ import { defaultLocale } from "./src/lib/i18n";
 
 const withMarkdoc = createMarkdocPlugin({
   schemaPath: './markdoc/config.ts',
-  extension: /\.md(oc)?$/,
 });
 
 const nextConfig: NextConfig = {
