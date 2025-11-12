@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+
 import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(locales);
-const LOCALE_AWARE_EXTENSIONS = new Set([".xml", ".webmanifest"]);
 
 function getExtension(pathname: string): string | null {
   const lastSegment = pathname.split("/").pop() ?? "";
@@ -38,19 +38,16 @@ export function middleware(request: NextRequest) {
   }
 
   const extension = getExtension(pathname);
-  if (extension && !LOCALE_AWARE_EXTENSIONS.has(extension)) {
+  if (extension) {
     return NextResponse.next();
   }
 
   const locale = extractLocale(pathname);
 
   if (!locale) {
-    if (pathname === "/") {
-      return NextResponse.next();
-    }
-
     const url = request.nextUrl.clone();
-    url.pathname = `/${defaultLocale}${pathname}`;
+    const suffix = pathname === "/" ? "" : pathname;
+    url.pathname = `/${defaultLocale}${suffix}`;
     return NextResponse.rewrite(url);
   }
 

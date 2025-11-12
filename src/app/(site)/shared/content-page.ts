@@ -126,12 +126,3 @@ export async function getLocalizedPageParams(): Promise<Array<{ locale: Locale; 
 
   return params;
 }
-
-export async function getDefaultLocalePageSlugs(defaultLocale: Locale): Promise<string[]> {
-  const params = await getLocalizedPageParams();
-  return params
-    .filter((entry) => entry.locale === defaultLocale)
-    .map((entry) => entry.slug)
-    .filter((slug): slug is string => typeof slug === 'string' && slug.length > 0)
-    .filter((slug, index, all) => all.indexOf(slug) === index);
-}

@@ -133,11 +133,3 @@ export async function getLocalizedPostParams(): Promise<Array<{ locale: Locale; 
 
   return params;
 }
-
-export async function getDefaultLocalePostSlugs(defaultLocale: Locale): Promise<string[]> {
-  const params = await getLocalizedPostParams();
-  return params
-    .filter((entry) => entry.locale === defaultLocale)
-    .map((entry) => entry.slug)
-    .filter((slug, index, all) => all.indexOf(slug) === index);
-}
