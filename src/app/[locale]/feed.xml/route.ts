@@ -75,12 +75,7 @@ function formatAtomFeed({
   return `<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n  <id>${escapeXml(siteUrl)}</id>\n  <title>${escapeXml(siteTitle)}</title>\n  <updated>${updatedAt}</updated>\n  <link href="${escapeXml(siteUrl)}" rel="self"/>\n  <category term="${escapeXml(locale)}"/>\n${entries.map((entry) => `  ${entry}`).join('\n')}\n</feed>`;
 }
 
-export async function GET(_request: Request, context: FeedContext) {
-  const { locale: rawLocale } = await context.params;
-  if (!isLocale(rawLocale)) {
-    return new Response('Locale not supported', { status: 404 });
-  }
-  const locale = rawLocale;
+export async function buildFeedResponse(locale: Locale) {
 
   const [site, postSummaries] = await Promise.all([getSite(locale), getAllPosts()]);
   const origin = resolveSiteOrigin(site.domain);
@@ -143,4 +138,12 @@ export async function GET(_request: Request, context: FeedContext) {
       'Cache-Control': 'public, max-age=0, s-maxage=600',
     },
   });
+}
+
+export async function GET(_request: Request, context: FeedContext) {
+  const { locale: rawLocale } = await context.params;
+  if (!isLocale(rawLocale)) {
+    return new Response('Locale not supported', { status: 404 });
+  }
+  return buildFeedResponse(rawLocale);
 }

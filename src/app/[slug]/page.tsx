@@ -1,19 +1,28 @@
-import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { getHomePage, resolveHomeMetadata } from '@/app/(site)/shared/home-page';
-import { switchLocalePath, findTargetLocale } from '@/lib/paths';
+import {
+  getContentPage,
+  getDefaultLocalePageSlugs,
+  resolveContentPageMetadata,
+} from '@/app/(site)/shared/content-page';
+import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 import { defaultLocale } from '@/lib/i18n';
 
 export const dynamic = 'force-static';
 
-export default async function RootHomePage() {
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export default async function DefaultContentPage({ params }: PageProps) {
+  const { slug } = await params;
   const locale = defaultLocale;
+
   const [data, shell] = await Promise.all([
-    getHomePage(locale),
+    getContentPage(locale, slug),
     getSiteShellData(locale),
   ]);
 
@@ -37,20 +46,9 @@ export default async function RootHomePage() {
       switcherHref={switcherHref}
     >
       <article className="prose prose-zinc max-w-none dark:prose-invert">
-        <header className="mb-10 space-y-4">
-          <Image
-            src="/uploads/hero.jpg"
-            alt={page.title}
-            width={1200}
-            height={675}
-            priority
-            sizes="(max-width: 768px) 100vw, 1200px"
-            className="h-auto w-full rounded-xl object-cover"
-          />
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-            {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
-          </div>
+        <header className="mb-10 space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
+          {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
         </header>
         <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
       </article>
@@ -58,6 +56,12 @@ export default async function RootHomePage() {
   );
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  return resolveHomeMetadata(defaultLocale);
+export async function generateStaticParams() {
+  const slugs = await getDefaultLocalePageSlugs(defaultLocale);
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  return resolveContentPageMetadata(defaultLocale, slug);
 }

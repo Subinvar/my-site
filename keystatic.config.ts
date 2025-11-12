@@ -103,11 +103,19 @@ const navigationLinks = (label: string) =>
     }
   );
 
+const storage =
+  process.env.KEYSTATIC_STORAGE_KIND === 'github'
+    ? ({
+        kind: 'github' as const,
+        repo: {
+          owner: 'Subinvar',
+          name: 'my-site',
+        },
+      })
+    : ({ kind: 'local' as const });
+
 export default config({
-  storage: {
-    kind: 'github',
-    repo: 'Subinvar/my-site',
-  },
+  storage,
   singletons: {
     site: singleton({
       label: 'Настройки сайта',

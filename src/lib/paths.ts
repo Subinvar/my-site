@@ -1,4 +1,4 @@
-import { locales, type Locale } from './i18n';
+import { defaultLocale, locales, type Locale } from './i18n';
 
 type PathSegment = string | null | undefined;
 
@@ -14,6 +14,9 @@ export function buildPath(locale: Locale, segments: PathSegment[] = []): string 
     .flatMap((segment) => (Array.isArray(segment) ? segment : [segment]))
     .filter((segment): segment is string => typeof segment === 'string' && segment.length > 0);
   const suffix = filtered.length ? `/${filtered.map(encodeURIComponent).join('/')}` : '';
+  if (locale === defaultLocale) {
+    return suffix.length ? suffix : '/';
+  }
   return `/${locale}${suffix}`;
 }
 

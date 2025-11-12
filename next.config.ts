@@ -16,14 +16,6 @@ const nextConfig: NextConfig = {
     KEYSTATIC_GITHUB_CLIENT_SECRET: process.env.KEYSTATIC_GITHUB_CLIENT_SECRET ?? "stub-client-secret",
     KEYSTATIC_SECRET: process.env.KEYSTATIC_SECRET ?? "stub-keystatic-secret",
   },
-  async rewrites() {
-    return [
-      {
-        source: "/manifest.webmanifest",
-        destination: `/${defaultLocale}/manifest.webmanifest`,
-      },
-    ];
-  },
 };
 
 export default withMarkdoc(nextConfig);
