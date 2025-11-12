@@ -1,83 +1,115 @@
 import type { MetadataRoute } from 'next';
-import { buildPath } from '@/lib/paths';
+
 import { getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
+import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
-import { HREFLANG_CODE, toAbsoluteUrl } from '@/lib/seo';
 
-function buildAlternateLanguages(
-  collection: 'pages' | 'posts',
-  slugByLocale: Partial<Record<Locale, string>>,
-  canonicalBase?: string | null
-) {
-  const languages: Record<string, string> = {};
+type Collection = 'pages' | 'posts';
+
+type DatedEntry = {
+  collection: Collection;
+  slugByLocale: Partial<Record<Locale, string | null | undefined>>;
+  updatedAt?: string | null;
+  date?: string | null;
+};
+
+const buildSegments = (collection: Collection, slug: string): string[] => {
+  if (collection === 'posts') {
+    return ['posts', slug];
+  }
+  return slug.length ? [slug] : [];
+};
+
+const toAbsoluteUrl = (baseUrl: string | null, path: string): string => {
+  if (!baseUrl) {
+    return path;
+  }
+  try {
+    return new URL(path, baseUrl).toString();
+  } catch {
+    return path;
+  }
+};
+
+const buildLocalizedUrls = (
+  baseUrl: string | null,
+  { collection, slugByLocale }: Pick<DatedEntry, 'collection' | 'slugByLocale'>
+): Partial<Record<Locale, string>> => {
+  const record: Partial<Record<Locale, string>> = {};
   for (const locale of locales) {
-    const slug = slugByLocale[locale];
-    if (slug === undefined || slug === null) {
+    const raw = slugByLocale[locale];
+    if (raw === undefined || raw === null) {
       continue;
     }
-    if (collection === 'posts' && !slug) {
+    const normalized = collection === 'posts' ? raw.trim() : raw.trim();
+    if (collection === 'posts' && !normalized) {
       continue;
     }
-    const segments = collection === 'posts' ? ['posts', slug] : slug ? [slug] : [];
+    const segments = buildSegments(collection, normalized);
     const relative = buildPath(locale, segments);
-    languages[HREFLANG_CODE[locale]] = toAbsoluteUrl(relative, canonicalBase) ?? relative;
+    record[locale] = toAbsoluteUrl(baseUrl, relative);
   }
 
-  const defaultSlug = slugByLocale[defaultLocale];
-  if (defaultSlug !== undefined && defaultSlug !== null) {
-    const segments = collection === 'posts' ? ['posts', defaultSlug] : defaultSlug ? [defaultSlug] : [];
-    const relative = buildPath(defaultLocale, segments);
-    languages['x-default'] = toAbsoluteUrl(relative, canonicalBase) ?? relative;
+  return record;
+};
+const toLastModified = (entry: DatedEntry): Date | undefined => {
+  const source = entry.updatedAt ?? entry.date;
+  if (!source) {
+    return undefined;
   }
+  const timestamp = Date.parse(source);
+  if (Number.isNaN(timestamp)) {
+    return undefined;
+  }
+  return new Date(timestamp);
+};
 
-  return languages;
-}
+const createSitemapRecords = (baseUrl: string | null, entry: DatedEntry): MetadataRoute.Sitemap => {
+  const urls = buildLocalizedUrls(baseUrl, entry);
+  const ruUrl = urls.ru;
+  const enUrl = urls.en;
+  if (!ruUrl || !enUrl) {
+    return [];
+  }
+  const lastModified = toLastModified(entry);
+  const alternates = { languages: { ru: ruUrl, en: enUrl } } as const;
+  return [
+    { url: ruUrl, lastModified, alternates },
+    { url: enUrl, lastModified, alternates },
+  ];
+};
+
+export const dynamic = 'force-static';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [pages, posts, site] = await Promise.all([getAllPages(), getAllPosts(), getSite(defaultLocale)]);
-  const canonicalBase = site.seo.canonicalBase;
-  const entries: MetadataRoute.Sitemap = [];
+  const [site, pages, posts] = await Promise.all([
+    getSite(defaultLocale),
+    getAllPages(),
+    getAllPosts(),
+  ]);
 
-  for (const page of pages) {
-    if (!page.published) {
-      continue;
-    }
-    const languages = buildAlternateLanguages('pages', page.slugByLocale, canonicalBase);
-    for (const locale of locales) {
-      const hrefLang = HREFLANG_CODE[locale];
-      const url = languages[hrefLang];
-      if (!url) {
-        continue;
-      }
-      entries.push({
-        url,
-        alternates: { languages },
-        changeFrequency: page.slugByLocale[locale] ? 'monthly' : 'weekly',
-        priority: page.slugByLocale[locale] ? 0.6 : 0.9,
-        lastModified: page.updatedAt ? new Date(page.updatedAt) : undefined,
-      });
-    }
-  }
+  const baseUrl = site.seo.canonicalBase ?? null;
 
-  for (const post of posts) {
-    if (!post.published) {
-      continue;
-    }
-    const languages = buildAlternateLanguages('posts', post.slugByLocale, canonicalBase);
-    for (const locale of locales) {
-      const hrefLang = HREFLANG_CODE[locale];
-      const url = languages[hrefLang];
-      if (!url) {
-        continue;
-      }
-      entries.push({
-        url,
-        alternates: { languages },
-        changeFrequency: 'monthly',
-        lastModified: post.updatedAt ? new Date(post.updatedAt) : post.date ? new Date(post.date) : undefined,
-      });
-    }
-  }
+  const pageEntries = pages
+    .filter((page) => page.published)
+    .flatMap((page) =>
+      createSitemapRecords(baseUrl, {
+        collection: 'pages',
+        slugByLocale: page.slugByLocale,
+        updatedAt: page.updatedAt,
+      })
+    );
 
-  return entries;
+  const postEntries = posts
+    .filter((post) => post.published)
+    .flatMap((post) =>
+      createSitemapRecords(baseUrl, {
+        collection: 'posts',
+        slugByLocale: post.slugByLocale,
+        updatedAt: post.updatedAt,
+        date: post.date,
+      })
+    );
+
+  return [...pageEntries, ...postEntries];
 }

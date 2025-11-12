@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
+import localFont from 'next/font/local';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -23,6 +24,24 @@ import {
 } from '@/lib/seo';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { geistMono, geistSans } from '../fonts';
+
+const brandFont = localFont({
+  src: [
+    {
+      path: '../../../public/fonts/geist/Geist-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../../public/fonts/geist/Geist-SemiBold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  preload: true,
+  display: 'swap',
+  variable: '--font-brand',
+});
 
 const SKIP_LINK_COPY: Record<Locale, string> = {
   ru: 'Пропустить к основному контенту',
@@ -216,7 +235,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     : switchLocalePath(locale, targetLocale);
 
   return (
-    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang={locale} className={`${brandFont.variable} ${geistSans.variable} ${geistMono.variable}`}>
       <body className="flex min-h-screen flex-col bg-white text-zinc-900 antialiased">
         <SkipToContentLink locale={locale} />
         <header className="border-b border-zinc-200 bg-white">

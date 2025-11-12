@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { render } from '@/lib/markdoc';
@@ -13,6 +14,8 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
+
+export const dynamic = 'force-static';
 
 const HOME_PAGE_ID = 'home';
 
@@ -51,9 +54,21 @@ export default async function HomePage({ params }: PageProps) {
 
   return (
     <article className="prose prose-zinc max-w-none dark:prose-invert">
-      <header className="mb-10 space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-        {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
+      <header className="mb-10 space-y-4">
+        {/* LCP hero image stored in public/uploads/hero.jpg */}
+        <Image
+          src="/uploads/hero.jpg"
+          alt={page.title}
+          width={1200}
+          height={675}
+          priority
+          sizes="(max-width: 768px) 100vw, 1200px"
+          className="h-auto w-full rounded-xl object-cover"
+        />
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
+          {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
+        </div>
       </header>
       <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
     </article>
