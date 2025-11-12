@@ -1,8 +1,13 @@
-import type { MetadataRoute } from 'next';
+import { NextResponse } from 'next/server';
 
 import { getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
+
+const XML_HEADER = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>`;
+
+const SITEMAP_NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
 type Collection = 'pages' | 'posts';
 
@@ -11,6 +16,12 @@ type DatedEntry = {
   slugByLocale: Partial<Record<Locale, string | null | undefined>>;
   updatedAt?: string | null;
   date?: string | null;
+};
+
+type SitemapUrl = {
+  loc: string;
+  lastmod?: string;
+  alternates: Partial<Record<Locale, string>>;
 };
 
 const buildSegments = (collection: Collection, slug: string): string[] => {
@@ -41,8 +52,8 @@ const buildLocalizedUrls = (
     if (raw === undefined || raw === null) {
       continue;
     }
-    const normalized = collection === 'posts' ? raw.trim() : raw.trim();
-    if (collection === 'posts' && !normalized) {
+    const normalized = raw.trim();
+    if (collection === 'posts' && normalized.length === 0) {
       continue;
     }
     const segments = buildSegments(collection, normalized);
@@ -52,7 +63,8 @@ const buildLocalizedUrls = (
 
   return record;
 };
-const toLastModified = (entry: DatedEntry): Date | undefined => {
+
+const toLastModified = (entry: DatedEntry): string | undefined => {
   const source = entry.updatedAt ?? entry.date;
   if (!source) {
     return undefined;
@@ -61,27 +73,67 @@ const toLastModified = (entry: DatedEntry): Date | undefined => {
   if (Number.isNaN(timestamp)) {
     return undefined;
   }
-  return new Date(timestamp);
+  return new Date(timestamp).toISOString();
 };
 
-const createSitemapRecords = (baseUrl: string | null, entry: DatedEntry): MetadataRoute.Sitemap => {
+const createSitemapUrls = (baseUrl: string | null, entry: DatedEntry): SitemapUrl[] => {
   const urls = buildLocalizedUrls(baseUrl, entry);
-  const ruUrl = urls.ru;
-  const enUrl = urls.en;
-  if (!ruUrl || !enUrl) {
-    return [];
+  const lastmod = toLastModified(entry);
+  const sitemapUrls: SitemapUrl[] = [];
+
+  for (const locale of locales) {
+    const loc = urls[locale];
+    if (!loc) {
+      continue;
+    }
+    sitemapUrls.push({
+      loc,
+      lastmod,
+      alternates: urls,
+    });
   }
-  const lastModified = toLastModified(entry);
-  const alternates = { languages: { ru: ruUrl, en: enUrl } } as const;
-  return [
-    { url: ruUrl, lastModified, alternates },
-    { url: enUrl, lastModified, alternates },
-  ];
+
+  return sitemapUrls;
 };
 
-export const dynamic = 'force-static';
+const renderUrlElement = ({ loc, lastmod, alternates }: SitemapUrl): string => {
+  const alternateLinks = locales
+    .map((locale) => {
+      const href = alternates[locale];
+      if (!href) {
+        return '';
+      }
+      return `    <xhtml:link rel="alternate" hreflang="${locale}" href="${href}" />`;
+    })
+    .filter(Boolean)
+    .join('\n');
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const lastmodLine = lastmod ? `    <lastmod>${lastmod}</lastmod>` : '';
+
+  return [
+    '  <url>',
+    `    <loc>${loc}</loc>`,
+    lastmodLine,
+    alternateLinks,
+    '  </url>',
+  ]
+    .filter(Boolean)
+    .join('\n');
+};
+
+const renderXml = (records: SitemapUrl[]): string => {
+  const urls = records.map(renderUrlElement).join('\n');
+  return [
+    XML_HEADER,
+    `<urlset xmlns="${SITEMAP_NAMESPACE}" xmlns:xhtml="${XHTML_NAMESPACE}">`,
+    urls,
+    '</urlset>',
+  ]
+    .filter(Boolean)
+    .join('\n');
+};
+
+export async function GET() {
   const [site, pages, posts] = await Promise.all([
     getSite(defaultLocale),
     getAllPages(),
@@ -90,20 +142,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const baseUrl = site.seo.canonicalBase ?? null;
 
-  const pageEntries = pages
+  const pageUrls = pages
     .filter((page) => page.published)
     .flatMap((page) =>
-      createSitemapRecords(baseUrl, {
+      createSitemapUrls(baseUrl, {
         collection: 'pages',
         slugByLocale: page.slugByLocale,
         updatedAt: page.updatedAt,
       })
     );
 
-  const postEntries = posts
+  const postUrls = posts
     .filter((post) => post.published)
     .flatMap((post) =>
-      createSitemapRecords(baseUrl, {
+      createSitemapUrls(baseUrl, {
         collection: 'posts',
         slugByLocale: post.slugByLocale,
         updatedAt: post.updatedAt,
@@ -111,5 +163,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     );
 
-  return [...pageEntries, ...postEntries];
+  const xml = renderXml([...pageUrls, ...postUrls]);
+
+  return new NextResponse(xml, {
+    headers: {
+      'Content-Type': 'application/xml; charset=UTF-8',
+    },
+  });
 }

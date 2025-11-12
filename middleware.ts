@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
 const LOCALE_PREFIXES = new Set(locales);
-const DEFAULT_LOCALE_INTERNAL_PREFIX = "/_default";
 
 function hasFileExtension(pathname: string): boolean {
   const trimmed = pathname.split("?")[0]?.replace(/\/$/, "") ?? "";
@@ -35,13 +34,6 @@ function removeDefaultLocalePrefix(pathname: string): string {
   return stripped.startsWith("/") ? stripped : `/${stripped}`;
 }
 
-function shouldBypass(pathname: string): boolean {
-  if (pathname === DEFAULT_LOCALE_INTERNAL_PREFIX) {
-    return true;
-  }
-  return pathname.startsWith(`${DEFAULT_LOCALE_INTERNAL_PREFIX}/`);
-}
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -50,10 +42,6 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname === "/api/keystatic" || pathname.startsWith("/api/keystatic/")) {
-    return NextResponse.next();
-  }
-
-  if (shouldBypass(pathname)) {
     return NextResponse.next();
   }
 
@@ -81,7 +69,7 @@ export function middleware(request: NextRequest) {
   }
 
   const url = request.nextUrl.clone();
-  url.pathname = `${DEFAULT_LOCALE_INTERNAL_PREFIX}${pathname}`;
+  url.pathname = `/${defaultLocale}${pathname}`.replace(/\/+/, "/");
   return NextResponse.rewrite(url);
 }
 
