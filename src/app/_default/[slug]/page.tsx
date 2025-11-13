@@ -43,12 +43,12 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
     >
-      <article className="prose prose-zinc max-w-none dark:prose-invert">
+      <article className="max-w-none">
         <header className="mb-10 space-y-2">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
           {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
         </header>
-        <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
+        <div className="prose-markdoc">{content}</div>
       </article>
     </SiteShell>
   );
@@ -62,6 +62,6 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   return resolveContentPageMetadata(defaultLocale, slug);
 }

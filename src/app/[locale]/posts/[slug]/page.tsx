@@ -47,13 +47,13 @@ export default async function PostPage({ params }: PostPageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
     >
-      <article className="prose prose-zinc max-w-none dark:prose-invert">
+      <article className="max-w-none">
         <header className="mb-8 space-y-3">
           <p className="text-sm uppercase tracking-wide text-zinc-500">{post.date}</p>
           <h1 className="text-3xl font-semibold text-zinc-900">{post.title}</h1>
           {summary ? <p className="text-base text-zinc-600">{summary}</p> : null}
         </header>
-        <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
+        <div className="prose-markdoc">{content}</div>
         {post.tags.length ? (
           <ul className="mt-10 flex flex-wrap gap-2 text-sm text-zinc-500">
             {post.tags.map((tag) => (

@@ -49,7 +49,7 @@ export default async function HomePage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
     >
-      <article className="prose prose-zinc max-w-none dark:prose-invert">
+      <article className="max-w-none">
         <header className="mb-10 space-y-4">
           {/* LCP hero image stored in public/uploads/hero.jpg */}
           <Image
@@ -66,7 +66,7 @@ export default async function HomePage({ params }: PageProps) {
             {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
           </div>
         </header>
-        <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
+        <div className="prose-markdoc">{content}</div>
       </article>
     </SiteShell>
   );
