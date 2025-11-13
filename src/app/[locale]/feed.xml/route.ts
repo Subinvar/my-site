@@ -59,6 +59,9 @@ function toAtomEntry({
   return parts.join('\n');
 }
 
+const ATOM_XML_HEADER =
+  `<?xml version="1.0" encoding="utf-8"?>\n<?xml-stylesheet type="text/xsl" href="/feed.xsl"?>`;
+
 function formatAtomFeed({
   locale,
   siteTitle,
@@ -72,7 +75,20 @@ function formatAtomFeed({
   updatedAt: string;
   entries: string[];
 }): string {
-  return `<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n  <id>${escapeXml(siteUrl)}</id>\n  <title>${escapeXml(siteTitle)}</title>\n  <updated>${updatedAt}</updated>\n  <link href="${escapeXml(siteUrl)}" rel="self"/>\n  <category term="${escapeXml(locale)}"/>\n${entries.map((entry) => `  ${entry}`).join('\n')}\n</feed>`;
+  const serializedEntries = entries.map((entry) => `  ${entry}`).join('\n');
+  return [
+    ATOM_XML_HEADER,
+    `<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="${escapeXml(locale)}">`,
+    `  <id>${escapeXml(siteUrl)}</id>`,
+    `  <title>${escapeXml(siteTitle)}</title>`,
+    `  <updated>${updatedAt}</updated>`,
+    `  <link href="${escapeXml(siteUrl)}" rel="self"/>`,
+    `  <category term="${escapeXml(locale)}"/>`,
+    serializedEntries,
+    '</feed>',
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 export async function buildFeedResponse(locale: Locale) {

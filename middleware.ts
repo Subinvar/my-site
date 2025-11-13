@@ -46,6 +46,18 @@ export function middleware(request: NextRequest) {
   }
 
   const locale = extractLocale(pathname);
+  const isFileRequest = hasFileExtension(pathname);
+
+  if (isFileRequest) {
+    if (locale === defaultLocale) {
+      const url = request.nextUrl.clone();
+      url.pathname = removeDefaultLocalePrefix(pathname);
+      if (url.pathname !== pathname) {
+        return NextResponse.rewrite(url);
+      }
+    }
+    return NextResponse.next();
+  }
 
   if (locale === defaultLocale) {
     const url = request.nextUrl.clone();
@@ -54,10 +66,6 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     return NextResponse.redirect(url, { status: 308 });
-  }
-
-  if (hasFileExtension(pathname)) {
-    return NextResponse.next();
   }
 
   if (locale) {

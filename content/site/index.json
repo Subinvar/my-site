@@ -8,7 +8,7 @@
     "en": "End-to-end engineering for industrial projects"
   },
   "contacts": {
-    "email": "hello@stroytech.pro",
+    "email": "hello@intema.ru",
     "phone": "+7 (495) 123-45-67",
     "address": {
       "ru": "Москва, Промышленный проспект, 12",
@@ -40,11 +40,11 @@
       },
       "alt": "StroyTech — команда инженеров"
     },
-    "canonicalBase": "https://stroytech.pro",
+    "canonicalBase": "https://intema.ru",
     "twitterHandle": "@stroytech"
   },
   "meta": {
-    "domain": "stroytech.pro",
+    "domain": "intema.ru",
     "robots": {
       "index": true,
       "follow": true
