@@ -92,6 +92,26 @@ function normalizeSlugRecord(record: Record<string, unknown>): void {
   }
 }
 
+function normalizeDateTime(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const minutesPrecisionMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})$/);
+  if (minutesPrecisionMatch) {
+    const candidate = `${minutesPrecisionMatch[1]}:00.000Z`;
+    const date = new Date(candidate);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  }
+
+  const date = new Date(trimmed);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 type Localized<T> = Partial<Record<Locale, T | null | undefined>>;
 
 type RawMedia =
@@ -620,7 +640,7 @@ export async function getPageById(id: string, locale: Locale): Promise<PageConte
     description,
     seo,
     excerpt,
-    updatedAt: entryRecord.entry.updatedAt ?? null,
+    updatedAt: normalizeDateTime(entryRecord.entry.updatedAt),
   } satisfies PageContent;
 }
 
@@ -633,7 +653,7 @@ export async function getAllPages(): Promise<PageSummary[]> {
       id,
       slugByLocale,
       published: isPublished(entry),
-      updatedAt: entry.updatedAt ?? null,
+      updatedAt: normalizeDateTime(entry.updatedAt),
     } satisfies PageSummary;
   });
 }
@@ -666,7 +686,7 @@ export async function getPageBySlug(slug: string, locale: Locale): Promise<PageC
     description,
     seo,
     excerpt,
-    updatedAt: record.entry.updatedAt ?? null,
+    updatedAt: normalizeDateTime(record.entry.updatedAt),
   } satisfies PageContent;
 }
 
@@ -679,8 +699,8 @@ export async function getAllPosts(): Promise<PostSummary[]> {
       id,
       slugByLocale,
       published: isPublished(entry),
-      date: entry.date ?? null,
-      updatedAt: entry.updatedAt ?? null,
+      date: normalizeDateTime(entry.date),
+      updatedAt: normalizeDateTime(entry.updatedAt),
     } satisfies PostSummary;
   });
 }
@@ -717,8 +737,8 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
     description,
     seo,
     excerpt,
-    updatedAt: record.entry.updatedAt ?? null,
-    date: record.entry.date ?? null,
+    updatedAt: normalizeDateTime(record.entry.updatedAt),
+    date: normalizeDateTime(record.entry.date),
     tags: record.entry.tags ?? [],
     cover,
   } satisfies PostContent;

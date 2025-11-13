@@ -1,7 +1,7 @@
 {
   "id": "first-post",
   "published": true,
-  "date": "2024-02-05T07:00:00.000Z",
+  "date": "2024-02-05T07:00",
   "slug": {
     "ru": "modernizaciya-proizvodstva",
     "en": "modernising-the-plant"
@@ -56,5 +56,5 @@
       "alt": "Производственная линия после модернизации"
     }
   },
-  "updatedAt": "2024-02-12T12:15:00.000Z"
+  "updatedAt": "2024-02-12T12:15"
 }
