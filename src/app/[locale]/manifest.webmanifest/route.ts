@@ -1,3 +1,5 @@
+import type { NextRequest } from 'next/server';
+
 import { resolveManifest } from '@/app/(site)/shared/manifest';
 import { isLocale } from '@/lib/i18n';
 
@@ -7,7 +9,7 @@ type ManifestContext = {
   params: { locale: string };
 };
 
-export async function GET(_request: Request, context: ManifestContext) {
+export async function GET(_request: NextRequest, context: ManifestContext) {
   const { locale: rawLocale } = context.params;
   if (!isLocale(rawLocale)) {
     return new Response('Locale not supported', { status: 404 });

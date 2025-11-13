@@ -1,3 +1,5 @@
+import type { NextRequest } from 'next/server';
+
 import { buildPath } from '@/lib/paths';
 import { getAllPosts, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale } from '@/lib/i18n';
@@ -156,7 +158,7 @@ export async function buildFeedResponse(locale: Locale) {
   });
 }
 
-export async function GET(_request: Request, context: FeedContext) {
+export async function GET(_request: NextRequest, context: FeedContext) {
   const { locale: rawLocale } = context.params;
   if (!isLocale(rawLocale)) {
     return new Response('Locale not supported', { status: 404 });
