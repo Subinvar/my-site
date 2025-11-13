@@ -12,11 +12,11 @@ import { defaultLocale } from '@/lib/i18n';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 type PageProps = {
-  params: { slug: string };
+  params: { slug: string } | Promise<{ slug: string }>;
 };
 
 export default async function DefaultLocaleContentPage({ params }: PageProps) {
-  const { slug } = params;
+  const { slug } = await Promise.resolve(params);
   const locale = defaultLocale;
 
   const [data, shell] = await Promise.all([
@@ -62,6 +62,6 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await Promise.resolve(params);
   return resolveContentPageMetadata(defaultLocale, slug);
 }

@@ -1,14 +1,14 @@
 // eslint.config.mjs
+import { fileURLToPath } from "node:url";
+
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 import eslintComments from "eslint-plugin-eslint-comments";
-import importPlugin from "eslint-plugin-import";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import tailwind from "eslint-plugin-tailwindcss";
-import tseslint from "@typescript-eslint/eslint-plugin";
 import unusedImports from "eslint-plugin-unused-imports";
+
+const tsconfigRootDir = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig([
   // Базовые пресеты Next (Core Web Vitals + TS)
@@ -21,6 +21,7 @@ export default defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "eslint.config.mjs",
   ]),
 
   // Общие жёсткие правила
@@ -30,18 +31,10 @@ export default defineConfig([
       reportUnusedDisableDirectives: true,
     },
     plugins: {
-      "@typescript-eslint": tseslint,
       "eslint-comments": eslintComments,
-      import: importPlugin,
-      "jsx-a11y": jsxA11y,
-      tailwindcss: tailwind,
       "unused-imports": unusedImports,
     },
     rules: {
-      // Ловим ваш кейс с `await params`
-      "@typescript-eslint/await-thenable": "error",
-      "@typescript-eslint/no-misused-promises": "error",
-
       // Запрет на «волшебные тряпки» без описания и безлимитные выключатели
       "eslint-comments/no-unlimited-disable": "error",
       "eslint-comments/no-unused-disable": "error",
@@ -55,15 +48,22 @@ export default defineConfig([
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/heading-has-content": "error",
 
-      // Tailwind: не ругаемся на свои кастомные классы (Tailwind v4)
-      "tailwindcss/no-custom-classname": "off",
     },
   },
 
   // Для .ts/.tsx — доп. строгость по TS-комментариям и резолвер для import-плагина
   {
     files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.json"],
+        tsconfigRootDir,
+      },
+    },
     rules: {
+      // Ловим ваш кейс с `await params`
+      "@typescript-eslint/await-thenable": "error",
+      "@typescript-eslint/no-misused-promises": "error",
       "@typescript-eslint/ban-ts-comment": ["error", {
         "ts-ignore": true,
         "ts-nocheck": true,

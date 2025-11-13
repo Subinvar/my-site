@@ -5,10 +5,9 @@ import { getAllPosts, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { renderToHtml } from '@/lib/markdoc-html';
 import { resolveSiteOrigin } from '@/lib/origin';
-import type { Awaitable } from '@/lib/types';
 
 type FeedContext = {
-  params: Awaitable<{ locale: string }>;
+  params: { locale: string } | Promise<{ locale: string }>;
 };
 
 type FeedEntry = {
@@ -160,8 +159,7 @@ export async function buildFeedResponse(locale: Locale) {
 }
 
 export async function GET(_request: NextRequest, context: FeedContext) {
-  const params = await Promise.resolve(context.params);
-  const { locale: rawLocale } = params;
+  const { locale: rawLocale } = await Promise.resolve(context.params);
   if (!isLocale(rawLocale)) {
     return new Response('Locale not supported', { status: 404 });
   }

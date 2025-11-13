@@ -14,7 +14,6 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
-import type { Awaitable } from '@/lib/types';
 
 type LocaleRouteParams = {
   locale: string;
@@ -22,12 +21,11 @@ type LocaleRouteParams = {
 
 type LocaleLayoutProps = {
   children: ReactNode;
-  params: Awaitable<LocaleRouteParams>;
+  params: LocaleRouteParams | Promise<LocaleRouteParams>;
 };
 
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
-  const resolvedParams = await Promise.resolve(params);
-  const { locale: rawLocale } = resolvedParams;
+  const { locale: rawLocale } = await Promise.resolve(params);
   if (!isLocale(rawLocale)) {
     return {};
   }
@@ -76,9 +74,8 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   } satisfies Metadata;
 }
 
-export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const resolvedParams = await Promise.resolve(params);
-  const { locale: rawLocale } = resolvedParams;
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale: rawLocale } = await Promise.resolve(params);
 
   if (!isLocale(rawLocale)) {
     notFound();
