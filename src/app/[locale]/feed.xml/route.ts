@@ -5,7 +5,7 @@ import { renderToHtml } from '@/lib/markdoc-html';
 import { resolveSiteOrigin } from '@/lib/origin';
 
 type FeedContext = {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 };
 
 type FeedEntry = {
@@ -157,7 +157,7 @@ export async function buildFeedResponse(locale: Locale) {
 }
 
 export async function GET(_request: Request, context: FeedContext) {
-  const { locale: rawLocale } = await context.params;
+  const { locale: rawLocale } = context.params;
   if (!isLocale(rawLocale)) {
     return new Response('Locale not supported', { status: 404 });
   }

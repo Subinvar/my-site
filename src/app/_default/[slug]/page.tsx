@@ -12,11 +12,11 @@ import { defaultLocale } from '@/lib/i18n';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 type PageProps = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
 export default async function DefaultLocaleContentPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const locale = defaultLocale;
 
   const [data, shell] = await Promise.all([

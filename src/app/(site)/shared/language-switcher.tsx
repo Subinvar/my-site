@@ -21,7 +21,7 @@ export function LanguageSwitcher({ currentLocale, targetLocale, href }: Language
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{currentLocale.toUpperCase()}</span>
-      <span aria-hidden className="text-zinc-300">
+      <span aria-hidden="true" className="text-zinc-300">
         /
       </span>
       <Link

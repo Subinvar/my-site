@@ -12,11 +12,11 @@ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 type PostPageProps = {
-  params: Promise<{ locale: Locale; slug: string }>;
+  params: { locale: Locale; slug: string };
 };
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { locale: rawLocale, slug } = await params;
+  const { locale: rawLocale, slug } = params;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -73,7 +73,7 @@ export async function generateStaticParams(): Promise<Array<{ locale: Locale; sl
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const { locale: rawLocale, slug } = await params;
+  const { locale: rawLocale, slug } = params;
   if (!isLocale(rawLocale)) {
     return {};
   }

@@ -21,11 +21,11 @@ type LocaleRouteParams = {
 
 type LocaleLayoutProps = {
   children: ReactNode;
-  params: Promise<LocaleRouteParams>;
+  params: LocaleRouteParams;
 };
 
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
-  const { locale: rawLocale } = await params;
+  const { locale: rawLocale } = params;
   if (!isLocale(rawLocale)) {
     return {};
   }
@@ -74,8 +74,8 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   } satisfies Metadata;
 }
 
-export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const { locale: rawLocale } = await params;
+export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale: rawLocale } = params;
 
   if (!isLocale(rawLocale)) {
     notFound();

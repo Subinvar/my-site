@@ -12,11 +12,11 @@ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 type PageProps = {
-  params: Promise<{ locale: string; slug: string }>;
+  params: { locale: string; slug: string };
 };
 
 export default async function Page({ params }: PageProps) {
-  const { locale: rawLocale, slug } = await params;
+  const { locale: rawLocale, slug } = params;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -63,7 +63,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale: rawLocale, slug } = await params;
+  const { locale: rawLocale, slug } = params;
   if (!isLocale(rawLocale)) {
     return {};
   }
