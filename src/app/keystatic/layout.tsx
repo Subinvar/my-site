@@ -1,8 +1,10 @@
 // src/app/keystatic/layout.tsx
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
-import KeystaticApp from "./keystatic";
-
-export default function Layout(): ReactElement {
-  return <KeystaticApp />;
+export default function Layout({
+  children,
+}: {
+  children: ReactNode;
+}): ReactElement {
+  return <>{children}</>;
 }

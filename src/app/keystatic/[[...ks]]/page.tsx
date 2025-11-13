@@ -1,2 +1,11 @@
 // src/app/keystatic/[[...ks]]/page.tsx
-export default function Page(){ return null; }
+import type { ReactElement } from "react";
+
+import KeystaticApp from "../keystatic";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default function Page(): ReactElement {
+  return <KeystaticApp />;
+}
