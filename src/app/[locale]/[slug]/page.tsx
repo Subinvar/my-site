@@ -7,6 +7,9 @@ import {
   getLocalizedPageParams,
   resolveContentPageMetadata,
 } from '@/app/(site)/shared/content-page';
+import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
+import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -20,21 +23,38 @@ export default async function Page({ params }: PageProps) {
   }
 
   const locale = rawLocale;
-  const data = await getContentPage(locale, slug);
+  const [data, shell] = await Promise.all([
+    getContentPage(locale, slug),
+    getSiteShellData(locale),
+  ]);
+
   if (!data) {
     notFound();
   }
 
   const { page, content, summary } = data;
+  const targetLocale = findTargetLocale(locale);
+  const switcherHref = switchLocalePath(locale, targetLocale, {
+    collection: 'pages',
+    slugs: page.slugByLocale,
+  });
 
   return (
-    <article className="prose prose-zinc max-w-none dark:prose-invert">
-      <header className="mb-10 space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-        {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
-      </header>
-      <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
-    </article>
+    <SiteShell
+      locale={locale}
+      targetLocale={targetLocale}
+      site={shell.site}
+      navigation={shell.navigation}
+      switcherHref={switcherHref}
+    >
+      <article className="prose prose-zinc max-w-none dark:prose-invert">
+        <header className="mb-10 space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
+          {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
+        </header>
+        <div className="prose-h2:mt-8 prose-h3:mt-6 prose-p:leading-relaxed">{content}</div>
+      </article>
+    </SiteShell>
   );
 }
 

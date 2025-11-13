@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
+<xsl:stylesheet
+  version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
+  exclude-result-prefixes="xhtml sitemap"
+>
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
   <xsl:template match="/">
     <html lang="ru">
@@ -81,11 +87,11 @@
             </tr>
           </thead>
           <tbody>
-            <xsl:for-each select="urlset/url">
+            <xsl:for-each select="sitemap:urlset/sitemap:url">
               <tr>
                 <td>
-                  <a href="{loc}">
-                    <xsl:value-of select="loc" />
+                  <a href="{sitemap:loc}">
+                    <xsl:value-of select="sitemap:loc" />
                   </a>
                 </td>
                 <td>
@@ -105,8 +111,8 @@
                 </td>
                 <td class="timestamp">
                   <xsl:choose>
-                    <xsl:when test="lastmod">
-                      <xsl:value-of select="lastmod" />
+                    <xsl:when test="sitemap:lastmod">
+                      <xsl:value-of select="sitemap:lastmod" />
                     </xsl:when>
                     <xsl:otherwise>—</xsl:otherwise>
                   </xsl:choose>
