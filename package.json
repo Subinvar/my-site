@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "knip": "knip",
+    "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,tailwindcss,sharp,lightningcss,lightningcss-wasm,unrs-resolver",
     "test": "tsx --test"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
     "babel-plugin-react-compiler": "1.0.0",
+    "depcheck": "^1.4.7",
     "eslint": "^9",
     "eslint-config-next": "16.0.2",
     "eslint-plugin-eslint-comments": "^3.2.0",
@@ -35,6 +38,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-tailwindcss": "^3.18.2",
     "eslint-plugin-unused-imports": "^4.3.0",
+    "knip": "^5.69.1",
     "lightningcss-win32-x64-msvc": "1.30.2",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
