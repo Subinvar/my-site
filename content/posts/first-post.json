@@ -28,11 +28,7 @@
     "lean-construction"
   ],
   "cover": {
-    "image": {
-      "src": "uploads/post-cover.svg",
-      "width": 1200,
-      "height": 630
-    },
+    "image": "uploads/post-cover.svg",
     "alt": {
       "ru": "Инженеры проверяют цифровой план модернизации",
       "en": "Engineers reviewing the digital modernisation plan"
@@ -56,11 +52,7 @@
       "en": "Walk through the project stages, digital models, and decisions behind the upgrade."
     },
     "ogImage": {
-      "image": {
-        "src": "uploads/post-cover.svg",
-        "width": 1200,
-        "height": 630
-      },
+      "image": "uploads/post-cover.svg",
       "alt": "Производственная линия после модернизации"
     }
   },

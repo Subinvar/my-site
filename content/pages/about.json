@@ -39,11 +39,7 @@
       "en": "We deliver major projects from digital modelling to operational launch."
     },
     "ogImage": {
-      "image": {
-        "src": "uploads/og-default.svg",
-        "width": 1200,
-        "height": 630
-      },
+      "image": "uploads/og-default.svg",
       "alt": "Офис StroyTech и команда инженеров"
     }
   },

@@ -33,11 +33,7 @@
       "en": "An engineering team accelerating the launch of modern industrial sites."
     },
     "ogImage": {
-      "image": {
-        "src": "uploads/og-default.svg",
-        "width": 1200,
-        "height": 630
-      },
+      "image": "uploads/og-default.svg",
       "alt": "Команда Интема Групп за обсуждением проекта"
     },
     "canonicalBase": "https://intema.ru",

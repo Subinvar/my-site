@@ -39,11 +39,7 @@
       "en": "Helping manufacturers launch new facilities faster and safer."
     },
     "ogImage": {
-      "image": {
-        "src": "uploads/og-default.svg",
-        "width": 1200,
-        "height": 630
-      },
+      "image": "uploads/og-default.svg",
       "alt": "StroyTech — команда инженеров"
     }
   },
