@@ -28,7 +28,11 @@
     "lean-construction"
   ],
   "cover": {
-    "image": "uploads/post-cover.svg",
+    "image": {
+      "src": "uploads/post-cover.svg",
+      "width": 1200,
+      "height": 630
+    },
     "alt": {
       "ru": "Инженеры проверяют цифровой план модернизации",
       "en": "Engineers reviewing the digital modernisation plan"

@@ -4,33 +4,33 @@
     "en": "StroyTech"
   },
   "tagline": {
-    "ru": "Инженерия промышленных проектов полного цикла",
-    "en": "End-to-end engineering for industrial projects"
+    "ru": "Инженерные решения для промышленного строительства",
+    "en": "Industrial engineering solutions"
   },
   "contacts": {
     "email": "hello@intema.ru",
     "phone": "+7 (495) 123-45-67",
     "address": {
-      "ru": "Москва, Промышленный проспект, 12",
-      "en": "12 Industrial Ave, Moscow"
+      "ru": "Москва, Пресненская наб., 12",
+      "en": "12 Presnenskaya emb., Moscow"
     }
   },
   "seo": {
     "title": {
-      "ru": "StroyTech — промышленное проектирование и строительство",
-      "en": "StroyTech — industrial engineering and construction"
+      "ru": "Интема Групп — инженерные решения полного цикла",
+      "en": "Intema Group — end-to-end industrial engineering"
     },
     "description": {
-      "ru": "Комплексные решения для заводов, логистических центров и исследовательских кампусов.",
-      "en": "Integrated solutions for factories, logistics hubs, and research campuses."
+      "ru": "Мы проектируем, строим и модернизируем высокотехнологичные промышленные объекты полного цикла.",
+      "en": "We design, build, and modernise high-tech industrial facilities end to end."
     },
     "ogTitle": {
-      "ru": "StroyTech: цифровая трансформация промышленности",
-      "en": "StroyTech: digital transformation for industry"
+      "ru": "Интема Групп — цифровая трансформация промышленности",
+      "en": "Intema Group — digital transformation for industry"
     },
     "ogDescription": {
-      "ru": "Команда инженеров и строителей, которая помогает запускать новые производства быстрее.",
-      "en": "A multidisciplinary team accelerating the launch of modern industrial facilities."
+      "ru": "Команда инженеров и строителей, которая ускоряет запуск современных производств.",
+      "en": "An engineering team accelerating the launch of modern industrial sites."
     },
     "ogImage": {
       "image": {
@@ -38,10 +38,10 @@
         "width": 1200,
         "height": 630
       },
-      "alt": "StroyTech — команда инженеров"
+      "alt": "Команда Интема Групп за обсуждением проекта"
     },
     "canonicalBase": "https://intema.ru",
-    "twitterHandle": "@stroytech"
+    "twitterHandle": "@Intema"
   },
   "meta": {
     "domain": "intema.ru",

@@ -1,0 +1,90 @@
+{
+  "headerLinks": [
+    {
+      "id": "home",
+      "label": {
+        "ru": "Главная",
+        "en": "Home"
+      },
+      "path": {
+        "ru": "",
+        "en": ""
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 0
+    },
+    {
+      "id": "about",
+      "label": {
+        "ru": "О компании",
+        "en": "About"
+      },
+      "path": {
+        "ru": "o-kompanii",
+        "en": "about"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 10
+    },
+    {
+      "id": "linkedin",
+      "label": {
+        "ru": "LinkedIn",
+        "en": "LinkedIn"
+      },
+      "path": {
+        "ru": "",
+        "en": ""
+      },
+      "externalUrl": "https://www.linkedin.com/company/intema",
+      "newTab": true,
+      "order": 20
+    }
+  ],
+  "footerLinks": [
+    {
+      "id": "footer-home",
+      "label": {
+        "ru": "Главная",
+        "en": "Home"
+      },
+      "path": {
+        "ru": "",
+        "en": ""
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 0
+    },
+    {
+      "id": "footer-news",
+      "label": {
+        "ru": "Новости",
+        "en": "News"
+      },
+      "path": {
+        "ru": "",
+        "en": ""
+      },
+      "externalUrl": "https://www.linkedin.com/company/intema/posts/",
+      "newTab": true,
+      "order": 10
+    },
+    {
+      "id": "footer-contacts",
+      "label": {
+        "ru": "Контакты",
+        "en": "Contact"
+      },
+      "path": {
+        "ru": "o-kompanii",
+        "en": "about"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 20
+    }
+  ]
+}
