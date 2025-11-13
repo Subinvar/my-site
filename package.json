@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "knip": "knip",
-    "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,tailwindcss,sharp,lightningcss,lightningcss-wasm,unrs-resolver",
+    "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,@tailwindcss/postcss,postcss,tailwindcss,sharp,lightningcss,lightningcss-wasm,lightningcss-win32-x64-msvc,unrs-resolver",
     "test": "tsx --test"
   },
   "dependencies": {
@@ -16,11 +16,10 @@
     "@keystatic/next": "^5.0.4",
     "@markdoc/markdoc": "^0.5.4",
     "@markdoc/next.js": "^0.5.0",
-    "next": "16.0.2",
+    "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "sharp": "^0.34.5",
-    "shiki": "^3.15.0"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
@@ -32,7 +31,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "depcheck": "^1.4.7",
     "eslint": "^9",
-    "eslint-config-next": "16.0.2",
+    "eslint-config-next": "16.0.3",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -40,6 +39,7 @@
     "eslint-plugin-unused-imports": "^4.3.0",
     "knip": "^5.69.1",
     "lightningcss-win32-x64-msvc": "1.30.2",
+    "postcss": "^8.4.47",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
     "typescript": "^5"

@@ -1,7 +1,20 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
-  "entry": ["src/app/**/*.{ts,tsx}", "src/lib/**/*.ts", "src/**/*.mdoc"],
-  "project": ["src/**/*.{ts,tsx}"],
+  "entry": [
+    "src/app/**/*.{ts,tsx}",
+    "src/lib/**/*.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}"
+  ],
+  "ignoreDependencies": [
+    "lightningcss-win32-x64-msvc",
+    "sharp",
+    "tailwindcss",
+    "eslint-plugin-tailwindcss",
+    "eslint-plugin-import",
+    "eslint-plugin-jsx-a11y"
+  ],
   "ignore": [
     ".next/**",
     "out/**",

@@ -50,7 +50,7 @@ export default async function DefaultLocalePostPage({ params }: PostPageProps) {
           {summary ? <p className="text-base text-zinc-600">{summary}</p> : null}
         </header>
         <div className="prose-markdoc">{content}</div>
-        {post.tags.length ? (
+        {post.tags.length > 0 ? (
           <ul className="mt-10 flex flex-wrap gap-2 text-sm text-zinc-500">
             {post.tags.map((tag) => (
               <li key={tag} className="rounded-full border border-zinc-200 px-3 py-1">
