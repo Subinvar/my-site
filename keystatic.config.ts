@@ -168,6 +168,7 @@ export default config({
     pages: collection({
       label: 'Страницы',
       path: 'content/pages/*',
+      format: { data: 'json' },
       slugField: 'id',
       schema: {
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
@@ -184,6 +185,7 @@ export default config({
     posts: collection({
       label: 'Посты',
       path: 'content/posts/*',
+      format: { data: 'json' },
       slugField: 'id',
       schema: {
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
