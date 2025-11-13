@@ -10,12 +10,12 @@
     "en": "About"
   },
   "description": {
-    "ru": "StroyTech строит и модернизирует промышленные объекты от проектирования до запуска.",
-    "en": "StroyTech designs, builds, and modernises industrial facilities from first sketch to commissioning."
+    "ru": "Интема Групп поставляет связующие системы, противопригарные покрытия и вспомогательные материалы для литейного производства.",
+    "en": "Intema Group supplies binder systems, release coatings, and auxiliary materials for foundry production."
   },
   "excerpt": {
-    "ru": "Рассказываем, кто мы, какие проекты ведём и в чём наша экспертиза.",
-    "en": "Learn who we are, the projects we manage, and what makes our expertise unique."
+    "ru": "Рассказываем, кто мы, как поддерживаем литейные цеха и какие сервисы предоставляем.",
+    "en": "Learn who we are, how we support foundries, and which services we provide."
   },
   "content": {
     "ru": "content/markdoc/ru/pages/about.mdoc",
@@ -23,24 +23,24 @@
   },
   "seo": {
     "title": {
-      "ru": "О компании StroyTech",
-      "en": "About StroyTech"
+      "ru": "О компании Интема Групп",
+      "en": "About Intema Group"
     },
     "description": {
-      "ru": "15 лет опыта в промышленном проектировании и строительстве сложных объектов.",
-      "en": "15 years of experience delivering complex industrial facilities worldwide."
+      "ru": "10 лет поставок связующих, противопригарных покрытий и сервисного сопровождения литейных предприятий.",
+      "en": "10 years of delivering binders, release coatings, and technical support for foundry teams."
     },
     "ogTitle": {
-      "ru": "StroyTech — команда инженеров и строителей",
-      "en": "StroyTech — engineers and builders united"
+      "ru": "Интема Групп — материалы и сервис для литейных цехов",
+      "en": "Intema Group — materials and service for foundry shops"
     },
     "ogDescription": {
-      "ru": "Реализуем крупные проекты от цифрового моделирования до ввода в эксплуатацию.",
-      "en": "We deliver major projects from digital modelling to operational launch."
+      "ru": "Подбираем рецептуры под требования клиентов и гарантируем внедрение под ключ.",
+      "en": "We match formulations to customer requirements and guide end-to-end implementation."
     },
     "ogImage": {
       "image": "uploads/og-default.svg",
-      "alt": "Офис StroyTech и команда инженеров"
+      "alt": "Офис Интема Групп и команда специалистов"
     }
   },
   "updatedAt": "2024-02-10T08:30"

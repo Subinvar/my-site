@@ -1,12 +1,12 @@
 {
   "common": {
     "siteName": {
-      "ru": "StroyTech",
-      "en": "StroyTech"
+      "ru": "Интема Групп",
+      "en": "Intema Group"
     },
     "tagline": {
-      "ru": "Инженерные решения для промышленного строительства",
-      "en": "Industrial engineering solutions"
+      "ru": "Материалы для литейных и формовочных производств",
+      "en": "Materials for moulding and casting operations"
     },
     "buttons": {
       "goHome": {
@@ -69,8 +69,8 @@
       "en": "Contacts"
     },
     "copyright": {
-      "ru": "© {year} StroyTech. Все права защищены.",
-      "en": "© {year} StroyTech. All rights reserved."
+      "ru": "© {year} Интема Групп. Все права защищены.",
+      "en": "© {year} Intema Group. All rights reserved."
     }
   },
   "forms": {
@@ -93,12 +93,12 @@
   },
   "seo": {
     "ogImageAlt": {
-      "ru": "Обложка StroyTech для социальных сетей",
-      "en": "StroyTech social sharing cover"
+      "ru": "Обложка Интема Групп для социальных сетей",
+      "en": "Intema Group social sharing cover"
     },
     "shareTitle": {
-      "ru": "StroyTech — эксперты по промышленному строительству",
-      "en": "StroyTech — experts in industrial construction"
+      "ru": "Интема Групп — материалы для литейного производства",
+      "en": "Intema Group — materials for foundry production"
     }
   },
   "messages": {

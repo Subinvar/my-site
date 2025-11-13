@@ -10,12 +10,12 @@
     "en": "Home"
   },
   "description": {
-    "ru": "StroyTech — инженерная компания, которая ведёт проекты от концепции до ввода в эксплуатацию.",
-    "en": "StroyTech is an engineering company delivering projects from concept to commissioning."
+    "ru": "Интема Групп поставляет связующие, противопригарные покрытия и вспомогательные материалы для литейных цехов.",
+    "en": "Intema Group supplies binders, release coatings, and auxiliary materials for foundry shops."
   },
   "excerpt": {
-    "ru": "StroyTech реализует промышленные проекты полного цикла — от концепции до пусконаладки.",
-    "en": "StroyTech delivers end-to-end industrial engineering projects from concept to commissioning."
+    "ru": "Мы помогаем литейным предприятиям стабилизировать процессы формовки и снизить брак.",
+    "en": "We help foundries stabilise moulding processes and reduce scrap."
   },
   "content": {
     "ru": "content/markdoc/ru/pages/home.mdoc",
@@ -23,24 +23,24 @@
   },
   "seo": {
     "title": {
-      "ru": "StroyTech — промышленное проектирование и стройка",
-      "en": "StroyTech — industrial design and construction"
+      "ru": "Интема Групп — материалы для литейного производства",
+      "en": "Intema Group — materials for foundry production"
     },
     "description": {
-      "ru": "Комплексные решения для заводов, логистических центров и научных комплексов.",
-      "en": "Integrated solutions for factories, logistics hubs, and research campuses."
+      "ru": "Связующие, противопригарные покрытия и добавки для изготовления форм и стержней с прогнозируемым качеством.",
+      "en": "Binders, release coatings, and additives that keep mould and core production predictable."
     },
     "ogTitle": {
-      "ru": "StroyTech: цифровая трансформация промышленности",
-      "en": "StroyTech: digital transformation for industry"
+      "ru": "Интема Групп: комплексные поставки для литейных цехов",
+      "en": "Intema Group: complete supplies for foundry teams"
     },
     "ogDescription": {
-      "ru": "Помогаем запускать новые производства быстрее и безопаснее.",
-      "en": "Helping manufacturers launch new facilities faster and safer."
+      "ru": "Подбираем рецептуры, обучаем персонал и сопровождаем внедрение материалов на производстве.",
+      "en": "We tailor formulations, train teams, and support on-site implementation."
     },
     "ogImage": {
       "image": "uploads/og-default.svg",
-      "alt": "StroyTech — команда инженеров"
+      "alt": "Интема Групп — команда экспертов по литейным материалам"
     }
   },
   "updatedAt": "2024-02-01T10:00"

@@ -32,8 +32,8 @@ export async function resolveManifest(locale: Locale): Promise<Response> {
   const startUrl = buildStartUrl(locale);
   const manifest: WebManifest = {
     id: startUrl,
-    name: site.name ?? 'StroyTech',
-    short_name: site.name ?? 'StroyTech',
+    name: site.name ?? 'Intema Group',
+    short_name: site.name ?? 'Intema Group',
     description: site.tagline ?? site.seo.description ?? undefined,
     start_url: startUrl,
     scope: locale === defaultLocale ? '/' : `${startUrl}`,

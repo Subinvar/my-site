@@ -1,43 +1,43 @@
 {
   "siteName": {
-    "ru": "StroyTech",
-    "en": "StroyTech"
+    "ru": "Интема Групп",
+    "en": "Intema Group"
   },
   "tagline": {
-    "ru": "Инженерные решения для промышленного строительства",
-    "en": "Industrial engineering solutions"
+    "ru": "Связующие материалы, противопригарные покрытия и вспомогательные решения для литейных производств",
+    "en": "Binders, release coatings, and auxiliary supplies for foundries"
   },
   "contacts": {
-    "email": "hello@intema.ru",
-    "phone": "+7 (495) 123-45-67",
+    "email": "info@intemagroup.ru",
+    "phone": "+7 (495) 357-25-50",
     "address": {
-      "ru": "Москва, Пресненская наб., 12",
-      "en": "12 Presnenskaya emb., Moscow"
+      "ru": "141241, Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, корп. Б, эт. 3, оф. 8",
+      "en": "141241, Centralnaya St. 2, Bldg. B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region"
     }
   },
   "seo": {
     "title": {
-      "ru": "Интема Групп — инженерные решения полного цикла",
-      "en": "Intema Group — end-to-end industrial engineering"
+      "ru": "Интема Групп — поставки связующих и противопригарных материалов",
+      "en": "Intema Group — binders and release coatings supplier"
     },
     "description": {
-      "ru": "Мы проектируем, строим и модернизируем высокотехнологичные промышленные объекты полного цикла.",
-      "en": "We design, build, and modernise high-tech industrial facilities end to end."
+      "ru": "Поставляем связующие, противопригарные покрытия и вспомогательные материалы для стабильного литья и подготовки форм.",
+      "en": "We supply binders, release coatings, and auxiliary materials to stabilise moulding and casting operations."
     },
     "ogTitle": {
-      "ru": "Интема Групп — цифровая трансформация промышленности",
-      "en": "Intema Group — digital transformation for industry"
+      "ru": "Интема Групп — эксперты по материалам для литейного производства",
+      "en": "Intema Group — specialists in foundry consumables"
     },
     "ogDescription": {
-      "ru": "Команда инженеров и строителей, которая ускоряет запуск современных производств.",
-      "en": "An engineering team accelerating the launch of modern industrial sites."
+      "ru": "Помогаем литейным цехам снижать брак, ускорять подготовку форм и улучшать поверхность отливок.",
+      "en": "We help foundries cut scrap, speed up mould preparation, and improve casting surface quality."
     },
     "ogImage": {
       "image": "uploads/og-default.svg",
-      "alt": "Команда Интема Групп за обсуждением проекта"
+      "alt": "Команда Интема Групп обсуждает применение противопригарных покрытий"
     },
     "canonicalBase": "https://intema.ru",
-    "twitterHandle": "@Intema"
+    "twitterHandle": "@IntemaGroup"
   },
   "meta": {
     "domain": "intema.ru",

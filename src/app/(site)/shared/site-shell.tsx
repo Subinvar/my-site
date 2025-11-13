@@ -63,7 +63,7 @@ export function SiteShell({
       <header className="border-b border-zinc-200 bg-white">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-6 px-6 py-6">
           <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">{site.name ?? 'StroyTech'}</p>
+            <p className="text-xs uppercase tracking-wide text-zinc-500">{site.name ?? 'Intema Group'}</p>
             <p className="text-lg font-semibold text-zinc-900">{site.tagline}</p>
           </div>
           <div className="flex items-center gap-6">

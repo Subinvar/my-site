@@ -29,16 +29,16 @@
       "order": 10
     },
     {
-      "id": "linkedin",
+      "id": "catalog",
       "label": {
-        "ru": "LinkedIn",
-        "en": "LinkedIn"
+        "ru": "Каталог",
+        "en": "Catalogue"
       },
       "path": {
         "ru": "",
         "en": ""
       },
-      "externalUrl": "https://www.linkedin.com/company/stroytech",
+      "externalUrl": "https://intema.ru",
       "newTab": true,
       "order": 20
     }
@@ -68,7 +68,7 @@
         "ru": "",
         "en": ""
       },
-      "externalUrl": "https://www.linkedin.com/company/stroytech/posts/",
+      "externalUrl": "https://intema.ru/news",
       "newTab": true,
       "order": 10
     },

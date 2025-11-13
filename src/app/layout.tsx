@@ -7,8 +7,8 @@ import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
 
 const LOCALE_HEADER = 'x-site-locale';
 
-function resolveLocale(): Locale {
-  const headerLocale = headers().get(LOCALE_HEADER);
+async function resolveLocale(): Promise<Locale> {
+  const headerLocale = (await headers()).get(LOCALE_HEADER);
   if (isLocale(headerLocale)) {
     return headerLocale;
   }
@@ -19,8 +19,8 @@ type RootLayoutProps = {
   children: ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
-  const locale = resolveLocale();
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const locale = await resolveLocale();
   return (
     <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="bg-white text-zinc-900 antialiased">{children}</body>

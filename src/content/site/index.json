@@ -1,40 +1,40 @@
 {
   "siteName": {
-    "ru": "StroyTech",
-    "en": "StroyTech"
+    "ru": "Интема Групп",
+    "en": "Intema Group"
   },
   "tagline": {
-    "ru": "Инженерные решения для промышленного строительства",
-    "en": "Industrial engineering solutions"
+    "ru": "Связующие материалы, противопригарные покрытия и вспомогательные решения для литейных производств",
+    "en": "Binders, release coatings, and auxiliary supplies for foundries"
   },
   "contacts": {
-    "email": "hello@stroytech.io",
-    "phone": "+7 (495) 123-45-67",
+    "email": "info@intema.ru",
+    "phone": "+7 (495) 357-25-50",
     "address": {
-      "ru": "Москва, Пресненская наб., 12",
-      "en": "12 Presnenskaya emb., Moscow"
+      "ru": "141241, Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, корп. Б, эт. 3, оф. 8",
+      "en": "141241, Centralnaya St. 2, Bldg. B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region"
     }
   },
   "defaultSeo": {
     "ru": {
-      "title": "StroyTech — инженерные решения",
-      "description": "Мы проектируем и строим высокотехнологичные промышленные объекты полного цикла.",
+      "title": "Интема Групп — поставки материалов для литья",
+      "description": "Комплексные поставки связующих, противопригарных покрытий и вспомогательных материалов для литейных цехов.",
       "ogImage": {
         "image": "uploads/og-default.svg",
-        "alt": "Команда StroyTech на фоне инженерных чертежей"
+        "alt": "Команда Интема Групп обсуждает противопригарные решения"
       }
     },
     "en": {
-      "title": "StroyTech — industrial engineering",
-      "description": "We design and build end-to-end industrial facilities for ambitious teams.",
+      "title": "Intema Group — foundry materials supplier",
+      "description": "Comprehensive deliveries of binders, release coatings, and auxiliary consumables for foundry shops.",
       "ogImage": {
         "image": "uploads/og-default.svg",
-        "alt": "StroyTech team with engineering plans"
+        "alt": "Intema Group team reviewing release agent applications"
       }
     }
   },
   "meta": {
-    "domain": "https://stroytech.io",
+    "domain": "https://intema.ru",
     "robots": {
       "index": true,
       "follow": true

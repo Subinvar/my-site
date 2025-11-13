@@ -3,57 +3,57 @@
   "published": true,
   "date": "2024-02-05T07:00",
   "slug": {
-    "ru": "modernizaciya-proizvodstva",
-    "en": "modernising-the-plant"
+    "ru": "snizhenie-prigara",
+    "en": "reducing-burn-on"
   },
   "title": {
-    "ru": "Как мы модернизировали производство за 90 дней",
-    "en": "How we modernised a plant in 90 days"
+    "ru": "Как мы снизили пригар на алюминиевой линии на 40%",
+    "en": "How we reduced burn-on defects on an aluminium line by 40%"
   },
   "description": {
-    "ru": "Какие решения помогли сократить простой и повысить эффективность линии на 27%.",
-    "en": "Solutions that reduced downtime and boosted line efficiency by 27%."
+    "ru": "Рассказываем, как подбор связующего и противопригарного покрытия помог стабилизировать выпуск отливок.",
+    "en": "How a new binder and release coating combo stabilised casting output."
   },
   "excerpt": {
-    "ru": "Разбираем этапы и инструменты ускоренной модернизации крупного производственного комплекса.",
-    "en": "A breakdown of the tools and milestones behind our fast-track industrial upgrade."
+    "ru": "Показываем по шагам внедрение материалов Интема Групп и ключевые показатели проекта.",
+    "en": "Step-by-step view of the Intema Group rollout and the metrics that mattered."
   },
   "content": {
     "ru": "content/markdoc/ru/posts/first-post.mdoc",
     "en": "content/markdoc/en/posts/first-post.mdoc"
   },
   "tags": [
-    "modernisation",
-    "digital twin",
-    "lean-construction"
+    "binders",
+    "release-coating",
+    "foundry"
   ],
   "cover": {
     "image": "uploads/post-cover.svg",
     "alt": {
-      "ru": "Инженеры проверяют цифровой план модернизации",
-      "en": "Engineers reviewing the digital modernisation plan"
+      "ru": "Контроль качества отливок после нанесения нового покрытия",
+      "en": "Inspecting castings after applying a new release coating"
     }
   },
   "seo": {
     "title": {
-      "ru": "Модернизация производства за 90 дней — опыт StroyTech",
-      "en": "Modernising a production line in 90 days — the StroyTech approach"
+      "ru": "Снижение пригара на линии литья — опыт Интема Групп",
+      "en": "Cutting burn-on defects — the Intema Group approach"
     },
     "description": {
-      "ru": "Какие решения помогли сократить простой и повысить эффективность линии на 27%.",
-      "en": "How we reduced downtime and increased line productivity by 27%."
+      "ru": "Какие параметры связующего и покрытия помогли сократить пригар на 40% и уменьшить время очистки отливок.",
+      "en": "The binder and coating parameters that cut burn-on by 40% and reduced cleaning time."
     },
     "ogTitle": {
-      "ru": "Как мы преобразили производственную линию за 90 дней",
-      "en": "How we transformed a production line in 90 days"
+      "ru": "Как мы улучшили чистоту поверхности отливок",
+      "en": "How we improved casting surface quality"
     },
     "ogDescription": {
-      "ru": "Показываем этапы проекта, цифровые модели и ключевые решения команды.",
-      "en": "Walk through the project stages, digital models, and decisions behind the upgrade."
+      "ru": "Делимся этапами проекта, испытаниями и сервисной поддержкой Интема Групп.",
+      "en": "Project stages, trials, and Intema Group support in detail."
     },
     "ogImage": {
       "image": "uploads/post-cover.svg",
-      "alt": "Производственная линия после модернизации"
+      "alt": "Литейная линия после внедрения нового покрытия"
     }
   },
   "updatedAt": "2024-02-12T12:15"
