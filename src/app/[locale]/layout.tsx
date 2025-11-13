@@ -14,7 +14,6 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
-import { geistMono, geistSans } from '../fonts';
 
 type LocaleRouteParams = {
   locale: string;
@@ -82,11 +81,5 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     notFound();
   }
 
-  const locale = rawLocale;
-
-  return (
-    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="bg-white text-zinc-900 antialiased">{children}</body>
-    </html>
-  );
+  return <>{children}</>;
 }

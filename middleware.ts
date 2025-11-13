@@ -3,7 +3,47 @@ import { NextResponse } from "next/server";
 
 import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
 
+const LOCALE_COOKIE = "NEXT_LOCALE";
+const LOCALE_HEADER = "x-site-locale";
+
 const LOCALE_PREFIXES = new Set(locales);
+
+function withLocaleCookie(response: NextResponse, locale: Locale): NextResponse {
+  response.cookies.set({
+    name: LOCALE_COOKIE,
+    value: locale,
+    path: "/",
+    sameSite: "lax",
+  });
+  return response;
+}
+
+function nextWithLocale(request: NextRequest, locale: Locale): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+  return withLocaleCookie(response, locale);
+}
+
+function rewriteWithLocale(request: NextRequest, url: URL, locale: Locale): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  const response = NextResponse.rewrite(url, {
+    request: {
+      headers: requestHeaders,
+    },
+  });
+  return withLocaleCookie(response, locale);
+}
+
+function redirectWithLocale(url: URL, locale: Locale, status: number): NextResponse {
+  const response = NextResponse.redirect(url, { status });
+  return withLocaleCookie(response, locale);
+}
 
 function hasFileExtension(pathname: string): boolean {
   const trimmed = pathname.split("?")[0]?.replace(/\/$/, "") ?? "";
@@ -53,32 +93,32 @@ export function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = removeDefaultLocalePrefix(pathname);
       if (url.pathname !== pathname) {
-        return NextResponse.rewrite(url);
+        return rewriteWithLocale(request, url, defaultLocale);
       }
     }
-    return NextResponse.next();
+    return nextWithLocale(request, locale ?? defaultLocale);
   }
 
   if (locale === defaultLocale) {
     const url = request.nextUrl.clone();
     url.pathname = removeDefaultLocalePrefix(pathname);
     if (url.pathname === pathname) {
-      return NextResponse.next();
+      return nextWithLocale(request, defaultLocale);
     }
-    return NextResponse.redirect(url, { status: 308 });
+    return redirectWithLocale(url, defaultLocale, 308);
   }
 
   if (locale) {
-    return NextResponse.next();
+    return nextWithLocale(request, locale);
   }
 
   if (pathname === "/") {
-    return NextResponse.next();
+    return nextWithLocale(request, defaultLocale);
   }
 
   const url = request.nextUrl.clone();
   url.pathname = `/${defaultLocale}${pathname}`.replace(/\/+/, "/");
-  return NextResponse.rewrite(url);
+  return rewriteWithLocale(request, url, defaultLocale);
 }
 
 export const config = {
