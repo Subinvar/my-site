@@ -119,7 +119,8 @@ export default config({
   singletons: {
     site: singleton({
       label: 'Настройки сайта',
-      path: 'content/site',
+      path: 'content/site/',
+      format: { data: 'json' },
       schema: {
         siteName: localizedText('Название сайта', { isRequired: true }),
         tagline: localizedText('Слоган', { multiline: true }),
@@ -157,7 +158,8 @@ export default config({
     }),
     navigation: singleton({
       label: 'Навигация',
-      path: 'content/navigation',
+      path: 'content/navigation/',
+      format: { data: 'json' },
       schema: {
         headerLinks: navigationLinks('Ссылки в шапке'),
         footerLinks: navigationLinks('Ссылки в подвале'),
