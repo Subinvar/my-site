@@ -9,10 +9,12 @@ import { buildPath } from '@/lib/paths';
 import {
   CATALOG_BASES,
   CATALOG_CATEGORIES,
+  CATALOG_AUXILIARIES,
   CATALOG_FILLERS,
   CATALOG_PROCESSES,
   type CatalogBase,
   type CatalogCategory,
+  type CatalogAuxiliary,
   type CatalogFiller,
   type CatalogProcess,
 } from './catalog/constants';
@@ -23,6 +25,7 @@ const CATALOG_CATEGORY_SET = new Set<string>(CATALOG_CATEGORIES);
 const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
 const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
 const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
+const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
 
 const getReader = cache(() => createReader(process.cwd(), config));
 
@@ -182,6 +185,7 @@ type RawCatalogEntry = {
   process?: string[] | null;
   base?: string[] | null;
   filler?: string[] | null;
+  auxiliary?: string[] | null;
   image?: RawMedia;
   docs?: string | null;
   published?: boolean | null;
@@ -299,6 +303,7 @@ export type CatalogListItem = {
   process: CatalogProcess[];
   base: CatalogBase[];
   filler: CatalogFiller[];
+  auxiliary: CatalogAuxiliary[];
   image: CatalogImage | null;
   docs: string | null;
   updatedAt?: string | null;
@@ -854,6 +859,7 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
   const process = filterValidValues<CatalogProcess>(entry.process, CATALOG_PROCESS_SET);
   const base = filterValidValues<CatalogBase>(entry.base, CATALOG_BASE_SET);
   const filler = filterValidValues<CatalogFiller>(entry.filler, CATALOG_FILLER_SET);
+  const auxiliary = filterValidValues<CatalogAuxiliary>(entry.auxiliary, CATALOG_AUXILIARY_SET);
   const imageAsset = normalizeImageAsset(entry.image ?? null);
   const image = imageAsset
     ? ({ src: imageAsset.src, width: imageAsset.width, height: imageAsset.height } satisfies CatalogImage)
@@ -871,6 +877,7 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
     process,
     base,
     filler,
+    auxiliary,
     image,
     docs,
     updatedAt: normalizeDateTime(entry.updatedAt),
@@ -1013,5 +1020,17 @@ export async function getNavigationEntityByPath(
   return { link: match, slugByLocale: mapLocalizedSlugs(match.localizedPath) };
 }
 
-export { CATALOG_BASES, CATALOG_CATEGORIES, CATALOG_FILLERS, CATALOG_PROCESSES } from './catalog/constants';
-export type { CatalogBase, CatalogCategory, CatalogFiller, CatalogProcess } from './catalog/constants';
+export {
+  CATALOG_AUXILIARIES,
+  CATALOG_BASES,
+  CATALOG_CATEGORIES,
+  CATALOG_FILLERS,
+  CATALOG_PROCESSES,
+} from './catalog/constants';
+export type {
+  CatalogAuxiliary,
+  CatalogBase,
+  CatalogCategory,
+  CatalogFiller,
+  CatalogProcess,
+} from './catalog/constants';

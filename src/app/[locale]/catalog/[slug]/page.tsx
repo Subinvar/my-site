@@ -2,26 +2,38 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getCatalogProductPage, getLocalizedCatalogParams, resolveCatalogProductMetadata } from '@/app/(site)/shared/catalog';
+import {
+  getCatalogProductPage,
+  getLocalizedCatalogParams,
+  resolveCatalogProductMetadata,
+} from '@/app/(site)/shared/catalog';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
+import type { CatalogCategory } from '@/lib/keystatic';
 
-const ATTRIBUTE_LABELS: Record<Locale, { category: string; process: string; base: string; filler: string }> = {
+const ATTRIBUTE_LABELS: Record<
+  Locale,
+  { category: string; process: string; base: string; filler: string; auxiliary: string }
+> = {
   ru: {
     category: 'Категория',
     process: 'Процессы',
     base: 'Основы',
     filler: 'Наполнители',
+    auxiliary: 'Вспомогательные материалы',
   },
   en: {
     category: 'Category',
     process: 'Processes',
     base: 'Bases',
     filler: 'Fillers',
+    auxiliary: 'Auxiliary supplies',
   },
 };
+
+const AUXILIARY_CATEGORY: CatalogCategory = 'Вспомогательные';
 
 const SUMMARY_LABEL: Record<Locale, string> = {
   ru: 'Кратко о продукте',
@@ -57,6 +69,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   });
   const attributes = ATTRIBUTE_LABELS[locale];
   const categoryValue = item.category ?? '—';
+  const showAuxiliary = item.category === AUXILIARY_CATEGORY;
 
   return (
     <SiteShell
@@ -91,6 +104,9 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
           <AttributeList label={attributes.process} values={item.process} />
           <AttributeList label={attributes.base} values={item.base} />
           <AttributeList label={attributes.filler} values={item.filler} />
+          {showAuxiliary ? (
+            <AttributeList label={attributes.auxiliary} values={item.auxiliary} />
+          ) : null}
         </section>
         <div className="prose-markdoc">{content}</div>
       </article>

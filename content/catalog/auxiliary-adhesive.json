@@ -1,0 +1,34 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "vspomogatelnij-kley-komplekt",
+    "en": "aux-adhesive-kit"
+  },
+  "title": {
+    "ru": "Клей-комплект для стержней",
+    "en": "Core adhesive kit"
+  },
+  "excerpt": {
+    "ru": "Быстро фиксирует стыки и герметизирует стержневые сборки.",
+    "en": "Rapidly seals joints and stabilises assembled cores."
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/auxiliary-adhesive.mdoc",
+    "en": "content/markdoc/en/catalog/auxiliary-adhesive.mdoc"
+  },
+  "category": "Вспомогательные",
+  "process": [
+    "Колд-Бокс",
+    "ЛГМ"
+  ],
+  "base": [],
+  "filler": [
+    "алюмосиликат"
+  ],
+  "auxiliary": [
+    "клей",
+    "шнур"
+  ],
+  "image": "uploads/catalog-binder-alpha.svg",
+  "updatedAt": "2024-03-05T08:10"
+}

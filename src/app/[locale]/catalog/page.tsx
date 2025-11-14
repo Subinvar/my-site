@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import {
+  CATALOG_AUXILIARIES,
   CATALOG_BASES,
   CATALOG_CATEGORIES,
   CATALOG_FILLERS,
@@ -16,6 +17,7 @@ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type {
+  CatalogAuxiliary,
   CatalogBase,
   CatalogCategory,
   CatalogFiller,
@@ -31,8 +33,8 @@ const HEADING_BY_LOCALE: Record<Locale, string> = {
 };
 
 const DESCRIPTION_BY_LOCALE: Record<Locale, string> = {
-  ru: 'Отфильтруйте продукты по категории, процессу, основе и наполнителю.',
-  en: 'Filter products by category, process, base, and filler.',
+  ru: 'Отфильтруйте продукты по категории, процессу, основе, наполнителю и типу вспомогательных материалов.',
+  en: 'Filter products by category, process, base, filler, and auxiliary type.',
 };
 
 const SUBMIT_LABEL: Record<Locale, string> = {
@@ -50,18 +52,23 @@ const CATEGORY_ALL_LABEL: Record<Locale, string> = {
   en: 'All categories',
 };
 
-const GROUP_LABELS: Record<Locale, { category: string; process: string; base: string; filler: string }> = {
+const GROUP_LABELS: Record<
+  Locale,
+  { category: string; process: string; base: string; filler: string; auxiliary: string }
+> = {
   ru: {
     category: 'Категория',
     process: 'Процесс',
     base: 'Основа',
     filler: 'Наполнитель',
+    auxiliary: 'Вспомогательные',
   },
   en: {
     category: 'Category',
     process: 'Process',
     base: 'Base',
     filler: 'Filler',
+    auxiliary: 'Auxiliary supplies',
   },
 };
 
@@ -75,6 +82,8 @@ const EMPTY_STATE_MESSAGE: Record<Locale, string> = {
   en: 'No products match your filters. Try adjusting the search parameters.',
 };
 
+const AUXILIARY_CATEGORY: CatalogCategory = 'Вспомогательные';
+
 type PageProps = {
   params: { locale: Locale } | Promise<{ locale: Locale }>;
   searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
@@ -85,6 +94,7 @@ type FilterState = {
   process: CatalogProcess[];
   base: CatalogBase[];
   filler: CatalogFiller[];
+  auxiliary: CatalogAuxiliary[];
 };
 
 export default async function CatalogPage({ params, searchParams }: PageProps) {
@@ -167,6 +177,12 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
               options={CATALOG_FILLERS}
               selected={filters.filler}
             />
+            <FilterGroup
+              name="auxiliary"
+              legend={GROUP_LABELS[locale].auxiliary}
+              options={CATALOG_AUXILIARIES}
+              selected={filters.auxiliary}
+            />
             <div className="flex flex-wrap gap-3">
               <button
                 type="submit"
@@ -214,10 +230,12 @@ function parseFilters(params: Record<string, string | string[] | undefined>): Fi
     process: toMulti<CatalogProcess>(params.process, CATALOG_PROCESSES),
     base: toMulti<CatalogBase>(params.base, CATALOG_BASES),
     filler: toMulti<CatalogFiller>(params.filler, CATALOG_FILLERS),
+    auxiliary: toMulti<CatalogAuxiliary>(params.auxiliary, CATALOG_AUXILIARIES),
   } satisfies FilterState;
 }
 
 function applyFilters(items: CatalogListItem[], filters: FilterState): CatalogListItem[] {
+  const shouldFilterAuxiliary = filters.auxiliary.length > 0 && filters.category === AUXILIARY_CATEGORY;
   return items.filter((item) => {
     if (filters.category && item.category !== filters.category) {
       return false;
@@ -230,6 +248,14 @@ function applyFilters(items: CatalogListItem[], filters: FilterState): CatalogLi
     }
     if (filters.filler.length > 0 && !hasIntersection(item.filler, filters.filler)) {
       return false;
+    }
+    if (shouldFilterAuxiliary) {
+      if (item.category !== AUXILIARY_CATEGORY) {
+        return false;
+      }
+      if (!hasIntersection(item.auxiliary, filters.auxiliary)) {
+        return false;
+      }
     }
     return true;
   });

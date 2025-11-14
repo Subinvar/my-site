@@ -1,0 +1,34 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "vspomogatelnij-ochistitel",
+    "en": "aux-cleaning-solution"
+  },
+  "title": {
+    "ru": "Отмывающий состав для оснастки",
+    "en": "Tooling cleaning solution"
+  },
+  "excerpt": {
+    "ru": "Удаляет пригар и подготавливает поверхности к нанесению покрытий.",
+    "en": "Removes burn-on and prepares tooling for new coatings."
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/auxiliary-cleaner.mdoc",
+    "en": "content/markdoc/en/catalog/auxiliary-cleaner.mdoc"
+  },
+  "category": "Вспомогательные",
+  "process": [
+    "ЖСС",
+    "кронинг"
+  ],
+  "base": [
+    "водное"
+  ],
+  "filler": [],
+  "auxiliary": [
+    "отмывающий состав",
+    "модификатор"
+  ],
+  "image": "uploads/catalog-coating-water.svg",
+  "updatedAt": "2024-03-05T08:12"
+}

@@ -24,3 +24,15 @@ export type CatalogBase = (typeof CATALOG_BASES)[number];
 export const CATALOG_FILLERS = ['циркон', 'алюмосиликат', 'графит', 'магнезит', 'хромит'] as const;
 
 export type CatalogFiller = (typeof CATALOG_FILLERS)[number];
+
+export const CATALOG_AUXILIARIES = [
+  'разделительный состав',
+  'клей',
+  'ремонтная паста',
+  'шнур',
+  'отмывающий состав',
+  'модификатор',
+  'экзотермическая смесь',
+] as const;
+
+export type CatalogAuxiliary = (typeof CATALOG_AUXILIARIES)[number];

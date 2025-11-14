@@ -3,6 +3,7 @@ import { collection, config, fields, singleton } from '@keystatic/core';
 import {
   CATALOG_BASES,
   CATALOG_CATEGORIES,
+  CATALOG_AUXILIARIES,
   CATALOG_FILLERS,
   CATALOG_PROCESSES,
 } from './src/lib/catalog/constants';
@@ -249,6 +250,10 @@ export default config({
         filler: fields.multiselect({
           label: 'Наполнитель',
           options: CATALOG_FILLERS.map((value) => ({ label: value, value })),
+        }),
+        auxiliary: fields.multiselect({
+          label: 'Вспомогательные',
+          options: CATALOG_AUXILIARIES.map((value) => ({ label: value, value })),
         }),
         image: imageField('Изображение'),
         docs: fields.relationship({
