@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import { NavigationList } from '@/app/[locale]/navigation-list';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
+import { buildPath } from '@/lib/paths';
 import { LanguageSwitcher } from './language-switcher';
 
 const brandFont = localFont({
@@ -57,49 +58,104 @@ export function SiteShell({
   switcherHref,
   children,
 }: SiteShellProps) {
+  const contactLinks = [
+    site.contacts.phone
+      ? {
+          id: 'phone',
+          label: site.contacts.phone,
+          href: `tel:${site.contacts.phone}`,
+        }
+      : null,
+    site.contacts.email
+      ? {
+          id: 'email',
+          label: site.contacts.email,
+          href: `mailto:${site.contacts.email}`,
+        }
+      : null,
+  ].filter((item): item is { id: string; label: string; href: string } => Boolean(item));
+
+  const hasContacts = contactLinks.length > 0 || Boolean(site.contacts.address);
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
       <SkipToContentLink locale={locale} />
       <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-6 px-6 py-6">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">{site.name ?? 'Intema Group'}</p>
-            <p className="text-lg font-semibold text-zinc-900">{site.tagline}</p>
+        {hasContacts ? (
+          <div className="border-b border-zinc-200 bg-zinc-900 text-sm text-zinc-100">
+            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 px-6 py-2">
+              {contactLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  className="inline-flex items-center gap-2 text-zinc-100 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                >
+                  {link.label}
+                </a>
+              ))}
+              {site.contacts.address ? (
+                <span className="text-zinc-300">{site.contacts.address}</span>
+              ) : null}
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <NavigationList links={navigation.header} locale={locale} />
-            <LanguageSwitcher
-              currentLocale={locale}
-              targetLocale={targetLocale}
-              href={switcherHref}
-            />
+        ) : null}
+        <div className="mx-auto w-full max-w-5xl px-6 py-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <a
+              href={buildPath(locale)}
+              className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            >
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                {site.name ?? 'Intema Group'}
+              </span>
+              {site.tagline ? (
+                <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
+              ) : null}
+            </a>
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+              <NavigationList links={navigation.header} locale={locale} />
+              <LanguageSwitcher
+                currentLocale={locale}
+                targetLocale={targetLocale}
+                href={switcherHref}
+              />
+            </div>
           </div>
         </div>
       </header>
       <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
         {children}
       </main>
-      <footer className="border-t border-zinc-200 bg-white">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-6 py-8 text-sm text-zinc-600">
-          <NavigationList links={navigation.footer} locale={locale} />
-          <div className="flex flex-wrap items-center gap-4">
-            {site.contacts.email ? (
-              <a
-                className="hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-                href={`mailto:${site.contacts.email}`}
-              >
-                {site.contacts.email}
-              </a>
+      <footer className="border-t border-zinc-200 bg-zinc-50">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-zinc-600">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                {site.name ?? 'Intema Group'}
+              </p>
+              {site.tagline ? (
+                <p className="max-w-xl text-base text-zinc-700">{site.tagline}</p>
+              ) : null}
+            </div>
+            {hasContacts ? (
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                {contactLinks.map((link) => (
+                  <a
+                    key={`footer-${link.id}`}
+                    className="text-zinc-600 transition hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                    href={link.href}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                {site.contacts.address ? <span>{site.contacts.address}</span> : null}
+              </div>
             ) : null}
-            {site.contacts.phone ? (
-              <a
-                className="hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-                href={`tel:${site.contacts.phone}`}
-              >
-                {site.contacts.phone}
-              </a>
-            ) : null}
-            {site.contacts.address ? <span>{site.contacts.address}</span> : null}
+          </div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <NavigationList links={navigation.footer} locale={locale} />
+            <p className="text-xs text-zinc-500">© {currentYear} {site.name ?? 'Intema Group'}. Все права защищены.</p>
           </div>
         </div>
       </footer>
