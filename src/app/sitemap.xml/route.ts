@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
+import { HREFLANG_CODE } from '@/lib/seo';
 
 const XML_HEADER = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>`;
 
@@ -99,17 +100,29 @@ const createSitemapUrls = (baseUrl: string | null, entry: DatedEntry): SitemapUr
   return sitemapUrls;
 };
 
+const renderAlternateLinks = (alternates: Partial<Record<Locale, string>>): string => {
+  const links: string[] = [];
+
+  for (const locale of locales) {
+    const href = alternates[locale];
+    if (!href) {
+      continue;
+    }
+    links.push(
+      `    <xhtml:link rel="alternate" hreflang="${HREFLANG_CODE[locale]}" href="${href}" />`
+    );
+  }
+
+  const defaultHref = alternates[defaultLocale];
+  if (defaultHref) {
+    links.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}" />`);
+  }
+
+  return links.join('\n');
+};
+
 const renderUrlElement = ({ loc, lastmod, alternates }: SitemapUrl): string => {
-  const alternateLinks = locales
-    .map((locale) => {
-      const href = alternates[locale];
-      if (!href) {
-        return '';
-      }
-      return `    <xhtml:link rel="alternate" hreflang="${locale}" href="${href}" />`;
-    })
-    .filter(Boolean)
-    .join('\n');
+  const alternateLinks = renderAlternateLinks(alternates);
 
   const lastmodLine = lastmod ? `    <lastmod>${lastmod}</lastmod>` : '';
 
@@ -177,7 +190,15 @@ export async function GET() {
       })
     );
 
-  const xml = renderXml([...pageUrls, ...postUrls, ...catalogUrls]);
+  const documentUrls = createSitemapUrls(baseUrl, {
+    collection: 'pages',
+    slugByLocale: {
+      ru: 'documents',
+      en: 'documents',
+    },
+  });
+
+  const xml = renderXml([...pageUrls, ...postUrls, ...catalogUrls, ...documentUrls]);
 
   return new NextResponse(xml, {
     headers: {
