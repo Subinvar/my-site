@@ -22,6 +22,13 @@ const imageField = (label: string) =>
     publicPath: '/uploads/',
   });
 
+const fileField = (label: string) =>
+  fields.file({
+    label,
+    directory: 'public/uploads',
+    publicPath: '/uploads/',
+  });
+
 const localizedText = (label: string, options: LocalizedFieldOptions = {}) =>
   fields.object(
     Object.fromEntries(
@@ -176,6 +183,22 @@ export default config({
         footerLinks: navigationLinks('Ссылки в подвале'),
       },
     }),
+    documentsPage: singleton({
+      label: 'Документы и сертификаты',
+      path: 'content/documents-page/',
+      format: { data: 'json' },
+      schema: {
+        title: localizedText('Заголовок', { isRequired: true }),
+        description: localizedText('Описание', { multiline: true }),
+        ogImage: fields.object(
+          {
+            image: imageField('OG-изображение'),
+            alt: fields.text({ label: 'Alt для OG' }),
+          },
+          { label: 'OG-изображение' }
+        ),
+      },
+    }),
   },
   collections: {
     pages: collection({
@@ -218,6 +241,47 @@ export default config({
           alt: localizedText('Alt'),
         }),
         seo: localizedSeoGroup(),
+        updatedAt: fields.datetime({ label: 'Обновлено' }),
+      },
+    }),
+    documents: collection({
+      label: 'Документы',
+      path: 'content/documents/*',
+      format: { data: 'json' },
+      slugField: 'id',
+      schema: {
+        id: fields.text({ label: 'ID', validation: { isRequired: true } }),
+        published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
+        title: localizedText('Название', { isRequired: true }),
+        file: fileField('Файл'),
+        type: fields.select({
+          label: 'Тип документа',
+          options: [
+            { label: 'Сертификат', value: 'certificate' },
+            { label: 'ТДС', value: 'tds' },
+            { label: 'МСДС', value: 'msds' },
+            { label: 'Брошюра', value: 'brochure' },
+          ],
+          defaultValue: 'certificate',
+        }),
+        lang: fields.select({
+          label: 'Язык',
+          options: [
+            { label: 'Русский', value: 'ru' },
+            { label: 'English', value: 'en' },
+          ],
+          defaultValue: 'ru',
+        }),
+        relatedProducts: fields.array(
+          fields.relationship({
+            label: 'Товар',
+            collection: 'catalog',
+          }),
+          {
+            label: 'Связанные продукты',
+            itemLabel: ({ value }) => value ?? 'Товар',
+          }
+        ),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),

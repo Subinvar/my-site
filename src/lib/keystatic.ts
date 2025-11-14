@@ -21,11 +21,20 @@ import {
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
 
+export type DocumentType = 'certificate' | 'tds' | 'msds' | 'brochure';
+export type DocumentLanguage = 'ru' | 'en';
+
 const CATALOG_CATEGORY_SET = new Set<string>(CATALOG_CATEGORIES);
 const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
 const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
 const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
 const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
+const DOCUMENT_TYPE_SET = new Set<DocumentType>(['certificate', 'tds', 'msds', 'brochure']);
+const DOCUMENT_LANGUAGE_SET = new Set<DocumentLanguage>(['ru', 'en']);
+const DOCUMENT_TYPE_ORDER: DocumentType[] = ['certificate', 'tds', 'msds', 'brochure'];
+
+export const DOCUMENT_TYPES: readonly DocumentType[] = DOCUMENT_TYPE_ORDER;
+export const DOCUMENT_LANGUAGES: readonly DocumentLanguage[] = ['ru', 'en'];
 
 const getReader = cache(() => createReader(process.cwd(), config));
 
@@ -194,6 +203,25 @@ type RawCatalogEntry = {
   slugKey?: string | null;
 };
 
+type RawDocumentEntry = {
+  id?: string | null;
+  title?: Localized<string>;
+  file?: RawMedia;
+  type?: string | null;
+  lang?: string | null;
+  relatedProducts?: string[] | string | null;
+  published?: boolean | null;
+  status?: 'draft' | 'published';
+  updatedAt?: string | null;
+  slugKey?: string | null;
+};
+
+type DocumentsPageSingleton = {
+  title?: Localized<string>;
+  description?: Localized<string>;
+  ogImage?: RawSeoImage;
+};
+
 type NavigationEntry = {
   id?: string | null;
   label?: Localized<string>;
@@ -320,6 +348,25 @@ export type CatalogSummary = {
   updatedAt?: string | null;
 };
 
+export type Document = {
+  id: string;
+  title: Partial<Record<Locale, string>>;
+  type: DocumentType;
+  lang: DocumentLanguage;
+  file: string | null;
+  fileName: string | null;
+  fileExtension: string | null;
+  fileSize: number | null;
+  relatedProductIds: string[];
+  updatedAt?: string | null;
+};
+
+export type DocumentsPageContent = {
+  title: Partial<Record<Locale, string>>;
+  description: Partial<Record<Locale, string>>;
+  ogImage: SeoImage | null;
+};
+
 function toOptionalString(value: unknown): string | null {
   if (typeof value !== 'string') {
     return null;
@@ -354,6 +401,27 @@ function normalizeImagePath(src: string): string {
   }
   const normalized = src.replace(/^\/+/g, '');
   return `/${normalized}`;
+}
+
+async function resolveUploadSize(filePath: string | null): Promise<number | null> {
+  if (!filePath || /^https?:\/\//i.test(filePath)) {
+    return null;
+  }
+  const withoutLeading = filePath.replace(/^\/+/g, '');
+  const withoutQuery = withoutLeading.split('?')[0]?.split('#')[0] ?? '';
+  const relative = withoutQuery.startsWith('public/')
+    ? withoutQuery.slice('public/'.length)
+    : withoutQuery;
+  const absolute = path.join(process.cwd(), 'public', relative);
+  try {
+    const stats = await fs.stat(absolute);
+    if (!stats.isFile()) {
+      return null;
+    }
+    return stats.size;
+  } catch {
+    return null;
+  }
 }
 
 function mapSeoImage(value: RawSeoImage): SeoImage | null {
@@ -395,7 +463,7 @@ function mapResolvedSeo(value: RawSeoGroup | undefined | null, locale: Locale): 
   } satisfies ResolvedSeo;
 }
 
-function isPublished(entry: RawPageEntry | RawPostEntry | RawCatalogEntry): boolean {
+function isPublished(entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry): boolean {
   if (typeof entry.published === 'boolean') {
     return entry.published;
   }
@@ -444,6 +512,90 @@ function mapLocalizedSlugs(slugs?: Localized<string | { slug?: string | null } |
     record[locale] = slug;
   }
   return record;
+}
+
+function mapLocalizedTextRecord(value?: Localized<string>): Partial<Record<Locale, string>> {
+  const record: Partial<Record<Locale, string>> = {};
+  if (!value) {
+    return record;
+  }
+  for (const locale of locales) {
+    const text = toOptionalString(value[locale] ?? undefined);
+    if (!text) {
+      continue;
+    }
+    record[locale] = text;
+  }
+  return record;
+}
+
+function pickFirstLocalizedText(record: Partial<Record<Locale, string>>): string | null {
+  const orderedLocales = [defaultLocale, ...locales.filter((candidate) => candidate !== defaultLocale)];
+  for (const locale of orderedLocales) {
+    const value = record[locale];
+    if (value && value.trim()) {
+      return value;
+    }
+  }
+  return null;
+}
+
+function normalizeFilePath(value: unknown): string | null {
+  if (!value) {
+    return null;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+    return normalizeImagePath(trimmed);
+  }
+  if (typeof value === 'object' && value !== null) {
+    if ('src' in value && typeof (value as { src?: string | null }).src === 'string') {
+      return normalizeFilePath((value as { src?: string | null }).src ?? null);
+    }
+    if ('path' in value && typeof (value as { path?: string | null }).path === 'string') {
+      return normalizeFilePath((value as { path?: string | null }).path ?? null);
+    }
+  }
+  return null;
+}
+
+function mapRelationshipValues(value: unknown): string[] {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const entry of value) {
+      let candidate: string | null = null;
+      if (typeof entry === 'string') {
+        candidate = entry;
+      } else if (entry && typeof entry === 'object' && 'value' in entry) {
+        const record = entry as { value?: string | null };
+        if (typeof record.value === 'string') {
+          candidate = record.value;
+        }
+      }
+      if (typeof candidate !== 'string') {
+        continue;
+      }
+      const trimmed = candidate.trim();
+      if (!trimmed || seen.has(trimmed)) {
+        continue;
+      }
+      seen.add(trimmed);
+      result.push(trimmed);
+    }
+    return result;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? [trimmed] : [];
+  }
+  return [];
 }
 
 function filterValidValues<T extends string>(values: unknown, allowed: Set<string>): T[] {
@@ -597,6 +749,19 @@ const readNavigationSingleton = cache(async (): Promise<NavigationSingleton | nu
   return (await readFallbackSingleton<NavigationSingleton>('content/navigation/index.json')) ?? null;
 });
 
+const readDocumentsPageSingleton = cache(async (): Promise<DocumentsPageSingleton | null> => {
+  const reader = getReader();
+  try {
+    const documentsPage = await reader.singletons.documentsPage.read();
+    if (documentsPage) {
+      return documentsPage as DocumentsPageSingleton;
+    }
+  } catch {
+    // fall back to file system
+  }
+  return (await readFallbackSingleton<DocumentsPageSingleton>('content/documents-page/index.json')) ?? null;
+});
+
 const readPagesCollection = cache(async () => {
   const reader = getReader();
   try {
@@ -638,6 +803,19 @@ const readCatalogCollection = cache(async () => {
   const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
   ensureUniqueLocalizedSlugs(fallback, 'catalog');
   return fallback;
+});
+
+const readDocumentsCollection = cache(async () => {
+  const reader = getReader();
+  try {
+    const entries = await reader.collections.documents.all({ resolveLinkedFiles: true });
+    if (entries.length > 0) {
+      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawDocumentEntry }));
+    }
+  } catch {
+    // fall back to file system
+  }
+  return readFallbackCollection<RawDocumentEntry>('content/documents');
 });
 
 function resolveNavigationLinks(
@@ -699,7 +877,10 @@ function buildInternalPath(locale: Locale, pathValue: string): string {
   return buildPath(locale, segments);
 }
 
-function computeEntryId(entry: RawPageEntry | RawPostEntry | RawCatalogEntry, fallback: string): string {
+function computeEntryId(
+  entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry,
+  fallback: string
+): string {
   const id = toOptionalString(entry.id ?? undefined);
   if (id) {
     return id;
@@ -996,6 +1177,79 @@ export async function getCatalogAlternates(id: string): Promise<Partial<Record<L
     return {};
   }
   return mapLocalizedSlugs(record.entry.slug);
+}
+
+export async function getDocuments(): Promise<Document[]> {
+  const entries = await readDocumentsCollection();
+  const documents: Document[] = [];
+
+  for (const { entry, key } of entries) {
+    if (!isPublished(entry)) {
+      continue;
+    }
+    const typeValue = typeof entry.type === 'string' ? (entry.type.trim() as DocumentType) : null;
+    if (!typeValue || !DOCUMENT_TYPE_SET.has(typeValue)) {
+      continue;
+    }
+    const langValue = typeof entry.lang === 'string' ? (entry.lang.trim() as DocumentLanguage) : null;
+    if (!langValue || !DOCUMENT_LANGUAGE_SET.has(langValue)) {
+      continue;
+    }
+    const filePath = normalizeFilePath(entry.file ?? null);
+    const sanitizedFilePath = filePath ?? null;
+    const fileName = sanitizedFilePath
+      ? path.basename(sanitizedFilePath.split('?')[0]?.split('#')[0] ?? sanitizedFilePath)
+      : null;
+    const fileExtension = fileName && fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() ?? null : null;
+    const fileSize = await resolveUploadSize(sanitizedFilePath);
+    const title = mapLocalizedTextRecord(entry.title);
+    const relatedProductIds = mapRelationshipValues(entry.relatedProducts);
+    documents.push({
+      id: computeEntryId(entry, key),
+      title,
+      type: typeValue,
+      lang: langValue,
+      file: sanitizedFilePath,
+      fileName,
+      fileExtension,
+      fileSize,
+      relatedProductIds,
+      updatedAt: normalizeDateTime(entry.updatedAt),
+    });
+  }
+
+  documents.sort((a, b) => {
+    const typeDiff = DOCUMENT_TYPE_ORDER.indexOf(a.type) - DOCUMENT_TYPE_ORDER.indexOf(b.type);
+    if (typeDiff !== 0) {
+      return typeDiff;
+    }
+    const updatedA = a.updatedAt ?? '';
+    const updatedB = b.updatedAt ?? '';
+    if (updatedA && updatedB && updatedA !== updatedB) {
+      return updatedA > updatedB ? -1 : 1;
+    }
+    const titleA = pickFirstLocalizedText(a.title) ?? a.fileName ?? a.id;
+    const titleB = pickFirstLocalizedText(b.title) ?? b.fileName ?? b.id;
+    return titleA.localeCompare(titleB);
+  });
+
+  return documents;
+}
+
+export async function getDocumentsPage(): Promise<DocumentsPageContent | null> {
+  const documentsPage = await readDocumentsPageSingleton();
+  if (!documentsPage) {
+    return null;
+  }
+  const title = mapLocalizedTextRecord(documentsPage.title);
+  const description = mapLocalizedTextRecord(documentsPage.description);
+  const ogImage = mapSeoImage(documentsPage.ogImage ?? null);
+
+  if (!Object.keys(title).length && !Object.keys(description).length && !ogImage) {
+    return null;
+  }
+
+  return { title, description, ogImage } satisfies DocumentsPageContent;
 }
 
 export async function getNavigationEntityByPath(
