@@ -2,10 +2,12 @@ import { cache } from 'react';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { createReader } from '@keystatic/core/reader';
+import type { Node as MarkdocNode } from '@markdoc/markdoc';
 import config from '../../keystatic.config';
 import { defaultLocale, locales, type Locale } from './i18n';
 import { isLocale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
+import type { MarkdocContent, ResolvedMarkdocContent } from '@/lib/markdoc';
 import {
   CATALOG_BASES,
   CATALOG_CATEGORIES,
@@ -59,10 +61,12 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
   for (const entry of dirEntries) {
     let filePath: string | null = null;
     let key: string;
+    let entryDir: string | null = null;
 
     if (entry.isDirectory()) {
       filePath = path.join(directory, entry.name, 'index.json');
       key = entry.name;
+      entryDir = path.join(directory, entry.name);
     } else if (entry.isFile() && entry.name.endsWith('.json')) {
       filePath = path.join(directory, entry.name);
       key = entry.name.replace(/\.json$/i, '');
@@ -76,6 +80,8 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
     }
 
     normalizeEntrySlugs(data);
+
+    await hydrateLocalizedMarkdoc(entryDir, data);
 
     results.push({ key, entry: data });
   }
@@ -98,6 +104,41 @@ function normalizeEntrySlugs(entry: unknown): void {
   }
   if (record.path && typeof record.path === 'object') {
     normalizeSlugRecord(record.path as Record<string, unknown>);
+  }
+}
+
+async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown): Promise<void> {
+  if (!entryDir) {
+    return;
+  }
+  if (!entry || typeof entry !== 'object') {
+    return;
+  }
+  const record = entry as { content?: unknown };
+  const localized = record.content;
+  if (!localized || typeof localized !== 'object') {
+    return;
+  }
+  const localizedRecord = localized as Record<string, unknown>;
+  for (const locale of locales) {
+    const current = localizedRecord[locale];
+    if (current && typeof current === 'object') {
+      if ('content' in (current as Record<string, unknown>) || 'node' in (current as Record<string, unknown>)) {
+        continue;
+      }
+    }
+    if (typeof current === 'string') {
+      continue;
+    }
+    const filePath = path.join(entryDir, 'content', `${locale}.mdoc`);
+    const file = await fs.readFile(filePath, 'utf8').catch(() => null);
+    if (file !== null) {
+      localizedRecord[locale] = { content: file };
+      continue;
+    }
+    if (current === undefined) {
+      localizedRecord[locale] = null;
+    }
   }
 }
 
@@ -161,12 +202,14 @@ type RawSeoGroup = {
   canonicalOverride?: string | null;
 } | null;
 
+type RawMarkdocValue = string | { content?: string | null } | { node?: MarkdocNode | null } | null;
+
 type RawPageEntry = {
   id?: string | null;
   slug?: Localized<string | { slug?: string | null } | null>;
   title?: Localized<string>;
   description?: Localized<string>;
-  content?: Localized<string | { content?: string | null } | null>;
+  content?: Localized<RawMarkdocValue>;
   seo?: RawSeoGroup;
   published?: boolean | null;
   status?: 'draft' | 'published';
@@ -189,7 +232,7 @@ type RawCatalogEntry = {
   slug?: Localized<string | { slug?: string | null } | null>;
   title?: Localized<string>;
   excerpt?: Localized<string>;
-  content?: Localized<string | { content?: string | null } | null>;
+  content?: Localized<RawMarkdocValue>;
   category?: string | null;
   process?: string[] | null;
   base?: string[] | null;
@@ -286,7 +329,7 @@ export type PageContent = {
   title: string;
   slug: string;
   slugByLocale: Partial<Record<Locale, string>>;
-  content: string | null;
+  content: MarkdocContent;
   description: string | null;
   seo: ResolvedSeo | null;
   excerpt: string | null;
@@ -338,7 +381,7 @@ export type CatalogListItem = {
 };
 
 export type CatalogItem = CatalogListItem & {
-  content: string | null;
+  content: MarkdocContent;
 };
 
 export type CatalogSummary = {
@@ -649,12 +692,19 @@ function ensureUniqueLocalizedSlugs<T extends { slug?: Localized<string | { slug
   }
 }
 
-async function readMarkdoc(reference: string | { content?: string | null } | null | undefined): Promise<string | null> {
+async function readMarkdoc(
+  reference: string | { content?: string | null } | { node?: MarkdocNode | null } | null | undefined
+): Promise<ResolvedMarkdocContent | null> {
   if (!reference) {
     return null;
   }
-  if (typeof reference === 'object' && reference !== null && typeof reference.content === 'string') {
-    return reference.content;
+  if (typeof reference === 'object' && reference !== null) {
+    if ('node' in reference && reference.node) {
+      return { node: reference.node } satisfies ResolvedMarkdocContent;
+    }
+    if ('content' in reference && typeof reference.content === 'string') {
+      return reference.content;
+    }
   }
   const raw = typeof reference === 'string' ? reference : null;
   if (!raw) {
@@ -669,7 +719,10 @@ async function readMarkdoc(reference: string | { content?: string | null } | nul
   }
 }
 
-async function resolveLocalizedContent(content: Localized<string | { content?: string | null } | null> | undefined, locale: Locale): Promise<string | null> {
+async function resolveLocalizedContent(
+  content: Localized<RawMarkdocValue> | undefined,
+  locale: Locale
+): Promise<MarkdocContent> {
   if (!content) {
     return null;
   }

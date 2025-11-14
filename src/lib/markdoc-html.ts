@@ -15,9 +15,9 @@ import {
   type AlertTone,
   type ButtonVariant,
   type CalloutKind,
+  toMarkdocAst,
+  type MarkdocContent,
 } from './markdoc';
-
-type MarkdocContent = string | null | undefined;
 
 function createFallback<T extends string>(labels: Record<T, Record<Locale, string>>, locale: Locale): Record<T, string> {
   return Object.fromEntries(
@@ -200,10 +200,10 @@ function createHtmlConfig(locale: Locale): Config {
 }
 
 export function renderToHtml(content: MarkdocContent, locale: Locale): string | null {
-  if (!content) {
+  const ast = toMarkdocAst(content);
+  if (!ast) {
     return null;
   }
-  const ast = Markdoc.parse(content);
   const transformed = Markdoc.transform(ast, createHtmlConfig(locale));
   return Markdoc.renderers.html(transformed);
 }

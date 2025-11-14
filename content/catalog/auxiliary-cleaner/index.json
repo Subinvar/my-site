@@ -13,8 +13,8 @@
     "en": "Removes burn-on and prepares tooling for new coatings."
   },
   "content": {
-    "ru": "content/markdoc/ru/catalog/auxiliary-cleaner.mdoc",
-    "en": "content/markdoc/en/catalog/auxiliary-cleaner.mdoc"
+    "ru": null,
+    "en": null
   },
   "category": "Вспомогательные",
   "process": [
