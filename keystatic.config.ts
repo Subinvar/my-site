@@ -95,11 +95,9 @@ const slugKeyField = (entityLabel: string) =>
   fields.slug({
     name: {
       label: `${entityLabel} — название`,
-      validation: { isRequired: true },
     },
     slug: {
       label: `${entityLabel} — slug`,
-      validation: { isRequired: true },
     },
   });
 
