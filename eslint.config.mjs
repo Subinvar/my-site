@@ -11,8 +11,6 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import eslintComments from "eslint-plugin-eslint-comments";
 import unusedImports from "eslint-plugin-unused-imports";
-import eslintCss from "@eslint/css";
-import tailwind from "@poupe/eslint-plugin-tailwindcss";
 
 const tsconfigRootDir = fileURLToPath(new URL(".", import.meta.url));
 
