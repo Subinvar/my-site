@@ -22,6 +22,8 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@eslint/css": "^0.14.1",
+    "@poupe/eslint-plugin-tailwindcss": "^0.2.4",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.4",
@@ -35,7 +37,7 @@
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-tailwindcss": "^3.18.2",
+    "eslint-plugin-tailwindcss": "4.0.0-beta.0",
     "eslint-plugin-unused-imports": "^4.3.0",
     "knip": "^5.69.1",
     "lightningcss-win32-x64-msvc": "1.30.2",

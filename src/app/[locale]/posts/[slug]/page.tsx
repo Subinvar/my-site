@@ -39,6 +39,9 @@ export default async function PostPage({ params }: PostPageProps) {
     slugs: post.slugByLocale,
   });
 
+  const tags = Array.isArray(post.tags) ? post.tags : [];
+  const hasTags = tags.length > 0;
+
   return (
     <SiteShell
       locale={locale}
@@ -54,9 +57,9 @@ export default async function PostPage({ params }: PostPageProps) {
           {summary ? <p className="text-base text-zinc-600">{summary}</p> : null}
         </header>
         <div className="prose-markdoc">{content}</div>
-        {post.tags.length > 0 ? (
+        {hasTags ? (
           <ul className="mt-10 flex flex-wrap gap-2 text-sm text-zinc-500">
-            {post.tags.map((tag) => (
+            {tags.map((tag) => (
               <li key={tag} className="rounded-full border border-zinc-200 px-3 py-1">
                 #{tag}
               </li>
