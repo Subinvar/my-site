@@ -4,6 +4,7 @@ import { buildPath } from '@/lib/paths';
 import { getAllPosts, getPostBySlug, getSite } from '@/lib/keystatic';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { renderToHtml } from '@/lib/markdoc-html';
+import type { MarkdocContent } from '@/lib/markdoc';
 import { resolveSiteOrigin } from '@/lib/origin';
 
 type FeedContext = {
@@ -14,7 +15,7 @@ type FeedEntry = {
   title: string;
   url: string;
   excerpt: string | null;
-  content: string | null;
+  content: MarkdocContent;
   publishedAt: string | null;
   updatedAt: string | null;
 };
@@ -28,7 +29,7 @@ function escapeXml(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
-function renderContentToHtml(content: string | null, locale: Locale): string | null {
+function renderContentToHtml(content: MarkdocContent, locale: Locale): string | null {
   return renderToHtml(content, locale);
 }
 

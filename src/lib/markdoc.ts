@@ -1,5 +1,5 @@
 import Markdoc from '@markdoc/markdoc';
-import type { Config } from '@markdoc/markdoc';
+import type { Config, Node as MarkdocNode } from '@markdoc/markdoc';
 import Image from 'next/image';
 import React, { type ReactNode } from 'react';
 import { locales, type Locale } from './i18n';
@@ -12,7 +12,9 @@ export const ALERT_TONES = ['info', 'success', 'warning', 'error'] as const;
 
 export type AlertTone = (typeof ALERT_TONES)[number];
 
-type MarkdocContent = string | null | undefined;
+export type ResolvedMarkdocContent = string | { node: MarkdocNode };
+
+export type MarkdocContent = ResolvedMarkdocContent | null | undefined;
 
 export const CALLOUT_LABELS: Record<CalloutKind, Record<Locale, string>> = {
   note: { ru: 'Заметка', en: 'Note' },
@@ -335,17 +337,40 @@ export function createComponents(locale: Locale) {
   } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }
 
-export async function render(content: MarkdocContent, locale: Locale): Promise<ReactNode> {
+export function toMarkdocAst(content: MarkdocContent): MarkdocNode | null {
   if (!content) {
     return null;
   }
-  const ast = Markdoc.parse(content);
+  if (typeof content === 'string') {
+    const trimmed = content.trim();
+    if (!trimmed) {
+      return null;
+    }
+    return Markdoc.parse(content);
+  }
+  if (typeof content === 'object' && 'node' in content && content.node) {
+    return content.node;
+  }
+  return null;
+}
+
+export async function render(content: MarkdocContent, locale: Locale): Promise<ReactNode> {
+  const ast = toMarkdocAst(content);
+  if (!ast) {
+    return null;
+  }
   const transformed = Markdoc.transform(ast, config);
   return Markdoc.renderers.react(transformed, React, { components: createComponents(locale) });
 }
 
 export function hasLocalizedContent(value: MarkdocContent): boolean {
-  return typeof value === 'string' && value.trim().length > 0;
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+  if (value && typeof value === 'object' && 'node' in value && value.node) {
+    return Array.isArray(value.node.children) ? value.node.children.length > 0 : true;
+  }
+  return false;
 }
 
 export function assertKnownLocale(locale: string | undefined): asserts locale is Locale {

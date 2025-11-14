@@ -18,8 +18,8 @@
     "en": "Learn who we are, how we support foundries, and which services we provide."
   },
   "content": {
-    "ru": "content/markdoc/ru/pages/about.mdoc",
-    "en": "content/markdoc/en/pages/about.mdoc"
+    "ru": null,
+    "en": null
   },
   "seo": {
     "title": {

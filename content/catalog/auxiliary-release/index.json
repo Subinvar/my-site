@@ -13,8 +13,8 @@
     "en": "Extends tooling life and simplifies core knock-out." 
   },
   "content": {
-    "ru": "content/markdoc/ru/catalog/auxiliary-release.mdoc",
-    "en": "content/markdoc/en/catalog/auxiliary-release.mdoc"
+    "ru": null,
+    "en": null
   },
   "category": "Вспомогательные",
   "process": [

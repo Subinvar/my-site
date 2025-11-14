@@ -58,17 +58,19 @@ const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
-const localizedMarkdocReference = (
-  label: string,
-  options: { pattern?: (locale: (typeof locales)[number]) => string } = {}
-) =>
+const localizedMarkdocContent = (label: string) =>
   fields.object(
     Object.fromEntries(
       locales.map((locale) => [
         locale,
-        fields.pathReference({
+        fields.markdoc({
           label: `${label} (${locale.toUpperCase()})`,
-          pattern: options.pattern?.(locale) ?? `content/markdoc/${locale}/**/*.mdoc`,
+          options: {
+            image: {
+              directory: 'public/uploads',
+              publicPath: '/uploads/',
+            },
+          },
         }),
       ])
     ),
@@ -213,7 +215,7 @@ export default config({
         title: localizedText('Заголовок', { isRequired: true }),
         description: localizedText('Описание', { multiline: true }),
         excerpt: localizedText('Краткое описание', { multiline: true }),
-        content: localizedMarkdocReference('Контент (Markdoc)'),
+        content: localizedMarkdocContent('Контент (Markdoc)'),
         seo: localizedSeoGroup(),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
@@ -231,7 +233,7 @@ export default config({
         title: localizedText('Заголовок', { isRequired: true }),
         description: localizedText('Описание', { multiline: true }),
         excerpt: localizedText('Краткое описание', { multiline: true }),
-        content: localizedMarkdocReference('Контент (Markdoc)'),
+        content: localizedMarkdocContent('Контент (Markdoc)'),
         tags: fields.array(fields.text({ label: 'Тег' }), {
           label: 'Теги',
           itemLabel: (props) => props.value ?? 'Тег',
@@ -295,9 +297,7 @@ export default config({
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),
         excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
-        content: localizedMarkdocReference('Контент (Markdoc)', {
-          pattern: (locale) => `content/markdoc/${locale}/catalog/*.mdoc`,
-        }),
+        content: localizedMarkdocContent('Контент (Markdoc)'),
         category: fields.select({
           label: 'Категория',
           options: CATALOG_CATEGORIES.map((value) => ({ label: value, value })),
