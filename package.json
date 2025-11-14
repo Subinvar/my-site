@@ -57,6 +57,11 @@
     ],
     "overrides": {
       "lightningcss": "npm:lightningcss-wasm@1.30.2"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@poupe/eslint-plugin-tailwindcss>@eslint/css": "0.14.x"
+      }
     }
   },
   "engines": {
