@@ -271,7 +271,7 @@ export default config({
   collections: {
     pages: collection({
       label: 'Страницы',
-      path: 'content/pages/*/index',
+      path: 'content/pages/*',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -296,7 +296,7 @@ export default config({
     }),
     posts: collection({
       label: 'Посты',
-      path: 'content/posts/*/index',
+      path: 'content/posts/*',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -323,7 +323,7 @@ export default config({
     }),
     documents: collection({
       label: 'Документы',
-      path: 'content/documents/*/index',
+      path: 'content/documents/*',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -365,7 +365,7 @@ export default config({
     }),
     catalog: collection({
       label: 'Каталог',
-      path: 'content/catalog/*/index',
+      path: 'content/catalog/*',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
