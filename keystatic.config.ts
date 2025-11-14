@@ -149,6 +149,12 @@ export default config({
           phone: fields.text({ label: 'Телефон' }),
           address: localizedText('Адрес', { multiline: true }),
         }),
+        footer: fields.object(
+          {
+            copyright: localizedText('Копирайт', { multiline: true }),
+          },
+          { label: 'Подвал' }
+        ),
         seo: fields.object({
           title: localizedSeoTextFields('Title по умолчанию'),
           description: localizedSeoTextFields('Description по умолчанию', { multiline: true }),
@@ -192,6 +198,31 @@ export default config({
       schema: {
         title: localizedText('Заголовок', { isRequired: true }),
         description: localizedText('Описание', { multiline: true }),
+        typeFilterLabel: localizedText('Подпись фильтра типов'),
+        languageFilterLabel: localizedText('Подпись фильтра языков'),
+        applyLabel: localizedText('Подпись кнопки применения'),
+        resetLabel: localizedText('Подпись кнопки сброса'),
+        allLanguagesLabel: localizedText('Подпись варианта «Все языки»'),
+        downloadLabel: localizedText('Подпись ссылки скачивания'),
+        relatedProductsLabel: localizedText('Подпись блока «Подходит для»'),
+        emptyStateMessage: localizedText('Сообщение о пустом списке', { multiline: true }),
+        resultsLabelTemplate: localizedText('Шаблон количества документов'),
+        typeLabels: fields.object(
+          {
+            certificate: localizedText('Название типа «Сертификат»', { isRequired: true }),
+            tds: localizedText('Название типа «ТДС»', { isRequired: true }),
+            msds: localizedText('Название типа «МСДС»', { isRequired: true }),
+            brochure: localizedText('Название типа «Брошюра»', { isRequired: true }),
+          },
+          { label: 'Подписи типов документов' }
+        ),
+        languageLabels: fields.object(
+          {
+            ru: localizedText('Подпись языка «Русский»', { isRequired: true }),
+            en: localizedText('Подпись языка «English»', { isRequired: true }),
+          },
+          { label: 'Подписи языков' }
+        ),
         ogImage: fields.object(
           {
             image: imageField('OG-изображение'),
@@ -201,11 +232,36 @@ export default config({
         ),
       },
     }),
+    catalogPage: singleton({
+      label: 'Каталог — страница списка',
+      path: 'content/catalog-page/',
+      format: { data: 'json' },
+      schema: {
+        title: localizedText('Заголовок', { isRequired: true }),
+        description: localizedText('Описание', { multiline: true }),
+        submitLabel: localizedText('Подпись кнопки применения фильтров'),
+        resetLabel: localizedText('Подпись кнопки сброса фильтров'),
+        categoryAllLabel: localizedText('Подпись варианта «Все категории»'),
+        detailLabel: localizedText('Подпись ссылки на карточку'),
+        emptyStateMessage: localizedText('Сообщение о пустом результате', { multiline: true }),
+        groupLabels: fields.object(
+          {
+            category: localizedText('Заголовок группы «Категория»', { isRequired: true }),
+            process: localizedText('Заголовок группы «Процесс»', { isRequired: true }),
+            base: localizedText('Заголовок группы «Основа»', { isRequired: true }),
+            filler: localizedText('Заголовок группы «Наполнитель»', { isRequired: true }),
+            auxiliary: localizedText('Заголовок группы «Вспомогательные»', { isRequired: true }),
+          },
+          { label: 'Подписи групп фильтров' }
+        ),
+        seo: localizedSeoGroup(),
+      },
+    }),
   },
   collections: {
     pages: collection({
       label: 'Страницы',
-      path: 'content/pages/*',
+      path: 'content/pages/*/index',
       format: { data: 'json' },
       slugField: 'id',
       schema: {
@@ -216,13 +272,20 @@ export default config({
         description: localizedText('Описание', { multiline: true }),
         excerpt: localizedText('Краткое описание', { multiline: true }),
         content: localizedMarkdocContent('Контент (Markdoc)'),
+        hero: fields.object(
+          {
+            image: imageField('Hero-изображение'),
+            alt: localizedText('Alt для hero'),
+          },
+          { label: 'Hero-блок' }
+        ),
         seo: localizedSeoGroup(),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
     posts: collection({
       label: 'Посты',
-      path: 'content/posts/*',
+      path: 'content/posts/*/index',
       format: { data: 'json' },
       slugField: 'id',
       schema: {
@@ -248,7 +311,7 @@ export default config({
     }),
     documents: collection({
       label: 'Документы',
-      path: 'content/documents/*',
+      path: 'content/documents/*/index',
       format: { data: 'json' },
       slugField: 'id',
       schema: {
@@ -289,7 +352,7 @@ export default config({
     }),
     catalog: collection({
       label: 'Каталог',
-      path: 'content/catalog/*',
+      path: 'content/catalog/*/index',
       format: { data: 'json' },
       slugField: 'slug' as never,
       schema: {

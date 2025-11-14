@@ -58,6 +58,7 @@ export function SiteShell({
   switcherHref,
   children,
 }: SiteShellProps) {
+  const brandName = site.name ?? 'Intema Group';
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -77,6 +78,10 @@ export function SiteShell({
 
   const hasContacts = contactLinks.length > 0 || Boolean(site.contacts.address);
   const currentYear = new Date().getFullYear();
+  const copyrightTemplate = site.footer?.copyright ?? '© {year} Intema Group. All rights reserved.';
+  const copyrightText = copyrightTemplate
+    .replaceAll('{year}', String(currentYear))
+    .replaceAll('{siteName}', brandName);
 
   return (
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
@@ -107,7 +112,7 @@ export function SiteShell({
               className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
             >
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                {site.name ?? 'Intema Group'}
+                {brandName}
               </span>
               {site.tagline ? (
                 <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
@@ -132,7 +137,7 @@ export function SiteShell({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                {site.name ?? 'Intema Group'}
+                {brandName}
               </p>
               {site.tagline ? (
                 <p className="max-w-xl text-base text-zinc-700">{site.tagline}</p>
@@ -155,7 +160,7 @@ export function SiteShell({
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <NavigationList links={navigation.footer} locale={locale} />
-            <p className="text-xs text-zinc-500">© {currentYear} {site.name ?? 'Intema Group'}. Все права защищены.</p>
+            <p className="text-xs text-zinc-500">{copyrightText}</p>
           </div>
         </div>
       </footer>
