@@ -1,0 +1,60 @@
+{
+  "id": "modernizaciya-proizvodstva",
+  "published": true,
+  "date": "2024-03-18T09:00",
+  "slug": {
+    "ru": "modernizaciya-proizvodstva",
+    "en": "modernising-operations"
+  },
+  "title": {
+    "ru": "Модернизация формовочного участка: рост выпуска на 41%",
+    "en": "Modernising the moulding shop lifted output by 41%"
+  },
+  "description": {
+    "ru": "Как мы обновили три линии холодного ящичного формования и сократили себестоимость корпуса насоса.",
+    "en": "How we revamped three cold-box lines and lowered the unit cost of a pump housing."
+  },
+  "excerpt": {
+    "ru": "Показываем, как новая связующая система, контроль дозирования и профилактика техники повысили выпуск и снизили выбросы.",
+    "en": "See how a new binder system, dosing control, and preventive maintenance boosted output and cut emissions."
+  },
+  "content": {
+    "ru": "content/markdoc/ru/posts/modernizaciya-proizvodstva.mdoc",
+    "en": "content/markdoc/en/posts/modernizaciya-proizvodstva.mdoc"
+  },
+  "tags": [
+    "production",
+    "process",
+    "modernisation"
+  ],
+  "cover": {
+    "image": "uploads/post-cover.svg",
+    "alt": {
+      "ru": "Инженеры настраивают дозирование связующего на линии",
+      "en": "Engineers tuning binder dosing on the moulding line"
+    }
+  },
+  "seo": {
+    "title": {
+      "ru": "Модернизация формовочных линий — кейс Интема Групп",
+      "en": "Upgrading moulding lines — an Intema Group case"
+    },
+    "description": {
+      "ru": "Рассказываем о проекте модернизации: снижение брака по раковинам и экономия 360 ₽ на каждом корпусе.",
+      "en": "Project recap: fewer burn-on defects and ₽360 saved per housing."
+    },
+    "ogTitle": {
+      "ru": "Как увеличить выпуск формовочного участка без расширения штата",
+      "en": "Growing a moulding line without extra headcount"
+    },
+    "ogDescription": {
+      "ru": "Делимся выводами по подбору связующих и автоматизации контроля дозирования.",
+      "en": "Takeaways on binder selection and automated dosing control."
+    },
+    "ogImage": {
+      "image": "uploads/post-cover.svg",
+      "alt": "Обновленная формовочная линия после модернизации"
+    }
+  },
+  "updatedAt": "2024-03-20T11:45"
+}

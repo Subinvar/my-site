@@ -1,4 +1,6 @@
 // eslint.config.mjs
+import eslintCss from "@eslint/css";
+import tailwind from "@poupe/eslint-plugin-tailwindcss";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -8,6 +10,8 @@ import nextTs from "eslint-config-next/typescript";
 import tsParser from "@typescript-eslint/parser";
 import eslintComments from "eslint-plugin-eslint-comments";
 import unusedImports from "eslint-plugin-unused-imports";
+import eslintCss from "@eslint/css";
+import tailwind from "@poupe/eslint-plugin-tailwindcss";
 
 const tsconfigRootDir = fileURLToPath(new URL(".", import.meta.url));
 
@@ -34,12 +38,18 @@ export default defineConfig([
     plugins: {
       "eslint-comments": eslintComments,
       "unused-imports": unusedImports,
+      "@eslint/css": eslintCss,
+      tailwindcss: tailwind,
     },
     rules: {
       // Запрет на «волшебные тряпки» без описания и безлимитные выключатели
       "eslint-comments/no-unlimited-disable": "error",
       "eslint-comments/no-unused-disable": "error",
       "eslint-comments/require-description": ["error", { ignore: [] }],
+
+      // Подсказки по стилям и Tailwind-классам
+      "@eslint/css/selector-complexity": "warn",
+      "tailwindcss/no-conflicting-utilities": "warn",
 
       // Чистим мусор
       "unused-imports/no-unused-imports": "error",

@@ -1,0 +1,60 @@
+{
+  "id": "snizhenie-prigara",
+  "published": true,
+  "date": "2024-02-05T08:00",
+  "slug": {
+    "ru": "snizhenie-prigara",
+    "en": "reducing-burn-on"
+  },
+  "title": {
+    "ru": "Снижение пригара на алюминиевых корпусах",
+    "en": "Reducing burn-on on aluminium housings"
+  },
+  "description": {
+    "ru": "Как мы подобрали покрытие и автоматизировали сушку форм, чтобы перестать зачищать каждый четвёртый корпус редуктора.",
+    "en": "How a tuned coating and automated mould drying eliminated rework on every fourth gearbox housing."
+  },
+  "excerpt": {
+    "ru": "Разбираем, как лабораторные тесты, контроль толщины слоя и ИК-датчики снизили пригар до 6 %.",
+    "en": "Lab trials, layer control, and IR sensors brought burn-on down to 6%."
+  },
+  "content": {
+    "ru": "content/markdoc/ru/posts/snizhenie-prigara.mdoc",
+    "en": "content/markdoc/en/posts/snizhenie-prigara.mdoc"
+  },
+  "tags": [
+    "quality",
+    "coatings",
+    "foundry"
+  ],
+  "cover": {
+    "image": "uploads/post-cover.svg",
+    "alt": {
+      "ru": "Контроль толщины противопригарного покрытия на форме",
+      "en": "Checking the release coating thickness on the mould"
+    }
+  },
+  "seo": {
+    "title": {
+      "ru": "Снижение пригара — кейс Интема Групп",
+      "en": "Burn-on reduction — an Intema Group case"
+    },
+    "description": {
+      "ru": "Рассказываем, как стабилизировали нанесение покрытия и сэкономили 3,8 млн ₽ в год.",
+      "en": "Stabilised coating application and saved ₽3.8 million a year."
+    },
+    "ogTitle": {
+      "ru": "Как сократить пригар на алюминиевых отливках",
+      "en": "How to cut burn-on on aluminium castings"
+    },
+    "ogDescription": {
+      "ru": "Практические шаги: новые рецептуры, контроль толщины, ИК-датчики.",
+      "en": "Practical steps: new formulas, layer control, IR sensors."
+    },
+    "ogImage": {
+      "image": "uploads/post-cover.svg",
+      "alt": "Отливка редуктора с ровным покрытием без пригара"
+    }
+  },
+  "updatedAt": "2024-02-12T10:15"
+}
