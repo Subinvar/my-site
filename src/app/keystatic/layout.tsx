@@ -1,4 +1,5 @@
 // src/app/keystatic/layout.tsx
+import Link from 'next/link';
 import type { ReactElement, ReactNode } from 'react';
 
 const currentYear = new Date().getFullYear();
@@ -18,12 +19,12 @@ export default function Layout({
             </p>
             <p className="text-xs text-slate-400">Управление контентом сайта</p>
           </div>
-          <a
+          <Link
             href="/"
             className="inline-flex items-center rounded-md border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
           >
             На сайт
-          </a>
+          </Link>
         </div>
       </header>
       <main className="flex-1">
