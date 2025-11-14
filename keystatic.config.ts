@@ -1,5 +1,12 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 
+import {
+  CATALOG_BASES,
+  CATALOG_CATEGORIES,
+  CATALOG_FILLERS,
+  CATALOG_PROCESSES,
+} from './src/lib/catalog/constants';
+
 const locales = ['ru', 'en'] as const;
 
 type LocalizedFieldOptions = {
@@ -43,14 +50,17 @@ const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
-const localizedMarkdocReference = (label: string) =>
+const localizedMarkdocReference = (
+  label: string,
+  options: { pattern?: (locale: (typeof locales)[number]) => string } = {}
+) =>
   fields.object(
     Object.fromEntries(
       locales.map((locale) => [
         locale,
         fields.pathReference({
           label: `${label} (${locale.toUpperCase()})`,
-          pattern: `content/markdoc/${locale}/**/*.mdoc`,
+          pattern: options.pattern?.(locale) ?? `content/markdoc/${locale}/**/*.mdoc`,
         }),
       ])
     ),
@@ -208,6 +218,43 @@ export default config({
         }),
         seo: localizedSeoGroup(),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
+      },
+    }),
+    catalog: collection({
+      label: 'Каталог',
+      path: 'content/catalog/*',
+      format: { data: 'json' },
+      slugField: 'slug' as never,
+      schema: {
+        published: fields.checkbox({ label: 'Опубликовано', defaultValue: false }),
+        slug: localizedSlug('Slug', { isRequired: true }),
+        title: localizedText('Название', { isRequired: true }),
+        excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
+        content: localizedMarkdocReference('Контент (Markdoc)', {
+          pattern: (locale) => `content/markdoc/${locale}/catalog/*.mdoc`,
+        }),
+        category: fields.select({
+          label: 'Категория',
+          options: CATALOG_CATEGORIES.map((value) => ({ label: value, value })),
+          defaultValue: CATALOG_CATEGORIES[0],
+        }),
+        process: fields.multiselect({
+          label: 'Процессы',
+          options: CATALOG_PROCESSES.map((value) => ({ label: value, value })),
+        }),
+        base: fields.multiselect({
+          label: 'Основа',
+          options: CATALOG_BASES.map((value) => ({ label: value, value })),
+        }),
+        filler: fields.multiselect({
+          label: 'Наполнитель',
+          options: CATALOG_FILLERS.map((value) => ({ label: value, value })),
+        }),
+        image: imageField('Изображение'),
+        docs: fields.relationship({
+          label: 'Документ',
+          collection: 'documents',
+        }),
       },
     }),
   },

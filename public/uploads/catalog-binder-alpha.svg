@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Binder Alpha-set</title>
+  <desc id="desc">Abstract illustration representing binder chemistry.</desc>
+  <defs>
+    <linearGradient id="grad-alpha" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f62fe" />
+      <stop offset="100%" stop-color="#88b1ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#grad-alpha)" rx="48" />
+  <g fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round">
+    <path d="M220 520c140-220 360-220 500 0" opacity="0.6" />
+    <path d="M320 560c110-170 280-170 390 0" opacity="0.4" />
+  </g>
+  <text x="600" y="380" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="96" font-weight="600" fill="#ffffff">
+    Alpha-set
+  </text>
+  <text x="600" y="470" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="40" fill="#e8f1ff" opacity="0.9">
+    Pep-set ready formulation
+  </text>
+</svg>

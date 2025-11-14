@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Water-based coating</title>
+  <desc id="desc">Illustration of a water based coating film.</desc>
+  <defs>
+    <linearGradient id="grad-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#66d9ff" />
+      <stop offset="100%" stop-color="#004b8d" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#grad-water)" rx="48" />
+  <g fill="#ffffff" opacity="0.7">
+    <path d="M200 520c120-80 260-80 380 0s260 80 380 0" />
+    <path d="M220 450c110-70 240-70 350 0s240 70 350 0" opacity="0.6" />
+  </g>
+  <text x="600" y="360" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="84" font-weight="600" fill="#ffffff">
+    Zircon film
+  </text>
+</svg>

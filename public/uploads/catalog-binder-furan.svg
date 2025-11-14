@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Furan binder</title>
+  <desc id="desc">Stylised molecules representing furan binder chemistry.</desc>
+  <rect width="1200" height="800" fill="#ff7eb6" rx="48" />
+  <g stroke="#ffffff" stroke-width="10" stroke-linecap="round" fill="none">
+    <circle cx="360" cy="360" r="140" opacity="0.4" />
+    <circle cx="820" cy="460" r="180" opacity="0.4" />
+    <path d="M360 360 L560 240 L820 460 L600 580 Z" opacity="0.6" />
+  </g>
+  <text x="600" y="380" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="90" font-weight="600" fill="#ffffff">
+    Furan &amp; CO₂
+  </text>
+</svg>

@@ -1,0 +1,34 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-barernoe-magniy",
+    "en": "barrier-magnesium-coating"
+  },
+  "title": {
+    "ru": "Барьерное покрытие с алюмосиликатом и магнезитом",
+    "en": "Barrier coating with aluminosilicate and magnesite"
+  },
+  "excerpt": {
+    "ru": "Обеспечивает устойчивость форм при ЛГМ и ЖСС процессах с высокими температурами.",
+    "en": "Provides high-temperature stability for V-Process and lost foam moulding." 
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/coating-barrier-magnesium.mdoc",
+    "en": "content/markdoc/en/catalog/coating-barrier-magnesium.mdoc"
+  },
+  "category": "Покрытия",
+  "process": [
+    "ЛГМ",
+    "ЖСС"
+  ],
+  "base": [
+    "водное"
+  ],
+  "filler": [
+    "алюмосиликат",
+    "магнезит",
+    "хромит"
+  ],
+  "image": "uploads/catalog-coating-barrier.svg",
+  "updatedAt": "2024-03-04T08:20"
+}

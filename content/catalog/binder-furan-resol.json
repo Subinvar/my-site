@@ -1,0 +1,28 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "svyazuyushchee-furan",
+    "en": "furan-resol-binder"
+  },
+  "title": {
+    "ru": "Фурановое связующее с резол-CO₂ активацией",
+    "en": "Furan binder with Resol-CO₂ activation"
+  },
+  "excerpt": {
+    "ru": "Высокая прочность и контролируемая реакция для фурановых и резол-CO₂ процессов.",
+    "en": "High strength and controlled reaction for furan and Resol-CO₂ moulding." 
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/binder-furan-resol.mdoc",
+    "en": "content/markdoc/en/catalog/binder-furan-resol.mdoc"
+  },
+  "category": "Связующие",
+  "process": [
+    "фуран",
+    "Резол-CO₂"
+  ],
+  "base": [],
+  "filler": [],
+  "image": "uploads/catalog-binder-furan.svg",
+  "updatedAt": "2024-03-02T11:30"
+}

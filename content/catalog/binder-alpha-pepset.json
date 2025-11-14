@@ -1,0 +1,28 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "svyazuyushchee-alpha-pep",
+    "en": "alpha-pep-binder"
+  },
+  "title": {
+    "ru": "Связующее для альфа-сет и Пеп-сет",
+    "en": "Binder for Alpha-set and Pep-set"
+  },
+  "excerpt": {
+    "ru": "Предварительно катализированная система для стабильного отверждения альфа-сет и Пеп-сет смесей.",
+    "en": "Pre-catalysed system that stabilises Alpha-set and Pep-set curing." 
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/binder-alpha-pepset.mdoc",
+    "en": "content/markdoc/en/catalog/binder-alpha-pepset.mdoc"
+  },
+  "category": "Связующие",
+  "process": [
+    "альфа-сет",
+    "Пеп-сет"
+  ],
+  "base": [],
+  "filler": [],
+  "image": "uploads/catalog-binder-alpha.svg",
+  "updatedAt": "2024-03-01T10:00"
+}

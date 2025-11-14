@@ -1,0 +1,28 @@
+{
+  "published": true,
+  "slug": {
+    "ru": "vspomogatelnaya-razdelitelnaya-smazka",
+    "en": "aux-release-agent"
+  },
+  "title": {
+    "ru": "Разделительная смазка для форм",
+    "en": "Mould release agent"
+  },
+  "excerpt": {
+    "ru": "Повышает долговечность оснастки и облегчает выбивку стержней.",
+    "en": "Extends tooling life and simplifies core knock-out." 
+  },
+  "content": {
+    "ru": "content/markdoc/ru/catalog/auxiliary-release.mdoc",
+    "en": "content/markdoc/en/catalog/auxiliary-release.mdoc"
+  },
+  "category": "Вспомогательные",
+  "process": [
+    "Колд-Бокс",
+    "ЖСС"
+  ],
+  "base": [],
+  "filler": [],
+  "image": "uploads/catalog-aux-release.svg",
+  "updatedAt": "2024-03-05T07:40"
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Alcohol coating</title>
+  <desc id="desc">Graphic showing graphite particles in coating.</desc>
+  <rect width="1200" height="800" fill="#2d2a44" rx="48" />
+  <g fill="#4ad295" opacity="0.85">
+    <circle cx="320" cy="320" r="90" />
+    <circle cx="520" cy="500" r="120" />
+    <circle cx="760" cy="340" r="110" />
+    <circle cx="940" cy="520" r="80" />
+  </g>
+  <text x="600" y="380" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="88" font-weight="600" fill="#ffffff">
+    Graphite
+  </text>
+</svg>

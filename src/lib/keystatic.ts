@@ -6,8 +6,23 @@ import config from '../../keystatic.config';
 import { defaultLocale, locales, type Locale } from './i18n';
 import { isLocale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
+import {
+  CATALOG_BASES,
+  CATALOG_CATEGORIES,
+  CATALOG_FILLERS,
+  CATALOG_PROCESSES,
+  type CatalogBase,
+  type CatalogCategory,
+  type CatalogFiller,
+  type CatalogProcess,
+} from './catalog/constants';
 
 const ROOT_SLUG_PLACEHOLDER = '__root__';
+
+const CATALOG_CATEGORY_SET = new Set<string>(CATALOG_CATEGORIES);
+const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
+const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
+const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
 
 const getReader = cache(() => createReader(process.cwd(), config));
 
@@ -157,6 +172,24 @@ type RawPostEntry = RawPageEntry & {
   } | null;
 };
 
+type RawCatalogEntry = {
+  id?: string | null;
+  slug?: Localized<string | { slug?: string | null } | null>;
+  title?: Localized<string>;
+  excerpt?: Localized<string>;
+  content?: Localized<string | { content?: string | null } | null>;
+  category?: string | null;
+  process?: string[] | null;
+  base?: string[] | null;
+  filler?: string[] | null;
+  image?: RawMedia;
+  docs?: string | null;
+  published?: boolean | null;
+  status?: 'draft' | 'published';
+  updatedAt?: string | null;
+  slugKey?: string | null;
+};
+
 type NavigationEntry = {
   id?: string | null;
   label?: Localized<string>;
@@ -249,6 +282,38 @@ export type PostContent = PageContent & {
   cover?: { src: string; alt?: string | null } | null;
 };
 
+export type CatalogImage = {
+  src: string;
+  width?: number | null;
+  height?: number | null;
+};
+
+export type CatalogListItem = {
+  id: string;
+  locale: Locale;
+  slug: string;
+  slugByLocale: Partial<Record<Locale, string>>;
+  title: string;
+  excerpt: string | null;
+  category: CatalogCategory | null;
+  process: CatalogProcess[];
+  base: CatalogBase[];
+  filler: CatalogFiller[];
+  image: CatalogImage | null;
+  docs: string | null;
+  updatedAt?: string | null;
+};
+
+export type CatalogItem = CatalogListItem & {
+  content: string | null;
+};
+
+export type CatalogSummary = {
+  id: string;
+  slugByLocale: Partial<Record<Locale, string>>;
+  published: boolean;
+};
+
 function toOptionalString(value: unknown): string | null {
   if (typeof value !== 'string') {
     return null;
@@ -324,7 +389,7 @@ function mapResolvedSeo(value: RawSeoGroup | undefined | null, locale: Locale): 
   } satisfies ResolvedSeo;
 }
 
-function isPublished(entry: RawPageEntry | RawPostEntry): boolean {
+function isPublished(entry: RawPageEntry | RawPostEntry | RawCatalogEntry): boolean {
   if (typeof entry.published === 'boolean') {
     return entry.published;
   }
@@ -373,6 +438,57 @@ function mapLocalizedSlugs(slugs?: Localized<string | { slug?: string | null } |
     record[locale] = slug;
   }
   return record;
+}
+
+function filterValidValues<T extends string>(values: unknown, allowed: Set<string>): T[] {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+  const seen = new Set<string>();
+  const result: T[] = [];
+  for (const value of values) {
+    if (typeof value !== 'string') {
+      continue;
+    }
+    const trimmed = value.trim();
+    if (!allowed.has(trimmed) || seen.has(trimmed)) {
+      continue;
+    }
+    seen.add(trimmed);
+    result.push(trimmed as T);
+  }
+  return result;
+}
+
+function ensureUniqueLocalizedSlugs<T extends { slug?: Localized<string | { slug?: string | null } | null> }>(
+  entries: Array<{ entry: T; key: string }>,
+  collection: string
+): void {
+  const seenByLocale = new Map<Locale, Map<string, string>>();
+  for (const locale of locales) {
+    seenByLocale.set(locale, new Map());
+  }
+
+  for (const { entry, key } of entries) {
+    const slugByLocale = mapLocalizedSlugs(entry.slug);
+    for (const locale of locales) {
+      const slug = slugByLocale[locale];
+      if (!slug) {
+        continue;
+      }
+      const localeMap = seenByLocale.get(locale);
+      if (!localeMap) {
+        continue;
+      }
+      const existing = localeMap.get(slug);
+      if (existing) {
+        throw new Error(
+          `Duplicate slug "${slug}" for locale "${locale}" in collection "${collection}" (entries "${existing}" and "${key}").`
+        );
+      }
+      localeMap.set(slug, key);
+    }
+  }
 }
 
 async function readMarkdoc(reference: string | { content?: string | null } | null | undefined): Promise<string | null> {
@@ -501,6 +617,23 @@ const readPostsCollection = cache(async () => {
   return readFallbackCollection<RawPostEntry>('content/posts');
 });
 
+const readCatalogCollection = cache(async () => {
+  const reader = getReader();
+  try {
+    const entries = await reader.collections.catalog.all({ resolveLinkedFiles: true });
+    if (entries.length > 0) {
+      const mapped = entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawCatalogEntry }));
+      ensureUniqueLocalizedSlugs(mapped, 'catalog');
+      return mapped;
+    }
+  } catch {
+    // fall back to file system
+  }
+  const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
+  ensureUniqueLocalizedSlugs(fallback, 'catalog');
+  return fallback;
+});
+
 function resolveNavigationLinks(
   links: NavigationEntry[] | undefined,
   locale: Locale
@@ -560,7 +693,7 @@ function buildInternalPath(locale: Locale, pathValue: string): string {
   return buildPath(locale, segments);
 }
 
-function computeEntryId(entry: RawPageEntry | RawPostEntry, fallback: string): string {
+function computeEntryId(entry: RawPageEntry | RawPostEntry | RawCatalogEntry, fallback: string): string {
   const id = toOptionalString(entry.id ?? undefined);
   if (id) {
     return id;
@@ -705,6 +838,44 @@ export async function getAllPosts(): Promise<PostSummary[]> {
   });
 }
 
+function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale): CatalogListItem | null {
+  const slugByLocale = mapLocalizedSlugs(entry.slug);
+  const slug = slugByLocale[locale];
+  if (!slug) {
+    return null;
+  }
+
+  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
+  const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, defaultLocale) ?? null;
+  const category = typeof entry.category === 'string' && CATALOG_CATEGORY_SET.has(entry.category)
+    ? (entry.category as CatalogCategory)
+    : null;
+  const process = filterValidValues<CatalogProcess>(entry.process, CATALOG_PROCESS_SET);
+  const base = filterValidValues<CatalogBase>(entry.base, CATALOG_BASE_SET);
+  const filler = filterValidValues<CatalogFiller>(entry.filler, CATALOG_FILLER_SET);
+  const imageAsset = normalizeImageAsset(entry.image ?? null);
+  const image = imageAsset
+    ? ({ src: imageAsset.src, width: imageAsset.width, height: imageAsset.height } satisfies CatalogImage)
+    : null;
+  const docs = toOptionalString(entry.docs ?? undefined);
+
+  return {
+    id: computeEntryId(entry, key),
+    locale,
+    slug,
+    slugByLocale,
+    title,
+    excerpt,
+    category,
+    process,
+    base,
+    filler,
+    image,
+    docs,
+    updatedAt: normalizeDateTime(entry.updatedAt),
+  } satisfies CatalogListItem;
+}
+
 export async function getPostBySlug(slug: string, locale: Locale): Promise<PostContent | null> {
   const entries = await readPostsCollection();
   const record = entries.find(({ entry }) => {
@@ -744,6 +915,53 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
   } satisfies PostContent;
 }
 
+export async function getCatalogItems(locale: Locale): Promise<CatalogListItem[]> {
+  const entries = await readCatalogCollection();
+  const items: CatalogListItem[] = [];
+
+  for (const { entry, key } of entries) {
+    if (!isPublished(entry)) {
+      continue;
+    }
+    const mapped = mapCatalogListItem(entry, key, locale);
+    if (!mapped) {
+      continue;
+    }
+    items.push(mapped);
+  }
+
+  return items;
+}
+
+export async function getCatalogItemBySlug(slug: string, locale: Locale): Promise<CatalogItem | null> {
+  const entries = await readCatalogCollection();
+  const record = entries.find(({ entry }) => {
+    const slugByLocale = mapLocalizedSlugs(entry.slug);
+    return slugByLocale[locale] === slug;
+  });
+  if (!record) {
+    return null;
+  }
+  if (!isPublished(record.entry)) {
+    return null;
+  }
+  const baseItem = mapCatalogListItem(record.entry, record.key, locale);
+  if (!baseItem) {
+    return null;
+  }
+  const content = await resolveLocalizedContent(record.entry.content, locale);
+  return { ...baseItem, content } satisfies CatalogItem;
+}
+
+export async function getAllCatalogEntries(): Promise<CatalogSummary[]> {
+  const entries = await readCatalogCollection();
+  return entries.map(({ entry, key }) => ({
+    id: computeEntryId(entry, key),
+    slugByLocale: mapLocalizedSlugs(entry.slug),
+    published: isPublished(entry),
+  } satisfies CatalogSummary));
+}
+
 export async function getPostAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
   const entries = await readPostsCollection();
   const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
@@ -755,6 +973,15 @@ export async function getPostAlternates(id: string): Promise<Partial<Record<Loca
 
 export async function getPageAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
   const entries = await readPagesCollection();
+  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
+  if (!record) {
+    return {};
+  }
+  return mapLocalizedSlugs(record.entry.slug);
+}
+
+export async function getCatalogAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
+  const entries = await readCatalogCollection();
   const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
   if (!record) {
     return {};
@@ -783,3 +1010,6 @@ export async function getNavigationEntityByPath(
   }
   return { link: match, slugByLocale: mapLocalizedSlugs(match.localizedPath) };
 }
+
+export { CATALOG_BASES, CATALOG_CATEGORIES, CATALOG_FILLERS, CATALOG_PROCESSES } from './catalog/constants';
+export type { CatalogBase, CatalogCategory, CatalogFiller, CatalogProcess } from './catalog/constants';

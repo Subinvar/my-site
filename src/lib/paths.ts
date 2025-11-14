@@ -5,7 +5,7 @@ type PathSegment = string | null | undefined;
 type LocalizedSlugs = Partial<Record<Locale, string | null | undefined>>;
 
 type EntityWithLocalizedSlugs = {
-  collection: 'pages' | 'posts';
+  collection: 'pages' | 'posts' | 'catalog';
   slugs: LocalizedSlugs;
 };
 
@@ -39,7 +39,12 @@ export function switchLocalePath(
   }
 
   const normalized = slug.trim();
-  const segments: string[] = entity.collection === 'posts' ? ['posts'] : [];
+  let segments: string[] = [];
+  if (entity.collection === 'posts') {
+    segments = ['posts'];
+  } else if (entity.collection === 'catalog') {
+    segments = ['catalog'];
+  }
   if (normalized.length > 0) {
     segments.push(normalized);
   }
