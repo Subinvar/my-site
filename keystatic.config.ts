@@ -91,6 +91,16 @@ const localizedSeoTextFields = (label: string, options: LocalizedFieldOptions = 
     { label }
   );
 
+const slugKeyField = (entityLabel: string) =>
+  fields.slug({
+    name: {
+      label: `${entityLabel} — название`,
+    },
+    slug: {
+      label: `${entityLabel} — slug`,
+    },
+  });
+
 const localizedSeoGroup = () =>
   fields.object({
     title: localizedSeoTextFields('SEO заголовок'),
@@ -263,8 +273,9 @@ export default config({
       label: 'Страницы',
       path: 'content/pages/*/index',
       format: { data: 'json' },
-      slugField: 'id',
+      slugField: 'slugKey',
       schema: {
+        slugKey: slugKeyField('Страница'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         slug: localizedSlug('Slug'),
@@ -287,8 +298,9 @@ export default config({
       label: 'Посты',
       path: 'content/posts/*/index',
       format: { data: 'json' },
-      slugField: 'id',
+      slugField: 'slugKey',
       schema: {
+        slugKey: slugKeyField('Пост'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         date: fields.datetime({ label: 'Дата публикации' }),
@@ -313,8 +325,9 @@ export default config({
       label: 'Документы',
       path: 'content/documents/*/index',
       format: { data: 'json' },
-      slugField: 'id',
+      slugField: 'slugKey',
       schema: {
+        slugKey: slugKeyField('Документ'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         title: localizedText('Название', { isRequired: true }),
@@ -354,8 +367,9 @@ export default config({
       label: 'Каталог',
       path: 'content/catalog/*/index',
       format: { data: 'json' },
-      slugField: 'slug' as never,
+      slugField: 'slugKey',
       schema: {
+        slugKey: slugKeyField('Товар'),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: false }),
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),

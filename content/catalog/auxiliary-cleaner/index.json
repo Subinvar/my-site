@@ -1,4 +1,8 @@
 {
+  "slugKey": {
+    "name": "auxiliary-cleaner",
+    "slug": "auxiliary-cleaner"
+  },
   "published": true,
   "slug": {
     "ru": "vspomogatelnij-ochistitel",

@@ -1,5 +1,9 @@
 {
   "id": "home",
+  "slugKey": {
+    "name": "home",
+    "slug": "home"
+  },
   "published": true,
   "slug": {
     "ru": "",

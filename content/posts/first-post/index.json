@@ -1,5 +1,9 @@
 {
   "id": "first-post",
+  "slugKey": {
+    "name": "first-post",
+    "slug": "first-post"
+  },
   "published": true,
   "date": "2024-02-05T07:00",
   "slug": {

@@ -204,6 +204,8 @@ type RawSeoGroup = {
 
 type RawMarkdocValue = string | { content?: string | null } | { node?: MarkdocNode | null } | null;
 
+type SlugKeyValue = { slug?: string | null; name?: string | null } | null;
+
 type RawPageEntry = {
   id?: string | null;
   slug?: Localized<string | { slug?: string | null } | null>;
@@ -219,7 +221,7 @@ type RawPageEntry = {
   status?: 'draft' | 'published';
   updatedAt?: string | null;
   excerpt?: Localized<string>;
-  slugKey?: string | null;
+  slugKey?: string | SlugKeyValue;
 };
 
 type RawPostEntry = RawPageEntry & {
@@ -247,7 +249,7 @@ type RawCatalogEntry = {
   published?: boolean | null;
   status?: 'draft' | 'published';
   updatedAt?: string | null;
-  slugKey?: string | null;
+  slugKey?: string | SlugKeyValue;
 };
 
 type RawDocumentEntry = {
@@ -260,7 +262,7 @@ type RawDocumentEntry = {
   published?: boolean | null;
   status?: 'draft' | 'published';
   updatedAt?: string | null;
-  slugKey?: string | null;
+  slugKey?: string | SlugKeyValue;
 };
 
 type DocumentsPageSingleton = {
@@ -482,11 +484,22 @@ export type CatalogPageContent = {
 };
 
 function toOptionalString(value: unknown): string | null {
-  if (typeof value !== 'string') {
-    return null;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : null;
   }
-  const trimmed = value.trim();
-  return trimmed.length ? trimmed : null;
+  if (value && typeof value === 'object') {
+    const record = value as { slug?: unknown; name?: unknown };
+    const slug = toOptionalString(record.slug ?? undefined);
+    if (slug) {
+      return slug;
+    }
+    const name = toOptionalString(record.name ?? undefined);
+    if (name) {
+      return name;
+    }
+  }
+  return null;
 }
 
 function normalizeImageAsset(value: RawMedia): { src: string; width?: number | null; height?: number | null } | null {

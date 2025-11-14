@@ -1,4 +1,8 @@
 {
+  "slugKey": {
+    "name": "binder-alpha-pepset",
+    "slug": "binder-alpha-pepset"
+  },
   "published": true,
   "slug": {
     "ru": "svyazuyushchee-alpha-pep",
