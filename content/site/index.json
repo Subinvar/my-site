@@ -15,6 +15,12 @@
       "en": "141241, Centralnaya St. 2, Bldg. B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region"
     }
   },
+  "footer": {
+    "copyright": {
+      "ru": "© {year} Интема Групп. Все права защищены.",
+      "en": "© {year} Intema Group. All rights reserved."
+    }
+  },
   "seo": {
     "title": {
       "ru": "Интема Групп — поставки связующих и противопригарных материалов",

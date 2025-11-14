@@ -52,7 +52,7 @@ const DEFAULT_DESCRIPTION: Record<Locale, string> = {
   en: 'Certificates, technical sheets, and brochures from the company.',
 };
 
-const TYPE_LABELS: Record<Locale, Record<DocumentType, string>> = {
+const FALLBACK_TYPE_LABELS: Record<Locale, Record<DocumentType, string>> = {
   ru: {
     certificate: 'Сертификат',
     tds: 'ТДС',
@@ -67,7 +67,7 @@ const TYPE_LABELS: Record<Locale, Record<DocumentType, string>> = {
   },
 };
 
-const LANGUAGE_LABELS: Record<Locale, Record<DocumentLanguage, string>> = {
+const FALLBACK_LANGUAGE_LABELS: Record<Locale, Record<DocumentLanguage, string>> = {
   ru: {
     ru: 'Русский',
     en: 'Английский',
@@ -78,47 +78,47 @@ const LANGUAGE_LABELS: Record<Locale, Record<DocumentLanguage, string>> = {
   },
 };
 
-const LANGUAGE_ALL_LABEL: Record<Locale, string> = {
+const FALLBACK_LANGUAGE_ALL_LABEL: Record<Locale, string> = {
   ru: 'Все языки',
   en: 'All languages',
 };
 
-const TYPE_FILTER_LABEL: Record<Locale, string> = {
+const FALLBACK_TYPE_FILTER_LABEL: Record<Locale, string> = {
   ru: 'Тип документа',
   en: 'Document type',
 };
 
-const LANGUAGE_FILTER_LABEL: Record<Locale, string> = {
+const FALLBACK_LANGUAGE_FILTER_LABEL: Record<Locale, string> = {
   ru: 'Язык файла',
   en: 'File language',
 };
 
-const APPLY_LABEL: Record<Locale, string> = {
+const FALLBACK_APPLY_LABEL: Record<Locale, string> = {
   ru: 'Применить фильтры',
   en: 'Apply filters',
 };
 
-const RESET_LABEL: Record<Locale, string> = {
+const FALLBACK_RESET_LABEL: Record<Locale, string> = {
   ru: 'Сбросить',
   en: 'Reset',
 };
 
-const DOWNLOAD_LABEL: Record<Locale, string> = {
+const FALLBACK_DOWNLOAD_LABEL: Record<Locale, string> = {
   ru: 'Скачать',
   en: 'Download',
 };
 
-const RESULTS_COUNT_LABEL: Record<Locale, (count: number) => string> = {
-  ru: (count) => `Найдено документов: ${count}`,
-  en: (count) => `Documents found: ${count}`,
+const FALLBACK_RESULTS_TEMPLATE: Record<Locale, string> = {
+  ru: 'Найдено документов: {count}',
+  en: 'Documents found: {count}',
 };
 
-const EMPTY_STATE_MESSAGE: Record<Locale, string> = {
+const FALLBACK_EMPTY_STATE_MESSAGE: Record<Locale, string> = {
   ru: 'По выбранным фильтрам документов нет. Попробуйте изменить параметры поиска.',
   en: 'No documents match your filters. Try adjusting the search parameters.',
 };
 
-const RELATED_PRODUCTS_LABEL: Record<Locale, string> = {
+const FALLBACK_RELATED_PRODUCTS_LABEL: Record<Locale, string> = {
   ru: 'Подходит для:',
   en: 'Suitable for:',
 };
@@ -153,7 +153,15 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
   const switcherHref = buildPath(targetLocale, ['documents']);
   const pageTitle = resolvePageTitle(pageContent, locale);
   const pageDescription = resolvePageDescription(pageContent, locale);
-  const resultsLabel = RESULTS_COUNT_LABEL[locale](sortedDocuments.length);
+  const typeLegendLabel = resolveTypeLegend(pageContent, locale);
+  const languageLegendLabel = resolveLanguageLegend(pageContent, locale);
+  const applyLabel = resolveApplyButtonLabel(pageContent, locale);
+  const resetLabel = resolveResetButtonLabel(pageContent, locale);
+  const downloadLabel = resolveDownloadLinkLabel(pageContent, locale);
+  const languageAllLabel = resolveAllLanguagesLabel(pageContent, locale);
+  const emptyStateMessage = resolveEmptyState(pageContent, locale);
+  const relatedProductsLabel = resolveRelatedProductsLabel(pageContent, locale);
+  const resultsLabel = resolveResultsLabel(pageContent, locale, sortedDocuments.length);
 
   return (
     <SiteShell
@@ -172,12 +180,12 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
           <form method="get" className="space-y-6">
             <fieldset>
               <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {TYPE_FILTER_LABEL[locale]}
+                {typeLegendLabel}
               </legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 {DOCUMENT_TYPES.map((type) => {
                   const id = `type-${type}`;
-                  const label = TYPE_LABELS[locale][type];
+                  const label = resolveTypeLabelValue(pageContent, locale, type);
                   return (
                     <label key={type} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
                       <input
@@ -196,15 +204,15 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
             </fieldset>
             <fieldset>
               <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {LANGUAGE_FILTER_LABEL[locale]}
+                {languageLegendLabel}
               </legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 {LANGUAGE_FILTER_VALUES.map((value) => {
                   const id = `lang-${value}`;
                   const isAll = value === 'all';
                   const label = isAll
-                    ? LANGUAGE_ALL_LABEL[locale]
-                    : LANGUAGE_LABELS[locale][value as DocumentLanguage];
+                    ? languageAllLabel
+                    : resolveLanguageLabelValue(pageContent, locale, value as DocumentLanguage);
                   return (
                     <label key={value} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
                       <input
@@ -226,13 +234,13 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                 type="submit"
                 className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               >
-                {APPLY_LABEL[locale]}
+                {applyLabel}
               </button>
               <Link
                 href={buildPath(locale, ['documents'])}
                 className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               >
-                {RESET_LABEL[locale]}
+                {resetLabel}
               </Link>
             </div>
           </form>
@@ -243,8 +251,8 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
             <ul className="space-y-6">
               {sortedDocuments.map((document) => {
                 const title = resolveDocumentTitle(document, locale);
-                const typeLabel = TYPE_LABELS[locale][document.type];
-                const langLabel = LANGUAGE_LABELS[locale][document.lang];
+                const typeLabel = resolveTypeLabelValue(pageContent, locale, document.type);
+                const langLabel = resolveLanguageLabelValue(pageContent, locale, document.lang);
                 const fileInfoParts: string[] = [];
                 if (document.fileExtension) {
                   fileInfoParts.push(document.fileExtension.toUpperCase());
@@ -256,7 +264,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                   }
                 }
                 const downloadSuffix = fileInfoParts.length ? ` (${fileInfoParts.join(', ')})` : '';
-                const downloadText = `${DOWNLOAD_LABEL[locale]} ${typeLabel}${downloadSuffix}`;
+                const downloadText = `${downloadLabel} ${typeLabel}${downloadSuffix}`;
                 const relatedProducts = resolveRelatedProducts(document, catalogLookup);
 
                 return (
@@ -281,7 +289,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                       ) : null}
                       {relatedProducts.length > 0 ? (
                         <div className="text-sm text-zinc-700">
-                          <span className="font-medium">{RELATED_PRODUCTS_LABEL[locale]} </span>
+                          <span className="font-medium">{relatedProductsLabel} </span>
                           <span>
                             {relatedProducts.map((product, index) => {
                               const href = buildPath(locale, ['catalog', product.slug]);
@@ -306,7 +314,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
               })}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-600">{EMPTY_STATE_MESSAGE[locale]}</p>
+            <p className="text-sm text-zinc-600">{emptyStateMessage}</p>
           )}
         </section>
       </div>
@@ -458,6 +466,83 @@ function resolveDocumentTitle(document: Document, locale: Locale): string {
     }
   }
   return document.fileName ?? document.id;
+}
+
+function resolveLocalizedValue(
+  record: Partial<Record<Locale, string>> | null | undefined,
+  locale: Locale,
+  fallback: Record<Locale, string>
+): string {
+  const localized = record?.[locale];
+  if (localized && localized.trim()) {
+    return localized;
+  }
+  const fallbackLocalized = record?.[defaultLocale];
+  if (fallbackLocalized && fallbackLocalized.trim()) {
+    return fallbackLocalized;
+  }
+  return fallback[locale];
+}
+
+function resolveTypeLegend(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.typeFilterLabel ?? null, locale, FALLBACK_TYPE_FILTER_LABEL);
+}
+
+function resolveLanguageLegend(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.languageFilterLabel ?? null, locale, FALLBACK_LANGUAGE_FILTER_LABEL);
+}
+
+function resolveApplyButtonLabel(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.applyLabel ?? null, locale, FALLBACK_APPLY_LABEL);
+}
+
+function resolveResetButtonLabel(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.resetLabel ?? null, locale, FALLBACK_RESET_LABEL);
+}
+
+function resolveDownloadLinkLabel(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.downloadLabel ?? null, locale, FALLBACK_DOWNLOAD_LABEL);
+}
+
+function resolveAllLanguagesLabel(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.allLanguagesLabel ?? null, locale, FALLBACK_LANGUAGE_ALL_LABEL);
+}
+
+function resolveEmptyState(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale, FALLBACK_EMPTY_STATE_MESSAGE);
+}
+
+function resolveRelatedProductsLabel(page: DocumentsPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.relatedProductsLabel ?? null, locale, FALLBACK_RELATED_PRODUCTS_LABEL);
+}
+
+function resolveTypeLabelValue(page: DocumentsPageContent | null, locale: Locale, type: DocumentType): string {
+  const fallback: Record<Locale, string> = {
+    ru: FALLBACK_TYPE_LABELS.ru[type],
+    en: FALLBACK_TYPE_LABELS.en[type],
+  };
+  return resolveLocalizedValue(page?.typeLabels?.[type] ?? null, locale, fallback);
+}
+
+function resolveLanguageLabelValue(
+  page: DocumentsPageContent | null,
+  locale: Locale,
+  lang: DocumentLanguage
+): string {
+  const fallback: Record<Locale, string> = {
+    ru: FALLBACK_LANGUAGE_LABELS.ru[lang],
+    en: FALLBACK_LANGUAGE_LABELS.en[lang],
+  };
+  return resolveLocalizedValue(page?.languageLabels?.[lang] ?? null, locale, fallback);
+}
+
+function resolveResultsLabel(
+  page: DocumentsPageContent | null,
+  locale: Locale,
+  count: number
+): string {
+  const template = resolveLocalizedValue(page?.resultsLabelTemplate ?? null, locale, FALLBACK_RESULTS_TEMPLATE);
+  return template.replace('{count}', String(count));
 }
 
 function buildCatalogLookup(items: CatalogListItem[]): Map<string, CatalogListItem> {

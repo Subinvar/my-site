@@ -7,5 +7,69 @@
     "ru": "Собрали сертификаты, техническую документацию и брошюры, которые помогут быстрее подобрать материалы и подтвердить требования.",
     "en": "Browse certificates, technical documents, and brochures that help you choose the right materials and confirm compliance."
   },
+  "typeFilterLabel": {
+    "ru": "Тип документа",
+    "en": "Document type"
+  },
+  "languageFilterLabel": {
+    "ru": "Язык файла",
+    "en": "File language"
+  },
+  "applyLabel": {
+    "ru": "Применить фильтры",
+    "en": "Apply filters"
+  },
+  "resetLabel": {
+    "ru": "Сбросить",
+    "en": "Reset"
+  },
+  "allLanguagesLabel": {
+    "ru": "Все языки",
+    "en": "All languages"
+  },
+  "downloadLabel": {
+    "ru": "Скачать",
+    "en": "Download"
+  },
+  "relatedProductsLabel": {
+    "ru": "Подходит для:",
+    "en": "Suitable for:"
+  },
+  "emptyStateMessage": {
+    "ru": "По выбранным фильтрам документов нет. Попробуйте изменить параметры поиска.",
+    "en": "No documents match your filters. Try adjusting the search parameters."
+  },
+  "resultsLabelTemplate": {
+    "ru": "Найдено документов: {count}",
+    "en": "Documents found: {count}"
+  },
+  "typeLabels": {
+    "certificate": {
+      "ru": "Сертификат",
+      "en": "Certificate"
+    },
+    "tds": {
+      "ru": "ТДС",
+      "en": "TDS"
+    },
+    "msds": {
+      "ru": "МСДС",
+      "en": "MSDS"
+    },
+    "brochure": {
+      "ru": "Брошюра",
+      "en": "Brochure"
+    }
+  },
+  "languageLabels": {
+    "ru": {
+      "ru": "Русский",
+      "en": "Russian"
+    },
+    "en": {
+      "ru": "Английский",
+      "en": "English"
+    }
+  },
   "ogImage": null
 }

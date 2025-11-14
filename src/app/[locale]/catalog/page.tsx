@@ -10,12 +10,13 @@ import {
   CATALOG_FILLERS,
   CATALOG_PROCESSES,
   getCatalogListing,
+  getCatalogListingPage,
   resolveCatalogListingMetadata,
 } from '@/app/(site)/shared/catalog';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
-import { isLocale, type Locale } from '@/lib/i18n';
+import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
 import type {
   CatalogAuxiliary,
   CatalogBase,
@@ -23,36 +24,37 @@ import type {
   CatalogFiller,
   CatalogListItem,
   CatalogProcess,
+  CatalogPageContent,
 } from '@/lib/keystatic';
 
 export const revalidate = 60;
 
-const HEADING_BY_LOCALE: Record<Locale, string> = {
+const FALLBACK_HEADING: Record<Locale, string> = {
   ru: 'Каталог',
   en: 'Catalog',
 };
 
-const DESCRIPTION_BY_LOCALE: Record<Locale, string> = {
+const FALLBACK_DESCRIPTION: Record<Locale, string> = {
   ru: 'Отфильтруйте продукты по категории, процессу, основе, наполнителю и типу вспомогательных материалов.',
   en: 'Filter products by category, process, base, filler, and auxiliary type.',
 };
 
-const SUBMIT_LABEL: Record<Locale, string> = {
+const FALLBACK_SUBMIT_LABEL: Record<Locale, string> = {
   ru: 'Применить фильтры',
   en: 'Apply filters',
 };
 
-const RESET_LABEL: Record<Locale, string> = {
+const FALLBACK_RESET_LABEL: Record<Locale, string> = {
   ru: 'Сбросить',
   en: 'Reset',
 };
 
-const CATEGORY_ALL_LABEL: Record<Locale, string> = {
+const FALLBACK_CATEGORY_ALL_LABEL: Record<Locale, string> = {
   ru: 'Все категории',
   en: 'All categories',
 };
 
-const GROUP_LABELS: Record<
+const FALLBACK_GROUP_LABELS: Record<
   Locale,
   { category: string; process: string; base: string; filler: string; auxiliary: string }
 > = {
@@ -72,12 +74,12 @@ const GROUP_LABELS: Record<
   },
 };
 
-const DETAIL_LINK_LABEL: Record<Locale, string> = {
+const FALLBACK_DETAIL_LABEL: Record<Locale, string> = {
   ru: 'Подробнее',
   en: 'View details',
 };
 
-const EMPTY_STATE_MESSAGE: Record<Locale, string> = {
+const FALLBACK_EMPTY_STATE_MESSAGE: Record<Locale, string> = {
   ru: 'Нет товаров, соответствующих выбранным фильтрам. Попробуйте изменить параметры поиска.',
   en: 'No products match your filters. Try adjusting the search parameters.',
 };
@@ -107,13 +109,22 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
 
   const locale = rawLocale;
   const filters = parseFilters(rawSearchParams);
-  const [items, shell] = await Promise.all([
+  const [items, shell, catalogPage] = await Promise.all([
     getCatalogListing(locale),
     getSiteShellData(locale),
+    getCatalogListingPage(locale),
   ]);
   const filteredItems = applyFilters(items, filters);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['catalog']);
+  const heading = resolveHeading(catalogPage, locale);
+  const description = resolveDescription(catalogPage, locale);
+  const submitLabel = resolveSubmitLabel(catalogPage, locale);
+  const resetLabel = resolveResetLabel(catalogPage, locale);
+  const categoryAllLabel = resolveCategoryAllLabel(catalogPage, locale);
+  const detailLabel = resolveDetailLabel(catalogPage, locale);
+  const emptyStateMessage = resolveEmptyState(catalogPage, locale);
+  const groupLabels = resolveGroupLabels(catalogPage, locale);
 
   return (
     <SiteShell
@@ -125,14 +136,14 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
     >
       <div className="space-y-12">
         <header className="space-y-3">
-          <h1 className="text-3xl font-semibold text-zinc-900">{HEADING_BY_LOCALE[locale]}</h1>
-          <p className="text-base text-zinc-600">{DESCRIPTION_BY_LOCALE[locale]}</p>
+          <h1 className="text-3xl font-semibold text-zinc-900">{heading}</h1>
+          <p className="text-base text-zinc-600">{description}</p>
         </header>
         <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
           <form className="space-y-6" method="get">
             <fieldset>
               <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {GROUP_LABELS[locale].category}
+                {groupLabels.category}
               </legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 <label className="flex items-center gap-2 text-sm text-zinc-700">
@@ -143,7 +154,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                     defaultChecked={!filters.category}
                     className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
                   />
-                  {CATEGORY_ALL_LABEL[locale]}
+                  {categoryAllLabel}
                 </label>
                 {CATALOG_CATEGORIES.map((category) => (
                   <label key={category} className="flex items-center gap-2 text-sm text-zinc-700">
@@ -161,25 +172,25 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
             </fieldset>
             <FilterGroup
               name="process"
-              legend={GROUP_LABELS[locale].process}
+              legend={groupLabels.process}
               options={CATALOG_PROCESSES}
               selected={filters.process}
             />
             <FilterGroup
               name="base"
-              legend={GROUP_LABELS[locale].base}
+              legend={groupLabels.base}
               options={CATALOG_BASES}
               selected={filters.base}
             />
             <FilterGroup
               name="filler"
-              legend={GROUP_LABELS[locale].filler}
+              legend={groupLabels.filler}
               options={CATALOG_FILLERS}
               selected={filters.filler}
             />
             <FilterGroup
               name="auxiliary"
-              legend={GROUP_LABELS[locale].auxiliary}
+              legend={groupLabels.auxiliary}
               options={CATALOG_AUXILIARIES}
               selected={filters.auxiliary}
             />
@@ -188,13 +199,13 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                 type="submit"
                 className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               >
-                {SUBMIT_LABEL[locale]}
+                {submitLabel}
               </button>
               <Link
                 href={buildPath(locale, ['catalog'])}
                 className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               >
-                {RESET_LABEL[locale]}
+                {resetLabel}
               </Link>
             </div>
           </form>
@@ -202,13 +213,13 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
         <section>
           {filteredItems.length === 0 ? (
             <p className="rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-600">
-              {EMPTY_STATE_MESSAGE[locale]}
+              {emptyStateMessage}
             </p>
           ) : (
             <ul className="grid gap-8 md:grid-cols-2">
               {filteredItems.map((item) => (
                 <li key={`${item.id}:${item.slug}`}>
-                  <CatalogCard item={item} locale={locale} />
+                  <CatalogCard item={item} locale={locale} detailLabel={detailLabel} />
                 </li>
               ))}
             </ul>
@@ -217,6 +228,79 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       </div>
     </SiteShell>
   );
+}
+
+function resolveLocalizedValue(
+  record: Partial<Record<Locale, string>> | null | undefined,
+  locale: Locale,
+  fallback: Record<Locale, string>
+): string {
+  const localized = record?.[locale];
+  if (localized && localized.trim()) {
+    return localized;
+  }
+  const fallbackLocalized = record?.[defaultLocale];
+  if (fallbackLocalized && fallbackLocalized.trim()) {
+    return fallbackLocalized;
+  }
+  return fallback[locale];
+}
+
+function resolveHeading(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.title ?? null, locale, FALLBACK_HEADING);
+}
+
+function resolveDescription(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.description ?? null, locale, FALLBACK_DESCRIPTION);
+}
+
+function resolveSubmitLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.submitLabel ?? null, locale, FALLBACK_SUBMIT_LABEL);
+}
+
+function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.resetLabel ?? null, locale, FALLBACK_RESET_LABEL);
+}
+
+function resolveCategoryAllLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.categoryAllLabel ?? null, locale, FALLBACK_CATEGORY_ALL_LABEL);
+}
+
+function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.detailLabel ?? null, locale, FALLBACK_DETAIL_LABEL);
+}
+
+function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale, FALLBACK_EMPTY_STATE_MESSAGE);
+}
+
+function resolveGroupLabels(
+  page: CatalogPageContent | null,
+  locale: Locale
+): { category: string; process: string; base: string; filler: string; auxiliary: string } {
+  const source = page?.groupLabels;
+  return {
+    category: resolveLocalizedValue(source?.category ?? null, locale, {
+      ru: FALLBACK_GROUP_LABELS.ru.category,
+      en: FALLBACK_GROUP_LABELS.en.category,
+    }),
+    process: resolveLocalizedValue(source?.process ?? null, locale, {
+      ru: FALLBACK_GROUP_LABELS.ru.process,
+      en: FALLBACK_GROUP_LABELS.en.process,
+    }),
+    base: resolveLocalizedValue(source?.base ?? null, locale, {
+      ru: FALLBACK_GROUP_LABELS.ru.base,
+      en: FALLBACK_GROUP_LABELS.en.base,
+    }),
+    filler: resolveLocalizedValue(source?.filler ?? null, locale, {
+      ru: FALLBACK_GROUP_LABELS.ru.filler,
+      en: FALLBACK_GROUP_LABELS.en.filler,
+    }),
+    auxiliary: resolveLocalizedValue(source?.auxiliary ?? null, locale, {
+      ru: FALLBACK_GROUP_LABELS.ru.auxiliary,
+      en: FALLBACK_GROUP_LABELS.en.auxiliary,
+    }),
+  };
 }
 
 function parseFilters(params: Record<string, string | string[] | undefined>): FilterState {
@@ -338,9 +422,10 @@ function FilterGroup<T extends string>({ name, legend, options, selected }: Filt
 type CatalogCardProps = {
   item: CatalogListItem;
   locale: Locale;
+  detailLabel: string;
 };
 
-function CatalogCard({ item, locale }: CatalogCardProps) {
+function CatalogCard({ item, locale, detailLabel }: CatalogCardProps) {
   const image = item.image;
   const href = buildPath(locale, ['catalog', item.slug]);
 
@@ -367,7 +452,7 @@ function CatalogCard({ item, locale }: CatalogCardProps) {
             href={href}
             className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
           >
-            {DETAIL_LINK_LABEL[locale]}
+            {detailLabel}
             <span aria-hidden>→</span>
           </Link>
         </div>

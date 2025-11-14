@@ -1,0 +1,74 @@
+{
+  "title": {
+    "ru": "Каталог",
+    "en": "Catalog"
+  },
+  "description": {
+    "ru": "Отфильтруйте продукты по категории, процессу, основе, наполнителю и типу вспомогательных материалов.",
+    "en": "Filter products by category, process, base, filler, and auxiliary type."
+  },
+  "submitLabel": {
+    "ru": "Применить фильтры",
+    "en": "Apply filters"
+  },
+  "resetLabel": {
+    "ru": "Сбросить",
+    "en": "Reset"
+  },
+  "categoryAllLabel": {
+    "ru": "Все категории",
+    "en": "All categories"
+  },
+  "detailLabel": {
+    "ru": "Подробнее",
+    "en": "View details"
+  },
+  "emptyStateMessage": {
+    "ru": "Нет товаров, соответствующих выбранным фильтрам. Попробуйте изменить параметры поиска.",
+    "en": "No products match your filters. Try adjusting the search parameters."
+  },
+  "groupLabels": {
+    "category": {
+      "ru": "Категория",
+      "en": "Category"
+    },
+    "process": {
+      "ru": "Процесс",
+      "en": "Process"
+    },
+    "base": {
+      "ru": "Основа",
+      "en": "Base"
+    },
+    "filler": {
+      "ru": "Наполнитель",
+      "en": "Filler"
+    },
+    "auxiliary": {
+      "ru": "Вспомогательные",
+      "en": "Auxiliary supplies"
+    }
+  },
+  "seo": {
+    "title": {
+      "ru": "Каталог материалов Интема Групп",
+      "en": "Intema Group product catalogue"
+    },
+    "description": {
+      "ru": "Каталог материалов Интема Групп: связующие системы, противопригарные покрытия и вспомогательные продукты.",
+      "en": "Intema Group product catalogue: binders, release coatings, and auxiliary supplies."
+    },
+    "ogTitle": {
+      "ru": "Каталог материалов Интема Групп",
+      "en": "Intema Group product catalogue"
+    },
+    "ogDescription": {
+      "ru": "Найдите связующие, покрытия и вспомогательные материалы для литейного производства.",
+      "en": "Find binders, coatings, and auxiliary supplies for foundry operations."
+    },
+    "ogImage": {
+      "image": "uploads/og-default.svg",
+      "alt": "Каталог продукции Интема Групп"
+    }
+  }
+}

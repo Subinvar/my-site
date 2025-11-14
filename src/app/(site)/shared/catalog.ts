@@ -10,6 +10,7 @@ import {
   getAllCatalogEntries,
   getCatalogItemBySlug,
   getCatalogItems,
+  getCatalogPage,
   getSite,
   type CatalogItem,
   type CatalogListItem,
@@ -19,8 +20,9 @@ import {
   type CatalogCategory,
   type CatalogFiller,
   type CatalogProcess,
+  type CatalogPageContent,
 } from '@/lib/keystatic';
-import { locales, type Locale } from '@/lib/i18n';
+import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 import {
   HREFLANG_CODE,
@@ -32,12 +34,12 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 
-const LISTING_TITLE: Record<Locale, string> = {
+const FALLBACK_LISTING_TITLE: Record<Locale, string> = {
   ru: 'Каталог',
   en: 'Catalog',
 };
 
-const LISTING_DESCRIPTION: Record<Locale, string> = {
+const FALLBACK_LISTING_DESCRIPTION: Record<Locale, string> = {
   ru: 'Каталог материалов Интема Групп: связующие системы, противопригарные покрытия и вспомогательные продукты.',
   en: 'Intema Group product catalogue: binders, release coatings, and auxiliary supplies.',
 };
@@ -50,6 +52,10 @@ export type CatalogProductPageData = {
 
 export function getCatalogListing(locale: Locale): Promise<CatalogListItem[]> {
   return getCatalogItems(locale);
+}
+
+export function getCatalogListingPage(locale: Locale): Promise<CatalogPageContent | null> {
+  return getCatalogPage(locale);
 }
 
 export async function getCatalogProductPage(locale: Locale, slug: string): Promise<CatalogProductPageData | null> {
@@ -76,8 +82,32 @@ function buildCatalogSlugMap(slugByLocale: Partial<Record<Locale, string>>): Par
   return record;
 }
 
+function resolveCatalogTitle(page: CatalogPageContent | null, locale: Locale): string {
+  const localized = page?.title?.[locale];
+  if (localized && localized.trim()) {
+    return localized;
+  }
+  const fallback = page?.title?.[defaultLocale];
+  if (fallback && fallback.trim()) {
+    return fallback;
+  }
+  return FALLBACK_LISTING_TITLE[locale];
+}
+
+function resolveCatalogDescription(page: CatalogPageContent | null, locale: Locale): string {
+  const localized = page?.description?.[locale];
+  if (localized && localized.trim()) {
+    return localized;
+  }
+  const fallback = page?.description?.[defaultLocale];
+  if (fallback && fallback.trim()) {
+    return fallback;
+  }
+  return FALLBACK_LISTING_DESCRIPTION[locale];
+}
+
 export async function resolveCatalogListingMetadata(locale: Locale): Promise<Metadata> {
-  const site = await getSite(locale);
+  const [site, catalogPage] = await Promise.all([getSite(locale), getCatalogPage(locale)]);
   const slugMap: Partial<Record<Locale, string>> = {};
   for (const candidate of locales) {
     slugMap[candidate] = buildPath(candidate, ['catalog']);
@@ -89,11 +119,15 @@ export async function resolveCatalogListingMetadata(locale: Locale): Promise<Met
     canonicalBase: site.seo.canonicalBase,
   });
 
+  const listingTitle = resolveCatalogTitle(catalogPage, locale);
+  const listingDescription = resolveCatalogDescription(catalogPage, locale);
+
   const merged = mergeSeo({
     site: site.seo,
+    page: catalogPage?.seo ?? null,
     defaults: {
-      title: LISTING_TITLE[locale],
-      description: LISTING_DESCRIPTION[locale],
+      title: listingTitle,
+      description: listingDescription,
     },
   });
 
@@ -104,14 +138,14 @@ export async function resolveCatalogListingMetadata(locale: Locale): Promise<Met
   }
 
   const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
-  const ogTitle = merged.ogTitle ?? merged.title ?? LISTING_TITLE[locale];
-  const ogDescription = merged.ogDescription ?? merged.description ?? LISTING_DESCRIPTION[locale];
+  const ogTitle = merged.ogTitle ?? merged.title ?? listingTitle;
+  const ogDescription = merged.ogDescription ?? merged.description ?? listingDescription;
   const hrefLang = HREFLANG_CODE[locale];
   const preferredUrl = canonicalUrl ?? alternates.languages[hrefLang];
 
   return {
-    title: merged.title ?? LISTING_TITLE[locale],
-    description: merged.description ?? LISTING_DESCRIPTION[locale],
+    title: merged.title ?? listingTitle,
+    description: merged.description ?? listingDescription,
     alternates: alternatesData,
     robots: resolveRobotsMeta(site.robots),
     openGraph: {

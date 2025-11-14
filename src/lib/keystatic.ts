@@ -210,6 +210,10 @@ type RawPageEntry = {
   title?: Localized<string>;
   description?: Localized<string>;
   content?: Localized<RawMarkdocValue>;
+  hero?: {
+    image?: RawMedia;
+    alt?: Localized<string>;
+  } | null;
   seo?: RawSeoGroup;
   published?: boolean | null;
   status?: 'draft' | 'published';
@@ -262,7 +266,36 @@ type RawDocumentEntry = {
 type DocumentsPageSingleton = {
   title?: Localized<string>;
   description?: Localized<string>;
+  typeFilterLabel?: Localized<string>;
+  languageFilterLabel?: Localized<string>;
+  applyLabel?: Localized<string>;
+  resetLabel?: Localized<string>;
+  allLanguagesLabel?: Localized<string>;
+  downloadLabel?: Localized<string>;
+  relatedProductsLabel?: Localized<string>;
+  emptyStateMessage?: Localized<string>;
+  resultsLabelTemplate?: Localized<string>;
+  typeLabels?: Record<DocumentType, Localized<string>>;
+  languageLabels?: Record<DocumentLanguage, Localized<string>>;
   ogImage?: RawSeoImage;
+};
+
+type CatalogPageSingleton = {
+  title?: Localized<string>;
+  description?: Localized<string>;
+  submitLabel?: Localized<string>;
+  resetLabel?: Localized<string>;
+  categoryAllLabel?: Localized<string>;
+  detailLabel?: Localized<string>;
+  emptyStateMessage?: Localized<string>;
+  groupLabels?: {
+    category?: Localized<string>;
+    process?: Localized<string>;
+    base?: Localized<string>;
+    filler?: Localized<string>;
+    auxiliary?: Localized<string>;
+  } | null;
+  seo?: RawSeoGroup;
 };
 
 type NavigationEntry = {
@@ -307,6 +340,9 @@ export type SiteContent = {
   seo: SiteSeo;
   domain: string | null;
   robots: { index: boolean; follow: boolean };
+  footer: {
+    copyright: string | null;
+  };
 };
 
 export type NavigationLink = {
@@ -323,6 +359,11 @@ export type Navigation = {
   footer: NavigationLink[];
 };
 
+export type PageHero = {
+  image: CatalogImage | null;
+  alt: string | null;
+};
+
 export type PageContent = {
   id: string;
   locale: Locale;
@@ -334,6 +375,7 @@ export type PageContent = {
   seo: ResolvedSeo | null;
   excerpt: string | null;
   updatedAt?: string | null;
+  hero: PageHero | null;
 };
 
 export type PageSummary = {
@@ -407,7 +449,36 @@ export type Document = {
 export type DocumentsPageContent = {
   title: Partial<Record<Locale, string>>;
   description: Partial<Record<Locale, string>>;
+  typeFilterLabel: Partial<Record<Locale, string>>;
+  languageFilterLabel: Partial<Record<Locale, string>>;
+  applyLabel: Partial<Record<Locale, string>>;
+  resetLabel: Partial<Record<Locale, string>>;
+  allLanguagesLabel: Partial<Record<Locale, string>>;
+  downloadLabel: Partial<Record<Locale, string>>;
+  relatedProductsLabel: Partial<Record<Locale, string>>;
+  emptyStateMessage: Partial<Record<Locale, string>>;
+  resultsLabelTemplate: Partial<Record<Locale, string>>;
+  typeLabels: Record<DocumentType, Partial<Record<Locale, string>>>;
+  languageLabels: Record<DocumentLanguage, Partial<Record<Locale, string>>>;
   ogImage: SeoImage | null;
+};
+
+export type CatalogPageContent = {
+  title: Partial<Record<Locale, string>>;
+  description: Partial<Record<Locale, string>>;
+  submitLabel: Partial<Record<Locale, string>>;
+  resetLabel: Partial<Record<Locale, string>>;
+  categoryAllLabel: Partial<Record<Locale, string>>;
+  detailLabel: Partial<Record<Locale, string>>;
+  emptyStateMessage: Partial<Record<Locale, string>>;
+  groupLabels: {
+    category: Partial<Record<Locale, string>>;
+    process: Partial<Record<Locale, string>>;
+    base: Partial<Record<Locale, string>>;
+    filler: Partial<Record<Locale, string>>;
+    auxiliary: Partial<Record<Locale, string>>;
+  };
+  seo: ResolvedSeo | null;
 };
 
 function toOptionalString(value: unknown): string | null {
@@ -570,6 +641,31 @@ function mapLocalizedTextRecord(value?: Localized<string>): Partial<Record<Local
     record[locale] = text;
   }
   return record;
+}
+
+function mapLocalizedRecordMap<T extends string>(
+  value: Record<T, Localized<string>> | undefined
+): Record<T, Partial<Record<Locale, string>>> {
+  const record: Partial<Record<T, Partial<Record<Locale, string>>>> = {};
+  if (!value) {
+    return record as Record<T, Partial<Record<Locale, string>>>;
+  }
+  for (const key of Object.keys(value) as T[]) {
+    record[key] = mapLocalizedTextRecord(value[key]);
+  }
+  return record as Record<T, Partial<Record<Locale, string>>>;
+}
+
+function mapPageHero(hero: RawPageEntry['hero'], locale: Locale): PageHero | null {
+  if (!hero) {
+    return null;
+  }
+  const image = normalizeImageAsset(hero.image ?? null);
+  const alt = pickLocalized(hero.alt, locale) ?? null;
+  if (!image && !alt) {
+    return null;
+  }
+  return { image, alt } satisfies PageHero;
 }
 
 function pickFirstLocalizedText(record: Partial<Record<Locale, string>>): string | null {
@@ -753,6 +849,9 @@ type SiteSingleton = {
     phone?: string | null;
     address?: Localized<string>;
   } | null;
+  footer?: {
+    copyright?: Localized<string>;
+  } | null;
   seo?: {
     title?: Localized<string>;
     description?: Localized<string>;
@@ -813,6 +912,19 @@ const readDocumentsPageSingleton = cache(async (): Promise<DocumentsPageSingleto
     // fall back to file system
   }
   return (await readFallbackSingleton<DocumentsPageSingleton>('content/documents-page/index.json')) ?? null;
+});
+
+const readCatalogPageSingleton = cache(async (): Promise<CatalogPageSingleton | null> => {
+  const reader = getReader();
+  try {
+    const catalogPage = await reader.singletons.catalogPage.read();
+    if (catalogPage) {
+      return catalogPage as CatalogPageSingleton;
+    }
+  } catch {
+    // fall back to file system
+  }
+  return (await readFallbackSingleton<CatalogPageSingleton>('content/catalog-page/index.json')) ?? null;
 });
 
 const readPagesCollection = cache(async () => {
@@ -950,6 +1062,7 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
   const seoGroup = site?.seo ?? null;
   const resolvedSeo = mapResolvedSeo(seoGroup, locale);
   const contacts = site?.contacts ?? site?.brand?.contacts ?? {};
+  const footer = site?.footer ?? null;
   return {
     locale,
     name: pickLocalized(site?.siteName ?? site?.brand?.siteName, locale) ?? null,
@@ -972,6 +1085,9 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
     robots: {
       index: site?.meta?.robots?.index !== false,
       follow: site?.meta?.robots?.follow !== false,
+    },
+    footer: {
+      copyright: pickLocalized(footer?.copyright, locale) ?? null,
     },
   } satisfies SiteContent;
 }
@@ -1003,6 +1119,7 @@ export async function getPageById(id: string, locale: Locale): Promise<PageConte
   const seo = mapResolvedSeo(entryRecord.entry.seo ?? null, locale);
   const description = pickLocalized(entryRecord.entry.description, locale) ?? null;
   const excerpt = pickLocalized(entryRecord.entry.excerpt, locale) ?? null;
+  const hero = mapPageHero(entryRecord.entry.hero ?? null, locale);
   return {
     id,
     locale,
@@ -1014,6 +1131,7 @@ export async function getPageById(id: string, locale: Locale): Promise<PageConte
     seo,
     excerpt,
     updatedAt: normalizeDateTime(entryRecord.entry.updatedAt),
+    hero,
   } satisfies PageContent;
 }
 
@@ -1049,6 +1167,7 @@ export async function getPageBySlug(slug: string, locale: Locale): Promise<PageC
   const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
   const description = pickLocalized(record.entry.description, locale) ?? null;
   const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
+  const hero = mapPageHero(record.entry.hero ?? null, locale);
   return {
     id: computeEntryId(record.entry, record.key),
     locale,
@@ -1060,6 +1179,7 @@ export async function getPageBySlug(slug: string, locale: Locale): Promise<PageC
     seo,
     excerpt,
     updatedAt: normalizeDateTime(record.entry.updatedAt),
+    hero,
   } satisfies PageContent;
 }
 
@@ -1140,6 +1260,7 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
   const cover = coverAsset
     ? { src: coverAsset.src, alt: pickLocalized(record.entry.cover?.alt, locale) ?? null }
     : null;
+  const hero = mapPageHero(record.entry.hero ?? null, locale);
   return {
     id: computeEntryId(record.entry, record.key),
     locale,
@@ -1154,6 +1275,7 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
     date: normalizeDateTime(record.entry.date),
     tags: record.entry.tags ?? [],
     cover,
+    hero,
   } satisfies PostContent;
 }
 
@@ -1296,13 +1418,97 @@ export async function getDocumentsPage(): Promise<DocumentsPageContent | null> {
   }
   const title = mapLocalizedTextRecord(documentsPage.title);
   const description = mapLocalizedTextRecord(documentsPage.description);
+  const typeFilterLabel = mapLocalizedTextRecord(documentsPage.typeFilterLabel);
+  const languageFilterLabel = mapLocalizedTextRecord(documentsPage.languageFilterLabel);
+  const applyLabel = mapLocalizedTextRecord(documentsPage.applyLabel);
+  const resetLabel = mapLocalizedTextRecord(documentsPage.resetLabel);
+  const allLanguagesLabel = mapLocalizedTextRecord(documentsPage.allLanguagesLabel);
+  const downloadLabel = mapLocalizedTextRecord(documentsPage.downloadLabel);
+  const relatedProductsLabel = mapLocalizedTextRecord(documentsPage.relatedProductsLabel);
+  const emptyStateMessage = mapLocalizedTextRecord(documentsPage.emptyStateMessage);
+  const resultsLabelTemplate = mapLocalizedTextRecord(documentsPage.resultsLabelTemplate);
+  const typeLabelsRecord = mapLocalizedRecordMap<DocumentType>(documentsPage.typeLabels);
+  const languageLabelsRecord = mapLocalizedRecordMap<DocumentLanguage>(documentsPage.languageLabels);
   const ogImage = mapSeoImage(documentsPage.ogImage ?? null);
 
-  if (!Object.keys(title).length && !Object.keys(description).length && !ogImage) {
+  if (
+    !Object.keys(title).length &&
+    !Object.keys(description).length &&
+    !ogImage &&
+    !Object.keys(typeFilterLabel).length &&
+    !Object.keys(languageFilterLabel).length
+  ) {
     return null;
   }
 
-  return { title, description, ogImage } satisfies DocumentsPageContent;
+  const typeLabels = Object.fromEntries(
+    DOCUMENT_TYPES.map((type) => [type, typeLabelsRecord[type] ?? {}])
+  ) as Record<DocumentType, Partial<Record<Locale, string>>>;
+  const languageLabels = Object.fromEntries(
+    DOCUMENT_LANGUAGES.map((lang) => [lang, languageLabelsRecord[lang] ?? {}])
+  ) as Record<DocumentLanguage, Partial<Record<Locale, string>>>;
+
+  return {
+    title,
+    description,
+    typeFilterLabel,
+    languageFilterLabel,
+    applyLabel,
+    resetLabel,
+    allLanguagesLabel,
+    downloadLabel,
+    relatedProductsLabel,
+    emptyStateMessage,
+    resultsLabelTemplate,
+    typeLabels,
+    languageLabels,
+    ogImage,
+  } satisfies DocumentsPageContent;
+}
+
+export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent | null> {
+  const catalogPage = await readCatalogPageSingleton();
+  if (!catalogPage) {
+    return null;
+  }
+  const title = mapLocalizedTextRecord(catalogPage.title);
+  const description = mapLocalizedTextRecord(catalogPage.description);
+  const submitLabel = mapLocalizedTextRecord(catalogPage.submitLabel);
+  const resetLabel = mapLocalizedTextRecord(catalogPage.resetLabel);
+  const categoryAllLabel = mapLocalizedTextRecord(catalogPage.categoryAllLabel);
+  const detailLabel = mapLocalizedTextRecord(catalogPage.detailLabel);
+  const emptyStateMessage = mapLocalizedTextRecord(catalogPage.emptyStateMessage);
+  const groupLabelsSource = catalogPage.groupLabels ?? {};
+  const groupLabels: CatalogPageContent['groupLabels'] = {
+    category: mapLocalizedTextRecord(groupLabelsSource.category),
+    process: mapLocalizedTextRecord(groupLabelsSource.process),
+    base: mapLocalizedTextRecord(groupLabelsSource.base),
+    filler: mapLocalizedTextRecord(groupLabelsSource.filler),
+    auxiliary: mapLocalizedTextRecord(groupLabelsSource.auxiliary),
+  };
+  const seo = mapResolvedSeo(catalogPage.seo ?? null, locale);
+
+  if (
+    !Object.keys(title).length &&
+    !Object.keys(description).length &&
+    !Object.keys(submitLabel).length &&
+    !Object.keys(resetLabel).length &&
+    !seo
+  ) {
+    return null;
+  }
+
+  return {
+    title,
+    description,
+    submitLabel,
+    resetLabel,
+    categoryAllLabel,
+    detailLabel,
+    emptyStateMessage,
+    groupLabels,
+    seo,
+  } satisfies CatalogPageContent;
 }
 
 export async function getNavigationEntityByPath(

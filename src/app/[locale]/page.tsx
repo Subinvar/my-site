@@ -40,6 +40,8 @@ export default async function HomePage({ params }: PageProps) {
     collection: 'pages',
     slugs: page.slugByLocale,
   });
+  const heroImage = page.hero?.image;
+  const heroAlt = page.hero?.alt ?? page.title;
 
   return (
     <SiteShell
@@ -51,16 +53,17 @@ export default async function HomePage({ params }: PageProps) {
     >
       <article className="max-w-none">
         <header className="mb-10 space-y-4">
-          {/* LCP hero image stored in public/uploads/hero.jpg */}
-          <Image
-            src="/uploads/hero.jpg"
-            alt={page.title}
-            width={1200}
-            height={675}
-            priority
-            sizes="(max-width: 768px) 100vw, 1200px"
-            className="h-auto w-full rounded-xl object-cover"
-          />
+          {heroImage ? (
+            <Image
+              src={heroImage.src}
+              alt={heroAlt}
+              width={heroImage.width ?? 1200}
+              height={heroImage.height ?? 675}
+              priority
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="h-auto w-full rounded-xl object-cover"
+            />
+          ) : null}
           <div className="space-y-2">
             <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
             {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}

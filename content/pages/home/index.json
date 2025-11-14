@@ -21,6 +21,13 @@
     "ru": null,
     "en": null
   },
+  "hero": {
+    "image": "uploads/hero.jpg",
+    "alt": {
+      "ru": "Производственная линия литейного цеха с противопригарным покрытием",
+      "en": "Foundry production line applying a release coating"
+    }
+  },
   "seo": {
     "title": {
       "ru": "Интема Групп — материалы для литейного производства",
