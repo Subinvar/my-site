@@ -1,5 +1,9 @@
 {
   "id": "modernizaciya-proizvodstva",
+  "slugKey": {
+    "name": "modernizaciya-proizvodstva",
+    "slug": "modernizaciya-proizvodstva"
+  },
   "published": true,
   "date": "2024-03-18T09:00",
   "slug": {

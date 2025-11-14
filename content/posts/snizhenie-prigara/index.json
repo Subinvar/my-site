@@ -1,5 +1,9 @@
 {
   "id": "snizhenie-prigara",
+  "slugKey": {
+    "name": "snizhenie-prigara",
+    "slug": "snizhenie-prigara"
+  },
   "published": true,
   "date": "2024-02-05T08:00",
   "slug": {
