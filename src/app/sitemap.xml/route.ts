@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
+import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 
@@ -9,7 +9,7 @@ const XML_HEADER = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet typ
 const SITEMAP_NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
-type Collection = 'pages' | 'posts';
+type Collection = 'pages' | 'posts' | 'catalog';
 
 type DatedEntry = {
   collection: Collection;
@@ -27,6 +27,9 @@ type SitemapUrl = {
 const buildSegments = (collection: Collection, slug: string): string[] => {
   if (collection === 'posts') {
     return ['posts', slug];
+  }
+  if (collection === 'catalog') {
+    return ['catalog', slug];
   }
   return slug.length ? [slug] : [];
 };
@@ -134,10 +137,11 @@ const renderXml = (records: SitemapUrl[]): string => {
 };
 
 export async function GET() {
-  const [site, pages, posts] = await Promise.all([
+  const [site, pages, posts, catalogEntries] = await Promise.all([
     getSite(defaultLocale),
     getAllPages(),
     getAllPosts(),
+    getAllCatalogEntries(),
   ]);
 
   const baseUrl = site.seo.canonicalBase ?? null;
@@ -163,7 +167,17 @@ export async function GET() {
       })
     );
 
-  const xml = renderXml([...pageUrls, ...postUrls]);
+  const catalogUrls = catalogEntries
+    .filter((entry) => entry.published)
+    .flatMap((entry) =>
+      createSitemapUrls(baseUrl, {
+        collection: 'catalog',
+        slugByLocale: entry.slugByLocale,
+        updatedAt: entry.updatedAt,
+      })
+    );
+
+  const xml = renderXml([...pageUrls, ...postUrls, ...catalogUrls]);
 
   return new NextResponse(xml, {
     headers: {

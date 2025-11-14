@@ -255,6 +255,7 @@ export default config({
           label: 'Документ',
           collection: 'documents',
         }),
+        updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
   },

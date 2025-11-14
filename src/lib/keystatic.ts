@@ -312,6 +312,7 @@ export type CatalogSummary = {
   id: string;
   slugByLocale: Partial<Record<Locale, string>>;
   published: boolean;
+  updatedAt?: string | null;
 };
 
 function toOptionalString(value: unknown): string | null {
@@ -959,6 +960,7 @@ export async function getAllCatalogEntries(): Promise<CatalogSummary[]> {
     id: computeEntryId(entry, key),
     slugByLocale: mapLocalizedSlugs(entry.slug),
     published: isPublished(entry),
+    updatedAt: normalizeDateTime(entry.updatedAt),
   } satisfies CatalogSummary));
 }
 

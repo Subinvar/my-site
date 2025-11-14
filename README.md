@@ -46,7 +46,9 @@ NEXT_TURBOPACK_EXPERIMENTAL_USE_SYSTEM_TLS_CERTS=1
 
 - `content/site/index.json` — глобальные настройки (название, контакты, SEO, домен).
 - `content/pages/*.json` — данные страниц «Главная» и «О компании» на двух языках.
+- `content/catalog/*.json` — карточки продуктов каталога с локализованными слагами, характеристиками и путями до контента.
 - `content/posts/*.json` и `content/markdoc/*` — метаданные и Markdown-контент блога.
+- `content/markdoc/[locale]/catalog/*.mdoc` — развёрнутые описания продуктов, отображающиеся на детальных страницах каталога.
 - `public/uploads` — изображения для страниц и social preview.
 
 Все коллекции синхронизируются через Keystatic: при редактировании в UI изменения пишутся в Git и доступны через Pull Request.
@@ -61,6 +63,13 @@ NEXT_TURBOPACK_EXPERIMENTAL_USE_SYSTEM_TLS_CERTS=1
 | Проверка production-сборки локально | `pnpm start` |
 
 Перед релизом убедитесь, что все проверки (`tsc`, `lint`, `build`) выполняются без ошибок, а `pnpm start` успешно поднимает собранное приложение.
+
+## Каталог продукции
+
+- Страница списка каталога доступна по адресу `/catalog` (русская локаль) и `/en/catalog` (английская локаль). На ней есть фильтры по категории, процессу, основе и наполнителю — они читаются из `src/lib/catalog/constants.ts`.
+- Детальные страницы продуктов формируются из файлов `content/catalog/*.json` и Markdown-описаний в `content/markdoc/[locale]/catalog/*.mdoc`. Слаг из JSON-файла определяет URL, например: `svyazuyushchee-alpha-pep` → `/catalog/svyazuyushchee-alpha-pep` и `/en/catalog/alpha-pep-binder`.
+- Чтобы добавить новый продукт, создайте файл в `content/catalog/`, пропишите локализованные слоги, характеристики и путь до Markdown-файлов. Keystatic автоматически предложит шаблон и обеспечит предпросмотр страницы.
+- После публикации нового продукта не забудьте обновить файл `SITEMAP`, чтобы зафиксировать новые маршруты для контента.
 
 ## Сборка и деплой
 
