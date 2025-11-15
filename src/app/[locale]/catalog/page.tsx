@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import {
+  AUXILIARY_CATEGORY,
   CATALOG_AUXILIARIES,
   CATALOG_BASES,
   CATALOG_CATEGORIES,
@@ -11,6 +12,7 @@ import {
   CATALOG_PROCESSES,
   getCatalogListing,
   getCatalogListingPage,
+  getCatalogTaxonomyOptions,
   resolveCatalogListingMetadata,
 } from '@/app/(site)/shared/catalog';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
@@ -84,8 +86,6 @@ const FALLBACK_EMPTY_STATE_MESSAGE: Record<Locale, string> = {
   en: 'No products match your filters. Try adjusting the search parameters.',
 };
 
-const AUXILIARY_CATEGORY: CatalogCategory = 'Вспомогательные';
-
 type PageProps = {
   params: { locale: Locale } | Promise<{ locale: Locale }>;
   searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
@@ -109,6 +109,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
 
   const locale = rawLocale;
   const filters = parseFilters(rawSearchParams);
+  const taxonomyOptions = getCatalogTaxonomyOptions(locale);
   const [items, shell, catalogPage] = await Promise.all([
     getCatalogListing(locale),
     getSiteShellData(locale),
@@ -156,16 +157,16 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                   />
                   {categoryAllLabel}
                 </label>
-                {CATALOG_CATEGORIES.map((category) => (
-                  <label key={category} className="flex items-center gap-2 text-sm text-zinc-700">
+                {taxonomyOptions.categories.map((option) => (
+                  <label key={option.value} className="flex items-center gap-2 text-sm text-zinc-700">
                     <input
                       type="radio"
                       name="category"
-                      value={category}
-                      defaultChecked={filters.category === category}
+                      value={option.value}
+                      defaultChecked={filters.category === option.value}
                       className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
                     />
-                    {category}
+                    {option.label}
                   </label>
                 ))}
               </div>
@@ -173,25 +174,25 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
             <FilterGroup
               name="process"
               legend={groupLabels.process}
-              options={CATALOG_PROCESSES}
+              options={taxonomyOptions.processes}
               selected={filters.process}
             />
             <FilterGroup
               name="base"
               legend={groupLabels.base}
-              options={CATALOG_BASES}
+              options={taxonomyOptions.bases}
               selected={filters.base}
             />
             <FilterGroup
               name="filler"
               legend={groupLabels.filler}
-              options={CATALOG_FILLERS}
+              options={taxonomyOptions.fillers}
               selected={filters.filler}
             />
             <FilterGroup
               name="auxiliary"
               legend={groupLabels.auxiliary}
-              options={CATALOG_AUXILIARIES}
+              options={taxonomyOptions.auxiliaries}
               selected={filters.auxiliary}
             />
             <div className="flex flex-wrap gap-3">
@@ -386,10 +387,12 @@ function hasIntersection<T extends string>(collection: readonly T[], filters: re
   return false;
 }
 
+type FilterOption<T extends string> = { value: T; label: string };
+
 type FilterGroupProps<T extends string> = {
   name: string;
   legend: string;
-  options: readonly T[];
+  options: ReadonlyArray<FilterOption<T>>;
   selected: readonly T[];
 };
 
@@ -399,18 +402,18 @@ function FilterGroup<T extends string>({ name, legend, options, selected }: Filt
       <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{legend}</legend>
       <div className="mt-3 flex flex-wrap gap-3">
         {options.map((option) => {
-          const id = buildOptionId(name, option);
+          const id = buildOptionId(name, option.value);
           return (
-            <label key={option} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
+            <label key={option.value} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
               <input
                 id={id}
                 type="checkbox"
                 name={name}
-                value={option}
-                defaultChecked={selected.includes(option)}
+                value={option.value}
+                defaultChecked={selected.includes(option.value)}
                 className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
-              {option}
+              {option.label}
             </label>
           );
         })}

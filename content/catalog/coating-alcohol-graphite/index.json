@@ -20,16 +20,16 @@
     "ru": null,
     "en": null
   },
-  "category": "Покрытия",
+  "category": "coatings",
   "process": [
-    "кронинг",
-    "кокиль"
+    "croning",
+    "permanent-mold"
   ],
   "base": [
-    "спиртовое"
+    "alcohol-based"
   ],
   "filler": [
-    "графит"
+    "graphite"
   ],
   "image": "uploads/catalog-coating-alcohol.svg",
   "updatedAt": "2024-03-03T11:45"

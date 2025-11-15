@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { render } from '@/lib/markdoc';
 import {
+  AUXILIARY_CATEGORY,
   CATALOG_AUXILIARIES,
   CATALOG_BASES,
   CATALOG_CATEGORIES,
@@ -11,6 +12,8 @@ import {
   getCatalogItemBySlug,
   getCatalogItems,
   getCatalogPage,
+  getCatalogTaxonomyLabel,
+  getCatalogTaxonomyOptions,
   getSite,
   type CatalogItem,
   type CatalogListItem,
@@ -259,7 +262,16 @@ export async function getLocalizedCatalogParams(): Promise<Array<{ locale: Local
   return params;
 }
 
-export { CATALOG_AUXILIARIES, CATALOG_BASES, CATALOG_CATEGORIES, CATALOG_FILLERS, CATALOG_PROCESSES };
+export {
+  AUXILIARY_CATEGORY,
+  CATALOG_AUXILIARIES,
+  CATALOG_BASES,
+  CATALOG_CATEGORIES,
+  CATALOG_FILLERS,
+  CATALOG_PROCESSES,
+  getCatalogTaxonomyLabel,
+  getCatalogTaxonomyOptions,
+};
 export type {
   CatalogAuxiliary,
   CatalogBase,

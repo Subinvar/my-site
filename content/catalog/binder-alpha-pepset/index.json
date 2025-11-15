@@ -20,10 +20,10 @@
     "ru": null,
     "en": null
   },
-  "category": "Связующие",
+  "category": "binders",
   "process": [
-    "альфа-сет",
-    "Пеп-сет"
+    "alpha-set",
+    "pep-set"
   ],
   "base": [],
   "filler": [],

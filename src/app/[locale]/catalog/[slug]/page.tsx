@@ -3,42 +3,23 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import {
+  AUXILIARY_CATEGORY,
   getCatalogProductPage,
+  getCatalogTaxonomyLabel,
   getLocalizedCatalogParams,
   resolveCatalogProductMetadata,
 } from '@/app/(site)/shared/catalog';
+import { getInterfaceDictionary } from '@/content/dictionary';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
-import type { CatalogCategory } from '@/lib/keystatic';
-
-const ATTRIBUTE_LABELS: Record<
-  Locale,
-  { category: string; process: string; base: string; filler: string; auxiliary: string }
-> = {
-  ru: {
-    category: 'Категория',
-    process: 'Процессы',
-    base: 'Основы',
-    filler: 'Наполнители',
-    auxiliary: 'Вспомогательные материалы',
-  },
-  en: {
-    category: 'Category',
-    process: 'Processes',
-    base: 'Bases',
-    filler: 'Fillers',
-    auxiliary: 'Auxiliary supplies',
-  },
-};
-
-const AUXILIARY_CATEGORY: CatalogCategory = 'Вспомогательные';
-
-const SUMMARY_LABEL: Record<Locale, string> = {
-  ru: 'Кратко о продукте',
-  en: 'Product summary',
-};
+const TAXONOMY_KEYS = {
+  process: 'processes',
+  base: 'bases',
+  filler: 'fillers',
+  auxiliary: 'auxiliaries',
+} as const;
 
 type CatalogProductPageProps = {
   params: { locale: Locale; slug: string } | Promise<{ locale: Locale; slug: string }>;
@@ -67,8 +48,17 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     collection: 'catalog',
     slugs: item.slugByLocale,
   });
-  const attributes = ATTRIBUTE_LABELS[locale];
-  const categoryValue = item.category ?? '—';
+  const dictionary = getInterfaceDictionary(locale);
+  const attributes = dictionary.catalog.attributes;
+  const emptyValue = dictionary.common.emptyValue;
+  const categoryValue =
+    item.category && typeof item.category === 'string'
+      ? getCatalogTaxonomyLabel('categories', item.category, locale) ?? item.category
+      : emptyValue;
+  const processValues = mapAttributeValues(item.process, TAXONOMY_KEYS.process, locale);
+  const baseValues = mapAttributeValues(item.base, TAXONOMY_KEYS.base, locale);
+  const fillerValues = mapAttributeValues(item.filler, TAXONOMY_KEYS.filler, locale);
+  const auxiliaryValues = mapAttributeValues(item.auxiliary, TAXONOMY_KEYS.auxiliary, locale);
   const showAuxiliary = item.category === AUXILIARY_CATEGORY;
 
   return (
@@ -84,7 +74,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
           <p className="text-sm uppercase tracking-wide text-zinc-500">{attributes.category}: {categoryValue}</p>
           <h1 className="text-3xl font-semibold text-zinc-900">{item.title}</h1>
           {summary ? (
-            <p className="text-base text-zinc-600" aria-label={SUMMARY_LABEL[locale]}>
+            <p className="text-base text-zinc-600" aria-label={dictionary.catalog.summaryLabel}>
               {summary}
             </p>
           ) : null}
@@ -101,11 +91,11 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
           />
         ) : null}
         <section className="grid gap-4 md:grid-cols-2">
-          <AttributeList label={attributes.process} values={item.process} />
-          <AttributeList label={attributes.base} values={item.base} />
-          <AttributeList label={attributes.filler} values={item.filler} />
+          <AttributeList label={attributes.process} values={processValues} emptyValue={emptyValue} />
+          <AttributeList label={attributes.base} values={baseValues} emptyValue={emptyValue} />
+          <AttributeList label={attributes.filler} values={fillerValues} emptyValue={emptyValue} />
           {showAuxiliary ? (
-            <AttributeList label={attributes.auxiliary} values={item.auxiliary} />
+            <AttributeList label={attributes.auxiliary} values={auxiliaryValues} emptyValue={emptyValue} />
           ) : null}
         </section>
         <div className="prose-markdoc">{content}</div>
@@ -117,16 +107,37 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
 type AttributeListProps = {
   label: string;
   values: readonly string[];
+  emptyValue: string;
 };
 
-function AttributeList({ label, values }: AttributeListProps) {
+function AttributeList({ label, values, emptyValue }: AttributeListProps) {
   const hasValues = Array.isArray(values) && values.length > 0;
   return (
     <div>
       <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{label}</h3>
-      <p className="mt-1 text-sm text-zinc-700">{hasValues ? values.join(', ') : '—'}</p>
+      <p className="mt-1 text-sm text-zinc-700">{hasValues ? values.join(', ') : emptyValue}</p>
     </div>
   );
+}
+
+function mapAttributeValues<T extends string>(
+  values: readonly T[],
+  taxonomyKey: 'processes' | 'bases' | 'fillers' | 'auxiliaries',
+  locale: Locale
+): string[] {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  return values
+    .map((value) => {
+      if (typeof value !== 'string' || !value.trim()) {
+        return null;
+      }
+      const label = getCatalogTaxonomyLabel(taxonomyKey, value, locale);
+      return label ?? value;
+    })
+    .filter((value): value is string => Boolean(value && value.trim()));
 }
 
 export async function generateStaticParams(): Promise<Array<{ locale: Locale; slug: string }>> {

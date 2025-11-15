@@ -20,18 +20,18 @@
     "ru": null,
     "en": null
   },
-  "category": "Вспомогательные",
+  "category": "auxiliary",
   "process": [
-    "Колд-Бокс",
-    "ЛГМ"
+    "cold-box",
+    "lgm"
   ],
   "base": [],
   "filler": [
-    "алюмосиликат"
+    "aluminosilicate"
   ],
   "auxiliary": [
-    "клей",
-    "шнур"
+    "adhesive",
+    "cord"
   ],
   "image": "uploads/catalog-binder-alpha.svg",
   "updatedAt": "2024-03-05T08:10"

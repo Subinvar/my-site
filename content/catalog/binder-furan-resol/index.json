@@ -20,10 +20,10 @@
     "ru": null,
     "en": null
   },
-  "category": "Связующие",
+  "category": "binders",
   "process": [
-    "фуран",
-    "Резол-CO₂"
+    "furan",
+    "resol-co2"
   ],
   "base": [],
   "filler": [],

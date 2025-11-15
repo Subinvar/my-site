@@ -2,21 +2,9 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { getInterfaceDictionary } from '@/content/dictionary';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
-
-const NOT_FOUND_COPY: Record<Locale, { title: string; description: string; back: string }> = {
-  ru: {
-    title: 'Страница не найдена',
-    description: 'Кажется, такого материала у нас пока нет. Попробуйте начать с главной страницы.',
-    back: 'На главную',
-  },
-  en: {
-    title: 'Page not found',
-    description: 'We could not find this page. Start from the homepage or explore recent posts.',
-    back: 'Back to home',
-  },
-};
 
 const resolveLocaleFromParams = (param: string | string[] | undefined): Locale => {
   const candidate = Array.isArray(param) ? param[0] : param;
@@ -29,7 +17,8 @@ const resolveLocaleFromParams = (param: string | string[] | undefined): Locale =
 export default function LocaleNotFound() {
   const params = useParams<{ locale?: string | string[] }>();
   const locale = resolveLocaleFromParams(params?.locale);
-  const copy = NOT_FOUND_COPY[locale];
+  const dictionary = getInterfaceDictionary(locale);
+  const copy = dictionary.errors.notFound;
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col items-start gap-6 py-24">
       <h1 className="text-4xl font-semibold text-zinc-900">{copy.title}</h1>
@@ -38,7 +27,7 @@ export default function LocaleNotFound() {
         href={buildPath(locale)}
         className="rounded-full border border-zinc-900 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       >
-        {copy.back}
+        {dictionary.common.buttons.goHome}
       </Link>
     </section>
   );

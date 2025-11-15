@@ -1,0 +1,202 @@
+{
+  "categories": [
+    {
+      "value": "binders",
+      "label": {
+        "ru": "Связующие",
+        "en": "Binders"
+      }
+    },
+    {
+      "value": "coatings",
+      "label": {
+        "ru": "Покрытия",
+        "en": "Coatings"
+      }
+    },
+    {
+      "value": "auxiliary",
+      "label": {
+        "ru": "Вспомогательные",
+        "en": "Auxiliary supplies"
+      },
+      "isAuxiliaryCategory": true
+    }
+  ],
+  "processes": [
+    {
+      "value": "alpha-set",
+      "label": {
+        "ru": "альфа-сет",
+        "en": "Alpha-set"
+      }
+    },
+    {
+      "value": "furan",
+      "label": {
+        "ru": "фуран",
+        "en": "Furan"
+      }
+    },
+    {
+      "value": "cold-box",
+      "label": {
+        "ru": "Колд-Бокс",
+        "en": "Cold-box"
+      }
+    },
+    {
+      "value": "resol-co2",
+      "label": {
+        "ru": "Резол-CO₂",
+        "en": "Resol-CO₂"
+      }
+    },
+    {
+      "value": "liquid-glass",
+      "label": {
+        "ru": "ЖСС",
+        "en": "Water glass"
+      }
+    },
+    {
+      "value": "pep-set",
+      "label": {
+        "ru": "Пеп-сет",
+        "en": "Pep-set"
+      }
+    },
+    {
+      "value": "croning",
+      "label": {
+        "ru": "кронинг",
+        "en": "Croning"
+      }
+    },
+    {
+      "value": "pgs",
+      "label": {
+        "ru": "ПГС",
+        "en": "PGS"
+      }
+    },
+    {
+      "value": "lgm",
+      "label": {
+        "ru": "ЛГМ",
+        "en": "Lost foam"
+      }
+    },
+    {
+      "value": "permanent-mold",
+      "label": {
+        "ru": "кокиль",
+        "en": "Permanent mold"
+      }
+    }
+  ],
+  "bases": [
+    {
+      "value": "water-based",
+      "label": {
+        "ru": "водное",
+        "en": "Water-based"
+      }
+    },
+    {
+      "value": "alcohol-based",
+      "label": {
+        "ru": "спиртовое",
+        "en": "Alcohol-based"
+      }
+    }
+  ],
+  "fillers": [
+    {
+      "value": "zircon",
+      "label": {
+        "ru": "циркон",
+        "en": "Zircon"
+      }
+    },
+    {
+      "value": "aluminosilicate",
+      "label": {
+        "ru": "алюмосиликат",
+        "en": "Aluminosilicate"
+      }
+    },
+    {
+      "value": "graphite",
+      "label": {
+        "ru": "графит",
+        "en": "Graphite"
+      }
+    },
+    {
+      "value": "magnesite",
+      "label": {
+        "ru": "магнезит",
+        "en": "Magnesite"
+      }
+    },
+    {
+      "value": "chromite",
+      "label": {
+        "ru": "хромит",
+        "en": "Chromite"
+      }
+    }
+  ],
+  "auxiliaries": [
+    {
+      "value": "release-agent",
+      "label": {
+        "ru": "разделительный состав",
+        "en": "Release agent"
+      }
+    },
+    {
+      "value": "adhesive",
+      "label": {
+        "ru": "клей",
+        "en": "Adhesive"
+      }
+    },
+    {
+      "value": "repair-paste",
+      "label": {
+        "ru": "ремонтная паста",
+        "en": "Repair paste"
+      }
+    },
+    {
+      "value": "cord",
+      "label": {
+        "ru": "шнур",
+        "en": "Cord"
+      }
+    },
+    {
+      "value": "cleaner",
+      "label": {
+        "ru": "отмывающий состав",
+        "en": "Cleaner"
+      }
+    },
+    {
+      "value": "modifier",
+      "label": {
+        "ru": "модификатор",
+        "en": "Modifier"
+      }
+    },
+    {
+      "value": "exothermic-mix",
+      "label": {
+        "ru": "экзотермическая смесь",
+        "en": "Exothermic mix"
+      }
+    }
+  ]
+}

@@ -1,12 +1,8 @@
 import Link from 'next/link';
 
+import { getInterfaceDictionary } from '@/content/dictionary';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
-
-const SWITCHER_LABEL: Record<Locale, string> = {
-  ru: 'Переключить язык на русский',
-  en: 'Switch language to English',
-};
 
 type LanguageSwitcherProps = {
   currentLocale: Locale;
@@ -16,7 +12,9 @@ type LanguageSwitcherProps = {
 
 export function LanguageSwitcher({ currentLocale, targetLocale, href }: LanguageSwitcherProps) {
   const targetHref = href ?? buildPath(targetLocale);
-  const ariaLabel = SWITCHER_LABEL[targetLocale] ?? `Switch language to ${targetLocale.toUpperCase()}`;
+  const dictionary = getInterfaceDictionary(currentLocale);
+  const ariaLabel =
+    dictionary.languageSwitcher.switchTo[targetLocale] ?? `Switch language to ${targetLocale.toUpperCase()}`;
 
   return (
     <div className="flex items-center gap-2">

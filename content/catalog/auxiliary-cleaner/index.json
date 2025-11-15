@@ -20,18 +20,18 @@
     "ru": null,
     "en": null
   },
-  "category": "Вспомогательные",
+  "category": "auxiliary",
   "process": [
-    "ЖСС",
-    "кронинг"
+    "liquid-glass",
+    "croning"
   ],
   "base": [
-    "водное"
+    "water-based"
   ],
   "filler": [],
   "auxiliary": [
-    "отмывающий состав",
-    "модификатор"
+    "cleaner",
+    "modifier"
   ],
   "image": "uploads/catalog-coating-water.svg",
   "updatedAt": "2024-03-05T08:12"
