@@ -20,18 +20,18 @@
     "ru": null,
     "en": null
   },
-  "category": "Покрытия",
+  "category": "coatings",
   "process": [
-    "ЛГМ",
-    "ЖСС"
+    "lgm",
+    "liquid-glass"
   ],
   "base": [
-    "водное"
+    "water-based"
   ],
   "filler": [
-    "алюмосиликат",
-    "магнезит",
-    "хромит"
+    "aluminosilicate",
+    "magnesite",
+    "chromite"
   ],
   "image": "uploads/catalog-coating-barrier.svg",
   "updatedAt": "2024-03-04T08:20"

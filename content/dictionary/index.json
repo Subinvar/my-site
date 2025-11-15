@@ -1,0 +1,84 @@
+{
+  "common": {
+    "skipToContent": {
+      "ru": "Пропустить к основному контенту",
+      "en": "Skip to main content"
+    },
+    "emptyValue": {
+      "ru": "—",
+      "en": "—"
+    },
+    "buttons": {
+      "goHome": {
+        "ru": "На главную",
+        "en": "Back to home"
+      },
+      "retry": {
+        "ru": "Попробовать снова",
+        "en": "Try again"
+      }
+    }
+  },
+  "languageSwitcher": {
+    "switchTo": {
+      "ru": {
+        "ru": "Переключить язык на русский",
+        "en": "Switch language to Russian"
+      },
+      "en": {
+        "ru": "Переключить язык на английский",
+        "en": "Switch language to English"
+      }
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": {
+        "ru": "Страница не найдена",
+        "en": "Page not found"
+      },
+      "description": {
+        "ru": "Кажется, такого материала у нас пока нет. Попробуйте начать с главной страницы.",
+        "en": "We couldn’t find this page. Try starting from the homepage."
+      }
+    },
+    "generic": {
+      "title": {
+        "ru": "Произошла ошибка",
+        "en": "Something went wrong"
+      },
+      "description": {
+        "ru": "Нам не удалось загрузить страницу. Обновите страницу или вернитесь на главную.",
+        "en": "We couldn’t load the page. Refresh it or head back to the homepage."
+      }
+    }
+  },
+  "catalog": {
+    "attributes": {
+      "category": {
+        "ru": "Категория",
+        "en": "Category"
+      },
+      "process": {
+        "ru": "Процессы",
+        "en": "Processes"
+      },
+      "base": {
+        "ru": "Основы",
+        "en": "Bases"
+      },
+      "filler": {
+        "ru": "Наполнители",
+        "en": "Fillers"
+      },
+      "auxiliary": {
+        "ru": "Вспомогательные материалы",
+        "en": "Auxiliary supplies"
+      }
+    },
+    "summaryLabel": {
+      "ru": "Кратко о продукте",
+      "en": "Product summary"
+    }
+  }
+}

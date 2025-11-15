@@ -20,16 +20,16 @@
     "ru": null,
     "en": null
   },
-  "category": "Покрытия",
+  "category": "coatings",
   "process": [
-    "Колд-Бокс",
-    "ПГС"
+    "cold-box",
+    "pgs"
   ],
   "base": [
-    "водное"
+    "water-based"
   ],
   "filler": [
-    "циркон"
+    "zircon"
   ],
   "image": "uploads/catalog-coating-water.svg",
   "updatedAt": "2024-03-03T09:15"

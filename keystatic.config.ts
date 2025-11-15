@@ -1,12 +1,9 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 
-import {
-  CATALOG_BASES,
-  CATALOG_CATEGORIES,
-  CATALOG_AUXILIARIES,
-  CATALOG_FILLERS,
-  CATALOG_PROCESSES,
-} from './src/lib/catalog/constants';
+import { CATALOG_CATEGORIES, getCatalogTaxonomyOptions } from './src/lib/catalog/constants';
+import { defaultLocale } from './src/lib/i18n';
+
+const taxonomyOptions = getCatalogTaxonomyOptions(defaultLocale);
 
 const locales = ['ru', 'en'] as const;
 
@@ -133,6 +130,21 @@ const navigationLinks = (label: string) =>
     }
   );
 
+const objectItemLabel = (fallback: string) => (props: any) => {
+  const valueFromValue = props?.value?.value;
+  const valueFromFields = props?.fields?.value?.value;
+
+  if (typeof valueFromValue === 'string' && valueFromValue.trim()) {
+    return valueFromValue;
+  }
+
+  if (typeof valueFromFields === 'string' && valueFromFields.trim()) {
+    return valueFromFields;
+  }
+
+  return fallback;
+};
+
 const storage =
   process.env.KEYSTATIC_STORAGE_KIND === 'github'
     ? ({
@@ -199,6 +211,152 @@ export default config({
       schema: {
         headerLinks: navigationLinks('Ссылки в шапке'),
         footerLinks: navigationLinks('Ссылки в подвале'),
+      },
+    }),
+    catalogTaxonomy: singleton({
+      label: 'Справочники каталога',
+      path: 'content/catalog-taxonomy/',
+      format: { data: 'json' },
+      schema: {
+        categories: fields.array(
+          fields.object({
+            value: fields.text({
+              label: 'Значение категории',
+              validation: { isRequired: true },
+            }),
+            label: localizedText('Подпись категории', { isRequired: true }),
+            isAuxiliaryCategory: fields.checkbox({
+              label: 'Категория для вспомогательных материалов',
+              defaultValue: false,
+            }),
+          }),
+          {
+            label: 'Категории',
+            itemLabel: objectItemLabel('Категория'),
+          }
+        ),
+        processes: fields.array(
+          fields.object({
+            value: fields.text({
+              label: 'Значение процесса',
+              validation: { isRequired: true },
+            }),
+            label: localizedText('Подпись процесса', { isRequired: true }),
+          }),
+          {
+            label: 'Процессы',
+            itemLabel: objectItemLabel('Процесс'),
+          }
+        ),
+        bases: fields.array(
+          fields.object({
+            value: fields.text({
+              label: 'Значение основы',
+              validation: { isRequired: true },
+            }),
+            label: localizedText('Подпись основы', { isRequired: true }),
+          }),
+          {
+            label: 'Основы',
+            itemLabel: objectItemLabel('Основа'),
+          }
+        ),
+        fillers: fields.array(
+          fields.object({
+            value: fields.text({
+              label: 'Значение наполнителя',
+              validation: { isRequired: true },
+            }),
+            label: localizedText('Подпись наполнителя', { isRequired: true }),
+          }),
+          {
+            label: 'Наполнители',
+            itemLabel: objectItemLabel('Наполнитель'),
+          }
+        ),
+        auxiliaries: fields.array(
+          fields.object({
+            value: fields.text({
+              label: 'Значение вспомогательного материала',
+              validation: { isRequired: true },
+            }),
+            label: localizedText('Подпись вспомогательного материала', { isRequired: true }),
+          }),
+          {
+            label: 'Вспомогательные материалы',
+            itemLabel: objectItemLabel('Материал'),
+          }
+        ),
+      },
+    }),
+    dictionary: singleton({
+      label: 'Словарь интерфейса',
+      path: 'content/dictionary/',
+      format: { data: 'json' },
+      schema: {
+        common: fields.object(
+          {
+            skipToContent: localizedText('Ссылка «Пропустить к контенту»', { isRequired: true }),
+            emptyValue: localizedText('Значение по умолчанию', { isRequired: true }),
+            buttons: fields.object(
+              {
+                goHome: localizedText('Кнопка «На главную»', { isRequired: true }),
+                retry: localizedText('Кнопка «Попробовать снова»', { isRequired: true }),
+              },
+              { label: 'Подписи кнопок' }
+            ),
+          },
+          { label: 'Общие тексты' }
+        ),
+        languageSwitcher: fields.object(
+          {
+            switchTo: fields.object(
+              Object.fromEntries(
+                locales.map((locale) => [
+                  locale,
+                  localizedText(`Aria-label переключения на ${locale.toUpperCase()}`, { isRequired: true }),
+                ])
+              ),
+              { label: 'Подписи переключателя языка' }
+            ),
+          },
+          { label: 'Переключатель языка' }
+        ),
+        errors: fields.object(
+          {
+            notFound: fields.object(
+              {
+                title: localizedText('Заголовок страницы 404', { isRequired: true }),
+                description: localizedText('Описание страницы 404', { multiline: true, isRequired: true }),
+              },
+              { label: 'Страница 404' }
+            ),
+            generic: fields.object(
+              {
+                title: localizedText('Заголовок общей ошибки', { isRequired: true }),
+                description: localizedText('Описание общей ошибки', { multiline: true, isRequired: true }),
+              },
+              { label: 'Общее сообщение об ошибке' }
+            ),
+          },
+          { label: 'Сообщения об ошибках' }
+        ),
+        catalog: fields.object(
+          {
+            attributes: fields.object(
+              {
+                category: localizedText('Подпись «Категория»', { isRequired: true }),
+                process: localizedText('Подпись «Процессы»', { isRequired: true }),
+                base: localizedText('Подпись «Основы»', { isRequired: true }),
+                filler: localizedText('Подпись «Наполнители»', { isRequired: true }),
+                auxiliary: localizedText('Подпись «Вспомогательные материалы»', { isRequired: true }),
+              },
+              { label: 'Подписи атрибутов' }
+            ),
+            summaryLabel: localizedText('Подпись «Кратко о продукте»', { isRequired: true }),
+          },
+          { label: 'Каталог' }
+        ),
       },
     }),
     documentsPage: singleton({
@@ -377,24 +535,24 @@ export default config({
         content: localizedMarkdocContent('Контент (Markdoc)'),
         category: fields.select({
           label: 'Категория',
-          options: CATALOG_CATEGORIES.map((value) => ({ label: value, value })),
+          options: taxonomyOptions.categories.map(({ value, label }) => ({ label, value })),
           defaultValue: CATALOG_CATEGORIES[0],
         }),
         process: fields.multiselect({
           label: 'Процессы',
-          options: CATALOG_PROCESSES.map((value) => ({ label: value, value })),
+          options: taxonomyOptions.processes.map(({ value, label }) => ({ label, value })),
         }),
         base: fields.multiselect({
           label: 'Основа',
-          options: CATALOG_BASES.map((value) => ({ label: value, value })),
+          options: taxonomyOptions.bases.map(({ value, label }) => ({ label, value })),
         }),
         filler: fields.multiselect({
           label: 'Наполнитель',
-          options: CATALOG_FILLERS.map((value) => ({ label: value, value })),
+          options: taxonomyOptions.fillers.map(({ value, label }) => ({ label, value })),
         }),
         auxiliary: fields.multiselect({
           label: 'Вспомогательные',
-          options: CATALOG_AUXILIARIES.map((value) => ({ label: value, value })),
+          options: taxonomyOptions.auxiliaries.map(({ value, label }) => ({ label, value })),
         }),
         image: imageField('Изображение'),
         docs: fields.relationship({

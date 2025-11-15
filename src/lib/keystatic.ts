@@ -1547,11 +1547,14 @@ export async function getNavigationEntityByPath(
 }
 
 export {
+  AUXILIARY_CATEGORY,
   CATALOG_AUXILIARIES,
   CATALOG_BASES,
   CATALOG_CATEGORIES,
   CATALOG_FILLERS,
   CATALOG_PROCESSES,
+  getCatalogTaxonomyLabel,
+  getCatalogTaxonomyOptions,
 } from './catalog/constants';
 export type {
   CatalogAuxiliary,

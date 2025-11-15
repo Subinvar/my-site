@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 
+import { getInterfaceDictionary } from '@/content/dictionary';
 import { NavigationList } from '@/app/[locale]/navigation-list';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
@@ -25,11 +26,6 @@ const brandFont = localFont({
   variable: '--font-brand',
 });
 
-const SKIP_LINK_COPY: Record<Locale, string> = {
-  ru: 'Пропустить к основному контенту',
-  en: 'Skip to main content',
-};
-
 type SiteShellProps = {
   locale: Locale;
   targetLocale: Locale;
@@ -39,13 +35,13 @@ type SiteShellProps = {
   children: ReactNode;
 };
 
-function SkipToContentLink({ locale }: { locale: Locale }) {
+function SkipToContentLink({ label }: { label: string }) {
   return (
     <a
       href="#main"
       className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-blue-600 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
     >
-      {SKIP_LINK_COPY[locale]}
+      {label}
     </a>
   );
 }
@@ -59,6 +55,8 @@ export function SiteShell({
   children,
 }: SiteShellProps) {
   const brandName = site.name ?? 'Intema Group';
+  const dictionary = getInterfaceDictionary(locale);
+  const skipLinkLabel = dictionary.common.skipToContent;
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -85,7 +83,7 @@ export function SiteShell({
 
   return (
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
-      <SkipToContentLink locale={locale} />
+      <SkipToContentLink label={skipLinkLabel} />
       <header className="border-b border-zinc-200 bg-white">
         {hasContacts ? (
           <div className="border-b border-zinc-200 bg-zinc-900 text-sm text-zinc-100">
