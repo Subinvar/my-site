@@ -86,7 +86,7 @@ const dictionaryData = dictionarySource as DictionarySource;
 function pickLocalized(
   record: LocalizedRecord | null | undefined,
   locale: Locale,
-  fallback: string
+  keyPath: string
 ): string {
   const localized = record?.[locale];
   if (localized && typeof localized === 'string' && localized.trim()) {
@@ -96,17 +96,23 @@ function pickLocalized(
   if (defaultValue && typeof defaultValue === 'string' && defaultValue.trim()) {
     return defaultValue;
   }
-  return fallback;
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[dictionary] Missing localized value for "${keyPath}" (requested locale: ${locale}).`
+    );
+  }
+  return '';
 }
 
 function resolveSwitchTo(
   record: SwitchToRecord | null | undefined,
-  locale: Locale
+  locale: Locale,
+  keyPath: string
 ): Record<Locale, string> {
   const result: Partial<Record<Locale, string>> = {};
   for (const target of ['ru', 'en'] as const) {
     const value = record?.[target];
-    const label = pickLocalized(value ?? null, locale, target.toUpperCase());
+    const label = pickLocalized(value ?? null, locale, `${keyPath}.${target}`);
     result[target] = label;
   }
   return result as Record<Locale, string>;
@@ -123,47 +129,47 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
 
   return {
     common: {
-      skipToContent: pickLocalized(common.skipToContent, locale, 'Skip to content'),
-      emptyValue: pickLocalized(common.emptyValue, locale, '—'),
+      skipToContent: pickLocalized(common.skipToContent, locale, 'common.skipToContent'),
+      emptyValue: pickLocalized(common.emptyValue, locale, 'common.emptyValue'),
       buttons: {
-        goHome: pickLocalized(buttons.goHome, locale, 'Back to home'),
-        retry: pickLocalized(buttons.retry, locale, 'Try again'),
+        goHome: pickLocalized(buttons.goHome, locale, 'common.buttons.goHome'),
+        retry: pickLocalized(buttons.retry, locale, 'common.buttons.retry'),
       },
     },
     navigation: {
-      headerLabel: pickLocalized(navigation.headerLabel, locale, 'Primary navigation'),
-      footerLabel: pickLocalized(navigation.footerLabel, locale, 'Footer navigation'),
+      headerLabel: pickLocalized(navigation.headerLabel, locale, 'navigation.headerLabel'),
+      footerLabel: pickLocalized(navigation.footerLabel, locale, 'navigation.footerLabel'),
     },
     languageSwitcher: {
-      switchTo: resolveSwitchTo(languageSwitcher.switchTo, locale),
+      switchTo: resolveSwitchTo(languageSwitcher.switchTo, locale, 'languageSwitcher.switchTo'),
     },
     errors: {
       notFound: {
-        title: pickLocalized(errors.notFound?.title, locale, 'Page not found'),
+        title: pickLocalized(errors.notFound?.title, locale, 'errors.notFound.title'),
         description: pickLocalized(
           errors.notFound?.description,
           locale,
-          'We could not find this page.'
+          'errors.notFound.description'
         ),
       },
       generic: {
-        title: pickLocalized(errors.generic?.title, locale, 'Something went wrong'),
+        title: pickLocalized(errors.generic?.title, locale, 'errors.generic.title'),
         description: pickLocalized(
           errors.generic?.description,
           locale,
-          'We could not load this page.'
+          'errors.generic.description'
         ),
       },
     },
     catalog: {
       attributes: {
-        category: pickLocalized(attributes.category, locale, 'Category'),
-        process: pickLocalized(attributes.process, locale, 'Processes'),
-        base: pickLocalized(attributes.base, locale, 'Bases'),
-        filler: pickLocalized(attributes.filler, locale, 'Fillers'),
-        auxiliary: pickLocalized(attributes.auxiliary, locale, 'Auxiliary supplies'),
+        category: pickLocalized(attributes.category, locale, 'catalog.attributes.category'),
+        process: pickLocalized(attributes.process, locale, 'catalog.attributes.process'),
+        base: pickLocalized(attributes.base, locale, 'catalog.attributes.base'),
+        filler: pickLocalized(attributes.filler, locale, 'catalog.attributes.filler'),
+        auxiliary: pickLocalized(attributes.auxiliary, locale, 'catalog.attributes.auxiliary'),
       },
-      summaryLabel: pickLocalized(catalog.summaryLabel, locale, 'Product summary'),
+      summaryLabel: pickLocalized(catalog.summaryLabel, locale, 'catalog.summaryLabel'),
     },
   } satisfies InterfaceDictionary;
 }
