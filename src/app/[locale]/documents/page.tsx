@@ -42,87 +42,6 @@ type FilterState = {
   lang: LangFilterValue;
 };
 
-const DEFAULT_TITLE: Record<Locale, string> = {
-  ru: 'Документы и сертификаты',
-  en: 'Documents and certificates',
-};
-
-const DEFAULT_DESCRIPTION: Record<Locale, string> = {
-  ru: 'Сертификаты, технические описания и брошюры компании.',
-  en: 'Certificates, technical sheets, and brochures from the company.',
-};
-
-const FALLBACK_TYPE_LABELS: Record<Locale, Record<DocumentType, string>> = {
-  ru: {
-    certificate: 'Сертификат',
-    tds: 'ТДС',
-    msds: 'МСДС',
-    brochure: 'Брошюра',
-  },
-  en: {
-    certificate: 'Certificate',
-    tds: 'TDS',
-    msds: 'MSDS',
-    brochure: 'Brochure',
-  },
-};
-
-const FALLBACK_LANGUAGE_LABELS: Record<Locale, Record<DocumentLanguage, string>> = {
-  ru: {
-    ru: 'Русский',
-    en: 'Английский',
-  },
-  en: {
-    ru: 'Russian',
-    en: 'English',
-  },
-};
-
-const FALLBACK_LANGUAGE_ALL_LABEL: Record<Locale, string> = {
-  ru: 'Все языки',
-  en: 'All languages',
-};
-
-const FALLBACK_TYPE_FILTER_LABEL: Record<Locale, string> = {
-  ru: 'Тип документа',
-  en: 'Document type',
-};
-
-const FALLBACK_LANGUAGE_FILTER_LABEL: Record<Locale, string> = {
-  ru: 'Язык файла',
-  en: 'File language',
-};
-
-const FALLBACK_APPLY_LABEL: Record<Locale, string> = {
-  ru: 'Применить фильтры',
-  en: 'Apply filters',
-};
-
-const FALLBACK_RESET_LABEL: Record<Locale, string> = {
-  ru: 'Сбросить',
-  en: 'Reset',
-};
-
-const FALLBACK_DOWNLOAD_LABEL: Record<Locale, string> = {
-  ru: 'Скачать',
-  en: 'Download',
-};
-
-const FALLBACK_RESULTS_TEMPLATE: Record<Locale, string> = {
-  ru: 'Найдено документов: {count}',
-  en: 'Documents found: {count}',
-};
-
-const FALLBACK_EMPTY_STATE_MESSAGE: Record<Locale, string> = {
-  ru: 'По выбранным фильтрам документов нет. Попробуйте изменить параметры поиска.',
-  en: 'No documents match your filters. Try adjusting the search parameters.',
-};
-
-const FALLBACK_RELATED_PRODUCTS_LABEL: Record<Locale, string> = {
-  ru: 'Подходит для:',
-  en: 'Suitable for:',
-};
-
 const DOCUMENT_TYPE_VALUES = new Set<DocumentType>(Array.from(DOCUMENT_TYPES));
 const DOCUMENT_LANGUAGE_VALUES = new Set<DocumentLanguage>(Array.from(DOCUMENT_LANGUAGES));
 const LANGUAGE_FILTER_VALUES: readonly LangFilterValue[] = ['all', ...DOCUMENT_LANGUAGES];
@@ -470,58 +389,59 @@ function resolveDocumentTitle(document: Document, locale: Locale): string {
 
 function resolveLocalizedValue(
   record: Partial<Record<Locale, string>> | null | undefined,
-  locale: Locale,
-  fallback: Record<Locale, string>
+  locale: Locale
 ): string {
   const localized = record?.[locale];
   if (localized && localized.trim()) {
     return localized;
   }
-  const fallbackLocalized = record?.[defaultLocale];
-  if (fallbackLocalized && fallbackLocalized.trim()) {
-    return fallbackLocalized;
+  const fallback = record?.[defaultLocale];
+  if (fallback && fallback.trim()) {
+    return fallback;
   }
-  return fallback[locale];
+  for (const candidate of locales) {
+    const value = record?.[candidate];
+    if (value && value.trim()) {
+      return value;
+    }
+  }
+  return '';
 }
 
 function resolveTypeLegend(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.typeFilterLabel ?? null, locale, FALLBACK_TYPE_FILTER_LABEL);
+  return resolveLocalizedValue(page?.typeFilterLabel ?? null, locale);
 }
 
 function resolveLanguageLegend(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.languageFilterLabel ?? null, locale, FALLBACK_LANGUAGE_FILTER_LABEL);
+  return resolveLocalizedValue(page?.languageFilterLabel ?? null, locale);
 }
 
 function resolveApplyButtonLabel(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.applyLabel ?? null, locale, FALLBACK_APPLY_LABEL);
+  return resolveLocalizedValue(page?.applyLabel ?? null, locale);
 }
 
 function resolveResetButtonLabel(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.resetLabel ?? null, locale, FALLBACK_RESET_LABEL);
+  return resolveLocalizedValue(page?.resetLabel ?? null, locale);
 }
 
 function resolveDownloadLinkLabel(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.downloadLabel ?? null, locale, FALLBACK_DOWNLOAD_LABEL);
+  return resolveLocalizedValue(page?.downloadLabel ?? null, locale);
 }
 
 function resolveAllLanguagesLabel(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.allLanguagesLabel ?? null, locale, FALLBACK_LANGUAGE_ALL_LABEL);
+  return resolveLocalizedValue(page?.allLanguagesLabel ?? null, locale);
 }
 
 function resolveEmptyState(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale, FALLBACK_EMPTY_STATE_MESSAGE);
+  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
 }
 
 function resolveRelatedProductsLabel(page: DocumentsPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.relatedProductsLabel ?? null, locale, FALLBACK_RELATED_PRODUCTS_LABEL);
+  return resolveLocalizedValue(page?.relatedProductsLabel ?? null, locale);
 }
 
 function resolveTypeLabelValue(page: DocumentsPageContent | null, locale: Locale, type: DocumentType): string {
-  const fallback: Record<Locale, string> = {
-    ru: FALLBACK_TYPE_LABELS.ru[type],
-    en: FALLBACK_TYPE_LABELS.en[type],
-  };
-  return resolveLocalizedValue(page?.typeLabels?.[type] ?? null, locale, fallback);
+  return resolveLocalizedValue(page?.typeLabels?.[type] ?? null, locale);
 }
 
 function resolveLanguageLabelValue(
@@ -529,11 +449,7 @@ function resolveLanguageLabelValue(
   locale: Locale,
   lang: DocumentLanguage
 ): string {
-  const fallback: Record<Locale, string> = {
-    ru: FALLBACK_LANGUAGE_LABELS.ru[lang],
-    en: FALLBACK_LANGUAGE_LABELS.en[lang],
-  };
-  return resolveLocalizedValue(page?.languageLabels?.[lang] ?? null, locale, fallback);
+  return resolveLocalizedValue(page?.languageLabels?.[lang] ?? null, locale);
 }
 
 function resolveResultsLabel(
@@ -541,8 +457,8 @@ function resolveResultsLabel(
   locale: Locale,
   count: number
 ): string {
-  const template = resolveLocalizedValue(page?.resultsLabelTemplate ?? null, locale, FALLBACK_RESULTS_TEMPLATE);
-  return template.replace('{count}', String(count));
+  const template = resolveLocalizedValue(page?.resultsLabelTemplate ?? null, locale);
+  return template.length ? template.replace('{count}', String(count)) : '';
 }
 
 function buildCatalogLookup(items: CatalogListItem[]): Map<string, CatalogListItem> {
@@ -586,7 +502,13 @@ function resolvePageTitle(page: DocumentsPageContent | null, locale: Locale): st
   if (fallback && fallback.trim()) {
     return fallback;
   }
-  return DEFAULT_TITLE[locale];
+  for (const candidate of locales) {
+    const value = page?.title?.[candidate];
+    if (value && value.trim()) {
+      return value;
+    }
+  }
+  return '';
 }
 
 function resolvePageDescription(page: DocumentsPageContent | null, locale: Locale): string | null {
@@ -598,7 +520,13 @@ function resolvePageDescription(page: DocumentsPageContent | null, locale: Local
   if (fallback && fallback.trim()) {
     return fallback;
   }
-  return DEFAULT_DESCRIPTION[locale] ?? null;
+  for (const candidate of locales) {
+    const value = page?.description?.[candidate];
+    if (value && value.trim()) {
+      return value;
+    }
+  }
+  return null;
 }
 
 function formatFileSize(bytes: number | null): string | null {

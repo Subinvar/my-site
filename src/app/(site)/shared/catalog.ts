@@ -37,16 +37,6 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 
-const FALLBACK_LISTING_TITLE: Record<Locale, string> = {
-  ru: 'Каталог',
-  en: 'Catalog',
-};
-
-const FALLBACK_LISTING_DESCRIPTION: Record<Locale, string> = {
-  ru: 'Каталог материалов Интема Групп: связующие системы, противопригарные покрытия и вспомогательные продукты.',
-  en: 'Intema Group product catalogue: binders, release coatings, and auxiliary supplies.',
-};
-
 export type CatalogProductPageData = {
   item: CatalogItem;
   content: Awaited<ReturnType<typeof render>>;
@@ -94,7 +84,7 @@ function resolveCatalogTitle(page: CatalogPageContent | null, locale: Locale): s
   if (fallback && fallback.trim()) {
     return fallback;
   }
-  return FALLBACK_LISTING_TITLE[locale];
+  return '';
 }
 
 function resolveCatalogDescription(page: CatalogPageContent | null, locale: Locale): string {
@@ -106,7 +96,7 @@ function resolveCatalogDescription(page: CatalogPageContent | null, locale: Loca
   if (fallback && fallback.trim()) {
     return fallback;
   }
-  return FALLBACK_LISTING_DESCRIPTION[locale];
+  return '';
 }
 
 export async function resolveCatalogListingMetadata(locale: Locale): Promise<Metadata> {

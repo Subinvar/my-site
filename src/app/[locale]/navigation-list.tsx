@@ -4,22 +4,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import type { NavigationLink } from '@/lib/keystatic';
-import type { Locale } from '@/lib/i18n';
 
 type NavigationListProps = {
   links: NavigationLink[];
-  locale: Locale;
   ariaLabel?: string | null;
-};
-
-const getDefaultLabel = (locale: Locale): string => {
-  switch (locale) {
-    case 'ru':
-      return 'Навигация';
-    case 'en':
-    default:
-      return 'Navigation';
-  }
 };
 
 const normalizePathname = (value: string): string => {
@@ -34,7 +22,7 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-export function NavigationList({ links, locale, ariaLabel }: NavigationListProps) {
+export function NavigationList({ links, ariaLabel }: NavigationListProps) {
   const pathname = usePathname();
 
   if (!links.length) {
@@ -42,10 +30,11 @@ export function NavigationList({ links, locale, ariaLabel }: NavigationListProps
   }
 
   const normalizedCurrent = normalizePathname(pathname ?? '/');
-  const label = ariaLabel && ariaLabel.trim().length ? ariaLabel : getDefaultLabel(locale);
+  const label = ariaLabel?.trim() ?? '';
+  const resolvedLabel = label.length > 0 ? label : undefined;
 
   return (
-    <nav aria-label={label}>
+    <nav aria-label={resolvedLabel}>
       <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
         {links.map((link) => {
           const href = resolveHref(link.href);
