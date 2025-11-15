@@ -245,7 +245,7 @@ type RawCatalogEntry = {
   filler?: string[] | null;
   auxiliary?: string[] | null;
   image?: RawMedia;
-  docs?: string | null;
+  docs?: string | { value?: string | null; slug?: string | null; name?: string | null } | null;
   published?: boolean | null;
   status?: 'draft' | 'published';
   updatedAt?: string | null;
@@ -489,14 +489,16 @@ function toOptionalString(value: unknown): string | null {
     return trimmed.length ? trimmed : null;
   }
   if (value && typeof value === 'object') {
-    const record = value as { slug?: unknown; name?: unknown };
-    const slug = toOptionalString(record.slug ?? undefined);
-    if (slug) {
-      return slug;
-    }
-    const name = toOptionalString(record.name ?? undefined);
-    if (name) {
-      return name;
+    const record = value as { slug?: unknown; name?: unknown; value?: unknown; id?: unknown };
+    const candidates: unknown[] = [record.slug, record.name, record.value, record.id];
+    for (const candidate of candidates) {
+      if (!candidate || candidate === value) {
+        continue;
+      }
+      const resolved = toOptionalString(candidate ?? undefined);
+      if (resolved) {
+        return resolved;
+      }
     }
   }
   return null;
