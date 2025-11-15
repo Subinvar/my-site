@@ -141,7 +141,7 @@ const renderXml = (records: SitemapUrl[]): string => {
   const urls = records.map(renderUrlElement).join('\n');
   return [
     XML_HEADER,
-    `<urlset xmlns="${SITEMAP_NAMESPACE}" xmlns:xhtml="${XHTML_NAMESPACE}">`,
+    `<urlset xmlns="${SITEMAP_NAMESPACE}" xmlns:xhtml="${XHTML_NAMESPACE}" xml:lang="${defaultLocale}">`,
     urls,
     '</urlset>',
   ]

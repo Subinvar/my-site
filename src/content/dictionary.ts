@@ -41,6 +41,25 @@ type DictionarySource = {
     };
     summaryLabel?: LocalizedRecord;
   };
+  feed?: {
+    meta?: {
+      selfLabel?: LocalizedRecord;
+      updatedLabel?: LocalizedRecord;
+    };
+    columns?: {
+      entry?: LocalizedRecord;
+      published?: LocalizedRecord;
+      updated?: LocalizedRecord;
+    };
+  };
+  sitemap?: {
+    pageTitle?: LocalizedRecord;
+    columns?: {
+      page?: LocalizedRecord;
+      alternates?: LocalizedRecord;
+      updated?: LocalizedRecord;
+    };
+  };
 };
 
 type InterfaceDictionary = {
@@ -78,6 +97,25 @@ type InterfaceDictionary = {
       auxiliary: string;
     };
     summaryLabel: string;
+  };
+  feed: {
+    meta: {
+      selfLabel: string;
+      updatedLabel: string;
+    };
+    columns: {
+      entry: string;
+      published: string;
+      updated: string;
+    };
+  };
+  sitemap: {
+    pageTitle: string;
+    columns: {
+      page: string;
+      alternates: string;
+      updated: string;
+    };
   };
 };
 
@@ -126,6 +164,11 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
   const attributes = catalog.attributes ?? {};
   const languageSwitcher = dictionaryData.languageSwitcher ?? {};
   const navigation = dictionaryData.navigation ?? {};
+  const feed = dictionaryData.feed ?? {};
+  const feedMeta = feed.meta ?? {};
+  const feedColumns = feed.columns ?? {};
+  const sitemap = dictionaryData.sitemap ?? {};
+  const sitemapColumns = sitemap.columns ?? {};
 
   return {
     common: {
@@ -170,6 +213,25 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
         auxiliary: pickLocalized(attributes.auxiliary, locale, 'catalog.attributes.auxiliary'),
       },
       summaryLabel: pickLocalized(catalog.summaryLabel, locale, 'catalog.summaryLabel'),
+    },
+    feed: {
+      meta: {
+        selfLabel: pickLocalized(feedMeta.selfLabel, locale, 'feed.meta.selfLabel'),
+        updatedLabel: pickLocalized(feedMeta.updatedLabel, locale, 'feed.meta.updatedLabel'),
+      },
+      columns: {
+        entry: pickLocalized(feedColumns.entry, locale, 'feed.columns.entry'),
+        published: pickLocalized(feedColumns.published, locale, 'feed.columns.published'),
+        updated: pickLocalized(feedColumns.updated, locale, 'feed.columns.updated'),
+      },
+    },
+    sitemap: {
+      pageTitle: pickLocalized(sitemap.pageTitle, locale, 'sitemap.pageTitle'),
+      columns: {
+        page: pickLocalized(sitemapColumns.page, locale, 'sitemap.columns.page'),
+        alternates: pickLocalized(sitemapColumns.alternates, locale, 'sitemap.columns.alternates'),
+        updated: pickLocalized(sitemapColumns.updated, locale, 'sitemap.columns.updated'),
+      },
     },
   } satisfies InterfaceDictionary;
 }

@@ -90,5 +90,51 @@
       "ru": "Навигация в подвале",
       "en": "Footer navigation"
     }
+  },
+  "feed": {
+    "meta": {
+      "selfLabel": {
+        "ru": "Ссылка на ленту",
+        "en": "Feed URL"
+      },
+      "updatedLabel": {
+        "ru": "Обновлено",
+        "en": "Updated"
+      }
+    },
+    "columns": {
+      "entry": {
+        "ru": "Запись",
+        "en": "Entry"
+      },
+      "published": {
+        "ru": "Опубликовано",
+        "en": "Published"
+      },
+      "updated": {
+        "ru": "Обновлено",
+        "en": "Updated"
+      }
+    }
+  },
+  "sitemap": {
+    "pageTitle": {
+      "ru": "Карта сайта",
+      "en": "Sitemap"
+    },
+    "columns": {
+      "page": {
+        "ru": "Страница",
+        "en": "Page"
+      },
+      "alternates": {
+        "ru": "Альтернативные языки",
+        "en": "Alternative languages"
+      },
+      "updated": {
+        "ru": "Обновлено",
+        "en": "Updated"
+      }
+    }
   }
 }
