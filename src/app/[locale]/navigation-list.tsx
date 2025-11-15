@@ -6,9 +6,20 @@ import { usePathname } from 'next/navigation';
 import type { NavigationLink } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 
-const NAVIGATION_LABEL: Record<Locale, string> = {
-  ru: 'Главная навигация',
-  en: 'Primary navigation',
+type NavigationListProps = {
+  links: NavigationLink[];
+  locale: Locale;
+  ariaLabel?: string | null;
+};
+
+const getDefaultLabel = (locale: Locale): string => {
+  switch (locale) {
+    case 'ru':
+      return 'Навигация';
+    case 'en':
+    default:
+      return 'Navigation';
+  }
 };
 
 const normalizePathname = (value: string): string => {
@@ -23,7 +34,7 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-export function NavigationList({ links, locale }: { links: NavigationLink[]; locale: Locale }) {
+export function NavigationList({ links, locale, ariaLabel }: NavigationListProps) {
   const pathname = usePathname();
 
   if (!links.length) {
@@ -31,9 +42,10 @@ export function NavigationList({ links, locale }: { links: NavigationLink[]; loc
   }
 
   const normalizedCurrent = normalizePathname(pathname ?? '/');
+  const label = ariaLabel && ariaLabel.trim().length ? ariaLabel : getDefaultLabel(locale);
 
   return (
-    <nav aria-label={NAVIGATION_LABEL[locale]}>
+    <nav aria-label={label}>
       <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
         {links.map((link) => {
           const href = resolveHref(link.href);

@@ -57,6 +57,7 @@ export function SiteShell({
   const brandName = site.name ?? 'Intema Group';
   const dictionary = getInterfaceDictionary(locale);
   const skipLinkLabel = dictionary.common.skipToContent;
+  const navigationLabels = dictionary.navigation;
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -117,7 +118,11 @@ export function SiteShell({
               ) : null}
             </a>
             <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-              <NavigationList links={navigation.header} locale={locale} />
+              <NavigationList
+                links={navigation.header}
+                locale={locale}
+                ariaLabel={navigationLabels.headerLabel}
+              />
               <LanguageSwitcher
                 currentLocale={locale}
                 targetLocale={targetLocale}
@@ -157,7 +162,11 @@ export function SiteShell({
             ) : null}
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <NavigationList links={navigation.footer} locale={locale} />
+            <NavigationList
+              links={navigation.footer}
+              locale={locale}
+              ariaLabel={navigationLabels.footerLabel}
+            />
             <p className="text-xs text-zinc-500">{copyrightText}</p>
           </div>
         </div>
