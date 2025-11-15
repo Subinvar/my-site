@@ -7,23 +7,27 @@ type CatalogTaxonomyEntry = {
   value: string;
   label?: LocalizedRecord;
   isAuxiliaryCategory?: boolean;
-} | null;
+};
+
+type CatalogTaxonomyEntryInput = CatalogTaxonomyEntry | null | undefined;
 
 type CatalogTaxonomy = {
-  categories?: CatalogTaxonomyEntry[];
-  processes?: CatalogTaxonomyEntry[];
-  bases?: CatalogTaxonomyEntry[];
-  fillers?: CatalogTaxonomyEntry[];
-  auxiliaries?: CatalogTaxonomyEntry[];
+  categories?: CatalogTaxonomyEntryInput[];
+  processes?: CatalogTaxonomyEntryInput[];
+  bases?: CatalogTaxonomyEntryInput[];
+  fillers?: CatalogTaxonomyEntryInput[];
+  auxiliaries?: CatalogTaxonomyEntryInput[];
 };
 
 const taxonomyData = (taxonomySource as CatalogTaxonomy) ?? {};
 
-function normalizeEntries(entries: CatalogTaxonomyEntry[] | undefined): CatalogTaxonomyEntry[] {
+function normalizeEntries(
+  entries: CatalogTaxonomyEntryInput[] | undefined
+): CatalogTaxonomyEntry[] {
   if (!Array.isArray(entries)) {
     return [];
   }
-  return entries.filter((entry): entry is NonNullable<CatalogTaxonomyEntry> => {
+  return entries.filter((entry): entry is CatalogTaxonomyEntry => {
     return Boolean(entry && typeof entry.value === 'string' && entry.value.trim());
   });
 }

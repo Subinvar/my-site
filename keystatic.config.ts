@@ -130,6 +130,21 @@ const navigationLinks = (label: string) =>
     }
   );
 
+const objectItemLabel = (fallback: string) => (props: any) => {
+  const valueFromValue = props?.value?.value;
+  const valueFromFields = props?.fields?.value?.value;
+
+  if (typeof valueFromValue === 'string' && valueFromValue.trim()) {
+    return valueFromValue;
+  }
+
+  if (typeof valueFromFields === 'string' && valueFromFields.trim()) {
+    return valueFromFields;
+  }
+
+  return fallback;
+};
+
 const storage =
   process.env.KEYSTATIC_STORAGE_KIND === 'github'
     ? ({
@@ -217,7 +232,7 @@ export default config({
           }),
           {
             label: 'Категории',
-            itemLabel: ({ value }) => value?.toString() ?? 'Категория',
+            itemLabel: objectItemLabel('Категория'),
           }
         ),
         processes: fields.array(
@@ -230,7 +245,7 @@ export default config({
           }),
           {
             label: 'Процессы',
-            itemLabel: ({ value }) => value?.toString() ?? 'Процесс',
+            itemLabel: objectItemLabel('Процесс'),
           }
         ),
         bases: fields.array(
@@ -243,7 +258,7 @@ export default config({
           }),
           {
             label: 'Основы',
-            itemLabel: ({ value }) => value?.toString() ?? 'Основа',
+            itemLabel: objectItemLabel('Основа'),
           }
         ),
         fillers: fields.array(
@@ -256,7 +271,7 @@ export default config({
           }),
           {
             label: 'Наполнители',
-            itemLabel: ({ value }) => value?.toString() ?? 'Наполнитель',
+            itemLabel: objectItemLabel('Наполнитель'),
           }
         ),
         auxiliaries: fields.array(
@@ -269,7 +284,7 @@ export default config({
           }),
           {
             label: 'Вспомогательные материалы',
-            itemLabel: ({ value }) => value?.toString() ?? 'Материал',
+            itemLabel: objectItemLabel('Материал'),
           }
         ),
       },
