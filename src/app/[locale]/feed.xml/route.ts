@@ -142,7 +142,7 @@ export async function buildFeedResponse(locale: Locale) {
 
   const latestUpdate = sortedPosts[0]?.updatedAt ?? sortedPosts[0]?.publishedAt ?? new Date().toISOString();
   const feedUrl = new URL(buildPath(locale, ['feed.xml']), origin).toString();
-  const siteTitle = site.name ?? 'StroyTech';
+  const siteTitle = site.name?.trim() ?? '';
   const body = formatAtomFeed({
     locale,
     siteTitle,

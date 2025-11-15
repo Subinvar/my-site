@@ -13,8 +13,8 @@ type LanguageSwitcherProps = {
 export function LanguageSwitcher({ currentLocale, targetLocale, href }: LanguageSwitcherProps) {
   const targetHref = href ?? buildPath(targetLocale);
   const dictionary = getInterfaceDictionary(currentLocale);
-  const ariaLabel =
-    dictionary.languageSwitcher.switchTo[targetLocale] ?? `Switch language to ${targetLocale.toUpperCase()}`;
+  const ariaLabelValue = dictionary.languageSwitcher.switchTo[targetLocale];
+  const ariaLabel = ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
 
   return (
     <div className="flex items-center gap-2">

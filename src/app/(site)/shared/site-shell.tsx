@@ -54,7 +54,8 @@ export function SiteShell({
   switcherHref,
   children,
 }: SiteShellProps) {
-  const brandName = site.name ?? 'Intema Group';
+  const brandName = site.name?.trim() ?? '';
+  const hasBrandName = brandName.length > 0;
   const dictionary = getInterfaceDictionary(locale);
   const skipLinkLabel = dictionary.common.skipToContent;
   const navigationLabels = dictionary.navigation;
@@ -77,10 +78,11 @@ export function SiteShell({
 
   const hasContacts = contactLinks.length > 0 || Boolean(site.contacts.address);
   const currentYear = new Date().getFullYear();
-  const copyrightTemplate = site.footer?.copyright ?? '© {year} Intema Group. All rights reserved.';
-  const copyrightText = copyrightTemplate
-    .replaceAll('{year}', String(currentYear))
-    .replaceAll('{siteName}', brandName);
+  const copyrightTemplate = site.footer?.copyright?.trim() ?? '';
+  const copyrightText = copyrightTemplate.length
+    ? copyrightTemplate.replaceAll('{year}', String(currentYear)).replaceAll('{siteName}', brandName)
+    : '';
+  const hasCopyright = copyrightText.length > 0;
 
   return (
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
@@ -110,19 +112,15 @@ export function SiteShell({
               href={buildPath(locale)}
               className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
             >
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                {brandName}
-              </span>
+              {hasBrandName ? (
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{brandName}</span>
+              ) : null}
               {site.tagline ? (
                 <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
               ) : null}
             </a>
             <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-              <NavigationList
-                links={navigation.header}
-                locale={locale}
-                ariaLabel={navigationLabels.headerLabel}
-              />
+              <NavigationList links={navigation.header} ariaLabel={navigationLabels.headerLabel} />
               <LanguageSwitcher
                 currentLocale={locale}
                 targetLocale={targetLocale}
@@ -139,9 +137,9 @@ export function SiteShell({
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-zinc-600">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
             <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-                {brandName}
-              </p>
+              {hasBrandName ? (
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{brandName}</p>
+              ) : null}
               {site.tagline ? (
                 <p className="max-w-xl text-base text-zinc-700">{site.tagline}</p>
               ) : null}
@@ -162,12 +160,8 @@ export function SiteShell({
             ) : null}
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <NavigationList
-              links={navigation.footer}
-              locale={locale}
-              ariaLabel={navigationLabels.footerLabel}
-            />
-            <p className="text-xs text-zinc-500">{copyrightText}</p>
+            <NavigationList links={navigation.footer} ariaLabel={navigationLabels.footerLabel} />
+            {hasCopyright ? <p className="text-xs text-zinc-500">{copyrightText}</p> : null}
           </div>
         </div>
       </footer>

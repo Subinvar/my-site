@@ -18,7 +18,7 @@ import {
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
-import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
+import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
 import type {
   CatalogAuxiliary,
   CatalogBase,
@@ -30,61 +30,6 @@ import type {
 } from '@/lib/keystatic';
 
 export const revalidate = 60;
-
-const FALLBACK_HEADING: Record<Locale, string> = {
-  ru: 'Каталог',
-  en: 'Catalog',
-};
-
-const FALLBACK_DESCRIPTION: Record<Locale, string> = {
-  ru: 'Отфильтруйте продукты по категории, процессу, основе, наполнителю и типу вспомогательных материалов.',
-  en: 'Filter products by category, process, base, filler, and auxiliary type.',
-};
-
-const FALLBACK_SUBMIT_LABEL: Record<Locale, string> = {
-  ru: 'Применить фильтры',
-  en: 'Apply filters',
-};
-
-const FALLBACK_RESET_LABEL: Record<Locale, string> = {
-  ru: 'Сбросить',
-  en: 'Reset',
-};
-
-const FALLBACK_CATEGORY_ALL_LABEL: Record<Locale, string> = {
-  ru: 'Все категории',
-  en: 'All categories',
-};
-
-const FALLBACK_GROUP_LABELS: Record<
-  Locale,
-  { category: string; process: string; base: string; filler: string; auxiliary: string }
-> = {
-  ru: {
-    category: 'Категория',
-    process: 'Процесс',
-    base: 'Основа',
-    filler: 'Наполнитель',
-    auxiliary: 'Вспомогательные',
-  },
-  en: {
-    category: 'Category',
-    process: 'Process',
-    base: 'Base',
-    filler: 'Filler',
-    auxiliary: 'Auxiliary supplies',
-  },
-};
-
-const FALLBACK_DETAIL_LABEL: Record<Locale, string> = {
-  ru: 'Подробнее',
-  en: 'View details',
-};
-
-const FALLBACK_EMPTY_STATE_MESSAGE: Record<Locale, string> = {
-  ru: 'Нет товаров, соответствующих выбранным фильтрам. Попробуйте изменить параметры поиска.',
-  en: 'No products match your filters. Try adjusting the search parameters.',
-};
 
 type PageProps = {
   params: { locale: Locale } | Promise<{ locale: Locale }>;
@@ -233,46 +178,51 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
 
 function resolveLocalizedValue(
   record: Partial<Record<Locale, string>> | null | undefined,
-  locale: Locale,
-  fallback: Record<Locale, string>
+  locale: Locale
 ): string {
   const localized = record?.[locale];
   if (localized && localized.trim()) {
     return localized;
   }
-  const fallbackLocalized = record?.[defaultLocale];
-  if (fallbackLocalized && fallbackLocalized.trim()) {
-    return fallbackLocalized;
+  const fallback = record?.[defaultLocale];
+  if (fallback && fallback.trim()) {
+    return fallback;
   }
-  return fallback[locale];
+  for (const candidate of locales) {
+    const value = record?.[candidate];
+    if (value && value.trim()) {
+      return value;
+    }
+  }
+  return '';
 }
 
 function resolveHeading(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.title ?? null, locale, FALLBACK_HEADING);
+  return resolveLocalizedValue(page?.title ?? null, locale);
 }
 
 function resolveDescription(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.description ?? null, locale, FALLBACK_DESCRIPTION);
+  return resolveLocalizedValue(page?.description ?? null, locale);
 }
 
 function resolveSubmitLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.submitLabel ?? null, locale, FALLBACK_SUBMIT_LABEL);
+  return resolveLocalizedValue(page?.submitLabel ?? null, locale);
 }
 
 function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.resetLabel ?? null, locale, FALLBACK_RESET_LABEL);
+  return resolveLocalizedValue(page?.resetLabel ?? null, locale);
 }
 
 function resolveCategoryAllLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.categoryAllLabel ?? null, locale, FALLBACK_CATEGORY_ALL_LABEL);
+  return resolveLocalizedValue(page?.categoryAllLabel ?? null, locale);
 }
 
 function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.detailLabel ?? null, locale, FALLBACK_DETAIL_LABEL);
+  return resolveLocalizedValue(page?.detailLabel ?? null, locale);
 }
 
 function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale, FALLBACK_EMPTY_STATE_MESSAGE);
+  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
 }
 
 function resolveGroupLabels(
@@ -281,26 +231,11 @@ function resolveGroupLabels(
 ): { category: string; process: string; base: string; filler: string; auxiliary: string } {
   const source = page?.groupLabels;
   return {
-    category: resolveLocalizedValue(source?.category ?? null, locale, {
-      ru: FALLBACK_GROUP_LABELS.ru.category,
-      en: FALLBACK_GROUP_LABELS.en.category,
-    }),
-    process: resolveLocalizedValue(source?.process ?? null, locale, {
-      ru: FALLBACK_GROUP_LABELS.ru.process,
-      en: FALLBACK_GROUP_LABELS.en.process,
-    }),
-    base: resolveLocalizedValue(source?.base ?? null, locale, {
-      ru: FALLBACK_GROUP_LABELS.ru.base,
-      en: FALLBACK_GROUP_LABELS.en.base,
-    }),
-    filler: resolveLocalizedValue(source?.filler ?? null, locale, {
-      ru: FALLBACK_GROUP_LABELS.ru.filler,
-      en: FALLBACK_GROUP_LABELS.en.filler,
-    }),
-    auxiliary: resolveLocalizedValue(source?.auxiliary ?? null, locale, {
-      ru: FALLBACK_GROUP_LABELS.ru.auxiliary,
-      en: FALLBACK_GROUP_LABELS.en.auxiliary,
-    }),
+    category: resolveLocalizedValue(source?.category ?? null, locale),
+    process: resolveLocalizedValue(source?.process ?? null, locale),
+    base: resolveLocalizedValue(source?.base ?? null, locale),
+    filler: resolveLocalizedValue(source?.filler ?? null, locale),
+    auxiliary: resolveLocalizedValue(source?.auxiliary ?? null, locale),
   };
 }
 

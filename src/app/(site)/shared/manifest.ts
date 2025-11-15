@@ -30,11 +30,15 @@ function buildStartUrl(locale: Locale): string {
 export async function resolveManifest(locale: Locale): Promise<Response> {
   const site = await getSite(locale);
   const startUrl = buildStartUrl(locale);
+  const siteName = site.name?.trim() ?? '';
+  const tagline = site.tagline?.trim() ?? '';
+  const seoDescription = site.seo.description?.trim() ?? '';
+  const description = tagline.length ? tagline : seoDescription || undefined;
   const manifest: WebManifest = {
     id: startUrl,
-    name: site.name ?? 'Intema Group',
-    short_name: site.name ?? 'Intema Group',
-    description: site.tagline ?? site.seo.description ?? undefined,
+    name: siteName,
+    short_name: siteName,
+    description,
     start_url: startUrl,
     scope: locale === defaultLocale ? '/' : `${startUrl}`,
     lang: locale,
