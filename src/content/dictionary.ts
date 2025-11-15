@@ -14,6 +14,10 @@ type DictionarySource = {
       retry?: LocalizedRecord;
     };
   };
+  navigation?: {
+    headerLabel?: LocalizedRecord;
+    footerLabel?: LocalizedRecord;
+  };
   languageSwitcher?: {
     switchTo?: SwitchToRecord;
   };
@@ -47,6 +51,10 @@ type InterfaceDictionary = {
       goHome: string;
       retry: string;
     };
+  };
+  navigation: {
+    headerLabel: string;
+    footerLabel: string;
   };
   languageSwitcher: {
     switchTo: Record<Locale, string>;
@@ -111,6 +119,7 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
   const catalog = dictionaryData.catalog ?? {};
   const attributes = catalog.attributes ?? {};
   const languageSwitcher = dictionaryData.languageSwitcher ?? {};
+  const navigation = dictionaryData.navigation ?? {};
 
   return {
     common: {
@@ -120,6 +129,10 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
         goHome: pickLocalized(buttons.goHome, locale, 'Back to home'),
         retry: pickLocalized(buttons.retry, locale, 'Try again'),
       },
+    },
+    navigation: {
+      headerLabel: pickLocalized(navigation.headerLabel, locale, 'Primary navigation'),
+      footerLabel: pickLocalized(navigation.footerLabel, locale, 'Footer navigation'),
     },
     languageSwitcher: {
       switchTo: resolveSwitchTo(languageSwitcher.switchTo, locale),

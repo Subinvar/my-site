@@ -80,5 +80,15 @@
       "ru": "Кратко о продукте",
       "en": "Product summary"
     }
+  },
+  "navigation": {
+    "headerLabel": {
+      "ru": "Главная навигация",
+      "en": "Primary navigation"
+    },
+    "footerLabel": {
+      "ru": "Навигация в подвале",
+      "en": "Footer navigation"
+    }
   }
 }

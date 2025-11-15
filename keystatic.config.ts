@@ -130,7 +130,12 @@ const navigationLinks = (label: string) =>
     }
   );
 
-const objectItemLabel = (fallback: string) => (props: any) => {
+type ObjectItemLabelProps = {
+  value?: { value?: unknown } | null;
+  fields?: { value?: { value?: unknown } | null } | null;
+};
+
+const objectItemLabel = (fallback: string) => (props: ObjectItemLabelProps) => {
   const valueFromValue = props?.value?.value;
   const valueFromFields = props?.fields?.value?.value;
 
@@ -356,6 +361,13 @@ export default config({
             summaryLabel: localizedText('Подпись «Кратко о продукте»', { isRequired: true }),
           },
           { label: 'Каталог' }
+        ),
+        navigation: fields.object(
+          {
+            headerLabel: localizedText('Aria-label основной навигации', { isRequired: true }),
+            footerLabel: localizedText('Aria-label навигации в подвале', { isRequired: true }),
+          },
+          { label: 'Навигация' }
         ),
       },
     }),
