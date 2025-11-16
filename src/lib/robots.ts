@@ -2,13 +2,14 @@ import type { MetadataRoute } from 'next';
 
 import { getSite } from '@/lib/keystatic';
 import { defaultLocale } from '@/lib/i18n';
+import { normalizeBaseUrl } from '@/lib/url';
 
 export function buildSitemapUrl(baseUrl: string | null): string {
-  if (!baseUrl) {
+  const normalized = normalizeBaseUrl(baseUrl);
+  if (!normalized) {
     return '/sitemap.xml';
   }
 
-  const normalized = baseUrl.replace(/\/+$/, '');
   return `${normalized}/sitemap.xml`;
 }
 

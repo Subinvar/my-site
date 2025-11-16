@@ -4,6 +4,7 @@ import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/k
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 import { HREFLANG_CODE } from '@/lib/seo';
+import { normalizeBaseUrl } from '@/lib/url';
 
 const XML_HEADER = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>`;
 
@@ -157,7 +158,7 @@ export async function GET() {
     getAllCatalogEntries(),
   ]);
 
-  const baseUrl = site.seo.canonicalBase ?? null;
+  const baseUrl = normalizeBaseUrl(site.seo.canonicalBase ?? null);
 
   const pageUrls = pages
     .filter((page) => page.published)
