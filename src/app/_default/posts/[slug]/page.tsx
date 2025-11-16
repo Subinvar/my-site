@@ -9,7 +9,7 @@ import {
   resolvePostPageMetadata,
 } from '@/app/(site)/shared/post-page';
 import { defaultLocale } from '@/lib/i18n';
-import { findTargetLocale, switchLocalePath } from '@/lib/paths';
+import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
 type PostPageProps = {
   params: { slug: string } | Promise<{ slug: string }>;
@@ -34,6 +34,7 @@ export default async function DefaultLocalePostPage({ params }: PostPageProps) {
     collection: 'posts',
     slugs: post.slugByLocale,
   });
+  const currentPath = buildPath(locale, ['posts', slug]);
 
   return (
     <SiteShell
@@ -42,6 +43,7 @@ export default async function DefaultLocalePostPage({ params }: PostPageProps) {
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <article className="max-w-none">
         <header className="mb-8 space-y-3">

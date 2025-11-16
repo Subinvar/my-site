@@ -9,7 +9,7 @@ import {
 } from '@/app/(site)/shared/content-page';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { findTargetLocale, switchLocalePath } from '@/lib/paths';
+import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
 type PageProps = {
   params: { locale: string; slug: string } | Promise<{ locale: string; slug: string }>;
@@ -38,6 +38,7 @@ export default async function Page({ params }: PageProps) {
     collection: 'pages',
     slugs: page.slugByLocale,
   });
+  const currentPath = buildPath(locale, [slug]);
 
   return (
     <SiteShell
@@ -46,6 +47,7 @@ export default async function Page({ params }: PageProps) {
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <article className="max-w-none">
         <header className="mb-10 space-y-2">

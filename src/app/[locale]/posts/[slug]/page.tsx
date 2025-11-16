@@ -9,7 +9,7 @@ import {
 } from '@/app/(site)/shared/post-page';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { findTargetLocale, switchLocalePath } from '@/lib/paths';
+import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
 type PostPageProps = {
   params: { locale: Locale; slug: string } | Promise<{ locale: Locale; slug: string }>;
@@ -38,6 +38,7 @@ export default async function PostPage({ params }: PostPageProps) {
     collection: 'posts',
     slugs: post.slugByLocale,
   });
+  const currentPath = buildPath(locale, ['posts', slug]);
 
   const tags = Array.isArray(post.tags) ? post.tags : [];
   const hasTags = tags.length > 0;
@@ -49,6 +50,7 @@ export default async function PostPage({ params }: PostPageProps) {
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <article className="max-w-none">
         <header className="mb-8 space-y-3">

@@ -32,6 +32,7 @@ type SiteShellProps = {
   site: SiteContent;
   navigation: Navigation;
   switcherHref: string | null;
+  currentPath: string;
   children: ReactNode;
 };
 
@@ -52,6 +53,7 @@ export function SiteShell({
   site,
   navigation,
   switcherHref,
+  currentPath,
   children,
 }: SiteShellProps) {
   const brandName = site.name?.trim() ?? '';
@@ -59,6 +61,7 @@ export function SiteShell({
   const dictionary = getInterfaceDictionary(locale);
   const skipLinkLabel = dictionary.common.skipToContent;
   const navigationLabels = dictionary.navigation;
+  const switchToLabels = dictionary.languageSwitcher.switchTo;
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -120,11 +123,16 @@ export function SiteShell({
               ) : null}
             </a>
             <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-              <NavigationList links={navigation.header} ariaLabel={navigationLabels.headerLabel} />
+              <NavigationList
+                links={navigation.header}
+                ariaLabel={navigationLabels.headerLabel}
+                currentPath={currentPath}
+              />
               <LanguageSwitcher
                 currentLocale={locale}
                 targetLocale={targetLocale}
                 href={switcherHref}
+                switchToLabels={switchToLabels}
               />
             </div>
           </div>
@@ -160,7 +168,11 @@ export function SiteShell({
             ) : null}
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <NavigationList links={navigation.footer} ariaLabel={navigationLabels.footerLabel} />
+            <NavigationList
+              links={navigation.footer}
+              ariaLabel={navigationLabels.footerLabel}
+              currentPath={currentPath}
+            />
             {hasCopyright ? <p className="text-xs text-zinc-500">{copyrightText}</p> : null}
           </div>
         </div>
