@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { CatalogFilters, type CatalogFilterValues } from '@/app/(site)/shared/filter-controls';
 import {
   AUXILIARY_CATEGORY,
   CATALOG_AUXILIARIES,
@@ -36,12 +37,17 @@ type PageProps = {
   searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
 };
 
+type MultiFilter<T extends string> = {
+  values: T[];
+  lookup: Set<T>;
+};
+
 type FilterState = {
   category: CatalogCategory | null;
-  process: CatalogProcess[];
-  base: CatalogBase[];
-  filler: CatalogFiller[];
-  auxiliary: CatalogAuxiliary[];
+  process: MultiFilter<CatalogProcess>;
+  base: MultiFilter<CatalogBase>;
+  filler: MultiFilter<CatalogFiller>;
+  auxiliary: MultiFilter<CatalogAuxiliary>;
 };
 
 export default async function CatalogPage({ params, searchParams }: PageProps) {
@@ -72,6 +78,13 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const detailLabel = resolveDetailLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
   const groupLabels = resolveGroupLabels(catalogPage, locale);
+  const initialFilterValues: CatalogFilterValues = {
+    category: filters.category,
+    process: filters.process.values,
+    base: filters.base.values,
+    filler: filters.filler.values,
+    auxiliary: filters.auxiliary.values,
+  };
 
   return (
     <SiteShell
@@ -88,75 +101,14 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
           <p className="text-base text-zinc-600">{description}</p>
         </header>
         <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-          <form className="space-y-6" method="get">
-            <fieldset>
-              <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {groupLabels.category}
-              </legend>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <label className="flex items-center gap-2 text-sm text-zinc-700">
-                  <input
-                    type="radio"
-                    name="category"
-                    value=""
-                    defaultChecked={!filters.category}
-                    className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  {categoryAllLabel}
-                </label>
-                {taxonomyOptions.categories.map((option) => (
-                  <label key={option.value} className="flex items-center gap-2 text-sm text-zinc-700">
-                    <input
-                      type="radio"
-                      name="category"
-                      value={option.value}
-                      defaultChecked={filters.category === option.value}
-                      className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-            <FilterGroup
-              name="process"
-              legend={groupLabels.process}
-              options={taxonomyOptions.processes}
-              selected={filters.process}
-            />
-            <FilterGroup
-              name="base"
-              legend={groupLabels.base}
-              options={taxonomyOptions.bases}
-              selected={filters.base}
-            />
-            <FilterGroup
-              name="filler"
-              legend={groupLabels.filler}
-              options={taxonomyOptions.fillers}
-              selected={filters.filler}
-            />
-            <FilterGroup
-              name="auxiliary"
-              legend={groupLabels.auxiliary}
-              options={taxonomyOptions.auxiliaries}
-              selected={filters.auxiliary}
-            />
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                {submitLabel}
-              </button>
-              <Link
-                href={buildPath(locale, ['catalog'])}
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                {resetLabel}
-              </Link>
-            </div>
-          </form>
+          <CatalogFilters
+            taxonomyOptions={taxonomyOptions}
+            groupLabels={groupLabels}
+            categoryAllLabel={categoryAllLabel}
+            submitLabel={submitLabel}
+            resetLabel={resetLabel}
+            initialValues={initialFilterValues}
+          />
         </section>
         <section>
           {filteredItems.length === 0 ? (
@@ -257,25 +209,25 @@ function parseFilters(params: Record<string, string | string[] | undefined>): Fi
 }
 
 function applyFilters(items: CatalogListItem[], filters: FilterState): CatalogListItem[] {
-  const shouldFilterAuxiliary = filters.auxiliary.length > 0 && filters.category === AUXILIARY_CATEGORY;
+  const shouldFilterAuxiliary = filters.auxiliary.values.length > 0 && filters.category === AUXILIARY_CATEGORY;
   return items.filter((item) => {
     if (filters.category && item.category !== filters.category) {
       return false;
     }
-    if (filters.process.length > 0 && !hasIntersection(item.process, filters.process)) {
+    if (filters.process.values.length > 0 && !hasIntersection(item.process, filters.process.lookup)) {
       return false;
     }
-    if (filters.base.length > 0 && !hasIntersection(item.base, filters.base)) {
+    if (filters.base.values.length > 0 && !hasIntersection(item.base, filters.base.lookup)) {
       return false;
     }
-    if (filters.filler.length > 0 && !hasIntersection(item.filler, filters.filler)) {
+    if (filters.filler.values.length > 0 && !hasIntersection(item.filler, filters.filler.lookup)) {
       return false;
     }
     if (shouldFilterAuxiliary) {
       if (item.category !== AUXILIARY_CATEGORY) {
         return false;
       }
-      if (!hasIntersection(item.auxiliary, filters.auxiliary)) {
+      if (!hasIntersection(item.auxiliary, filters.auxiliary.lookup)) {
         return false;
       }
     }
@@ -294,9 +246,9 @@ function toSingle(value: string | string[] | undefined): string | null {
   return null;
 }
 
-function toMulti<T extends string>(value: string | string[] | undefined, allowed: readonly T[]): T[] {
+function toMulti<T extends string>(value: string | string[] | undefined, allowed: readonly T[]): MultiFilter<T> {
   const rawValues = Array.isArray(value) ? value : typeof value === 'string' ? [value] : [];
-  const unique = new Set<T>();
+  const lookup = new Set<T>();
   for (const candidate of rawValues) {
     if (typeof candidate !== 'string') {
       continue;
@@ -306,57 +258,22 @@ function toMulti<T extends string>(value: string | string[] | undefined, allowed
       continue;
     }
     if (allowed.includes(trimmed as T)) {
-      unique.add(trimmed as T);
+      lookup.add(trimmed as T);
     }
   }
-  return Array.from(unique);
+  return { values: Array.from(lookup), lookup } satisfies MultiFilter<T>;
 }
 
-function hasIntersection<T extends string>(collection: readonly T[], filters: readonly T[]): boolean {
-  if (!collection.length) {
+function hasIntersection<T extends string>(collection: readonly T[], filters: ReadonlySet<T>): boolean {
+  if (!collection.length || filters.size === 0) {
     return false;
   }
-  for (const value of filters) {
-    if (collection.includes(value)) {
+  for (const value of collection) {
+    if (filters.has(value)) {
       return true;
     }
   }
   return false;
-}
-
-type FilterOption<T extends string> = { value: T; label: string };
-
-type FilterGroupProps<T extends string> = {
-  name: string;
-  legend: string;
-  options: ReadonlyArray<FilterOption<T>>;
-  selected: readonly T[];
-};
-
-function FilterGroup<T extends string>({ name, legend, options, selected }: FilterGroupProps<T>) {
-  return (
-    <fieldset>
-      <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{legend}</legend>
-      <div className="mt-3 flex flex-wrap gap-3">
-        {options.map((option) => {
-          const id = buildOptionId(name, option.value);
-          return (
-            <label key={option.value} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
-              <input
-                id={id}
-                type="checkbox"
-                name={name}
-                value={option.value}
-                defaultChecked={selected.includes(option.value)}
-                className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
-              />
-              {option.label}
-            </label>
-          );
-        })}
-      </div>
-    </fieldset>
-  );
 }
 
 type CatalogCardProps = {
@@ -399,11 +316,6 @@ function CatalogCard({ item, locale, detailLabel }: CatalogCardProps) {
       </div>
     </article>
   );
-}
-
-function buildOptionId(group: string, value: string): string {
-  const normalized = encodeURIComponent(value).replace(/%/g, '').toLowerCase();
-  return `${group}-${normalized || 'option'}`;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
