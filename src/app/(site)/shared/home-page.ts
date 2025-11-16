@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 
 import { render } from '@/lib/markdoc';
@@ -37,7 +38,7 @@ const buildSlugMap = (slugByLocale: Partial<Record<Locale, string>>): SlugMap =>
   return record;
 };
 
-export async function getHomePage(locale: Locale): Promise<HomePageData | null> {
+export const getHomePage = cache(async (locale: Locale): Promise<HomePageData | null> => {
   const page = await getPageById(HOME_PAGE_ID, locale);
   if (!page) {
     return null;
@@ -47,9 +48,9 @@ export async function getHomePage(locale: Locale): Promise<HomePageData | null> 
   const summary = page.description ?? page.excerpt ?? null;
 
   return { page, content, summary } satisfies HomePageData;
-}
+});
 
-export async function resolveHomeMetadata(locale: Locale): Promise<Metadata> {
+export const resolveHomeMetadata = cache(async (locale: Locale): Promise<Metadata> => {
   const [site, page] = await Promise.all([getSite(locale), getPageById(HOME_PAGE_ID, locale)]);
   if (!page) {
     return {};
@@ -108,7 +109,7 @@ export async function resolveHomeMetadata(locale: Locale): Promise<Metadata> {
       images: ogImage ? [ogImage.url] : undefined,
     },
   } satisfies Metadata;
-}
+});
 
 export async function getHomeStaticLocales(): Promise<Locale[]> {
   const pages = await getAllPages();

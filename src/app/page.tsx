@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getHomePage, resolveHomeMetadata } from '@/app/(site)/shared/home-page';
-import { switchLocalePath, findTargetLocale } from '@/lib/paths';
+import { switchLocalePath, findTargetLocale, buildPath } from '@/lib/paths';
 import { defaultLocale } from '@/lib/i18n';
 
 export const dynamic = 'force-static';
@@ -29,6 +29,7 @@ export default async function RootHomePage() {
   });
   const heroImage = page.hero?.image;
   const heroAlt = page.hero?.alt ?? page.title;
+  const currentPath = buildPath(locale);
 
   return (
     <SiteShell
@@ -37,6 +38,7 @@ export default async function RootHomePage() {
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <article className="max-w-none">
         <header className="mb-10 space-y-4">

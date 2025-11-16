@@ -1,13 +1,11 @@
-'use client';
-
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import type { NavigationLink } from '@/lib/keystatic';
 
 type NavigationListProps = {
   links: NavigationLink[];
   ariaLabel?: string | null;
+  currentPath?: string;
 };
 
 const normalizePathname = (value: string): string => {
@@ -22,14 +20,12 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-export function NavigationList({ links, ariaLabel }: NavigationListProps) {
-  const pathname = usePathname();
-
+export function NavigationList({ links, ariaLabel, currentPath = '/' }: NavigationListProps) {
   if (!links.length) {
     return null;
   }
 
-  const normalizedCurrent = normalizePathname(pathname ?? '/');
+  const normalizedCurrent = normalizePathname(currentPath);
   const label = ariaLabel?.trim() ?? '';
   const resolvedLabel = label.length > 0 ? label : undefined;
 

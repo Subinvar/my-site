@@ -12,7 +12,7 @@ import {
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { findTargetLocale, switchLocalePath } from '@/lib/paths';
+import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
 const TAXONOMY_KEYS = {
   process: 'processes',
@@ -48,6 +48,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     collection: 'catalog',
     slugs: item.slugByLocale,
   });
+  const currentPath = buildPath(locale, ['catalog', slug]);
   const dictionary = getInterfaceDictionary(locale);
   const attributes = dictionary.catalog.attributes;
   const emptyValue = dictionary.common.emptyValue;
@@ -68,6 +69,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <article className="space-y-10">
         <header className="space-y-4">

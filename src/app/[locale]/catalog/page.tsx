@@ -63,6 +63,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const filteredItems = applyFilters(items, filters);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['catalog']);
+  const currentPath = buildPath(locale, ['catalog']);
   const heading = resolveHeading(catalogPage, locale);
   const description = resolveDescription(catalogPage, locale);
   const submitLabel = resolveSubmitLabel(catalogPage, locale);
@@ -79,6 +80,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <div className="space-y-12">
         <header className="space-y-3">

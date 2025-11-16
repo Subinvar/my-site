@@ -70,6 +70,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
 
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['documents']);
+  const currentPath = buildPath(locale, ['documents']);
   const pageTitle = resolvePageTitle(pageContent, locale);
   const pageDescription = resolvePageDescription(pageContent, locale);
   const typeLegendLabel = resolveTypeLegend(pageContent, locale);
@@ -89,6 +90,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
       site={shell.site}
       navigation={shell.navigation}
       switcherHref={switcherHref}
+      currentPath={currentPath}
     >
       <div className="space-y-12">
         <header className="space-y-3">
