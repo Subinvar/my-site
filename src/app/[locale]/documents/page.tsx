@@ -3,16 +3,17 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { DocumentsFilters, type DocumentFilterValues, type LangFilterValue } from '@/app/(site)/shared/filter-controls';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import {
   DOCUMENT_TYPES,
   DOCUMENT_LANGUAGES,
-  getCatalogItems,
+  getCatalogLookupItems,
   getDocuments,
   getDocumentsPage,
   getSite,
-  type CatalogListItem,
+  type CatalogLookupItem,
   type Document,
   type DocumentLanguage,
   type DocumentType,
@@ -35,12 +36,7 @@ type PageProps = {
   searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
 };
 
-type LangFilterValue = DocumentLanguage | 'all';
-
-type FilterState = {
-  types: DocumentType[];
-  lang: LangFilterValue;
-};
+type FilterState = DocumentFilterValues;
 
 const DOCUMENT_TYPE_VALUES = new Set<DocumentType>(Array.from(DOCUMENT_TYPES));
 const DOCUMENT_LANGUAGE_VALUES = new Set<DocumentLanguage>(Array.from(DOCUMENT_LANGUAGES));
@@ -61,7 +57,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
     getDocuments(),
     getDocumentsPage(),
     getSiteShellData(locale),
-    getCatalogItems(locale),
+    getCatalogLookupItems(locale),
   ]);
 
   const filteredDocuments = applyFilters(documents, filters);
@@ -82,6 +78,23 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
   const emptyStateMessage = resolveEmptyState(pageContent, locale);
   const relatedProductsLabel = resolveRelatedProductsLabel(pageContent, locale);
   const resultsLabel = resolveResultsLabel(pageContent, locale, sortedDocuments.length);
+  const typeOptions = DOCUMENT_TYPES.map((type) => ({
+    value: type,
+    label: resolveTypeLabelValue(pageContent, locale, type),
+  }));
+  const languageOptions = LANGUAGE_FILTER_VALUES.map((value) => {
+    if (value === 'all') {
+      return { value, label: languageAllLabel };
+    }
+    return {
+      value,
+      label: resolveLanguageLabelValue(pageContent, locale, value),
+    } satisfies { value: LangFilterValue; label: string };
+  });
+  const initialFilterValues: DocumentFilterValues = {
+    types: filters.types,
+    lang: filters.lang,
+  };
 
   return (
     <SiteShell
@@ -98,73 +111,15 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
           {pageDescription ? <p className="text-base text-zinc-600">{pageDescription}</p> : null}
         </header>
         <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-          <form method="get" className="space-y-6">
-            <fieldset>
-              <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {typeLegendLabel}
-              </legend>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {DOCUMENT_TYPES.map((type) => {
-                  const id = `type-${type}`;
-                  const label = resolveTypeLabelValue(pageContent, locale, type);
-                  return (
-                    <label key={type} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
-                      <input
-                        id={id}
-                        type="checkbox"
-                        name="type"
-                        value={type}
-                        defaultChecked={filters.types.includes(type)}
-                        className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      {label}
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                {languageLegendLabel}
-              </legend>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {LANGUAGE_FILTER_VALUES.map((value) => {
-                  const id = `lang-${value}`;
-                  const isAll = value === 'all';
-                  const label = isAll
-                    ? languageAllLabel
-                    : resolveLanguageLabelValue(pageContent, locale, value as DocumentLanguage);
-                  return (
-                    <label key={value} htmlFor={id} className="flex items-center gap-2 text-sm text-zinc-700">
-                      <input
-                        id={id}
-                        type="radio"
-                        name="lang"
-                        value={value}
-                        defaultChecked={filters.lang === value}
-                        className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      {label}
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                {applyLabel}
-              </button>
-              <Link
-                href={buildPath(locale, ['documents'])}
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              >
-                {resetLabel}
-              </Link>
-            </div>
-          </form>
+          <DocumentsFilters
+            typeOptions={typeOptions}
+            languageOptions={languageOptions}
+            applyLabel={applyLabel}
+            resetLabel={resetLabel}
+            initialValues={initialFilterValues}
+            typeLegend={typeLegendLabel}
+            languageLegend={languageLegendLabel}
+          />
         </section>
         <section className="space-y-6">
           <p className="text-sm text-zinc-500">{resultsLabel}</p>
@@ -463,8 +418,8 @@ function resolveResultsLabel(
   return template.length ? template.replace('{count}', String(count)) : '';
 }
 
-function buildCatalogLookup(items: CatalogListItem[]): Map<string, CatalogListItem> {
-  const map = new Map<string, CatalogListItem>();
+function buildCatalogLookup(items: CatalogLookupItem[]): Map<string, CatalogLookupItem> {
+  const map = new Map<string, CatalogLookupItem>();
   for (const item of items) {
     map.set(item.id, item);
     map.set(item.slug, item);
@@ -477,8 +432,8 @@ function buildCatalogLookup(items: CatalogListItem[]): Map<string, CatalogListIt
   return map;
 }
 
-function resolveRelatedProducts(document: Document, lookup: Map<string, CatalogListItem>): CatalogListItem[] {
-  const related: CatalogListItem[] = [];
+function resolveRelatedProducts(document: Document, lookup: Map<string, CatalogLookupItem>): CatalogLookupItem[] {
+  const related: CatalogLookupItem[] = [];
   const seen = new Set<string>();
   for (const key of document.relatedProductIds) {
     const normalized = key.trim();

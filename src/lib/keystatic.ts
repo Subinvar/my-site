@@ -428,6 +428,13 @@ export type CatalogItem = CatalogListItem & {
   content: MarkdocContent;
 };
 
+export type CatalogLookupItem = {
+  id: string;
+  slug: string;
+  slugByLocale: Partial<Record<Locale, string>>;
+  title: string;
+};
+
 export type CatalogSummary = {
   id: string;
   slugByLocale: Partial<Record<Locale, string>>;
@@ -1213,6 +1220,27 @@ export async function getAllPosts(): Promise<PostSummary[]> {
   });
 }
 
+function mapCatalogLookupItem(
+  entry: RawCatalogEntry,
+  key: string,
+  locale: Locale
+): CatalogLookupItem | null {
+  const slugByLocale = mapLocalizedSlugs(entry.slug);
+  const slug = slugByLocale[locale];
+  if (!slug) {
+    return null;
+  }
+
+  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
+
+  return {
+    id: computeEntryId(entry, key),
+    slug,
+    slugByLocale,
+    title,
+  } satisfies CatalogLookupItem;
+}
+
 function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale): CatalogListItem | null {
   const slugByLocale = mapLocalizedSlugs(entry.slug);
   const slug = slugByLocale[locale];
@@ -1303,6 +1331,24 @@ export async function getCatalogItems(locale: Locale): Promise<CatalogListItem[]
       continue;
     }
     const mapped = mapCatalogListItem(entry, key, locale);
+    if (!mapped) {
+      continue;
+    }
+    items.push(mapped);
+  }
+
+  return items;
+}
+
+export async function getCatalogLookupItems(locale: Locale): Promise<CatalogLookupItem[]> {
+  const entries = await readCatalogCollection();
+  const items: CatalogLookupItem[] = [];
+
+  for (const { entry, key } of entries) {
+    if (!isPublished(entry)) {
+      continue;
+    }
+    const mapped = mapCatalogLookupItem(entry, key, locale);
     if (!mapped) {
       continue;
     }
