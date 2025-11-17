@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { defaultLocale, locales, type Locale } from "./src/lib/i18n";
+import { defaultLocale, locales, type Locale } from "./lib/i18n";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 const LOCALE_HEADER = "x-site-locale";
