@@ -42,6 +42,18 @@ NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=...
 NEXT_TURBOPACK_EXPERIMENTAL_USE_SYSTEM_TLS_CERTS=1
 ```
 
+Для работы серверной формы контактов добавьте SMTP-настройки (локально в `.env.local` и в переменные Vercel):
+
+```ini
+SMTP_HOST=... # хост SMTP-сервера (например, smtp.yandex.ru)
+SMTP_PORT=587 # порт: 465 для SSL или 587 для STARTTLS
+SMTP_USER=... # логин/отправитель
+SMTP_PASS=... # пароль или App Password
+LEADS_TO=...  # адрес получателя лидов
+```
+
+Значения берите у вашего почтового/SMTP‑провайдера или сервисов вроде Postmark, Mailgun, Yandex/Google (с app password).
+
 ## Структура контента
 
 - `content/site/index.json` — глобальные настройки (название, контакты, SEO, домен).
