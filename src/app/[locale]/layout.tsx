@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { buildPath } from '@/lib/paths';
 import { getSite } from '@/lib/keystatic';
@@ -81,5 +83,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     notFound();
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
 }
