@@ -74,7 +74,7 @@ function removeDefaultLocalePrefix(pathname: string): string {
   return stripped.startsWith("/") ? stripped : `/${stripped}`;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/keystatic" || pathname.startsWith("/keystatic/")) {
