@@ -8,12 +8,18 @@
 - http://localhost:3000/o-kompanii — русская версия страницы «О компании».
 - http://localhost:3000/en/about — английская версия страницы «About».
 
+## Документы и сертификаты
+- http://localhost:3000/documents — русская страница с фильтрами по типу документа, языку и связанным продуктам.
+- http://localhost:3000/en/documents — английская версия той же страницы.
+
 ## Каталог продукции
 - http://localhost:3000/catalog — русская версия каталога с фильтрами по категориям, процессам, основам и наполнителям.
 - http://localhost:3000/en/catalog — английская версия каталога с тем же набором фильтров.
+- http://localhost:3000/catalog/vspomogatelnij-kley-komplekt и http://localhost:3000/en/catalog/aux-adhesive-kit — продукт «Клей-комплект для стержней» / «Core adhesive kit».
+- http://localhost:3000/catalog/vspomogatelnij-ochistitel и http://localhost:3000/en/catalog/aux-cleaning-solution — продукт «Отмывающий состав для оснастки» / «Tooling cleaning solution».
+- http://localhost:3000/catalog/vspomogatelnaya-razdelitelnaya-smazka и http://localhost:3000/en/catalog/aux-release-agent — продукт «Вспомогательная разделительная смазка» / «Auxiliary release agent».
 - http://localhost:3000/catalog/svyazuyushchee-alpha-pep и http://localhost:3000/en/catalog/alpha-pep-binder — продукт «Связующее для альфа-сет и Пеп-сет» / «Binder for Alpha-set and Pep-set».
 - http://localhost:3000/catalog/svyazuyushchee-furan и http://localhost:3000/en/catalog/furan-resol-binder — продукт «Связующее для фурановых смол» / «Furan-resol binder».
-- http://localhost:3000/catalog/vspomogatelnaya-razdelitelnaya-smazka и http://localhost:3000/en/catalog/aux-release-agent — продукт «Вспомогательная разделительная смазка» / «Auxiliary release agent».
 - http://localhost:3000/catalog/pokrytie-spirtovoe-grafit и http://localhost:3000/en/catalog/alcohol-graphite-coating — продукт «Спиртовое графитовое покрытие» / «Alcohol-based graphite coating».
 - http://localhost:3000/catalog/pokrytie-barernoe-magniy и http://localhost:3000/en/catalog/barrier-magnesium-coating — продукт «Барьерное магниевое покрытие» / «Barrier magnesium coating».
 - http://localhost:3000/catalog/pokrytie-vodnoe-zirkon и http://localhost:3000/en/catalog/water-zircon-coating — продукт «Водное циркониевое покрытие» / «Water zircon coating».
@@ -21,7 +27,9 @@
 
 ## Блог и материалы
 - http://localhost:3000/posts/modernizaciya-proizvodstva — опубликованный пост блога на русском языке.
-- http://localhost:3000/en/posts/modernising-the-plant — локализованный вариант поста на английском.
+- http://localhost:3000/en/posts/modernising-operations — локализованный вариант поста на английском.
+- http://localhost:3000/posts/snizhenie-prigara — кейс про снижение пригара в русской локали.
+- http://localhost:3000/en/posts/reducing-burn-on — локализованный вариант кейса.
 - http://localhost:3000/en/posts/[slug] и http://localhost:3000/posts/[slug] — динамические маршруты, которые появятся для новых материалов при добавлении записей в Keystatic.
 
 ## Служебные и технические маршруты
