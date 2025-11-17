@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "coating-barrier-magnesium",
-    "slug": "coating-barrier-magnesium"
-  },
+  "slugKey": "coating-barrier-magnesium",
   "published": true,
   "slug": {
     "ru": "pokrytie-barernoe-magniy",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Обеспечивает устойчивость форм при ЛГМ и ЖСС процессах с высокими температурами.",
-    "en": "Provides high-temperature stability for V-Process and lost foam moulding." 
+    "en": "Provides high-temperature stability for V-Process and lost foam moulding."
   },
   "content": {
     "ru": null,

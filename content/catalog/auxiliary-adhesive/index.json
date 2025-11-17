@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "auxiliary-adhesive",
-    "slug": "auxiliary-adhesive"
-  },
+  "slugKey": "auxiliary-adhesive",
   "published": true,
   "slug": {
     "ru": "vspomogatelnij-kley-komplekt",

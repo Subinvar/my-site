@@ -89,13 +89,9 @@ const localizedSeoTextFields = (label: string, options: LocalizedFieldOptions = 
   );
 
 const slugKeyField = (entityLabel: string) =>
-  fields.slug({
-    name: {
-      label: `${entityLabel} — название`,
-    },
-    slug: {
-      label: `${entityLabel} — slug`,
-    },
+  fields.text({
+    label: `${entityLabel} — slug`,
+    validation: { isRequired: true },
   });
 
 const localizedSeoGroup = () =>

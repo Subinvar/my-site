@@ -1,9 +1,6 @@
 {
   "id": "about",
-  "slugKey": {
-    "name": "about",
-    "slug": "about"
-  },
+  "slugKey": "about",
   "published": true,
   "slug": {
     "ru": "o-kompanii",

@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "binder-alpha-pepset",
-    "slug": "binder-alpha-pepset"
-  },
+  "slugKey": "binder-alpha-pepset",
   "published": true,
   "slug": {
     "ru": "svyazuyushchee-alpha-pep",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Предварительно катализированная система для стабильного отверждения альфа-сет и Пеп-сет смесей.",
-    "en": "Pre-catalysed system that stabilises Alpha-set and Pep-set curing." 
+    "en": "Pre-catalysed system that stabilises Alpha-set and Pep-set curing."
   },
   "content": {
     "ru": null,

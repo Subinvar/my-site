@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "coating-alcohol-graphite",
-    "slug": "coating-alcohol-graphite"
-  },
+  "slugKey": "coating-alcohol-graphite",
   "published": true,
   "slug": {
     "ru": "pokrytie-spirtovoe-grafit",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Гладкая поверхность отливок при кронинг и кокильных процессах.",
-    "en": "Smooth casting finish for Croning and permanent mould applications." 
+    "en": "Smooth casting finish for Croning and permanent mould applications."
   },
   "content": {
     "ru": null,
