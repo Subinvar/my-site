@@ -145,7 +145,7 @@ export async function sendContact(formData: FormData) {
       ].join('\n'),
       replyTo: hasEmail ? email : undefined,
     });
-  } catch (error) {
+  } catch {
     redirect(errorRedirect);
   }
 
