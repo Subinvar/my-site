@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "auxiliary-release",
-    "slug": "auxiliary-release"
-  },
+  "slugKey": "auxiliary-release",
   "published": true,
   "slug": {
     "ru": "vspomogatelnaya-razdelitelnaya-smazka",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Повышает долговечность оснастки и облегчает выбивку стержней.",
-    "en": "Extends tooling life and simplifies core knock-out." 
+    "en": "Extends tooling life and simplifies core knock-out."
   },
   "content": {
     "ru": null,

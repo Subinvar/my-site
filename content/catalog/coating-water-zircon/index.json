@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "coating-water-zircon",
-    "slug": "coating-water-zircon"
-  },
+  "slugKey": "coating-water-zircon",
   "published": true,
   "slug": {
     "ru": "pokrytie-vodnoe-zirkon",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Оптимизировано для Колд-Бокс и ПГС стержней с быстрым высыханием.",
-    "en": "Optimised for Cold-Box and no-bake cores with fast drying." 
+    "en": "Optimised for Cold-Box and no-bake cores with fast drying."
   },
   "content": {
     "ru": null,

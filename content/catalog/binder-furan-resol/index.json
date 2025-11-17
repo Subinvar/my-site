@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "binder-furan-resol",
-    "slug": "binder-furan-resol"
-  },
+  "slugKey": "binder-furan-resol",
   "published": true,
   "slug": {
     "ru": "svyazuyushchee-furan",
@@ -14,7 +11,7 @@
   },
   "excerpt": {
     "ru": "Высокая прочность и контролируемая реакция для фурановых и резол-CO₂ процессов.",
-    "en": "High strength and controlled reaction for furan and Resol-CO₂ moulding." 
+    "en": "High strength and controlled reaction for furan and Resol-CO₂ moulding."
   },
   "content": {
     "ru": null,
