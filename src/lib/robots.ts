@@ -16,13 +16,18 @@ export function buildSitemapUrl(baseUrl: string | null): string {
 export async function getRobotsMetadata(): Promise<MetadataRoute.Robots> {
   const site = await getSite(defaultLocale);
   const sitemap = buildSitemapUrl(site.seo.canonicalBase ?? null);
+  const disallow: string[] = ['/api/keystatic'];
+
+  if (process.env.NODE_ENV === 'production') {
+    disallow.unshift('/keystatic');
+  }
 
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/keystatic', '/api/keystatic'],
+        disallow,
       },
     ],
     sitemap,

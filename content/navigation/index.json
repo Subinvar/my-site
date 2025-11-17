@@ -15,6 +15,34 @@
       "order": 0
     },
     {
+      "id": "catalog",
+      "label": {
+        "ru": "Каталог",
+        "en": "Catalog"
+      },
+      "path": {
+        "ru": "catalog",
+        "en": "catalog"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 10
+    },
+    {
+      "id": "documents",
+      "label": {
+        "ru": "Документы",
+        "en": "Documents"
+      },
+      "path": {
+        "ru": "documents",
+        "en": "documents"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 20
+    },
+    {
       "id": "about",
       "label": {
         "ru": "О компании",
@@ -26,7 +54,21 @@
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 10
+      "order": 30
+    },
+    {
+      "id": "contacts",
+      "label": {
+        "ru": "Контакты",
+        "en": "Contacts"
+      },
+      "path": {
+        "ru": "contacts",
+        "en": "contacts"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 40
     },
     {
       "id": "linkedin",
@@ -40,7 +82,7 @@
       },
       "externalUrl": "https://www.linkedin.com/company/intema",
       "newTab": true,
-      "order": 20
+      "order": 50
     }
   ],
   "footerLinks": [
@@ -59,6 +101,62 @@
       "order": 0
     },
     {
+      "id": "footer-catalog",
+      "label": {
+        "ru": "Каталог",
+        "en": "Catalog"
+      },
+      "path": {
+        "ru": "catalog",
+        "en": "catalog"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 10
+    },
+    {
+      "id": "footer-documents",
+      "label": {
+        "ru": "Документы",
+        "en": "Documents"
+      },
+      "path": {
+        "ru": "documents",
+        "en": "documents"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 20
+    },
+    {
+      "id": "footer-about",
+      "label": {
+        "ru": "О компании",
+        "en": "About"
+      },
+      "path": {
+        "ru": "o-kompanii",
+        "en": "about"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 30
+    },
+    {
+      "id": "footer-contacts",
+      "label": {
+        "ru": "Контакты",
+        "en": "Contacts"
+      },
+      "path": {
+        "ru": "contacts",
+        "en": "contacts"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 40
+    },
+    {
       "id": "footer-news",
       "label": {
         "ru": "Новости",
@@ -70,21 +168,7 @@
       },
       "externalUrl": "https://www.linkedin.com/company/intema/posts/",
       "newTab": true,
-      "order": 10
-    },
-    {
-      "id": "footer-contacts",
-      "label": {
-        "ru": "Контакты",
-        "en": "Contact"
-      },
-      "path": {
-        "ru": "o-kompanii",
-        "en": "about"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 20
+      "order": 50
     }
   ]
 }
