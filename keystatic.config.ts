@@ -346,6 +346,26 @@ export default config({
           },
           { label: 'Сообщения об ошибках' }
         ),
+        feed: fields.object(
+          {
+            meta: fields.object(
+              {
+                selfLabel: localizedText('Подпись ссылки на ленту', { isRequired: true }),
+                updatedLabel: localizedText('Подпись даты обновления ленты', { isRequired: true }),
+              },
+              { label: 'Метаданные ленты' }
+            ),
+            columns: fields.object(
+              {
+                entry: localizedText('Название колонки «Запись»', { isRequired: true }),
+                published: localizedText('Название колонки «Опубликовано»', { isRequired: true }),
+                updated: localizedText('Название колонки «Обновлено»', { isRequired: true }),
+              },
+              { label: 'Колонки таблицы ленты' }
+            ),
+          },
+          { label: 'Лента' }
+        ),
         catalog: fields.object(
           {
             attributes: fields.object(
@@ -368,6 +388,20 @@ export default config({
             footerLabel: localizedText('Aria-label навигации в подвале', { isRequired: true }),
           },
           { label: 'Навигация' }
+        ),
+        sitemap: fields.object(
+          {
+            pageTitle: localizedText('Заголовок страницы карты сайта', { isRequired: true }),
+            columns: fields.object(
+              {
+                page: localizedText('Название колонки «Страница»', { isRequired: true }),
+                alternates: localizedText('Название колонки «Альтернативные языки»', { isRequired: true }),
+                updated: localizedText('Название колонки «Обновлено»', { isRequired: true }),
+              },
+              { label: 'Колонки таблицы карты сайта' }
+            ),
+          },
+          { label: 'Карта сайта' }
         ),
       },
     }),
