@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { ImageResponse } from 'next/og';
 
 import { assertKnownLocale } from '@/lib/markdoc';
@@ -13,7 +12,6 @@ type OgSeo = {
 type OgEntity = {
   title: string;
   description: string | null;
-  excerpt: string | null;
   seo: OgSeo;
 };
 
@@ -34,22 +32,11 @@ export const runtime = 'edge';
 export const size = { width: 1200, height: 630 } as const;
 export const contentType = 'image/png';
 
-const MAX_TITLE_LENGTH = 120;
-const MAX_DESCRIPTION_LENGTH = 220;
+const MAX_TITLE_LENGTH = 80;
+const MAX_DESCRIPTION_LENGTH = 160;
 
-const resolveBaseUrl = async () => {
-  const headerList = await headers();
-  const host = headerList.get('x-forwarded-host') ?? headerList.get('host');
-  if (!host) {
-    return process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-  }
-  const protocol = headerList.get('x-forwarded-proto') ?? (host.includes('localhost') ? 'http' : 'https');
-  return `${protocol}://${host}`;
-};
-
-async function fetchOgData(locale: string, slug: string): Promise<OgResponse | null> {
-  const baseUrl = await resolveBaseUrl();
-  const url = `${baseUrl}/api/og-data?locale=${encodeURIComponent(locale)}&slug=${encodeURIComponent(
+async function fetchOgData(origin: string, locale: string, slug: string): Promise<OgResponse | null> {
+  const url = `${origin}/api/og-data?locale=${encodeURIComponent(locale)}&slug=${encodeURIComponent(
     slug
   )}&kind=post`;
   const response = await fetch(url, { cache: 'no-store' });
@@ -196,16 +183,20 @@ const buildImage = (title: string, description: string | null, brand: string, do
   );
 };
 
-export default async function ImageOG({
-  params,
-}: {
-  params: { locale: string; slug: string };
-}) {
+export default async function ImageOG(
+  {
+    params,
+  }: {
+    params: { locale: string; slug: string };
+  },
+  { request }: { request: Request }
+) {
   const { locale: rawLocale, slug } = params;
   assertKnownLocale(rawLocale);
   const locale = rawLocale;
 
-  const ogData = await fetchOgData(locale, slug);
+  const origin = new URL(request.url).origin;
+  const ogData = await fetchOgData(origin, locale, slug);
 
   const fallbackTitle = ogData?.site.name ?? 'Intema';
   const fallbackDescription =
@@ -228,7 +219,6 @@ export default async function ImageOG({
       ogData.entity.seo?.ogDescription ??
         ogData.entity.seo?.description ??
         ogData.entity.description ??
-        ogData.entity.excerpt ??
         fallbackDescription,
       MAX_DESCRIPTION_LENGTH
     ) ?? fallbackDescription;

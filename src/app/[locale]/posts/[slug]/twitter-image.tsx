@@ -38,7 +38,7 @@ const MAX_DESCRIPTION_LENGTH = 160;
 async function fetchOgData(origin: string, locale: string, slug: string): Promise<OgResponse | null> {
   const url = `${origin}/api/og-data?locale=${encodeURIComponent(locale)}&slug=${encodeURIComponent(
     slug
-  )}&kind=page`;
+  )}&kind=post`;
   const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) {
     return null;
@@ -183,7 +183,7 @@ const buildImage = (title: string, description: string | null, brand: string, do
   );
 };
 
-export default async function ImageOG(
+export default async function ImageTwitter(
   {
     params,
   }: {

@@ -183,7 +183,7 @@ const buildImage = (title: string, description: string | null, brand: string, do
   );
 };
 
-export default async function ImageOG(
+export default async function ImageTwitter(
   {
     params,
   }: {
