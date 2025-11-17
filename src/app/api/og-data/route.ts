@@ -4,6 +4,8 @@ import { assertKnownLocale } from '@/lib/markdoc';
 import { getPageBySlug, getPostBySlug, getSite } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const localeParam = searchParams.get('locale');
@@ -37,15 +39,14 @@ export async function GET(request: Request) {
       : await getPageBySlug(slug, locale);
 
   if (!entity) {
-    return NextResponse.json({ site: sitePayload, entity: null });
+    return NextResponse.json({ site: sitePayload, entity: null }, { status: 404 });
   }
 
   return NextResponse.json({
     site: sitePayload,
     entity: {
       title: entity.title,
-      description: entity.description ?? null,
-      excerpt: entity.excerpt ?? null,
+      description: entity.description ?? entity.excerpt ?? null,
       seo: entity.seo ?? null,
     },
   });
