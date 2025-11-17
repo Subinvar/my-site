@@ -949,60 +949,89 @@ const readCatalogPageSingleton = cache(async (): Promise<CatalogPageSingleton | 
   return (await readFallbackSingleton<CatalogPageSingleton>('content/catalog-page/index.json')) ?? null;
 });
 
+function mergeCollections<T>(
+  primary: Array<{ key: string; entry: T }>,
+  fallback: Array<{ key: string; entry: T }>
+): Array<{ key: string; entry: T }> {
+  if (fallback.length === 0) {
+    return primary;
+  }
+
+  const merged = new Map<string, { key: string; entry: T }>();
+  for (const entry of fallback) {
+    merged.set(entry.key, entry);
+  }
+  for (const entry of primary) {
+    merged.set(entry.key, entry);
+  }
+  return Array.from(merged.values());
+}
+
 const readPagesCollection = cache(async () => {
   const reader = getReader();
+  let entries: Array<{ key: string; entry: RawPageEntry }> = [];
   try {
-    const entries = await reader.collections.pages.all({ resolveLinkedFiles: true });
-    if (entries.length > 0) {
-      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPageEntry }));
-    }
+    const result = await reader.collections.pages.all({ resolveLinkedFiles: true });
+    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPageEntry }));
   } catch {
     // fall back to file system
   }
-  return readFallbackCollection<RawPageEntry>('content/pages');
+
+  const fallback = await readFallbackCollection<RawPageEntry>('content/pages');
+  if (entries.length === 0) {
+    return fallback;
+  }
+  return mergeCollections(entries, fallback);
 });
 
 const readPostsCollection = cache(async () => {
   const reader = getReader();
+  let entries: Array<{ key: string; entry: RawPostEntry }> = [];
   try {
-    const entries = await reader.collections.posts.all({ resolveLinkedFiles: true });
-    if (entries.length > 0) {
-      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPostEntry }));
-    }
+    const result = await reader.collections.posts.all({ resolveLinkedFiles: true });
+    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPostEntry }));
   } catch {
     // fall back to file system
   }
-  return readFallbackCollection<RawPostEntry>('content/posts');
+
+  const fallback = await readFallbackCollection<RawPostEntry>('content/posts');
+  if (entries.length === 0) {
+    return fallback;
+  }
+  return mergeCollections(entries, fallback);
 });
 
 const readCatalogCollection = cache(async () => {
   const reader = getReader();
+  let entries: Array<{ key: string; entry: RawCatalogEntry }> = [];
   try {
-    const entries = await reader.collections.catalog.all({ resolveLinkedFiles: true });
-    if (entries.length > 0) {
-      const mapped = entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawCatalogEntry }));
-      ensureUniqueLocalizedSlugs(mapped, 'catalog');
-      return mapped;
-    }
+    const result = await reader.collections.catalog.all({ resolveLinkedFiles: true });
+    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawCatalogEntry }));
   } catch {
     // fall back to file system
   }
+
   const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
-  ensureUniqueLocalizedSlugs(fallback, 'catalog');
-  return fallback;
+  const merged = entries.length === 0 ? fallback : mergeCollections(entries, fallback);
+  ensureUniqueLocalizedSlugs(merged, 'catalog');
+  return merged;
 });
 
 const readDocumentsCollection = cache(async () => {
   const reader = getReader();
+  let entries: Array<{ key: string; entry: RawDocumentEntry }> = [];
   try {
-    const entries = await reader.collections.documents.all({ resolveLinkedFiles: true });
-    if (entries.length > 0) {
-      return entries.map(({ slug, entry }) => ({ key: slug, entry: entry as RawDocumentEntry }));
-    }
+    const result = await reader.collections.documents.all({ resolveLinkedFiles: true });
+    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawDocumentEntry }));
   } catch {
     // fall back to file system
   }
-  return readFallbackCollection<RawDocumentEntry>('content/documents');
+
+  const fallback = await readFallbackCollection<RawDocumentEntry>('content/documents');
+  if (entries.length === 0) {
+    return fallback;
+  }
+  return mergeCollections(entries, fallback);
 });
 
 function resolveNavigationLinks(
