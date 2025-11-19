@@ -146,16 +146,14 @@ const objectItemLabel = (fallback: string) => (props: ObjectItemLabelProps) => {
   return fallback;
 };
 
-const storage =
-  process.env.KEYSTATIC_STORAGE_KIND === 'github'
-    ? ({
-        kind: 'github' as const,
-        repo: {
-          owner: 'Subinvar',
-          name: 'my-site',
-        },
-      })
-    : ({ kind: 'local' as const });
+const storage = {
+  kind: 'github' as const,
+  repo: {
+    owner: 'Subinvar',
+    name: 'my-site',
+    branch: 'main',
+  },
+};
 
 export default config({
   storage,
