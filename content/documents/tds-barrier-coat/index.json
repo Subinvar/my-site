@@ -1,0 +1,18 @@
+{
+  "id": "tds-barrier-coat",
+  "slugKey": "tds-barrier-coat",
+  "published": true,
+  "title": {
+    "ru": "Технические данные: противопригарное покрытие Barrier Coat 230",
+    "en": "Technical data sheet: Barrier Coat 230 release coating"
+  },
+  "file": "uploads/tds-coating-ru.pdf",
+  "type": "tds",
+  "lang": "ru",
+  "relatedProducts": [
+    {
+      "value": "coating-barrier-magnesium"
+    }
+  ],
+  "updatedAt": "2024-04-22T09:30"
+}

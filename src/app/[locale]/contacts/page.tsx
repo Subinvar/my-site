@@ -297,7 +297,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
         <div className="space-y-4">
           <div className="overflow-hidden rounded-xl border border-zinc-200 shadow-sm">
             <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=16.3725%2C48.2082%2C16.3825%2C48.2182&layer=mapnik&marker=48.2132%2C16.3775"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=37.838%2C55.992%2C37.854%2C56&layer=mapnik&marker=55.996%2C37.845"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="h-72 w-full border-0"
