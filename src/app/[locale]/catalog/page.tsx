@@ -287,7 +287,10 @@ function CatalogCard({ item, locale, detailLabel }: CatalogCardProps) {
   const href = buildPath(locale, ['catalog', item.slug]);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
+    <article
+      className="flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm"
+      data-testid="catalog-item"
+    >
       {image ? (
         <div className="relative h-48 w-full">
           <Image

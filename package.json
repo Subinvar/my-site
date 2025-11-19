@@ -9,7 +9,10 @@
     "lint": "eslint",
     "knip": "knip",
     "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,@tailwindcss/postcss,postcss,tailwindcss,sharp,lightningcss,lightningcss-wasm,lightningcss-win32-x64-msvc,unrs-resolver",
-    "test": "tsx --test"
+    "test": "tsx --test",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@keystatic/core": "^0.5.48",

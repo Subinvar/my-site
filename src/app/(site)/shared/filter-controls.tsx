@@ -139,6 +139,7 @@ export function CatalogFilters({
             name={name}
             value={option.value}
             checked={selected.includes(option.value)}
+            data-testid="catalog-filter-checkbox"
             onChange={(event) =>
               updateState((prev) => {
                 const nextValues = toggleValue(prev[name] as T[], option.value, event.target.checked);

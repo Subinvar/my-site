@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { defaultLocale, locales, type Locale } from "./lib/i18n";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
-const LOCALE_HEADER = "x-site-locale";
+const LOCALE_HEADER = "x-middleware-request-locale";
 
 const LOCALE_PREFIXES = new Set(locales);
 
@@ -18,9 +18,30 @@ function withLocaleCookie(response: NextResponse, locale: Locale): NextResponse 
   return response;
 }
 
-function nextWithLocale(request: NextRequest, locale: Locale): NextResponse {
+function prepareRequestHeaders(request: NextRequest, locale: Locale): Headers {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_HEADER, locale);
+  const existingCookies = requestHeaders.get('cookie');
+  const cookieMap = new Map<string, string>();
+  if (existingCookies) {
+    for (const chunk of existingCookies.split(';')) {
+      const [rawName, ...rest] = chunk.split('=');
+      if (!rawName) continue;
+      const name = rawName.trim();
+      if (!name) continue;
+      cookieMap.set(name, rest.join('=').trim());
+    }
+  }
+  cookieMap.set(LOCALE_COOKIE, locale);
+  const cookieHeader = Array.from(cookieMap.entries())
+    .map(([name, value]) => `${name}=${value}`)
+    .join('; ');
+  requestHeaders.set('cookie', cookieHeader);
+  return requestHeaders;
+}
+
+function nextWithLocale(request: NextRequest, locale: Locale): NextResponse {
+  const requestHeaders = prepareRequestHeaders(request, locale);
   const response = NextResponse.next({
     request: {
       headers: requestHeaders,
@@ -30,8 +51,7 @@ function nextWithLocale(request: NextRequest, locale: Locale): NextResponse {
 }
 
 function rewriteWithLocale(request: NextRequest, url: URL, locale: Locale): NextResponse {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(LOCALE_HEADER, locale);
+  const requestHeaders = prepareRequestHeaders(request, locale);
   const response = NextResponse.rewrite(url, {
     request: {
       headers: requestHeaders,
