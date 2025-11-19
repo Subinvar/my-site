@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts -- Нам нужен синхронный скрипт до гидратации, чтобы язык <html> совпадал с URL сразу после перезагрузки */
 import type { ReactNode } from 'react';
 import { cookies, headers } from 'next/headers';
 
