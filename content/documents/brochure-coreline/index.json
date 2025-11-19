@@ -1,0 +1,21 @@
+{
+  "id": "brochure-coreline",
+  "slugKey": "brochure-coreline",
+  "published": true,
+  "title": {
+    "ru": "Брошюра CoreLine: оборудование и расходники для стержневого участка",
+    "en": "CoreLine brochure: equipment and consumables for core shops"
+  },
+  "file": "uploads/brochure-coreline-en.pdf",
+  "type": "brochure",
+  "lang": "en",
+  "relatedProducts": [
+    {
+      "value": "auxiliary-adhesive"
+    },
+    {
+      "value": "auxiliary-release"
+    }
+  ],
+  "updatedAt": "2024-03-10T14:45"
+}

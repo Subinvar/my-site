@@ -1,0 +1,21 @@
+{
+  "id": "certificate-iso9001",
+  "slugKey": "certificate-iso9001",
+  "published": true,
+  "title": {
+    "ru": "Сертификат ISO 9001:2015 на систему менеджмента качества",
+    "en": "ISO 9001:2015 quality management certificate"
+  },
+  "file": "uploads/certificate-iso9001.pdf",
+  "type": "certificate",
+  "lang": "ru",
+  "relatedProducts": [
+    {
+      "value": "binder-alpha-pepset"
+    },
+    {
+      "value": "auxiliary-cleaner"
+    }
+  ],
+  "updatedAt": "2024-05-15T10:00"
+}

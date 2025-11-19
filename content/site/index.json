@@ -39,6 +39,7 @@
       "en": "We help foundries cut scrap, speed up mould preparation, and improve casting surface quality."
     },
     "ogImage": {
+      "image": "uploads/og-default.svg",
       "alt": "Команда Интема Групп обсуждает применение противопригарных покрытий"
     },
     "canonicalBase": "https://intema.ru",
