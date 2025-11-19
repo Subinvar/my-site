@@ -1,0 +1,10 @@
+import type { BasicFormField } from "../../api.d.ts";
+import type { RequiredValidation } from "../utils.d.ts";
+export declare function pathReference<IsRequired extends boolean | undefined>({ label, pattern, validation, description, }: {
+    label: string;
+    pattern?: string;
+    validation?: {
+        isRequired?: IsRequired;
+    };
+    description?: string;
+} & RequiredValidation<IsRequired>): BasicFormField<string | null, string | (IsRequired extends true ? never : null)>;

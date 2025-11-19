@@ -509,7 +509,7 @@ export default config({
         content: localizedMarkdocContent('Контент (Markdoc)'),
         tags: fields.array(fields.text({ label: 'Тег' }), {
           label: 'Теги',
-          itemLabel: (props) => props.value ?? 'Тег',
+          itemLabel: (props: { value?: string | null }) => props.value ?? 'Тег',
         }),
         cover: fields.object({
           image: imageField('Обложка'),
@@ -555,7 +555,7 @@ export default config({
           }),
           {
             label: 'Связанные продукты',
-            itemLabel: ({ value }) => value ?? 'Товар',
+            itemLabel: ({ value }: { value?: string | null }) => value ?? 'Товар',
           }
         ),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
