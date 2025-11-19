@@ -972,7 +972,10 @@ const readPagesCollection = cache(async () => {
   let entries: Array<{ key: string; entry: RawPageEntry }> = [];
   try {
     const result = await reader.collections.pages.all({ resolveLinkedFiles: true });
-    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPageEntry }));
+    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+      key: slug,
+      entry: entry as RawPageEntry,
+    }));
   } catch {
     // fall back to file system
   }
@@ -989,7 +992,10 @@ const readPostsCollection = cache(async () => {
   let entries: Array<{ key: string; entry: RawPostEntry }> = [];
   try {
     const result = await reader.collections.posts.all({ resolveLinkedFiles: true });
-    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawPostEntry }));
+    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+      key: slug,
+      entry: entry as RawPostEntry,
+    }));
   } catch {
     // fall back to file system
   }
@@ -1006,7 +1012,10 @@ const readCatalogCollection = cache(async () => {
   let entries: Array<{ key: string; entry: RawCatalogEntry }> = [];
   try {
     const result = await reader.collections.catalog.all({ resolveLinkedFiles: true });
-    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawCatalogEntry }));
+    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+      key: slug,
+      entry: entry as RawCatalogEntry,
+    }));
   } catch {
     // fall back to file system
   }
@@ -1022,7 +1031,10 @@ const readDocumentsCollection = cache(async () => {
   let entries: Array<{ key: string; entry: RawDocumentEntry }> = [];
   try {
     const result = await reader.collections.documents.all({ resolveLinkedFiles: true });
-    entries = result.map(({ slug, entry }) => ({ key: slug, entry: entry as RawDocumentEntry }));
+    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+      key: slug,
+      entry: entry as RawDocumentEntry,
+    }));
   } catch {
     // fall back to file system
   }
