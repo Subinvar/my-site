@@ -205,7 +205,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
 
           <form
             action={sendContact}
-            method="post"
             className="space-y-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
           >
             <input type="hidden" name="locale" value={locale} />
