@@ -76,6 +76,7 @@ export async function sendContact(formData: FormData) {
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
   const successRedirect = `/${locale}/contacts?ok=1`;
   const errorRedirect = `/${locale}/contacts?ok=0`;
+  const isDryRun = process.env.LEADS_DRY_RUN === '1';
 
   const honeypot = formData.get('company')?.toString().trim();
   if (honeypot) {
@@ -110,6 +111,10 @@ export async function sendContact(formData: FormData) {
   }
 
   await new Promise((resolve) => setTimeout(resolve, 400));
+
+  if (isDryRun) {
+    redirect(successRedirect);
+  }
 
   const smtpHost = process.env.SMTP_HOST;
   const smtpPort = Number(process.env.SMTP_PORT ?? 587);
@@ -200,7 +205,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
 
           <form
             action={sendContact}
-            method="post"
             className="space-y-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
           >
             <input type="hidden" name="locale" value={locale} />
