@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { defaultLocale, locales, type Locale } from "./lib/i18n";
+import { defaultLocale, locales, type Locale } from "./i18n";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 const LOCALE_HEADER = "x-middleware-request-locale";
@@ -140,10 +140,3 @@ export function proxy(request: NextRequest) {
   url.pathname = `/${defaultLocale}${pathname}`.replace(/\/+/, "/");
   return rewriteWithLocale(request, url, defaultLocale);
 }
-
-export const config = {
-  matcher: [
-    "/((?!_next|api|keystatic|.*\\.[^/]+$).*)",
-    "/((?=.+\\.(?:xml|webmanifest)$).*)",
-  ],
-};
