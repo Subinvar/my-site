@@ -1,15 +1,10 @@
-import { NextResponse } from 'next/server';
+import type { MetadataRoute } from 'next';
 
 import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 import { HREFLANG_CODE } from '@/lib/seo';
 import { normalizeBaseUrl } from '@/lib/url';
-
-const XML_HEADER = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>`;
-
-const SITEMAP_NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-const XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
 type Collection = 'pages' | 'posts' | 'catalog';
 
@@ -18,12 +13,6 @@ type DatedEntry = {
   slugByLocale: Partial<Record<Locale, string | null | undefined>>;
   updatedAt?: string | null;
   date?: string | null;
-};
-
-type SitemapUrl = {
-  loc: string;
-  lastmod?: string;
-  alternates: Partial<Record<Locale, string>>;
 };
 
 const buildSegments = (collection: Collection, slug: string): string[] => {
@@ -69,7 +58,7 @@ const buildLocalizedUrls = (
   return record;
 };
 
-const toLastModified = (entry: DatedEntry): string | undefined => {
+const toLastModified = (entry: DatedEntry): Date | undefined => {
   const source = entry.updatedAt ?? entry.date;
   if (!source) {
     return undefined;
@@ -78,79 +67,56 @@ const toLastModified = (entry: DatedEntry): string | undefined => {
   if (Number.isNaN(timestamp)) {
     return undefined;
   }
-  return new Date(timestamp).toISOString();
+  return new Date(timestamp);
 };
 
-const createSitemapUrls = (baseUrl: string | null, entry: DatedEntry): SitemapUrl[] => {
-  const urls = buildLocalizedUrls(baseUrl, entry);
-  const lastmod = toLastModified(entry);
-  const sitemapUrls: SitemapUrl[] = [];
-
-  for (const locale of locales) {
-    const loc = urls[locale];
-    if (!loc) {
-      continue;
-    }
-    sitemapUrls.push({
-      loc,
-      lastmod,
-      alternates: urls,
-    });
-  }
-
-  return sitemapUrls;
-};
-
-const renderAlternateLinks = (alternates: Partial<Record<Locale, string>>): string => {
-  const links: string[] = [];
+const buildAlternateLanguages = (
+  alternates: Partial<Record<Locale, string>>
+): Record<string, string> | undefined => {
+  const languages: Record<string, string> = {};
 
   for (const locale of locales) {
     const href = alternates[locale];
     if (!href) {
       continue;
     }
-    links.push(
-      `    <xhtml:link rel="alternate" hreflang="${HREFLANG_CODE[locale]}" href="${href}" />`
-    );
+    languages[HREFLANG_CODE[locale]] = href;
   }
 
   const defaultHref = alternates[defaultLocale];
   if (defaultHref) {
-    links.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}" />`);
+    languages['x-default'] = defaultHref;
   }
 
-  return links.join('\n');
+  return Object.keys(languages).length ? languages : undefined;
 };
 
-const renderUrlElement = ({ loc, lastmod, alternates }: SitemapUrl): string => {
-  const alternateLinks = renderAlternateLinks(alternates);
+const createSitemapEntries = (
+  baseUrl: string | null,
+  entry: DatedEntry
+): MetadataRoute.Sitemap => {
+  const urls = buildLocalizedUrls(baseUrl, entry);
+  const lastModified = toLastModified(entry);
+  const entries: MetadataRoute.Sitemap = [];
 
-  const lastmodLine = lastmod ? `    <lastmod>${lastmod}</lastmod>` : '';
+  for (const locale of locales) {
+    const url = urls[locale];
+    if (!url) {
+      continue;
+    }
 
-  return [
-    '  <url>',
-    `    <loc>${loc}</loc>`,
-    lastmodLine,
-    alternateLinks,
-    '  </url>',
-  ]
-    .filter(Boolean)
-    .join('\n');
+    const languages = buildAlternateLanguages(urls);
+    entries.push({
+      url,
+      lastModified,
+      alternates: languages ? { languages } : undefined,
+    });
+  }
+
+  return entries;
 };
 
-const renderXml = (records: SitemapUrl[]): string => {
-  const urls = records.map(renderUrlElement).join('\n');
-  return [
-    XML_HEADER,
-    `<urlset xmlns="${SITEMAP_NAMESPACE}" xmlns:xhtml="${XHTML_NAMESPACE}" xml:lang="${defaultLocale}">`,
-    urls,
-    '</urlset>',
-  ]
-    .filter(Boolean)
-    .join('\n');
-};
-
-export async function GET() {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [site, pages, posts, catalogEntries] = await Promise.all([
     getSite(defaultLocale),
     getAllPages(),
@@ -160,20 +126,20 @@ export async function GET() {
 
   const baseUrl = normalizeBaseUrl(site.seo.canonicalBase ?? null);
 
-  const pageUrls = pages
+  const pageEntries = pages
     .filter((page) => page.published)
     .flatMap((page) =>
-      createSitemapUrls(baseUrl, {
+      createSitemapEntries(baseUrl, {
         collection: 'pages',
         slugByLocale: page.slugByLocale,
         updatedAt: page.updatedAt,
       })
     );
 
-  const postUrls = posts
+  const postEntries = posts
     .filter((post) => post.published)
     .flatMap((post) =>
-      createSitemapUrls(baseUrl, {
+      createSitemapEntries(baseUrl, {
         collection: 'posts',
         slugByLocale: post.slugByLocale,
         updatedAt: post.updatedAt,
@@ -181,17 +147,17 @@ export async function GET() {
       })
     );
 
-  const catalogUrls = catalogEntries
+  const catalogEntriesUrls = catalogEntries
     .filter((entry) => entry.published)
     .flatMap((entry) =>
-      createSitemapUrls(baseUrl, {
+      createSitemapEntries(baseUrl, {
         collection: 'catalog',
         slugByLocale: entry.slugByLocale,
         updatedAt: entry.updatedAt,
       })
     );
 
-  const documentUrls = createSitemapUrls(baseUrl, {
+  const documentsEntries = createSitemapEntries(baseUrl, {
     collection: 'pages',
     slugByLocale: {
       ru: 'documents',
@@ -199,11 +165,5 @@ export async function GET() {
     },
   });
 
-  const xml = renderXml([...pageUrls, ...postUrls, ...catalogUrls, ...documentUrls]);
-
-  return new NextResponse(xml, {
-    headers: {
-      'Content-Type': 'application/xml; charset=UTF-8',
-    },
-  });
+  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries];
 }
