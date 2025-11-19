@@ -65,7 +65,12 @@
       "allowedVersions": {
         "@poupe/eslint-plugin-tailwindcss>@eslint/css": "0.14.x"
       }
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@vercel/speed-insights",
+      "sharp",
+      "unrs-resolver"
+    ]
   },
   "engines": {
     "node": "22.x"
