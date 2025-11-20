@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { defaultLocale, locales, type Locale } from "./i18n";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
-const LOCALE_HEADER = "x-middleware-request-locale";
+export const LOCALE_HEADER = "x-middleware-request-locale";
 
 const LOCALE_PREFIXES = new Set(locales);
 
@@ -120,12 +120,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (locale === defaultLocale) {
-    const url = request.nextUrl.clone();
-    url.pathname = removeDefaultLocalePrefix(pathname);
-    if (url.pathname === pathname) {
-      return nextWithLocale(request, defaultLocale);
-    }
-    return redirectWithLocale(url, defaultLocale, 308);
+    return nextWithLocale(request, defaultLocale);
   }
 
   if (locale) {

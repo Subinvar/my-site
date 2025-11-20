@@ -39,7 +39,12 @@ export function HtmlLangSync() {
   useEffect(() => {
     const cookieLocale = resolveLocaleFromCookie();
     const pathLocale = resolveLocaleFromPath(pathname);
-    const nextLocale = cookieLocale ?? pathLocale ?? defaultLocale;
+    const nextLocale = pathLocale ?? cookieLocale ?? defaultLocale;
+
+    if (pathLocale && cookieLocale !== pathLocale) {
+      document.cookie = `NEXT_LOCALE=${encodeURIComponent(pathLocale)}; path=/; sameSite=lax`;
+    }
+
     document.documentElement.setAttribute('lang', nextLocale);
   }, [pathname]);
 
