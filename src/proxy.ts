@@ -11,6 +11,7 @@ const github = 'https://github.com https://api.github.com';
 
 type SecurityOptions = {
   allowInlineScripts?: boolean;
+  allowInlineStyles?: boolean;
 };
 
 const baseSecurityHeaders = {
@@ -23,6 +24,7 @@ const baseSecurityHeaders = {
 
 const buildCsp = (options: SecurityOptions = {}): string => {
   const scriptSrc = options.allowInlineScripts ? `${self} 'unsafe-inline'` : self;
+  const styleSrc = options.allowInlineStyles ? `${self} 'unsafe-inline'` : self;
 
   return [
     `default-src ${self}`,
@@ -30,7 +32,7 @@ const buildCsp = (options: SecurityOptions = {}): string => {
     `font-src ${self} ${data}`,
     `connect-src ${self} ${vercelApps} ${github} https://vitals.vercel-insights.com`,
     `frame-src https://www.openstreetmap.org`,
-    `style-src ${self} 'unsafe-inline'`,
+    `style-src ${styleSrc}`,
     `script-src ${scriptSrc}`,
     `base-uri ${self}`,
     `form-action ${self}`,
@@ -67,7 +69,7 @@ function unauthorized(): NextResponse {
       'WWW-Authenticate': 'Basic realm="Keystatic CMS"',
     },
   });
-  applySecurityHeaders(response, { allowInlineScripts: true });
+  applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
   return response;
 }
 
@@ -83,7 +85,7 @@ function withKeystaticAuth(request: NextRequest): NextResponse {
     const [username, password] = decoded.split(':');
     if (username === KEYSTATIC_USERNAME && password === KEYSTATIC_PASSWORD) {
       const response = NextResponse.next();
-      applySecurityHeaders(response, { allowInlineScripts: true });
+      applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
       return response;
     }
   }
