@@ -1,11 +1,9 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { CatalogFilters, type CatalogFilterValues } from '@/app/(site)/shared/filter-controls';
 import { CatalogListing } from '@/app/(site)/shared/catalog-listing';
-import { applyFilters, parseFilters } from '@/app/(site)/shared/catalog-filtering';
+import { parseFilters } from '@/app/(site)/shared/catalog-filtering';
 import {
   getCatalogListing,
   getCatalogListingPage,
@@ -16,15 +14,7 @@ import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
-import type {
-  CatalogAuxiliary,
-  CatalogBase,
-  CatalogCategory,
-  CatalogFiller,
-  CatalogListItem,
-  CatalogProcess,
-  CatalogPageContent,
-} from '@/lib/keystatic';
+import type { CatalogPageContent } from '@/lib/keystatic';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,7 +43,6 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
     getSiteShellData(locale),
     getCatalogListingPage(locale),
   ]);
-  const filteredItems = applyFilters(items, filters);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['catalog']);
   const currentPath = buildPath(locale, ['catalog']);
