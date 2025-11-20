@@ -116,7 +116,7 @@ export function CatalogListing({
             </dl>
             <div className="mt-auto flex items-center justify-between">
               <div className="text-xs text-zinc-500">
-                <time dateTime={item.updatedAt}>{item.updatedAt}</time>
+                {item.updatedAt ? <time dateTime={item.updatedAt}>{item.updatedAt}</time> : null}
               </div>
               <Link
                 href={buildPath(locale, ['catalog', item.slug])}
