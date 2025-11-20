@@ -1,18 +1,29 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const tracePath = path.join(process.cwd(), '.next', 'server', 'middleware.js.nft.json');
-const traceDir = path.dirname(tracePath);
+const nextDir = path.join(process.cwd(), '.next');
+const lockPath = path.join(nextDir, 'lock');
+const traceDir = path.join(nextDir, 'server');
+const traceFilenames = ['proxy.js.nft.json', 'middleware.js.nft.json'];
+const payload = { version: 1, files: [] };
+
+await mkdir(traceDir, { recursive: true });
 
 try {
-  await access(tracePath);
-  console.log(`middleware trace already exists at ${tracePath}`);
-  process.exit(0);
+  await access(lockPath);
+  console.log(`.next lock file already exists at ${lockPath}`);
 } catch {
-  // continue and create the fallback file
+  await writeFile(lockPath, '', 'utf8');
+  console.log(`created fallback .next lock file at ${lockPath}`);
 }
 
-const payload = { version: 1, files: [] };
-await mkdir(traceDir, { recursive: true });
-await writeFile(tracePath, JSON.stringify(payload), 'utf8');
-console.log(`created fallback middleware trace at ${tracePath}`);
+for (const filename of traceFilenames) {
+  const tracePath = path.join(traceDir, filename);
+  try {
+    await access(tracePath);
+    console.log(`${filename} trace already exists at ${tracePath}`);
+  } catch {
+    await writeFile(tracePath, JSON.stringify(payload), 'utf8');
+    console.log(`created fallback ${filename} trace at ${tracePath}`);
+  }
+}

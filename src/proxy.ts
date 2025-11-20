@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { proxy } from './lib/locale-middleware';
+import { proxy as applyLocaleProxy } from './lib/locale-middleware';
 
 const self = "'self'";
 const data = 'data:';
@@ -90,11 +90,11 @@ function withKeystaticAuth(request: NextRequest): NextResponse {
   return unauthorized();
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (isKeystaticRequest(request.nextUrl.pathname)) {
     return withKeystaticAuth(request);
   }
-  const response = proxy(request);
+  const response = applyLocaleProxy(request);
   applySecurityHeaders(response);
   return response;
 }
