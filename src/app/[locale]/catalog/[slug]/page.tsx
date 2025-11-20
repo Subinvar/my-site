@@ -21,12 +21,14 @@ const TAXONOMY_KEYS = {
   auxiliary: 'auxiliaries',
 } as const;
 
+type CatalogProductParams = { locale: Locale; slug: string };
+
 type CatalogProductPageProps = {
-  params: { locale: Locale; slug: string } | Promise<{ locale: Locale; slug: string }>;
+  params: Promise<CatalogProductParams>;
 };
 
 export default async function CatalogProductPage({ params }: CatalogProductPageProps) {
-  const { locale: rawLocale, slug } = await Promise.resolve(params);
+  const { locale: rawLocale, slug } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -147,7 +149,7 @@ export async function generateStaticParams(): Promise<Array<{ locale: Locale; sl
 }
 
 export async function generateMetadata({ params }: CatalogProductPageProps): Promise<Metadata> {
-  const { locale: rawLocale, slug } = await Promise.resolve(params);
+  const { locale: rawLocale, slug } = await params;
   if (!isLocale(rawLocale)) {
     return {};
   }

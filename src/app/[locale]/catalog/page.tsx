@@ -32,9 +32,11 @@ import type {
 
 export const revalidate = 60;
 
+type PageParams = { locale: Locale };
+
 type PageProps = {
-  params: { locale: Locale } | Promise<{ locale: Locale }>;
-  searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
+  params: Promise<PageParams>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 type MultiFilter<T extends string> = {
@@ -51,8 +53,8 @@ type FilterState = {
 };
 
 export default async function CatalogPage({ params, searchParams }: PageProps) {
-  const { locale: rawLocale } = await Promise.resolve(params);
-  const rawSearchParams = await Promise.resolve(searchParams ?? {});
+  const { locale: rawLocale } = await params;
+  const rawSearchParams = await (searchParams ?? Promise.resolve({}));
 
   if (!isLocale(rawLocale)) {
     notFound();

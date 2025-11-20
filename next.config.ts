@@ -1,9 +1,4 @@
 import type { NextConfig } from "next";
-import createMarkdocPlugin from "@markdoc/next.js";
-
-const withMarkdoc = createMarkdocPlugin({
-  schemaPath: './markdoc/config.ts',
-});
 
 const self = "'self'";
 const data = 'data:';
@@ -59,6 +54,7 @@ const createSecurityHeaders = (options?: ContentSecurityPolicyOptions) => [
 
 const nextConfig: NextConfig = {
   /* config options here */
+  turbopack: {},
   async headers() {
     return [
       {
@@ -75,9 +71,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  reactCompiler: true,
+  reactCompiler: false,
   allowedDevOrigins: ['127.0.0.1', 'localhost'],
-  turbopack: {},
   env: {
     KEYSTATIC_GITHUB_CLIENT_ID: process.env.KEYSTATIC_GITHUB_CLIENT_ID ?? "stub-client-id",
     KEYSTATIC_GITHUB_CLIENT_SECRET: process.env.KEYSTATIC_GITHUB_CLIENT_SECRET ?? "stub-client-secret",
@@ -85,4 +80,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withMarkdoc(nextConfig);
+export default nextConfig;

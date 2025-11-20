@@ -31,9 +31,11 @@ import {
 
 export const revalidate = 60;
 
+type PageParams = { locale: Locale };
+
 type PageProps = {
-  params: { locale: Locale } | Promise<{ locale: Locale }>;
-  searchParams?: Record<string, string | string[] | undefined> | Promise<Record<string, string | string[] | undefined>>;
+  params: Promise<PageParams>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 type FilterState = DocumentFilterValues;
@@ -43,8 +45,8 @@ const DOCUMENT_LANGUAGE_VALUES = new Set<DocumentLanguage>(Array.from(DOCUMENT_L
 const LANGUAGE_FILTER_VALUES: readonly LangFilterValue[] = ['all', ...DOCUMENT_LANGUAGES];
 
 export default async function DocumentsPage({ params, searchParams }: PageProps) {
-  const { locale: rawLocale } = await Promise.resolve(params);
-  const rawSearchParams = await Promise.resolve(searchParams ?? {});
+  const { locale: rawLocale } = await params;
+  const rawSearchParams = await (searchParams ?? Promise.resolve({}));
 
   if (!isLocale(rawLocale)) {
     notFound();
