@@ -13,8 +13,9 @@ type RootLayoutProps = {
   children: ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
-  const requestLocale = headers().get(LOCALE_HEADER);
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const headersList = await headers();
+  const requestLocale = headersList.get(LOCALE_HEADER);
   const locale = isLocale(requestLocale) ? requestLocale : defaultLocale;
   return (
     <html

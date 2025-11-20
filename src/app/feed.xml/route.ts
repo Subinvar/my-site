@@ -1,4 +1,4 @@
-import { buildFeedResponse } from '@/app/[locale]/feed.xml/route';
+import { buildFeedResponse } from '@/lib/feed';
 import { defaultLocale } from '@/lib/i18n';
 
 export const dynamic = 'force-static';
