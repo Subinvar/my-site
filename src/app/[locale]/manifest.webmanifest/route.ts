@@ -6,11 +6,11 @@ import { isLocale } from '@/lib/i18n';
 export const dynamic = 'force-static';
 
 type ManifestContext = {
-  params: { locale: string } | Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>;
 };
 
 export async function GET(_request: NextRequest, context: ManifestContext) {
-  const { locale: rawLocale } = await Promise.resolve(context.params);
+  const { locale: rawLocale } = await context.params;
   if (!isLocale(rawLocale)) {
     return new Response('Locale not supported', { status: 404 });
   }

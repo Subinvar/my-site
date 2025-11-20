@@ -11,12 +11,14 @@ import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
+type PageParams = { locale: string; slug: string };
+
 type PageProps = {
-  params: { locale: string; slug: string } | Promise<{ locale: string; slug: string }>;
+  params: Promise<PageParams>;
 };
 
 export default async function Page({ params }: PageProps) {
-  const { locale: rawLocale, slug } = await Promise.resolve(params);
+  const { locale: rawLocale, slug } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -65,7 +67,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale: rawLocale, slug } = await Promise.resolve(params);
+  const { locale: rawLocale, slug } = await params;
   if (!isLocale(rawLocale)) {
     return {};
   }

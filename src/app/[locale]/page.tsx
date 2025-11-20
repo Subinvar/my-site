@@ -13,12 +13,14 @@ import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
 export const dynamic = 'force-static';
 
+type PageParams = { locale: Locale };
+
 type PageProps = {
-  params: { locale: Locale } | Promise<{ locale: Locale }>;
+  params: Promise<PageParams>;
 };
 
 export default async function HomePage({ params }: PageProps) {
-  const { locale: rawLocale } = await Promise.resolve(params);
+  const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();
@@ -83,7 +85,7 @@ export async function generateStaticParams(): Promise<Array<{ locale: Locale }>>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale: rawLocale } = await Promise.resolve(params);
+  const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) {
     return {};
   }

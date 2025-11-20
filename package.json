@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build && node scripts/ensure-middleware-trace.mjs",
+    "build": "TURBO_TASKS_ENABLE_DEPENDENCY_TRACKING=1 TURBOPACK_DEPENDENCY_TRACKING=1 next build --turbo && node scripts/ensure-middleware-trace.mjs",
     "start": "next start",
     "lint": "eslint",
     "knip": "knip",
