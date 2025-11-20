@@ -16,7 +16,17 @@ type RootLayoutProps = {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const headersList = await headers();
   const requestLocale = headersList.get(LOCALE_HEADER);
-  const locale = isLocale(requestLocale) ? requestLocale : defaultLocale;
+  const cookieLocale = headersList
+    .get('cookie')
+    ?.split(';')
+    .map((chunk) => chunk.trim())
+    .map((chunk) => chunk.split('='))
+    .find(([name]) => name === 'NEXT_LOCALE')?.[1];
+  const locale = isLocale(requestLocale)
+    ? requestLocale
+    : isLocale(cookieLocale)
+      ? cookieLocale
+      : defaultLocale;
   return (
     <html
       lang={locale}
