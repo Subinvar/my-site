@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { defaultLocale, locales, type Locale } from "./i18n";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
-const LOCALE_HEADER = "x-middleware-request-locale";
+export const LOCALE_HEADER = "x-middleware-request-locale";
 
 const LOCALE_PREFIXES = new Set(locales);
 

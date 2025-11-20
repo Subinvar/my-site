@@ -1,19 +1,21 @@
-/* eslint-disable @next/next/no-sync-scripts -- Нам нужен синхронный скрипт до гидратации, чтобы язык <html> совпадал с URL сразу после перезагрузки */
 import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
 
 import './globals.css';
 import { geistMono, geistSans } from './fonts';
 import { HtmlLangSync } from './(site)/shared/html-lang-sync';
-import { defaultLocale, locales } from '@/lib/i18n';
+import { defaultLocale, locales, isLocale } from '@/lib/i18n';
+import { LOCALE_HEADER } from '@/lib/locale-middleware';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 type RootLayoutProps = {
   children: ReactNode;
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  const locale = defaultLocale;
+  const requestLocale = headers().get(LOCALE_HEADER);
+  const locale = isLocale(requestLocale) ? requestLocale : defaultLocale;
   return (
     <html
       lang={locale}
@@ -22,7 +24,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       data-default-locale={defaultLocale}
     >
       <body className="bg-white text-zinc-900 antialiased">
-        <script src="/html-lang-bootstrap.js" />
         <HtmlLangSync />
         {children}
       </body>
