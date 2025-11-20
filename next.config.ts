@@ -54,7 +54,6 @@ const createSecurityHeaders = (options?: ContentSecurityPolicyOptions) => [
 
 const nextConfig: NextConfig = {
   /* config options here */
-  turbopack: {},
   async headers() {
     return [
       {
