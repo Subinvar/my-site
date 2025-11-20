@@ -99,11 +99,3 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = {
-  matcher: [
-    '/((?!_next|api|keystatic|.*\\.[^/]+$).*)',
-    '/((?=.+\\.(?:xml|webmanifest)$).*)',
-    '/keystatic/:path*',
-    '/api/keystatic/:path*',
-  ],
-};
