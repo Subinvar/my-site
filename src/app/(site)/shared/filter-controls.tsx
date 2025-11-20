@@ -71,6 +71,7 @@ export function CatalogFilters({
         setMultiParam(params, 'auxiliary', nextState.auxiliary);
         const query = params.toString();
         router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+        router.refresh();
       });
     },
     [pathname, router, searchParams]

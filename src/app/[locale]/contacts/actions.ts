@@ -4,13 +4,15 @@ import { redirect } from 'next/navigation';
 import { createTransport } from 'nodemailer';
 
 import { isLocale, type Locale } from '@/lib/i18n';
+import { buildPath } from '@/lib/paths';
 
 export async function sendContact(formData: FormData) {
   const rawLocale = formData.get('locale')?.toString() ?? 'ru';
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
-  const successRedirect = `/${locale}/contacts?ok=1`;
-  const errorRedirect = `/${locale}/contacts?ok=0`;
-  const isDryRun = process.env.LEADS_DRY_RUN === '1';
+  const contactsPath = buildPath(locale, ['contacts']);
+  const successRedirect = `${contactsPath}?ok=1`;
+  const errorRedirect = `${contactsPath}?ok=0`;
+  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
 
   const honeypot = formData.get('company')?.toString().trim();
   if (honeypot) {
