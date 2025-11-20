@@ -9,6 +9,7 @@ const github = 'https://github.com https://api.github.com';
 
 type ContentSecurityPolicyOptions = {
   allowInlineScripts?: boolean;
+  allowInlineStyles?: boolean;
 };
 
 const buildContentSecurityPolicy = (options: ContentSecurityPolicyOptions = {}): string =>
@@ -18,7 +19,7 @@ const buildContentSecurityPolicy = (options: ContentSecurityPolicyOptions = {}):
     `font-src ${self} ${data}`,
     `connect-src ${self} ${vercelApps} ${github} https://vitals.vercel-insights.com`,
     `frame-src https://www.openstreetmap.org`,
-    `style-src ${self} 'unsafe-inline'`,
+    `style-src ${self}${options.allowInlineStyles ? " 'unsafe-inline'" : ''}`,
     `script-src ${options.allowInlineScripts ? `${self} 'unsafe-inline'` : self}`,
     `base-uri ${self}`,
     `form-action ${self}`,
@@ -64,11 +65,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/keystatic/:path*',
-        headers: createSecurityHeaders({ allowInlineScripts: true }),
+        headers: createSecurityHeaders({ allowInlineScripts: true, allowInlineStyles: true }),
       },
       {
         source: '/api/keystatic/:path*',
-        headers: createSecurityHeaders({ allowInlineScripts: true }),
+        headers: createSecurityHeaders({ allowInlineScripts: true, allowInlineStyles: true }),
       },
       {
         source: '/:path*',

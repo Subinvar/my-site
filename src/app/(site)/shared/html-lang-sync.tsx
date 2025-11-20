@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n';
@@ -36,7 +36,7 @@ function resolveLocaleFromCookie(): Locale | null {
 export function HtmlLangSync() {
   const pathname = usePathname();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const cookieLocale = resolveLocaleFromCookie();
     const pathLocale = resolveLocaleFromPath(pathname);
     const nextLocale = pathLocale ?? cookieLocale ?? defaultLocale;
