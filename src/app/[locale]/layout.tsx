@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { cache, type ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -26,6 +26,8 @@ type LocaleLayoutProps = {
   params: Promise<LocaleRouteParams>;
 };
 
+const getCachedSite = cache(getSite);
+
 export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) {
@@ -33,7 +35,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   }
 
   const locale = rawLocale;
-  const site = await getSite(locale);
+  const site = await getCachedSite(locale);
   const merged = mergeSeo({ site: site.seo });
 
   const slugMap = locales.reduce<Partial<Record<Locale, string>>>((acc, candidate) => {
@@ -82,6 +84,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   if (!isLocale(rawLocale)) {
     notFound();
   }
+
+  await getCachedSite(rawLocale);
 
   return (
     <>
