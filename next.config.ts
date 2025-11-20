@@ -54,6 +54,12 @@ const createSecurityHeaders = (options?: ContentSecurityPolicyOptions) => [
 
 const nextConfig: NextConfig = {
   /* config options here */
+  outputFileTracingExcludes: {
+    '*': [
+      './.next/cache/webpack/**',
+      './.next/cache/swc/**',
+    ],
+  },
   async headers() {
     return [
       {
