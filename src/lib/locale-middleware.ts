@@ -120,12 +120,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (locale === defaultLocale) {
-    const url = request.nextUrl.clone();
-    url.pathname = removeDefaultLocalePrefix(pathname);
-    if (url.pathname === pathname) {
-      return nextWithLocale(request, defaultLocale);
-    }
-    return redirectWithLocale(url, defaultLocale, 308);
+    return nextWithLocale(request, defaultLocale);
   }
 
   if (locale) {
