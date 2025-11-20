@@ -45,10 +45,15 @@ const applySecurityHeaders = (response: NextResponse, options?: SecurityOptions)
   }
 };
 
-const KEYSTATIC_USERNAME = process.env.KEYSTATIC_BASIC_USER ?? 'admin';
+const normalizeEnv = (value?: string): string | undefined => {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+};
+
+const KEYSTATIC_USERNAME = normalizeEnv(process.env.KEYSTATIC_BASIC_USER) ?? 'admin';
 const KEYSTATIC_PASSWORD =
-  process.env.KEYSTATIC_BASIC_PASSWORD ??
-  process.env.KEYSTATIC_SECRET ??
+  normalizeEnv(process.env.KEYSTATIC_BASIC_PASSWORD) ??
+  normalizeEnv(process.env.KEYSTATIC_SECRET) ??
   'stub-keystatic-secret';
 
 function isKeystaticRequest(pathname: string): boolean {
