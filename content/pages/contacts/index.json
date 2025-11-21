@@ -1,0 +1,48 @@
+{
+  "id": "contacts",
+  "slugKey": "contacts",
+  "published": true,
+  "slug": {
+    "ru": "contacts",
+    "en": "contacts"
+  },
+  "title": {
+    "ru": "Контакты",
+    "en": "Contacts"
+  },
+  "description": {
+    "ru": "Как связаться с Интема Групп: телефоны, почта, адрес.",
+    "en": "How to contact Intema Group: phone, email, address."
+  },
+  "excerpt": {
+    "ru": "Телефоны, e-mail и адрес для связи.",
+    "en": "Phone, email, and address to reach us."
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "seo": {
+    "title": {
+      "ru": "Контакты Интема Групп",
+      "en": "Intema Group Contacts"
+    },
+    "description": {
+      "ru": "Свяжитесь с нами для консультаций и заказов.",
+      "en": "Contact us for consultations and orders."
+    },
+    "ogTitle": {
+      "ru": "Контакты Интема Групп",
+      "en": "Intema Group contacts"
+    },
+    "ogDescription": {
+      "ru": "Телефон, почта и адрес офиса компании.",
+      "en": "Phone, email, and office address."
+    },
+    "ogImage": {
+      "image": "uploads/og-default.svg",
+      "alt": "Контакты Интема Групп"
+    }
+  },
+  "updatedAt": "2024-10-05T12:15"
+}

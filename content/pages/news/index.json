@@ -1,0 +1,48 @@
+{
+  "id": "news",
+  "slugKey": "news",
+  "published": true,
+  "slug": {
+    "ru": "news",
+    "en": "news"
+  },
+  "title": {
+    "ru": "Новости",
+    "en": "News"
+  },
+  "description": {
+    "ru": "Свежие новости и обновления Интема Групп.",
+    "en": "Latest news and updates from Intema Group."
+  },
+  "excerpt": {
+    "ru": "Анонсы, релизы и события компании.",
+    "en": "Company announcements, releases, and events."
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "seo": {
+    "title": {
+      "ru": "Новости Интема Групп",
+      "en": "Intema Group News"
+    },
+    "description": {
+      "ru": "Лента новостей и материалов о работе компании и продукции.",
+      "en": "News feed and materials about the company and its products."
+    },
+    "ogTitle": {
+      "ru": "Новости и анонсы Интема Групп",
+      "en": "Intema Group news and announcements"
+    },
+    "ogDescription": {
+      "ru": "Следите за обновлениями продукции и событиями компании.",
+      "en": "Follow product updates and company events."
+    },
+    "ogImage": {
+      "image": "uploads/og-default.svg",
+      "alt": "Новости Интема Групп"
+    }
+  },
+  "updatedAt": "2024-10-05T12:05"
+}

@@ -10,9 +10,51 @@
         "ru": "",
         "en": ""
       },
-      "externalUrl": null,
+      "externalUrl": "",
       "newTab": false,
       "order": 0
+    },
+    {
+      "id": "products",
+      "label": {
+        "ru": "Продукция",
+        "en": "Products"
+      },
+      "path": {
+        "ru": "products",
+        "en": "products"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 10
+    },
+    {
+      "id": "news",
+      "label": {
+        "ru": "Новости",
+        "en": "News"
+      },
+      "path": {
+        "ru": "news",
+        "en": "news"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 20
+    },
+    {
+      "id": "partners",
+      "label": {
+        "ru": "Партнёры",
+        "en": "Partners"
+      },
+      "path": {
+        "ru": "partners",
+        "en": "partners"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 30
     },
     {
       "id": "about",
@@ -21,26 +63,26 @@
         "en": "About"
       },
       "path": {
-        "ru": "o-kompanii",
+        "ru": "about",
         "en": "about"
       },
-      "externalUrl": null,
+      "externalUrl": "",
       "newTab": false,
-      "order": 10
+      "order": 40
     },
     {
-      "id": "catalog",
+      "id": "contacts",
       "label": {
-        "ru": "Каталог",
-        "en": "Catalogue"
+        "ru": "Контакты",
+        "en": "Contacts"
       },
       "path": {
-        "ru": "",
-        "en": ""
+        "ru": "contacts",
+        "en": "contacts"
       },
-      "externalUrl": "https://intema.ru",
-      "newTab": true,
-      "order": 20
+      "externalUrl": "",
+      "newTab": false,
+      "order": 50
     }
   ],
   "footerLinks": [

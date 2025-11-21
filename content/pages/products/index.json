@@ -1,0 +1,48 @@
+{
+  "id": "products",
+  "slugKey": "products",
+  "published": true,
+  "slug": {
+    "ru": "products",
+    "en": "products"
+  },
+  "title": {
+    "ru": "Продукция",
+    "en": "Products"
+  },
+  "description": {
+    "ru": "Продукты и решения Интема Групп для литейного производства.",
+    "en": "Intema Group products and solutions for foundry production."
+  },
+  "excerpt": {
+    "ru": "Каталог связующих систем, противопригарных покрытий и вспомогательных материалов.",
+    "en": "Catalogue of binder systems, release coatings, and auxiliary materials."
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "seo": {
+    "title": {
+      "ru": "Продукция Интема Групп",
+      "en": "Intema Group Products"
+    },
+    "description": {
+      "ru": "Связующие системы, противопригарные покрытия и материалы для стабильного литья.",
+      "en": "Binder systems, release coatings, and materials for stable casting."
+    },
+    "ogTitle": {
+      "ru": "Материалы и решения Интема Групп",
+      "en": "Intema Group materials and solutions"
+    },
+    "ogDescription": {
+      "ru": "Готовые решения под задачи литейных цехов и техническая поддержка внедрения.",
+      "en": "Ready-made solutions for foundry teams with implementation support."
+    },
+    "ogImage": {
+      "image": "uploads/og-default.svg",
+      "alt": "Продукция Интема Групп"
+    }
+  },
+  "updatedAt": "2024-10-05T12:00"
+}
