@@ -1054,7 +1054,13 @@ function resolveNavigationLinks(
   if (!Array.isArray(links)) {
     return [];
   }
-  const withOrder = links
+  const blacklist = new Set(['linkedin', 'footer-news']);
+  const filteredLinks = links.filter((link) => {
+    const id = toOptionalString(link.id ?? undefined);
+    return !id || !blacklist.has(id);
+  });
+
+  const withOrder = filteredLinks
     .map((link, index) => {
       const id = toOptionalString(link.id) ?? `link-${index}`;
       const label = pickLocalized(link.label, locale) ?? '';
