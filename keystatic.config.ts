@@ -166,7 +166,7 @@ export default config({
   storage,
   singletons: {
     site: singleton({
-      label: 'Настройки сайта',
+      label: 'Настройки и SEO сайта',
       path: 'content/site/',
       format: { data: 'json' },
       schema: {

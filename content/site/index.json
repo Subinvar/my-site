@@ -4,15 +4,15 @@
     "en": "Intema Group"
   },
   "tagline": {
-    "ru": "Связующие материалы, противопригарные покрытия и вспомогательные решения для литейных производств",
-    "en": "Binders, release coatings, and auxiliary supplies for foundries"
+    "ru": "Связующие, противопригарные покрытия и вспомогательные материалы для литейного производства",
+    "en": "Binders, foundry coatings and auxiliary materials for modern foundries"
   },
   "contacts": {
     "email": "info@intema.ru",
-    "phone": "+7 (495) 357-25-50",
+    "phone": "+7 495 357 25 50",
     "address": {
-      "ru": "141241, Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, корп. Б, эт. 3, оф. 8",
-      "en": "141241, Centralnaya St. 2, Bldg. B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region"
+      "ru": "ООО „Интема Групп“, 141241, Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, корп. Б, эт. 3, оф. 8",
+      "en": "LLC „Intema Group“, 141241, Centralnaya St. 2, Building B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region, Russia"
     }
   },
   "footer": {
@@ -23,12 +23,12 @@
   },
   "seo": {
     "title": {
-      "ru": "Интема Групп — поставки связующих и противопригарных материалов",
-      "en": "Intema Group — binders and release coatings supplier"
+      "ru": "Интема Групп — материалы для литейного производства: связующие, покрытия, вспомогательные решения",
+      "en": "Intema Group — binders, foundry coatings and auxiliary materials for foundries"
     },
     "description": {
-      "ru": "Поставляем связующие, противопригарные покрытия и вспомогательные материалы для стабильного литья и подготовки форм.",
-      "en": "We supply binders, release coatings, and auxiliary materials to stabilise moulding and casting operations."
+      "ru": "Поставляем связующие, противопригарные покрытия и вспомогательные материалы для литейной промышленности — для стабильной работы формовочных линий и высокого качества отливок.",
+      "en": "We supply binders, foundry coatings and auxiliary materials for the foundry industry to keep moulding lines stable and improve casting quality."
     },
     "ogTitle": {
       "ru": "Интема Групп — эксперты по материалам для литейного производства",
@@ -39,7 +39,7 @@
       "en": "We help foundries cut scrap, speed up mould preparation, and improve casting surface quality."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
+      "image": "/uploads/seo/ogImage/image.svg",
       "alt": "Команда Интема Групп обсуждает применение противопригарных покрытий"
     },
     "canonicalBase": "https://intema.ru",
