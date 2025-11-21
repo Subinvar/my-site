@@ -130,12 +130,19 @@ async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown):
     if (typeof current === 'string') {
       continue;
     }
-    const filePath = path.join(entryDir, 'content', `${locale}.mdoc`);
-    const file = await fs.readFile(filePath, 'utf8').catch(() => null);
+
+    const directFilePath = path.join(entryDir, 'content', `${locale}.mdoc`);
+    const nestedFilePath = path.join(entryDir, 'index', 'content', `${locale}.mdoc`);
+
+    const file =
+      (await fs.readFile(directFilePath, 'utf8').catch(() => null)) ??
+      (await fs.readFile(nestedFilePath, 'utf8').catch(() => null));
+
     if (file !== null) {
       localizedRecord[locale] = { content: file };
       continue;
     }
+    
     if (current === undefined) {
       localizedRecord[locale] = null;
     }
