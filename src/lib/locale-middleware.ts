@@ -100,6 +100,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname === "/_next" || pathname.startsWith("/_next/")) {
+    return NextResponse.next();
+  }
+
   const locale = extractLocale(pathname);
   const isFileRequest = hasFileExtension(pathname);
 
