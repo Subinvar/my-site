@@ -130,6 +130,15 @@ async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown):
   if (!localized || typeof localized !== 'object') {
     return;
   }
+  const baseDir = await findExistingDirectory([
+    path.join(entryDir, 'content'),
+    path.join(entryDir, 'index', 'content'),
+  ]);
+
+  if (!baseDir) {
+    return;
+  }
+
   const localizedRecord = localized as Record<string, unknown>;
   for (const locale of locales) {
     const current = localizedRecord[locale];
@@ -141,15 +150,18 @@ async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown):
     if (typeof current === 'string') {
       continue;
     }
-    const filePath = path.join(entryDir, 'content', `${locale}.mdoc`);
-    const file = await fs.readFile(filePath, 'utf8').catch(() => null);
-    if (file !== null) {
-      localizedRecord[locale] = { content: file };
+
+    const filePath = path.join(baseDir, `${locale}.mdoc`);
+    const hasFile = await fs.stat(filePath).then((stats) => stats.isFile()).catch(() => false);
+    if (!hasFile) {
+      if (current === undefined) {
+        localizedRecord[locale] = null;
+      }
       continue;
     }
-    if (current === undefined) {
-      localizedRecord[locale] = null;
-    }
+
+    const relative = path.relative(path.join(process.cwd(), 'content'), filePath);
+    localizedRecord[locale] = relative;
   }
 }
 

@@ -3,12 +3,12 @@
   "published": true,
   "slug": {},
   "title": {
-    "ru": "Главная",
-    "en": "Home"
+    "ru": "Материалы и решения для литейного производства",
+    "en": "Materials and solutions for foundry production"
   },
   "description": {
-    "ru": "Интема Групп поставляет связующие, противопригарные покрытия и вспомогательные материалы для литейных цехов.",
-    "en": "Intema Group supplies binders, release coatings, and auxiliary materials for foundry shops."
+    "ru": "Материалы для литейных цехов и техническое сопровождение внедрения.",
+    "en": "Foundry materials with on-site technical support."
   },
   "excerpt": {
     "ru": "Мы помогаем литейным предприятиям стабилизировать процессы формовки и снизить брак.",
@@ -16,6 +16,7 @@
   },
   "content": {},
   "hero": {
+    "image": "/uploads/home/hero/image.jpg",
     "alt": {
       "ru": "Производственная линия литейного цеха с противопригарным покрытием",
       "en": "Foundry production line applying a release coating"
@@ -39,6 +40,7 @@
       "en": "We tailor formulations, train teams, and support on-site implementation."
     },
     "ogImage": {
+      "image": "/uploads/home/seo/ogImage/image.svg",
       "alt": "Интема Групп — команда экспертов по литейным материалам"
     }
   },
