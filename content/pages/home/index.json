@@ -14,7 +14,10 @@
     "ru": "Мы помогаем литейным предприятиям стабилизировать процессы формовки и снизить брак.",
     "en": "We help foundries stabilise moulding processes and reduce scrap."
   },
-  "content": {},
+  "content": {
+    "ru": "pages/home/index/content/ru.mdoc",
+    "en": "pages/home/index/content/en.mdoc"
+  },
   "hero": {
     "alt": {
       "ru": "Производственная линия литейного цеха с противопригарным покрытием",

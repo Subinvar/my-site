@@ -153,6 +153,62 @@ async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown):
   }
 }
 
+async function findExistingDirectory(paths: string[]): Promise<string | null> {
+  for (const dir of paths) {
+    const exists = await fs.stat(dir).then((stats) => stats.isDirectory()).catch(() => false);
+    if (exists) {
+      return dir;
+    }
+  }
+  return null;
+}
+
+async function hydrateLocalizedMarkdocByKey(
+  collectionRoot: string,
+  entryKey: string,
+  entry: unknown
+): Promise<void> {
+  if (!entry || typeof entry !== 'object') {
+    return;
+  }
+  const record = entry as { content?: unknown };
+  if (!record.content || typeof record.content !== 'object') {
+    return;
+  }
+
+  const baseDir = await findExistingDirectory([
+    path.join(process.cwd(), collectionRoot, entryKey, 'content'),
+    path.join(process.cwd(), collectionRoot, entryKey, 'index', 'content'),
+  ]);
+
+  if (!baseDir) {
+    return;
+  }
+
+  const localizedRecord = record.content as Record<string, unknown>;
+  for (const locale of locales) {
+    const current = localizedRecord[locale];
+    if (typeof current === 'string') {
+      continue;
+    }
+    if (current && typeof current === 'object') {
+      const currentRecord = current as Record<string, unknown>;
+      if ('content' in currentRecord || 'node' in currentRecord) {
+        continue;
+      }
+    }
+
+    const localeFile = path.join(baseDir, `${locale}.mdoc`);
+    const hasFile = await fs.stat(localeFile).then((stats) => stats.isFile()).catch(() => false);
+    if (!hasFile) {
+      continue;
+    }
+
+    const relative = path.relative(path.join(process.cwd(), 'content'), localeFile);
+    localizedRecord[locale] = relative;
+  }
+}
+
 function normalizeSlugRecord(record: Record<string, unknown>): void {
   for (const key of Object.keys(record)) {
     const value = record[key];
@@ -979,6 +1035,14 @@ function mergeCollections<T>(
   return Array.from(merged.values());
 }
 
+async function hydrateMarkdocEntries<T extends { content?: unknown }>(
+  collectionRoot: string,
+  entries: Array<{ key: string; entry: T }>
+): Promise<Array<{ key: string; entry: T }>> {
+  await Promise.all(entries.map(({ key, entry }) => hydrateLocalizedMarkdocByKey(collectionRoot, key, entry)));
+  return entries;
+}
+
 const readPagesCollection = cache(async () => {
   const reader = getReader();
   let entries: Array<{ key: string; entry: RawPageEntry }> = [];
@@ -994,9 +1058,9 @@ const readPagesCollection = cache(async () => {
 
   const fallback = await readFallbackCollection<RawPageEntry>('content/pages');
   if (entries.length === 0) {
-    return fallback;
+    return hydrateMarkdocEntries('content/pages', fallback);
   }
-  return mergeCollections(entries, fallback);
+  return hydrateMarkdocEntries('content/pages', mergeCollections(entries, fallback));
 });
 
 const readPostsCollection = cache(async () => {
@@ -1014,9 +1078,9 @@ const readPostsCollection = cache(async () => {
 
   const fallback = await readFallbackCollection<RawPostEntry>('content/posts');
   if (entries.length === 0) {
-    return fallback;
+    return hydrateMarkdocEntries('content/posts', fallback);
   }
-  return mergeCollections(entries, fallback);
+  return hydrateMarkdocEntries('content/posts', mergeCollections(entries, fallback));
 });
 
 const readCatalogCollection = cache(async () => {
@@ -1034,6 +1098,7 @@ const readCatalogCollection = cache(async () => {
 
   const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
   const merged = entries.length === 0 ? fallback : mergeCollections(entries, fallback);
+  await hydrateMarkdocEntries('content/catalog', merged);
   ensureUniqueLocalizedSlugs(merged, 'catalog');
   return merged;
 });
