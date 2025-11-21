@@ -15,32 +15,46 @@
       "order": 0
     },
     {
-      "id": "catalog",
+      "id": "products",
       "label": {
-        "ru": "Каталог",
-        "en": "Catalog"
+        "ru": "Продукция",
+        "en": "Products"
       },
       "path": {
-        "ru": "catalog",
-        "en": "catalog"
+        "ru": "products",
+        "en": "products"
       },
       "externalUrl": "",
       "newTab": false,
       "order": 10
     },
     {
-      "id": "documents",
+      "id": "news",
       "label": {
-        "ru": "Документы",
-        "en": "Documents"
+        "ru": "Новости",
+        "en": "News"
       },
       "path": {
-        "ru": "documents",
-        "en": "documents"
+        "ru": "news",
+        "en": "news"
       },
       "externalUrl": "",
       "newTab": false,
       "order": 20
+    },
+    {
+      "id": "partners",
+      "label": {
+        "ru": "Партнёры",
+        "en": "Partners"
+      },
+      "path": {
+        "ru": "partners",
+        "en": "partners"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 30
     },
     {
       "id": "about",
@@ -49,12 +63,12 @@
         "en": "About"
       },
       "path": {
-        "ru": "o-kompanii",
+        "ru": "about",
         "en": "about"
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 30
+      "order": 40
     },
     {
       "id": "contacts",
@@ -68,20 +82,6 @@
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 40
-    },
-    {
-      "id": "linkedin",
-      "label": {
-        "ru": "LinkedIn",
-        "en": "LinkedIn"
-      },
-      "path": {
-        "ru": "",
-        "en": ""
-      },
-      "externalUrl": "https://www.linkedin.com/company/intema",
-      "newTab": true,
       "order": 50
     }
   ],

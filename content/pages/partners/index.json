@@ -1,0 +1,48 @@
+{
+  "id": "partners",
+  "slugKey": "partners",
+  "published": true,
+  "slug": {
+    "ru": "partners",
+    "en": "partners"
+  },
+  "title": {
+    "ru": "Партнёры",
+    "en": "Partners"
+  },
+  "description": {
+    "ru": "Информация для партнёров и дилеров Интема Групп.",
+    "en": "Information for Intema Group partners and dealers."
+  },
+  "excerpt": {
+    "ru": "Условия сотрудничества и поддержка партнёров.",
+    "en": "Partnership terms and support resources."
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "seo": {
+    "title": {
+      "ru": "Партнёрам Интема Групп",
+      "en": "For Intema Group Partners"
+    },
+    "description": {
+      "ru": "Программы сотрудничества, материалы и контакты для партнёров.",
+      "en": "Partnership programs, materials, and contacts."
+    },
+    "ogTitle": {
+      "ru": "Информация для партнёров",
+      "en": "Partner information"
+    },
+    "ogDescription": {
+      "ru": "Ресурсы и поддержка для партнёров и дилеров компании.",
+      "en": "Resources and support for company partners and dealers."
+    },
+    "ogImage": {
+      "image": "uploads/og-default.svg",
+      "alt": "Партнёры Интема Групп"
+    }
+  },
+  "updatedAt": "2024-10-05T12:10"
+}
