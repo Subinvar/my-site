@@ -1,11 +1,7 @@
 {
   "id": "home",
-  "slugKey": "home",
   "published": true,
-  "slug": {
-    "ru": "",
-    "en": ""
-  },
+  "slug": {},
   "title": {
     "ru": "Главная",
     "en": "Home"
@@ -18,12 +14,8 @@
     "ru": "Мы помогаем литейным предприятиям стабилизировать процессы формовки и снизить брак.",
     "en": "We help foundries stabilise moulding processes and reduce scrap."
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "hero": {
-    "image": "uploads/hero.jpg",
     "alt": {
       "ru": "Производственная линия литейного цеха с противопригарным покрытием",
       "en": "Foundry production line applying a release coating"
@@ -47,7 +39,6 @@
       "en": "We tailor formulations, train teams, and support on-site implementation."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Интема Групп — команда экспертов по литейным материалам"
     }
   },
