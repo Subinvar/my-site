@@ -52,7 +52,7 @@ export function HtmlLangSync({ initialLocale }: HtmlLangSyncProps) {
     }
 
     document.documentElement.setAttribute('lang', nextLocale);
-  }, [pathname]);
+  }, [pathname, initialLocale]);
 
   return null;
 }
