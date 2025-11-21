@@ -245,13 +245,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: descriptionForMeta,
       images: ogImage ? [ogImage] : undefined,
     },
-    twitter: {
-      card: ogImage ? 'summary_large_image' : 'summary',
-      site: site.seo.twitterHandle ?? undefined,
-      title: resolvedTitle,
-      description: descriptionForMeta,
-      images: ogImage ? [ogImage.url] : undefined,
-    },
   } satisfies Metadata;
 }
 

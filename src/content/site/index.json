@@ -10,6 +10,7 @@
   "contacts": {
     "email": "info@intema.ru",
     "phone": "+7 (495) 357-25-50",
+    "telegramUrl": "https://t.me/IntemaGroup",
     "address": {
       "ru": "141241, Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, корп. Б, эт. 3, оф. 8",
       "en": "141241, Centralnaya St. 2, Bldg. B, Floor 3, Office 8, Mamontovka, Pushkino, Moscow Region"

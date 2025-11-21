@@ -68,13 +68,6 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
       alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
       images: ogImage ? [ogImage] : undefined,
     },
-    twitter: {
-      card: merged.ogImage ? 'summary_large_image' : 'summary',
-      site: merged.twitterHandle,
-      title: merged.ogTitle ?? merged.title,
-      description: merged.ogDescription ?? merged.description,
-      images: ogImage ? [ogImage.url] : undefined,
-    },
   } satisfies Metadata;
 }
 

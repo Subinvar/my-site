@@ -149,13 +149,6 @@ export async function resolveCatalogListingMetadata(locale: Locale): Promise<Met
       description: ogDescription,
       images: ogImage ? [ogImage] : undefined,
     },
-    twitter: {
-      card: ogImage ? 'summary_large_image' : 'summary',
-      site: merged.twitterHandle,
-      title: ogTitle,
-      description: ogDescription,
-      images: ogImage ? [ogImage.url] : undefined,
-    },
   } satisfies Metadata;
 }
 
@@ -215,13 +208,6 @@ export async function resolveCatalogProductMetadata(locale: Locale, slug: string
       description: ogDescriptionFallback,
       images: ogImage ? [ogImage] : undefined,
       alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
-    },
-    twitter: {
-      card: ogImage ? 'summary_large_image' : 'summary',
-      site: merged.twitterHandle,
-      title: ogTitleFallback,
-      description: ogDescriptionFallback,
-      images: ogImage ? [ogImage.url] : undefined,
     },
   } satisfies Metadata;
 }

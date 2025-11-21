@@ -100,7 +100,6 @@ export type MergedSeo = {
   ogDescription?: string;
   ogImage?: SeoImage | null;
   canonicalOverride?: string;
-  twitterHandle?: string;
 };
 
 export const mergeSeo = ({ site, page, defaults }: MergeSeoInput): MergedSeo => {
@@ -126,7 +125,6 @@ export const mergeSeo = ({ site, page, defaults }: MergeSeoInput): MergedSeo => 
     undefined;
   const ogImage = page?.ogImage ?? site.ogImage ?? null;
   const canonicalOverride = page?.canonicalOverride ?? undefined;
-  const twitterHandle = site.twitterHandle ?? undefined;
 
   return {
     title: title ?? undefined,
@@ -135,7 +133,6 @@ export const mergeSeo = ({ site, page, defaults }: MergeSeoInput): MergedSeo => 
     ogDescription: ogDescription ?? undefined,
     ogImage,
     canonicalOverride,
-    twitterHandle,
   } satisfies MergedSeo;
 };
 

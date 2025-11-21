@@ -101,13 +101,6 @@ export const resolveHomeMetadata = cache(async (locale: Locale): Promise<Metadat
       alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
       images: ogImage ? [ogImage] : undefined,
     },
-    twitter: {
-      card: merged.ogImage ? 'summary_large_image' : 'summary',
-      site: merged.twitterHandle,
-      title: ogTitleFallback,
-      description: ogDescriptionFallback,
-      images: ogImage ? [ogImage.url] : undefined,
-    },
   } satisfies Metadata;
 });
 

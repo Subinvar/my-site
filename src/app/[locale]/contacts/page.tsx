@@ -14,6 +14,7 @@ import {
   resolveOpenGraphImage,
   resolveRobotsMeta,
 } from '@/lib/seo';
+import { formatTelegramHandle } from '@/lib/contacts';
 import { getSite } from '@/lib/keystatic';
 import { sendContact } from './actions';
 
@@ -98,6 +99,8 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const address = shell.site.contacts.address ?? '';
   const phone = shell.site.contacts.phone ?? '';
   const email = shell.site.contacts.email ?? '';
+  const telegramUrl = shell.site.contacts.telegramUrl ?? '';
+  const telegramLabel = formatTelegramHandle(telegramUrl) ?? telegramUrl;
 
   return (
     <SiteShell
@@ -154,6 +157,16 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                 {email}
               </a>
             ) : null}
+            {telegramUrl ? (
+              <a
+                className="block text-sm text-blue-700 underline underline-offset-4 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                href={telegramUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {telegramLabel || telegramUrl}
+              </a>
+            ) : null}
           </div>
         </div>
       </div>
@@ -193,13 +206,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: mergedSeo.ogTitle ?? mergedSeo.title,
       description: mergedSeo.ogDescription ?? mergedSeo.description,
       images: ogImage ? [ogImage] : undefined,
-    },
-    twitter: {
-      card: ogImage ? 'summary_large_image' : 'summary',
-      site: mergedSeo.twitterHandle,
-      title: mergedSeo.ogTitle ?? mergedSeo.title,
-      description: mergedSeo.ogDescription ?? mergedSeo.description,
-      images: ogImage ? [ogImage.url] : undefined,
     },
   } satisfies Metadata;
 }
