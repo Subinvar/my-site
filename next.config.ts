@@ -6,6 +6,7 @@ const blob = 'blob:';
 const vercelApps = 'https://*.vercel.app';
 const openStreetMap = 'https://www.openstreetmap.org https://tile.openstreetmap.org';
 const github = 'https://github.com https://api.github.com';
+const isProduction = process.env.NODE_ENV === "production";
 
 type ContentSecurityPolicyOptions = {
   allowInlineScripts?: boolean;
@@ -20,7 +21,7 @@ const buildContentSecurityPolicy = (options: ContentSecurityPolicyOptions = {}):
     `connect-src ${self} ${vercelApps} ${github} https://vitals.vercel-insights.com`,
     `frame-src https://www.openstreetmap.org`,
     `style-src ${self}${options.allowInlineStyles ? " 'unsafe-inline'" : ''}`,
-    `script-src ${options.allowInlineScripts ? `${self} 'unsafe-inline'` : self}`,
+    `script-src ${options.allowInlineScripts ? `${self} 'unsafe-inline' 'unsafe-eval'` : self}`,
     `base-uri ${self}`,
     `form-action ${self}`,
     "frame-ancestors 'none'",
@@ -73,7 +74,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/:path*',
-        headers: createSecurityHeaders(),
+        headers: createSecurityHeaders({ allowInlineScripts: !isProduction, allowInlineStyles: !isProduction }),
       },
     ];
   },

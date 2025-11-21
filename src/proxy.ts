@@ -23,7 +23,7 @@ const baseSecurityHeaders = {
 } as const;
 
 const buildCsp = (options: SecurityOptions = {}): string => {
-  const scriptSrc = options.allowInlineScripts ? `${self} 'unsafe-inline'` : self;
+  const scriptSrc = options.allowInlineScripts ? `${self} 'unsafe-inline' 'unsafe-eval'` : self;
   const styleSrc = options.allowInlineStyles ? `${self} 'unsafe-inline'` : self;
 
   return [
@@ -97,7 +97,8 @@ export function proxy(request: NextRequest) {
     return withKeystaticAuth(request);
   }
   const response = applyLocaleProxy(request);
-  applySecurityHeaders(response);
+  const allowInline = process.env.NODE_ENV !== 'production';
+  applySecurityHeaders(response, { allowInlineScripts: allowInline, allowInlineStyles: allowInline });
   return response;
 }
 
