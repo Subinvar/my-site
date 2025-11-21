@@ -12,7 +12,8 @@ const config: PlaywrightTestConfig = {
     ['html', { open: 'never' }],
   ],
   webServer: {
-    command: 'rm -f .next/dev/lock && pnpm dev --port 3010 --hostname 127.0.0.1',
+    command:
+      "node -e \"require('fs').rmSync('.next/dev/lock', { force: true, recursive: true })\" && pnpm dev --port 3010 --hostname 127.0.0.1",
     url: 'http://127.0.0.1:3010',
     reuseExistingServer: !process.env.CI,
     env: {
