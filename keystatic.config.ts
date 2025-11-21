@@ -68,6 +68,7 @@ const localizedMarkdocContent = (label: string) =>
               publicPath: '/uploads/',
             },
           },
+          extension: 'mdoc',
         }),
       ])
     ),
