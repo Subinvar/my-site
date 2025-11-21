@@ -64,9 +64,20 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
     let entryDir: string | null = null;
 
     if (entry.isDirectory()) {
-      filePath = path.join(directory, entry.name, 'index.json');
+      const dir = path.join(directory, entry.name);
+      const primaryIndexPath = path.join(dir, 'index.json');
+      const nestedIndexPath = path.join(dir, 'index', 'index.json');
+      const existingIndexPath =
+        (await fs.stat(primaryIndexPath).then(() => primaryIndexPath).catch(() => null)) ??
+        (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
+
+      if (!existingIndexPath) {
+        continue;
+      }
+
+      filePath = existingIndexPath;
       key = entry.name;
-      entryDir = path.join(directory, entry.name);
+      entryDir = dir;
     } else if (entry.isFile() && entry.name.endsWith('.json')) {
       filePath = path.join(directory, entry.name);
       key = entry.name.replace(/\.json$/i, '');
@@ -130,19 +141,12 @@ async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown):
     if (typeof current === 'string') {
       continue;
     }
-
-    const directFilePath = path.join(entryDir, 'content', `${locale}.mdoc`);
-    const nestedFilePath = path.join(entryDir, 'index', 'content', `${locale}.mdoc`);
-
-    const file =
-      (await fs.readFile(directFilePath, 'utf8').catch(() => null)) ??
-      (await fs.readFile(nestedFilePath, 'utf8').catch(() => null));
-
+    const filePath = path.join(entryDir, 'content', `${locale}.mdoc`);
+    const file = await fs.readFile(filePath, 'utf8').catch(() => null);
     if (file !== null) {
       localizedRecord[locale] = { content: file };
       continue;
     }
-    
     if (current === undefined) {
       localizedRecord[locale] = null;
     }
