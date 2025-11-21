@@ -60,11 +60,6 @@ function rewriteWithLocale(request: NextRequest, url: URL, locale: Locale): Next
   return withLocaleCookie(response, locale);
 }
 
-function redirectWithLocale(url: URL, locale: Locale, status: number): NextResponse {
-  const response = NextResponse.redirect(url, { status });
-  return withLocaleCookie(response, locale);
-}
-
 function hasFileExtension(pathname: string): boolean {
   const trimmed = pathname.split("?")[0]?.replace(/\/$/, "") ?? "";
   if (!trimmed) {
