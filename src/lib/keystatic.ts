@@ -327,7 +327,6 @@ export type ResolvedSeo = {
 
 export type SiteSeo = Omit<ResolvedSeo, 'canonicalOverride'> & {
   canonicalBase: string | null;
-  twitterHandle: string | null;
 };
 
 export type SiteContent = {
@@ -337,6 +336,7 @@ export type SiteContent = {
   contacts: {
     email: string | null;
     phone: string | null;
+    telegramUrl: string | null;
     address: string | null;
   };
   seo: SiteSeo;
@@ -862,6 +862,7 @@ type SiteSingleton = {
     contacts?: {
       email?: string | null;
       phone?: string | null;
+      telegramUrl?: string | null;
       address?: Localized<string>;
     } | null;
   } | null;
@@ -869,6 +870,7 @@ type SiteSingleton = {
   contacts?: {
     email?: string | null;
     phone?: string | null;
+    telegramUrl?: string | null;
     address?: Localized<string>;
   } | null;
   footer?: {
@@ -881,7 +883,6 @@ type SiteSingleton = {
     ogDescription?: Localized<string>;
     ogImage?: RawSeoImage;
     canonicalBase?: string | null;
-    twitterHandle?: string | null;
   } | null;
   meta?: {
     domain?: string | null;
@@ -1133,6 +1134,7 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
     contacts: {
       email: toOptionalString(contacts.email ?? undefined),
       phone: toOptionalString(contacts.phone ?? undefined),
+      telegramUrl: toOptionalString(contacts.telegramUrl ?? undefined),
       address: pickLocalized(contacts.address, locale) ?? null,
     },
     seo: {
@@ -1142,7 +1144,6 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
       ogDescription: resolvedSeo?.ogDescription ?? null,
       ogImage: resolvedSeo?.ogImage ?? null,
       canonicalBase: toOptionalString(seoGroup?.canonicalBase ?? undefined),
-      twitterHandle: toOptionalString(seoGroup?.twitterHandle ?? undefined),
     },
     domain: toOptionalString(site?.meta?.domain ?? undefined),
     robots: {

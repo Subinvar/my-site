@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { NavigationList } from '@/app/[locale]/navigation-list';
+import { formatTelegramHandle } from '@/lib/contacts';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
@@ -63,6 +64,8 @@ export function SiteShell({
   const skipLinkLabel = dictionary.common.skipToContent;
   const navigationLabels = dictionary.navigation;
   const switchToLabels = dictionary.languageSwitcher.switchTo;
+  const telegramUrl = site.contacts.telegramUrl?.trim() ?? '';
+  const telegramLabel = formatTelegramHandle(telegramUrl) ?? (telegramUrl ? 'Telegram' : '');
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -76,6 +79,13 @@ export function SiteShell({
           id: 'email',
           label: site.contacts.email,
           href: `mailto:${site.contacts.email}`,
+        }
+      : null,
+    telegramUrl
+      ? {
+          id: 'telegram',
+          label: telegramLabel || telegramUrl,
+          href: telegramUrl,
         }
       : null,
   ].filter((item): item is { id: string; label: string; href: string } => Boolean(item));

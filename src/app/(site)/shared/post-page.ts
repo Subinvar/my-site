@@ -98,13 +98,6 @@ export async function resolvePostPageMetadata(locale: Locale, slug: string): Pro
       alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
       images: ogImage ? [ogImage] : undefined,
     },
-    twitter: {
-      card: merged.ogImage ? 'summary_large_image' : 'summary',
-      site: merged.twitterHandle,
-      title: ogTitleFallback,
-      description: ogDescriptionFallback,
-      images: ogImage ? [ogImage.url] : undefined,
-    },
   } satisfies Metadata;
 }
 

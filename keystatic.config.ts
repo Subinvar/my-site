@@ -175,6 +175,7 @@ export default config({
         contacts: fields.object({
           email: fields.text({ label: 'E-mail' }),
           phone: fields.text({ label: 'Телефон' }),
+          telegramUrl: fields.text({ label: 'Telegram (ссылка)' }),
           address: localizedText('Адрес', { multiline: true }),
         }),
         footer: fields.object(
@@ -199,7 +200,6 @@ export default config({
             label: 'Canonical base URL',
             validation: { isRequired: true },
           }),
-          twitterHandle: fields.text({ label: 'Twitter @handle' }),
         }),
         meta: fields.object({
           domain: fields.text({ label: 'Домен' }),
