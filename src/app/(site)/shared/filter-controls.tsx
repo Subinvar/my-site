@@ -61,7 +61,8 @@ export function CatalogFilters({
   const [isPending, startTransition] = useTransition();
 
   const syncQuery = useCallback(
-    (nextState: CatalogFilterValues) => {
+    (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
+      const shouldNavigate = options?.navigate !== false;
       startTransition(() => {
         const params = new URLSearchParams(searchParams.toString());
         updateCategoryParam(params, nextState.category);
@@ -70,8 +71,20 @@ export function CatalogFilters({
         setMultiParam(params, 'filler', nextState.filler);
         setMultiParam(params, 'auxiliary', nextState.auxiliary);
         const query = params.toString();
-        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-        router.refresh();
+        const nextUrl = query ? `${pathname}?${query}` : pathname;
+
+        if (typeof window !== 'undefined') {
+          window.history.replaceState(null, '', nextUrl);
+          if (shouldNavigate) {
+            window.location.href = nextUrl;
+            return;
+          }
+        }
+
+        if (shouldNavigate) {
+          router.replace(nextUrl, { scroll: false });
+          router.refresh();
+        }
       });
     },
     [pathname, router, searchParams]
@@ -84,7 +97,7 @@ export function CatalogFilters({
         if (next === prev) {
           return prev;
         }
-        syncQuery(next);
+        syncQuery(next, { navigate: false });
         return next;
       });
     },

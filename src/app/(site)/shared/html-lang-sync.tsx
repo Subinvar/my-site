@@ -33,16 +33,22 @@ function resolveLocaleFromCookie(): Locale | null {
   }
 }
 
-export function HtmlLangSync() {
+type HtmlLangSyncProps = {
+  initialLocale?: Locale | null;
+};
+
+export function HtmlLangSync({ initialLocale }: HtmlLangSyncProps) {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
+    const currentPath = pathname ?? (typeof window !== 'undefined' ? window.location.pathname : null);
     const cookieLocale = resolveLocaleFromCookie();
-    const pathLocale = resolveLocaleFromPath(pathname);
-    const nextLocale = pathLocale ?? cookieLocale ?? defaultLocale;
+    const pathLocale = resolveLocaleFromPath(currentPath);
+    const preferredLocale = pathLocale ?? initialLocale;
+    const nextLocale = preferredLocale ?? cookieLocale ?? defaultLocale;
 
-    if (pathLocale && cookieLocale !== pathLocale) {
-      document.cookie = `NEXT_LOCALE=${encodeURIComponent(pathLocale)}; path=/; sameSite=lax`;
+    if (preferredLocale && cookieLocale !== preferredLocale) {
+      document.cookie = `NEXT_LOCALE=${encodeURIComponent(preferredLocale)}; Path=/; SameSite=Lax; Max-Age=${365 * 24 * 60 * 60}`;
     }
 
     document.documentElement.setAttribute('lang', nextLocale);

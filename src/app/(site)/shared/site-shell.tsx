@@ -7,6 +7,7 @@ import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 import { LanguageSwitcher } from './language-switcher';
+import { HtmlLangSync } from './html-lang-sync';
 
 const brandFont = localFont({
   src: [
@@ -89,6 +90,7 @@ export function SiteShell({
 
   return (
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
+      <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
       <header className="border-b border-zinc-200 bg-white">
         {hasContacts ? (
