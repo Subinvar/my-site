@@ -101,20 +101,6 @@
       "order": 0
     },
     {
-      "id": "footer-catalog",
-      "label": {
-        "ru": "Каталог",
-        "en": "Catalog"
-      },
-      "path": {
-        "ru": "catalog",
-        "en": "catalog"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 10
-    },
-    {
       "id": "footer-documents",
       "label": {
         "ru": "Документы",
@@ -126,21 +112,21 @@
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 20
+      "order": 10
     },
     {
-      "id": "footer-about",
+      "id": "footer-catalog",
       "label": {
-        "ru": "О компании",
-        "en": "About"
+        "ru": "Каталог",
+        "en": "Catalog"
       },
       "path": {
-        "ru": "o-kompanii",
-        "en": "about"
+        "ru": "catalog",
+        "en": "catalog"
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 30
+      "order": 20
     },
     {
       "id": "footer-contacts",
@@ -154,21 +140,7 @@
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 40
-    },
-    {
-      "id": "footer-news",
-      "label": {
-        "ru": "Новости",
-        "en": "News"
-      },
-      "path": {
-        "ru": "",
-        "en": ""
-      },
-      "externalUrl": "https://www.linkedin.com/company/intema/posts/",
-      "newTab": true,
-      "order": 50
+      "order": 30
     }
   ]
 }

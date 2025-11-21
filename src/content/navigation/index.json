@@ -96,37 +96,51 @@
         "ru": "",
         "en": ""
       },
-      "externalUrl": null,
+      "externalUrl": "",
       "newTab": false,
       "order": 0
     },
     {
-      "id": "footer-news",
+      "id": "footer-documents",
       "label": {
-        "ru": "Новости",
-        "en": "News"
+        "ru": "Документы",
+        "en": "Documents"
       },
       "path": {
-        "ru": "",
-        "en": ""
+        "ru": "documents",
+        "en": "documents"
       },
-      "externalUrl": "https://intema.ru/news",
-      "newTab": true,
+      "externalUrl": "",
+      "newTab": false,
       "order": 10
+    },
+    {
+      "id": "footer-catalog",
+      "label": {
+        "ru": "Каталог",
+        "en": "Catalog"
+      },
+      "path": {
+        "ru": "catalog",
+        "en": "catalog"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 20
     },
     {
       "id": "footer-contacts",
       "label": {
         "ru": "Контакты",
-        "en": "Contact"
+        "en": "Contacts"
       },
       "path": {
-        "ru": "o-kompanii",
-        "en": "about"
+        "ru": "contacts",
+        "en": "contacts"
       },
-      "externalUrl": null,
+      "externalUrl": "",
       "newTab": false,
-      "order": 20
+      "order": 30
     }
   ]
 }
