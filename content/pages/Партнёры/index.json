@@ -1,6 +1,5 @@
 {
   "id": "partners",
-  "slugKey": "partners",
   "published": true,
   "slug": {
     "ru": "partners",
@@ -18,9 +17,9 @@
     "ru": "Условия сотрудничества и поддержка партнёров.",
     "en": "Partnership terms and support resources."
   },
-  "content": {
-    "ru": null,
-    "en": null
+  "content": {},
+  "hero": {
+    "alt": {}
   },
   "seo": {
     "title": {
@@ -40,7 +39,6 @@
       "en": "Resources and support for company partners and dealers."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Партнёры Интема Групп"
     }
   },

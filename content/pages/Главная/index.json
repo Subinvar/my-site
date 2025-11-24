@@ -16,7 +16,7 @@
   },
   "content": {},
   "hero": {
-    "image": "/uploads/home/hero/image.jpg",
+    "image": "/uploads/Главная/hero/image.jpg",
     "alt": {
       "ru": "Производственная линия литейного цеха с противопригарным покрытием",
       "en": "Foundry production line applying a release coating"
@@ -40,7 +40,7 @@
       "en": "We tailor formulations, train teams, and support on-site implementation."
     },
     "ogImage": {
-      "image": "/uploads/home/seo/ogImage/image.svg",
+      "image": "/uploads/Главная/seo/ogImage/image.svg",
       "alt": "Интема Групп — команда экспертов по литейным материалам"
     }
   },

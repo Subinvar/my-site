@@ -1,6 +1,5 @@
 {
   "id": "news",
-  "slugKey": "news",
   "published": true,
   "slug": {
     "ru": "news",
@@ -18,9 +17,9 @@
     "ru": "Анонсы, релизы и события компании.",
     "en": "Company announcements, releases, and events."
   },
-  "content": {
-    "ru": null,
-    "en": null
+  "content": {},
+  "hero": {
+    "alt": {}
   },
   "seo": {
     "title": {
@@ -40,7 +39,6 @@
       "en": "Follow product updates and company events."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Новости Интема Групп"
     }
   },

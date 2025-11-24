@@ -1,6 +1,5 @@
 {
   "id": "about",
-  "slugKey": "about",
   "published": true,
   "slug": {
     "ru": "about",
@@ -18,9 +17,9 @@
     "ru": "Рассказываем, кто мы, как поддерживаем литейные цеха и какие сервисы предоставляем.",
     "en": "Learn who we are, how we support foundries, and which services we provide."
   },
-  "content": {
-    "ru": null,
-    "en": null
+  "content": {},
+  "hero": {
+    "alt": {}
   },
   "seo": {
     "title": {
@@ -40,7 +39,6 @@
       "en": "We match formulations to customer requirements and guide end-to-end implementation."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Офис Интема Групп и команда специалистов"
     }
   },

@@ -1,6 +1,5 @@
 {
   "id": "products",
-  "slugKey": "products",
   "published": true,
   "slug": {
     "ru": "products",
@@ -18,9 +17,9 @@
     "ru": "Каталог связующих систем, противопригарных покрытий и вспомогательных материалов.",
     "en": "Catalogue of binder systems, release coatings, and auxiliary materials."
   },
-  "content": {
-    "ru": null,
-    "en": null
+  "content": {},
+  "hero": {
+    "alt": {}
   },
   "seo": {
     "title": {
@@ -40,7 +39,6 @@
       "en": "Ready-made solutions for foundry teams with implementation support."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Продукция Интема Групп"
     }
   },

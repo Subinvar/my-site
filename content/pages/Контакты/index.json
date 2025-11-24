@@ -1,6 +1,5 @@
 {
   "id": "contacts",
-  "slugKey": "contacts",
   "published": true,
   "slug": {
     "ru": "contacts",
@@ -18,9 +17,9 @@
     "ru": "Телефоны, e-mail и адрес для связи.",
     "en": "Phone, email, and address to reach us."
   },
-  "content": {
-    "ru": null,
-    "en": null
+  "content": {},
+  "hero": {
+    "alt": {}
   },
   "seo": {
     "title": {
@@ -40,7 +39,6 @@
       "en": "Phone, email, and office address."
     },
     "ogImage": {
-      "image": "uploads/og-default.svg",
       "alt": "Контакты Интема Групп"
     }
   },
