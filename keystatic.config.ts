@@ -56,27 +56,28 @@ const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
-const localizedMarkdocContent = (label: string) =>
-  fields.object(
-    Object.fromEntries(
-      locales.map((locale) => [
-        locale,
-        fields.markdoc({
-          label: `${label} (${locale.toUpperCase()})`,
-          config: keystaticMarkdocConfig,
-          components: keystaticMarkdocConfig.components,
-          options: {
-            image: {
-              directory: 'public/uploads',
-              publicPath: '/uploads/',
-            },
+const localizedMarkdocContent = (label: string) => {
+  const fieldsByLocale = locales.reduce(
+    (acc, locale) => ({
+      ...acc,
+      [locale]: fields.markdoc({
+        label: `${label} (${locale.toUpperCase()})`,
+        config: keystaticMarkdocConfig,
+        components: keystaticMarkdocConfig.components,
+        options: {
+          image: {
+            directory: 'public/uploads',
+            publicPath: '/uploads/',
           },
-          extension: 'mdoc',
-        }),
-      ])
-    ),
-    { label }
+        },
+        extension: 'mdoc',
+      }),
+    }),
+    {} as Record<(typeof locales)[number], ReturnType<typeof fields.markdoc>>
   );
+
+  return fields.object(fieldsByLocale, { label });
+};
 
 const localizedSeoTextFields = (label: string, options: LocalizedFieldOptions = {}) =>
   fields.object(
