@@ -15,6 +15,7 @@ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
 import type { CatalogPageContent } from '@/lib/keystatic';
+import { getCatalogTaxonomyValues } from '@/lib/catalog/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +37,8 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   }
 
   const locale = rawLocale;
-  const filters = parseFilters(rawSearchParams);
+  const taxonomyValues = getCatalogTaxonomyValues();
+  const filters = parseFilters(rawSearchParams, taxonomyValues);
   const taxonomyOptions = getCatalogTaxonomyOptions(locale);
   const [items, shell, catalogPage] = await Promise.all([
     getCatalogListing(locale),
@@ -93,6 +95,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
             emptyStateMessage={emptyStateMessage}
             detailLabel={detailLabel}
             locale={locale}
+            taxonomy={taxonomyValues}
           />
         </section>
       </div>

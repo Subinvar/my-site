@@ -1,15 +1,10 @@
-import {
-  AUXILIARY_CATEGORY,
-  CATALOG_AUXILIARIES,
-  CATALOG_BASES,
-  CATALOG_CATEGORIES,
-  CATALOG_FILLERS,
-  CATALOG_PROCESSES,
-  type CatalogAuxiliary,
-  type CatalogBase,
-  type CatalogCategory,
-  type CatalogFiller,
-  type CatalogProcess,
+import type { CatalogTaxonomyValues } from '@/lib/catalog/constants';
+import type {
+  CatalogAuxiliary,
+  CatalogBase,
+  CatalogCategory,
+  CatalogFiller,
+  CatalogProcess,
 } from '@/lib/catalog/constants';
 
 export type CatalogListItem = {
@@ -40,23 +35,32 @@ export type FilterState = {
   auxiliary: MultiFilter<CatalogAuxiliary>;
 };
 
-export function parseFilters(params: Record<string, string | string[] | undefined>): FilterState {
+export function parseFilters(
+  params: Record<string, string | string[] | undefined>,
+  taxonomy: CatalogTaxonomyValues
+): FilterState {
+  const { categories, processes, bases, fillers, auxiliaries } = taxonomy;
   const categoryValue = toSingle(params.category);
-  const category = categoryValue && CATALOG_CATEGORIES.includes(categoryValue as CatalogCategory)
+  const category = categoryValue && categories.includes(categoryValue as CatalogCategory)
     ? (categoryValue as CatalogCategory)
     : null;
 
   return {
     category,
-    process: toMulti<CatalogProcess>(params.process, CATALOG_PROCESSES),
-    base: toMulti<CatalogBase>(params.base, CATALOG_BASES),
-    filler: toMulti<CatalogFiller>(params.filler, CATALOG_FILLERS),
-    auxiliary: toMulti<CatalogAuxiliary>(params.auxiliary, CATALOG_AUXILIARIES),
+    process: toMulti<CatalogProcess>(params.process, processes),
+    base: toMulti<CatalogBase>(params.base, bases),
+    filler: toMulti<CatalogFiller>(params.filler, fillers),
+    auxiliary: toMulti<CatalogAuxiliary>(params.auxiliary, auxiliaries),
   } satisfies FilterState;
 }
 
-export function applyFilters(items: CatalogListItem[], filters: FilterState): CatalogListItem[] {
-  const shouldFilterAuxiliary = filters.auxiliary.values.length > 0 && filters.category === AUXILIARY_CATEGORY;
+export function applyFilters(
+  items: CatalogListItem[],
+  filters: FilterState,
+  taxonomy: CatalogTaxonomyValues
+): CatalogListItem[] {
+  const shouldFilterAuxiliary =
+    filters.auxiliary.values.length > 0 && filters.category === taxonomy.auxiliaryCategory;
   return items.filter((item) => {
     if (filters.category && item.category !== filters.category) {
       return false;
@@ -71,7 +75,7 @@ export function applyFilters(items: CatalogListItem[], filters: FilterState): Ca
       return false;
     }
     if (shouldFilterAuxiliary) {
-      if (item.category !== AUXILIARY_CATEGORY) {
+      if (item.category !== taxonomy.auxiliaryCategory) {
         return false;
       }
       if (!hasIntersection(item.auxiliary, filters.auxiliary.lookup)) {

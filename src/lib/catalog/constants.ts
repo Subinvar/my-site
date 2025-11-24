@@ -167,3 +167,18 @@ export function getCatalogTaxonomyOptions(
 
 export const AUXILIARY_CATEGORY =
   categories.find((entry) => entry.isAuxiliaryCategory)?.value ?? 'auxiliary';
+
+export const CATALOG_TAXONOMY_VALUES = {
+  categories: CATALOG_CATEGORIES,
+  processes: CATALOG_PROCESSES,
+  bases: CATALOG_BASES,
+  fillers: CATALOG_FILLERS,
+  auxiliaries: CATALOG_AUXILIARIES,
+  auxiliaryCategory: AUXILIARY_CATEGORY,
+} as const;
+
+export type CatalogTaxonomyValues = typeof CATALOG_TAXONOMY_VALUES;
+
+export function getCatalogTaxonomyValues(): CatalogTaxonomyValues {
+  return CATALOG_TAXONOMY_VALUES;
+}
