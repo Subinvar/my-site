@@ -15,7 +15,8 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 import { formatTelegramHandle } from '@/lib/contacts';
-import { getSite } from '@/lib/keystatic';
+import { getSite, getPageBySlug } from '@/lib/keystatic';
+import { render } from '@/lib/markdoc';
 import { sendContact } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -91,7 +92,12 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const locale = rawLocale;
   const isDryRun = process.env.LEADS_DRY_RUN !== '0';
   const status = isDryRun ? 'success' : resolveStatus(rawSearchParams.ok);
-  const shell = await getSiteShellData(locale);
+  const [shell, page] = await Promise.all([
+    getSiteShellData(locale),
+    getPageBySlug('contacts', locale),
+  ]);
+
+  const pageContent = page ? await render(page.content, locale) : null;
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['contacts']);
   const currentPath = buildPath(locale, ['contacts']);
@@ -170,6 +176,14 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           </div>
         </div>
       </div>
+
+      {pageContent ? (
+        <div className="mt-10 border-t border-zinc-200 pt-8">
+          <article className="prose-markdoc">
+            {pageContent}
+          </article>
+        </div>
+      ) : null}
     </SiteShell>
   );
 }
