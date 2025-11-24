@@ -17,7 +17,7 @@ type DatedEntry = {
 
 const buildSegments = (collection: Collection, slug: string): string[] => {
   if (collection === 'posts') {
-    return ['posts', slug];
+    return ['news', slug];
   }
   if (collection === 'catalog') {
     return ['catalog', slug];

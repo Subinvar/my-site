@@ -41,7 +41,7 @@ export function switchLocalePath(
   const normalized = slug.trim();
   let segments: string[] = [];
   if (entity.collection === 'posts') {
-    segments = ['posts'];
+    segments = ['news'];
   } else if (entity.collection === 'catalog') {
     segments = ['catalog'];
   }

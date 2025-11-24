@@ -70,7 +70,7 @@ async function getLocalizedPosts(locale: Locale): Promise<PostListItem[]> {
         title: post.title,
         description,
         date,
-        href: buildPath(locale, ['posts', slug]),
+        href: buildPath(locale, ['news', slug]),
       } satisfies PostListItem;
     })
   );

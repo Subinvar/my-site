@@ -105,7 +105,7 @@ export async function buildFeedResponse(locale: Locale) {
       }
       return {
         title: fullPost.title,
-        url: new URL(buildPath(locale, ['posts', slug]), origin).toString(),
+        url: new URL(buildPath(locale, ['news', slug]), origin).toString(),
         excerpt: fullPost.excerpt,
         content: fullPost.content,
         publishedAt: fullPost.date ?? post.updatedAt ?? null,

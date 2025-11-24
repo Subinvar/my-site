@@ -40,7 +40,7 @@ export default async function PostPage({ params }: PostPageProps) {
     collection: 'posts',
     slugs: post.slugByLocale,
   });
-  const currentPath = buildPath(locale, ['posts', slug]);
+  const currentPath = buildPath(locale, ['news', slug]);
 
   const tags = Array.isArray(post.tags) ? post.tags : [];
   const hasTags = tags.length > 0;
