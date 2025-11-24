@@ -19,7 +19,11 @@
   },
   "content": {},
   "hero": {
-    "alt": {}
+    "image": "/uploads/Партнёры/hero/image.jpg",
+    "alt": {
+      "ru": "Команда партнёров Интема Групп обсуждает проект на производстве",
+      "en": "Intema Group partners discussing a project at a foundry"
+    }
   },
   "seo": {
     "title": {
@@ -42,5 +46,5 @@
       "alt": "Партнёры Интема Групп"
     }
   },
-  "updatedAt": "2024-10-05T12:10"
+  "updatedAt": "2025-11-24T12:10"
 }

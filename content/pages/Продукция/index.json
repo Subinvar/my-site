@@ -19,7 +19,11 @@
   },
   "content": {},
   "hero": {
-    "alt": {}
+    "image": "/uploads/Продукция/hero/image.jpg",
+    "alt": {
+      "ru": "Ассортимент материалов Интема Групп для литейного производства",
+      "en": "Intema Group product range for foundry production"
+    }
   },
   "seo": {
     "title": {
@@ -42,5 +46,5 @@
       "alt": "Продукция Интема Групп"
     }
   },
-  "updatedAt": "2024-10-05T12:00"
+  "updatedAt": "2025-11-24T12:00"
 }
