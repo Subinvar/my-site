@@ -340,7 +340,11 @@ export function createComponents(locale: Locale) {
   } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }
 
-export const keystaticMarkdocConfig: Config = {
+export type KeystaticMarkdocConfig = Config & {
+  components: ReturnType<typeof createComponents>;
+};
+
+export const keystaticMarkdocConfig: KeystaticMarkdocConfig = {
   ...config,
   components: createComponents(defaultLocale),
 };
