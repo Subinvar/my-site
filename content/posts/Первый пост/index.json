@@ -1,6 +1,5 @@
 {
   "id": "first-post",
-  "slugKey": "first-post",
   "published": true,
   "date": "2024-02-05T07:00",
   "slug": {
@@ -19,17 +18,13 @@
     "ru": "Показываем по шагам внедрение материалов Интема Групп и ключевые показатели проекта.",
     "en": "Step-by-step view of the Intema Group rollout and the metrics that mattered."
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "tags": [
     "binders",
     "release-coating",
     "foundry"
   ],
   "cover": {
-    "image": "uploads/post-cover.svg",
     "alt": {
       "ru": "Контроль качества отливок после нанесения нового покрытия",
       "en": "Inspecting castings after applying a new release coating"
@@ -53,7 +48,6 @@
       "en": "Project stages, trials, and Intema Group support in detail."
     },
     "ogImage": {
-      "image": "uploads/post-cover.svg",
       "alt": "Литейная линия после внедрения нового покрытия"
     }
   },

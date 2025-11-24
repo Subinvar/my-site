@@ -1,6 +1,5 @@
 {
   "id": "modernizaciya-proizvodstva",
-  "slugKey": "modernizaciya-proizvodstva",
   "published": true,
   "date": "2024-03-18T09:00",
   "slug": {
@@ -19,17 +18,13 @@
     "ru": "Показываем, как новая связующая система, контроль дозирования и профилактика техники повысили выпуск и снизили выбросы.",
     "en": "See how a new binder system, dosing control, and preventive maintenance boosted output and cut emissions."
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "tags": [
     "production",
     "process",
     "modernisation"
   ],
   "cover": {
-    "image": "uploads/post-cover.svg",
     "alt": {
       "ru": "Инженеры настраивают дозирование связующего на линии",
       "en": "Engineers tuning binder dosing on the moulding line"
@@ -53,7 +48,6 @@
       "en": "Takeaways on binder selection and automated dosing control."
     },
     "ogImage": {
-      "image": "uploads/post-cover.svg",
       "alt": "Обновленная формовочная линия после модернизации"
     }
   },

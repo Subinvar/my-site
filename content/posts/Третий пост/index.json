@@ -1,6 +1,5 @@
 {
   "id": "snizhenie-prigara",
-  "slugKey": "snizhenie-prigara",
   "published": true,
   "date": "2024-02-05T08:00",
   "slug": {
@@ -19,17 +18,13 @@
     "ru": "Разбираем, как лабораторные тесты, контроль толщины слоя и ИК-датчики снизили пригар до 6 %.",
     "en": "Lab trials, layer control, and IR sensors brought burn-on down to 6%."
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "tags": [
     "quality",
     "coatings",
     "foundry"
   ],
   "cover": {
-    "image": "uploads/post-cover.svg",
     "alt": {
       "ru": "Контроль толщины противопригарного покрытия на форме",
       "en": "Checking the release coating thickness on the mould"
@@ -53,7 +48,6 @@
       "en": "Practical steps: new formulas, layer control, IR sensors."
     },
     "ogImage": {
-      "image": "uploads/post-cover.svg",
       "alt": "Отливка редуктора с ровным покрытием без пригара"
     }
   },
