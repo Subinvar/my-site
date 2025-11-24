@@ -64,6 +64,7 @@ const localizedMarkdocContent = (label: string) =>
         fields.markdoc({
           label: `${label} (${locale.toUpperCase()})`,
           config: keystaticMarkdocConfig,
+          components: keystaticMarkdocConfig.components,
           options: {
             image: {
               directory: 'public/uploads',
