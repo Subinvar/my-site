@@ -1,8 +1,7 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 
 import { CATALOG_CATEGORIES, getCatalogTaxonomyOptions } from './src/lib/catalog/constants';
-import { defaultLocale, type Locale } from './src/lib/i18n';
-import { keystaticMarkdocConfig } from './src/lib/markdoc';
+import { defaultLocale } from './src/lib/i18n';
 
 const taxonomyOptions = getCatalogTaxonomyOptions(defaultLocale);
 

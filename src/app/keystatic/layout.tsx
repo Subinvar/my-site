@@ -10,9 +10,9 @@ export default function Layout({
   children: ReactNode;
 }): ReactElement {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
+    <div className="flex min-h-0 min-h-screen flex-col bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 bg-slate-900">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-slate-200">
               Intema Group Admin
@@ -27,8 +27,8 @@ export default function Layout({
           </Link>
         </div>
       </header>
-      <main className="flex-1">
-        <div className="mx-auto w-full max-w-6xl px-6 py-8">
+      <main className="flex-1 overflow-y-auto min-h-0">
+        <div className="mx-auto w-full max-w-6xl px-6 py-6">
           <div className="rounded-2xl border border-slate-800 bg-white/5 p-4 shadow-lg shadow-slate-950/20 backdrop-blur">
             {children}
           </div>
