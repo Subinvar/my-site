@@ -149,6 +149,41 @@ export function createComponents(locale: Locale) {
     Object.entries(ALERT_LABELS).map(([tone, labels]) => [tone, labels[locale] ?? labels.ru])
   ) as Record<AlertTone, string>;
 
+  const AlertComponent = ({
+    tone = 'info',
+    title,
+    children,
+  }: {
+    tone?: AlertTone;
+    title?: string;
+    dismissible?: boolean;
+    children?: ReactNode;
+  }) => {
+    const normalizedTone = ALERT_TONES.includes(tone ?? '') ? (tone as AlertTone) : 'info';
+    const classes = ALERT_TONE_CLASSES[normalizedTone];
+    const heading = title?.trim() || alertTitleFallback[normalizedTone];
+    return React.createElement(
+      'aside',
+      {
+        className: `rounded-lg border ${classes.border} ${classes.background} p-4 text-sm ${classes.text}`,
+      },
+      heading
+        ? React.createElement(
+            'strong',
+            {
+              className: `block text-xs font-semibold uppercase tracking-wide ${classes.heading}`,
+            },
+            heading
+          )
+        : null,
+      React.createElement(
+        'div',
+        { className: 'mt-2 space-y-2 leading-relaxed' },
+        children
+      )
+    );
+  };
+
   return {
     Callout({
       type = 'note',
@@ -246,40 +281,8 @@ export function createComponents(locale: Locale) {
         sizes: '(min-width: 768px) 720px, 100vw',
       });
     },
-    Alert({
-      tone = 'info',
-      title,
-      children,
-    }: {
-      tone?: AlertTone;
-      title?: string;
-      dismissible?: boolean;
-      children?: ReactNode;
-    }) {
-      const normalizedTone = ALERT_TONES.includes(tone ?? '') ? (tone as AlertTone) : 'info';
-      const classes = ALERT_TONE_CLASSES[normalizedTone];
-      const heading = title?.trim() || alertTitleFallback[normalizedTone];
-      return React.createElement(
-        'aside',
-        {
-          className: `rounded-lg border ${classes.border} ${classes.background} p-4 text-sm ${classes.text}`,
-        },
-        heading
-          ? React.createElement(
-              'strong',
-              {
-                className: `block text-xs font-semibold uppercase tracking-wide ${classes.heading}`,
-              },
-              heading
-            )
-          : null,
-        React.createElement(
-          'div',
-          { className: 'mt-2 space-y-2 leading-relaxed' },
-          children
-        )
-      );
-    },
+    Alert: AlertComponent,
+    alert: AlertComponent,
     Figure({
       src,
       alt,
