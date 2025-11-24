@@ -2,7 +2,7 @@ import { collection, config, fields, singleton } from '@keystatic/core';
 
 import { CATALOG_CATEGORIES, getCatalogTaxonomyOptions } from './src/lib/catalog/constants';
 import { defaultLocale, type Locale } from './src/lib/i18n';
-import { config as markdocConfig } from './src/lib/markdoc';
+import { keystaticMarkdocConfig } from './src/lib/markdoc';
 
 const taxonomyOptions = getCatalogTaxonomyOptions(defaultLocale);
 
@@ -56,19 +56,19 @@ const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
-  const localizedMarkdocContent = (label: string) =>
-    fields.object(
-      Object.fromEntries(
-        locales.map((locale) => [
-          locale,
-          fields.markdoc({
-            label: `${label} (${locale.toUpperCase()})`,
-            config: markdocConfig,
-            options: {
-              image: {
-                directory: 'public/uploads',
-                publicPath: '/uploads/',
-              },
+const localizedMarkdocContent = (label: string) =>
+  fields.object(
+    Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        fields.markdoc({
+          label: `${label} (${locale.toUpperCase()})`,
+          config: keystaticMarkdocConfig,
+          options: {
+            image: {
+              directory: 'public/uploads',
+              publicPath: '/uploads/',
+            },
           },
           extension: 'mdoc',
         }),

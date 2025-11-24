@@ -2,7 +2,7 @@ import Markdoc from '@markdoc/markdoc';
 import type { Config, Node as MarkdocNode } from '@markdoc/markdoc';
 import Image from 'next/image';
 import React, { type ReactNode } from 'react';
-import { locales, type Locale } from './i18n';
+import { defaultLocale, locales, type Locale } from './i18n';
 import alertTag from '../../markdoc/tags/alert';
 import figureTag from '../../markdoc/tags/figure';
 
@@ -339,6 +339,15 @@ export function createComponents(locale: Locale) {
     },
   } satisfies Record<string, (props: Record<string, unknown>) => ReactNode>;
 }
+
+export type KeystaticMarkdocConfig = Config & {
+  components: ReturnType<typeof createComponents>;
+};
+
+export const keystaticMarkdocConfig: KeystaticMarkdocConfig = {
+  ...config,
+  components: createComponents(defaultLocale),
+};
 
 export function toMarkdocAst(content: MarkdocContent): MarkdocNode | null {
   if (!content) {
