@@ -7,6 +7,7 @@ import {
   getLocalizedPageParams,
   resolveContentPageMetadata,
 } from '@/app/(site)/shared/content-page';
+import { PostsList } from '@/app/(site)/shared/posts-list';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
@@ -35,6 +36,7 @@ export default async function Page({ params }: PageProps) {
   }
 
   const { page, content, summary } = data;
+  const isNewsPage = page.id === 'news';
   const targetLocale = findTargetLocale(locale);
   const switcherHref = switchLocalePath(locale, targetLocale, {
     collection: 'pages',
@@ -58,6 +60,7 @@ export default async function Page({ params }: PageProps) {
         </header>
         <div className="prose-markdoc">{content}</div>
       </article>
+      {isNewsPage ? <PostsList locale={locale} /> : null}
     </SiteShell>
   );
 }
