@@ -1,0 +1,28 @@
+{
+  "slugKey": "eps-10",
+  "published": true,
+  "slug": {
+    "ru": "eps-10",
+    "en": "eps-10"
+  },
+  "title": {
+    "ru": "ЭПС-10",
+    "en": "ЭПС-10"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "exothermic-mix"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

@@ -1,0 +1,28 @@
+{
+  "slugKey": "svyazuyushchie-kb-a-b",
+  "published": true,
+  "slug": {
+    "ru": "svyazuyushchie-kb-a-b",
+    "en": "svyazuyushchie-kb-a-b"
+  },
+  "title": {
+    "ru": "Связующие КБ-А, КБ-Б",
+    "en": "Связующие КБ-А, КБ-Б"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "cold-box"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

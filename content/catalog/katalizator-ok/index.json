@@ -1,0 +1,28 @@
+{
+  "slugKey": "katalizator-ok",
+  "published": true,
+  "slug": {
+    "ru": "katalizator-ok",
+    "en": "katalizator-ok"
+  },
+  "title": {
+    "ru": "Катализатор серии ОК",
+    "en": "Катализатор серии ОК"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "furan"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

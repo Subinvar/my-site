@@ -1,0 +1,35 @@
+{
+  "slugKey": "pokrytie-pk-57g",
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-pk-57g",
+    "en": "pokrytie-pk-57g"
+  },
+  "title": {
+    "ru": "Покрытие ПК-57Г",
+    "en": "Покрытие ПК-57Г"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
+  "process": [
+    "alpha-set",
+    "furan",
+    "resol-co2",
+    "liquid-glass",
+    "pep-set",
+    "croning"
+  ],
+  "base": [
+    "alcohol-based"
+  ],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

@@ -1,0 +1,34 @@
+{
+  "slugKey": "rp-2",
+  "published": true,
+  "slug": {
+    "ru": "rp-2",
+    "en": "rp-2"
+  },
+  "title": {
+    "ru": "Разделительный состав РП-2",
+    "en": "Разделительный состав РП-2"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [
+    "alpha-set",
+    "furan",
+    "resol-co2",
+    "liquid-glass",
+    "pep-set"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "release-agent"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

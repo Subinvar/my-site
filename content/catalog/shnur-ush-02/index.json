@@ -1,0 +1,28 @@
+{
+  "slugKey": "shnur-ush-02",
+  "published": true,
+  "slug": {
+    "ru": "shnur-ush-02",
+    "en": "shnur-ush-02"
+  },
+  "title": {
+    "ru": "Шнур УШ-02",
+    "en": "Шнур УШ-02"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "cord"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

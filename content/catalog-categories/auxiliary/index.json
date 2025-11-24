@@ -1,0 +1,8 @@
+{
+  "value": "auxiliary",
+  "label": {
+    "ru": "Вспомогательные материалы",
+    "en": "Auxiliary supplies"
+  },
+  "isAuxiliaryCategory": true
+}

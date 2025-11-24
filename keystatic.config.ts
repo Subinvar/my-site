@@ -1,9 +1,5 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 
-import { CATALOG_CATEGORIES, getCatalogTaxonomyOptions } from './src/lib/catalog/constants';
-import { defaultLocale } from './src/lib/i18n';
-
-const taxonomyOptions = getCatalogTaxonomyOptions(defaultLocale);
 
 const locales = ['ru', 'en'] as const;
 
@@ -128,26 +124,6 @@ const navigationLinks = (label: string) =>
     }
   );
 
-type ObjectItemLabelProps = {
-  value?: { value?: unknown } | null;
-  fields?: { value?: { value?: unknown } | null } | null;
-};
-
-const objectItemLabel = (fallback: string) => (props: ObjectItemLabelProps) => {
-  const valueFromValue = props?.value?.value;
-  const valueFromFields = props?.fields?.value?.value;
-
-  if (typeof valueFromValue === 'string' && valueFromValue.trim()) {
-    return valueFromValue;
-  }
-
-  if (typeof valueFromFields === 'string' && valueFromFields.trim()) {
-    return valueFromFields;
-  }
-
-  return fallback;
-};
-
 const storageKind = process.env.KEYSTATIC_STORAGE?.toLowerCase();
 
 const storage =
@@ -219,82 +195,6 @@ export default config({
       schema: {
         headerLinks: navigationLinks('Ссылки в шапке'),
         footerLinks: navigationLinks('Ссылки в подвале'),
-      },
-    }),
-    catalogTaxonomy: singleton({
-      label: 'Справочники каталога',
-      path: 'content/catalog-taxonomy/',
-      format: { data: 'json' },
-      schema: {
-        categories: fields.array(
-          fields.object({
-            value: fields.text({
-              label: 'Значение категории',
-              validation: { isRequired: true },
-            }),
-            label: localizedText('Подпись категории', { isRequired: true }),
-            isAuxiliaryCategory: fields.checkbox({
-              label: 'Категория для вспомогательных материалов',
-              defaultValue: false,
-            }),
-          }),
-          {
-            label: 'Категории',
-            itemLabel: objectItemLabel('Категория'),
-          }
-        ),
-        processes: fields.array(
-          fields.object({
-            value: fields.text({
-              label: 'Значение процесса',
-              validation: { isRequired: true },
-            }),
-            label: localizedText('Подпись процесса', { isRequired: true }),
-          }),
-          {
-            label: 'Процессы',
-            itemLabel: objectItemLabel('Процесс'),
-          }
-        ),
-        bases: fields.array(
-          fields.object({
-            value: fields.text({
-              label: 'Значение основы',
-              validation: { isRequired: true },
-            }),
-            label: localizedText('Подпись основы', { isRequired: true }),
-          }),
-          {
-            label: 'Основы',
-            itemLabel: objectItemLabel('Основа'),
-          }
-        ),
-        fillers: fields.array(
-          fields.object({
-            value: fields.text({
-              label: 'Значение наполнителя',
-              validation: { isRequired: true },
-            }),
-            label: localizedText('Подпись наполнителя', { isRequired: true }),
-          }),
-          {
-            label: 'Наполнители',
-            itemLabel: objectItemLabel('Наполнитель'),
-          }
-        ),
-        auxiliaries: fields.array(
-          fields.object({
-            value: fields.text({
-              label: 'Значение вспомогательного материала',
-              validation: { isRequired: true },
-            }),
-            label: localizedText('Подпись вспомогательного материала', { isRequired: true }),
-          }),
-          {
-            label: 'Вспомогательные материалы',
-            itemLabel: objectItemLabel('Материал'),
-          }
-        ),
       },
     }),
     dictionary: singleton({
@@ -476,6 +376,75 @@ export default config({
     }),
   },
   collections: {
+    catalogCategories: collection({
+      label: 'Каталог — верхний уровень',
+      path: 'content/catalog-categories/**/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: fields.text({
+          label: 'Значение категории',
+          validation: { isRequired: true },
+        }),
+        label: localizedText('Подпись категории', { isRequired: true }),
+        isAuxiliaryCategory: fields.checkbox({
+          label: 'Категория для вспомогательных материалов',
+          defaultValue: false,
+        }),
+      },
+    }),
+    catalogProcesses: collection({
+      label: 'Каталог — процессы',
+      path: 'content/catalog-processes/**/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: fields.text({
+          label: 'Значение процесса',
+          validation: { isRequired: true },
+        }),
+        label: localizedText('Подпись процесса', { isRequired: true }),
+      },
+    }),
+    catalogBases: collection({
+      label: 'Каталог — типы покрытий',
+      path: 'content/catalog-bases/**/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: fields.text({
+          label: 'Значение основы покрытия',
+          validation: { isRequired: true },
+        }),
+        label: localizedText('Подпись основы', { isRequired: true }),
+      },
+    }),
+    catalogFillers: collection({
+      label: 'Каталог — наполнители',
+      path: 'content/catalog-fillers/**/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: fields.text({
+          label: 'Значение наполнителя',
+          validation: { isRequired: true },
+        }),
+        label: localizedText('Подпись наполнителя', { isRequired: true }),
+      },
+    }),
+    catalogAuxiliaries: collection({
+      label: 'Каталог — вспомогательные направления',
+      path: 'content/catalog-auxiliaries/**/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: fields.text({
+          label: 'Значение направления',
+          validation: { isRequired: true },
+        }),
+        label: localizedText('Подпись направления', { isRequired: true }),
+      },
+    }),
     pages: collection({
       label: 'Страницы',
       path: 'content/pages/**/index',
@@ -582,26 +551,26 @@ export default config({
         title: localizedText('Название', { isRequired: true }),
         excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
         content: localizedMarkdocContent('Контент (Markdoc)'),
-        category: fields.select({
+        category: fields.relationship({
           label: 'Категория',
-          options: taxonomyOptions.categories.map(({ value, label }) => ({ label, value })),
-          defaultValue: CATALOG_CATEGORIES[0],
+          collection: 'catalogCategories',
+          validation: { isRequired: true },
         }),
-        process: fields.multiselect({
+        process: fields.array(fields.relationship({ label: 'Процесс', collection: 'catalogProcesses' }), {
           label: 'Процессы',
-          options: taxonomyOptions.processes.map(({ value, label }) => ({ label, value })),
+          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Процесс',
         }),
-        base: fields.multiselect({
-          label: 'Основа',
-          options: taxonomyOptions.bases.map(({ value, label }) => ({ label, value })),
+        base: fields.array(fields.relationship({ label: 'Основа', collection: 'catalogBases' }), {
+          label: 'Основы',
+          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Основа',
         }),
-        filler: fields.multiselect({
-          label: 'Наполнитель',
-          options: taxonomyOptions.fillers.map(({ value, label }) => ({ label, value })),
+        filler: fields.array(fields.relationship({ label: 'Наполнитель', collection: 'catalogFillers' }), {
+          label: 'Наполнители',
+          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Наполнитель',
         }),
-        auxiliary: fields.multiselect({
+        auxiliary: fields.array(fields.relationship({ label: 'Вспомогательный', collection: 'catalogAuxiliaries' }), {
           label: 'Вспомогательные',
-          options: taxonomyOptions.auxiliaries.map(({ value, label }) => ({ label, value })),
+          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Вспомогательный',
         }),
         image: imageField('Изображение'),
         docs: fields.relationship({

@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-fk-30",
+  "published": true,
+  "slug": {
+    "ru": "smola-fk-30",
+    "en": "smola-fk-30"
+  },
+  "title": {
+    "ru": "Смола ФК-30",
+    "en": "Смола ФК-30"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "furan"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

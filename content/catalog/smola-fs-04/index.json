@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-fs-04",
+  "published": true,
+  "slug": {
+    "ru": "smola-fs-04",
+    "en": "smola-fs-04"
+  },
+  "title": {
+    "ru": "Смола ФС-04",
+    "en": "Смола ФС-04"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "alpha-set"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

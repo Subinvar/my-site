@@ -1,4 +1,6 @@
-import taxonomySource from '../../../content/catalog-taxonomy/index.json';
+import fs from 'fs';
+import path from 'path';
+
 import { defaultLocale, type Locale } from '@/lib/i18n';
 
 type LocalizedRecord = Partial<Record<Locale, string | null | undefined>>;
@@ -19,18 +21,74 @@ type CatalogTaxonomy = {
   auxiliaries?: CatalogTaxonomyEntryInput[];
 };
 
-const taxonomyData = (taxonomySource as CatalogTaxonomy) ?? {};
+type TaxonomyKey = 'categories' | 'processes' | 'bases' | 'fillers' | 'auxiliaries';
 
-function normalizeEntries(
-  entries: CatalogTaxonomyEntryInput[] | undefined
-): CatalogTaxonomyEntry[] {
+type TaxonomyEntryMap = {
+  categories: CatalogTaxonomyEntry[];
+  processes: CatalogTaxonomyEntry[];
+  bases: CatalogTaxonomyEntry[];
+  fillers: CatalogTaxonomyEntry[];
+  auxiliaries: CatalogTaxonomyEntry[];
+};
+
+const TAXONOMY_DIRECTORIES: Record<TaxonomyKey, string> = {
+  categories: 'content/catalog-categories',
+  processes: 'content/catalog-processes',
+  bases: 'content/catalog-bases',
+  fillers: 'content/catalog-fillers',
+  auxiliaries: 'content/catalog-auxiliaries',
+};
+
+function readJsonFile<T>(filePath: string): T | null {
+  try {
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function readEntriesFromDirectory(directory: string): CatalogTaxonomyEntry[] {
+  const absoluteDir = path.join(process.cwd(), directory);
+
+  let dirEntries: fs.Dirent[] = [];
+  try {
+    dirEntries = fs.readdirSync(absoluteDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+
+  return dirEntries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => {
+      const candidatePath = path.join(absoluteDir, entry.name, 'index.json');
+      const parsed = readJsonFile<CatalogTaxonomyEntryInput>(candidatePath);
+
+      if (!parsed || typeof parsed.value !== 'string' || !parsed.value.trim()) {
+        return null;
+      }
+
+      return parsed as CatalogTaxonomyEntry;
+    })
+    .filter((entry): entry is CatalogTaxonomyEntry => Boolean(entry));
+}
+
+function normalizeEntries(entries: CatalogTaxonomyEntryInput[] | undefined): CatalogTaxonomyEntry[] {
   if (!Array.isArray(entries)) {
     return [];
   }
+
   return entries.filter((entry): entry is CatalogTaxonomyEntry => {
     return Boolean(entry && typeof entry.value === 'string' && entry.value.trim());
   });
 }
+
+const taxonomyData: CatalogTaxonomy = Object.fromEntries(
+  (Object.keys(TAXONOMY_DIRECTORIES) as TaxonomyKey[]).map((key) => [
+    key,
+    readEntriesFromDirectory(TAXONOMY_DIRECTORIES[key]),
+  ])
+) as CatalogTaxonomy;
 
 const categories = normalizeEntries(taxonomyData.categories);
 const processes = normalizeEntries(taxonomyData.processes);
@@ -68,16 +126,6 @@ export type CatalogProcess = (typeof CATALOG_PROCESSES)[number];
 export type CatalogBase = (typeof CATALOG_BASES)[number];
 export type CatalogFiller = (typeof CATALOG_FILLERS)[number];
 export type CatalogAuxiliary = (typeof CATALOG_AUXILIARIES)[number];
-
-type TaxonomyKey = 'categories' | 'processes' | 'bases' | 'fillers' | 'auxiliaries';
-
-type TaxonomyEntryMap = {
-  categories: CatalogTaxonomyEntry[];
-  processes: CatalogTaxonomyEntry[];
-  bases: CatalogTaxonomyEntry[];
-  fillers: CatalogTaxonomyEntry[];
-  auxiliaries: CatalogTaxonomyEntry[];
-};
 
 const TAXONOMY_MAP: TaxonomyEntryMap = {
   categories,

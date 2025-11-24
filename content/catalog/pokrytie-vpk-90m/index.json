@@ -1,0 +1,30 @@
+{
+  "slugKey": "pokrytie-vpk-90m",
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-vpk-90m",
+    "en": "pokrytie-vpk-90m"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-90М",
+    "en": "Покрытие ВПК-90М"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
+  "process": [
+    "pgs"
+  ],
+  "base": [
+    "water-based"
+  ],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

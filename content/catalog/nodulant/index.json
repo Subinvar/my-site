@@ -1,0 +1,28 @@
+{
+  "slugKey": "nodulant",
+  "published": true,
+  "slug": {
+    "ru": "nodulant",
+    "en": "nodulant"
+  },
+  "title": {
+    "ru": "Нодулант",
+    "en": "Нодулант"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "modifier"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

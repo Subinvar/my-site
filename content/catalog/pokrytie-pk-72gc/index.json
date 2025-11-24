@@ -1,0 +1,35 @@
+{
+  "slugKey": "pokrytie-pk-72gc",
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-pk-72gc",
+    "en": "pokrytie-pk-72gc"
+  },
+  "title": {
+    "ru": "Покрытие ПК-72ГЦ",
+    "en": "Покрытие ПК-72ГЦ"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
+  "process": [
+    "alpha-set",
+    "furan",
+    "resol-co2",
+    "liquid-glass",
+    "pep-set",
+    "croning"
+  ],
+  "base": [
+    "alcohol-based"
+  ],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}
