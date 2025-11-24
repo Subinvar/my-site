@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { applyFilters, parseFilters, type FilterState } from './catalog-filtering';
 import { buildPath } from '@/lib/paths';
+import type { CatalogTaxonomyValues } from '@/lib/catalog/constants';
 import type { CatalogListItem } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 
@@ -31,6 +32,7 @@ type CatalogListingProps = {
   emptyStateMessage: string;
   detailLabel: string;
   locale: Locale;
+  taxonomy: CatalogTaxonomyValues;
 };
 
 export function CatalogListing({
@@ -39,16 +41,17 @@ export function CatalogListing({
   emptyStateMessage,
   detailLabel,
   locale,
+  taxonomy,
 }: CatalogListingProps) {
   const searchParams = useSearchParams();
   const filters = useMemo(() => {
     if (!searchParams) {
       return initialFilters;
     }
-    return parseFilters(toRecord(searchParams));
-  }, [initialFilters, searchParams]);
+    return parseFilters(toRecord(searchParams), taxonomy);
+  }, [initialFilters, searchParams, taxonomy]);
 
-  const filteredItems = useMemo(() => applyFilters(items, filters), [items, filters]);
+  const filteredItems = useMemo(() => applyFilters(items, filters, taxonomy), [items, filters, taxonomy]);
 
   if (filteredItems.length === 0) {
     return (

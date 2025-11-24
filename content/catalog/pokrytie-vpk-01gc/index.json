@@ -1,0 +1,30 @@
+{
+  "slugKey": "pokrytie-vpk-01gc",
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-vpk-01gc",
+    "en": "pokrytie-vpk-01gc"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-01ГЦ",
+    "en": "Покрытие ВПК-01ГЦ"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
+  "process": [
+    "pgs"
+  ],
+  "base": [
+    "water-based"
+  ],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

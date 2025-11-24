@@ -1,0 +1,28 @@
+{
+  "slugKey": "os-1",
+  "published": true,
+  "slug": {
+    "ru": "os-1",
+    "en": "os-1"
+  },
+  "title": {
+    "ru": "Отмывающий состав ОС-1",
+    "en": "Отмывающий состав ОС-1"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "cleaner"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

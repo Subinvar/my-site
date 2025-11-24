@@ -1,0 +1,28 @@
+{
+  "slugKey": "otverditel-am",
+  "published": true,
+  "slug": {
+    "ru": "otverditel-am",
+    "en": "otverditel-am"
+  },
+  "title": {
+    "ru": "Отвердитель серии АМ",
+    "en": "Отвердитель серии АМ"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "liquid-glass"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

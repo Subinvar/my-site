@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-sk-92",
+  "published": true,
+  "slug": {
+    "ru": "smola-sk-92",
+    "en": "smola-sk-92"
+  },
+  "title": {
+    "ru": "Смола СК-92",
+    "en": "Смола СК-92"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "croning"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

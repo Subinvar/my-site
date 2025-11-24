@@ -1,0 +1,28 @@
+{
+  "slugKey": "svyazuyushchie-sfu",
+  "published": true,
+  "slug": {
+    "ru": "svyazuyushchie-sfu",
+    "en": "svyazuyushchie-sfu"
+  },
+  "title": {
+    "ru": "Связующие СФУ-1, СФУ-2, СФУ-3К",
+    "en": "Связующие СФУ-1, СФУ-2, СФУ-3К"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "pep-set"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

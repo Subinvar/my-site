@@ -1,0 +1,30 @@
+{
+  "slugKey": "aips",
+  "published": true,
+  "slug": {
+    "ru": "aips",
+    "en": "aips"
+  },
+  "title": {
+    "ru": "АИПС",
+    "en": "АИПС"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [
+    "alcohol-based"
+  ],
+  "filler": [],
+  "auxiliary": [
+    "aux-material"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

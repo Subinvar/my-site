@@ -1,0 +1,28 @@
+{
+  "slugKey": "pasta-pr-v",
+  "published": true,
+  "slug": {
+    "ru": "pasta-pr-v",
+    "en": "pasta-pr-v"
+  },
+  "title": {
+    "ru": "Паста ПР-В",
+    "en": "Паста ПР-В"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "repair-paste"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

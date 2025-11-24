@@ -1,0 +1,30 @@
+{
+  "slugKey": "rp-2-1",
+  "published": true,
+  "slug": {
+    "ru": "rp-2-1",
+    "en": "rp-2-1"
+  },
+  "title": {
+    "ru": "Разделительный состав РП-2.1",
+    "en": "Разделительный состав РП-2.1"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [
+    "cold-box"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "release-agent"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

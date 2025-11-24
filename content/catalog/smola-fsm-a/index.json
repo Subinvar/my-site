@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-fsm-a",
+  "published": true,
+  "slug": {
+    "ru": "smola-fsm-a",
+    "en": "smola-fsm-a"
+  },
+  "title": {
+    "ru": "Смола ФСМ-А",
+    "en": "Смола ФСМ-А"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "alpha-set"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

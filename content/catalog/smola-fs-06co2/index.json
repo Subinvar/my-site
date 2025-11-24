@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-fs-06co2",
+  "published": true,
+  "slug": {
+    "ru": "smola-fs-06co2",
+    "en": "smola-fs-06co2"
+  },
+  "title": {
+    "ru": "Смола ФС-06CO₂",
+    "en": "Смола ФС-06CO₂"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "resol-co2"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

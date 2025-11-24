@@ -1,0 +1,28 @@
+{
+  "slugKey": "inokulant",
+  "published": true,
+  "slug": {
+    "ru": "inokulant",
+    "en": "inokulant"
+  },
+  "title": {
+    "ru": "Инокулант",
+    "en": "Инокулант"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "modifier"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

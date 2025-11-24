@@ -1,0 +1,28 @@
+{
+  "slugKey": "smola-fk-5",
+  "published": true,
+  "slug": {
+    "ru": "smola-fk-5",
+    "en": "smola-fk-5"
+  },
+  "title": {
+    "ru": "Смола ФК-5",
+    "en": "Смола ФК-5"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "furan"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

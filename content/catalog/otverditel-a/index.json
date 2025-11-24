@@ -1,0 +1,28 @@
+{
+  "slugKey": "otverditel-a",
+  "published": true,
+  "slug": {
+    "ru": "otverditel-a",
+    "en": "otverditel-a"
+  },
+  "title": {
+    "ru": "Отвердитель серии А",
+    "en": "Отвердитель серии А"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "binders",
+  "process": [
+    "alpha-set"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

@@ -1,0 +1,28 @@
+{
+  "slugKey": "kley-kfs-01",
+  "published": true,
+  "slug": {
+    "ru": "kley-kfs-01",
+    "en": "kley-kfs-01"
+  },
+  "title": {
+    "ru": "Клей КФС-01",
+    "en": "Клей КФС-01"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "adhesive"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

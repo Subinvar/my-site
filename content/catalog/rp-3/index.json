@@ -1,0 +1,30 @@
+{
+  "slugKey": "rp-3",
+  "published": true,
+  "slug": {
+    "ru": "rp-3",
+    "en": "rp-3"
+  },
+  "title": {
+    "ru": "Разделительный состав РП-3",
+    "en": "Разделительный состав РП-3"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "auxiliary",
+  "process": [
+    "pgs"
+  ],
+  "base": [],
+  "filler": [],
+  "auxiliary": [
+    "release-agent"
+  ],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}

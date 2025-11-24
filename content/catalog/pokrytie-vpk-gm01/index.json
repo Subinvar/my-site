@@ -1,0 +1,30 @@
+{
+  "slugKey": "pokrytie-vpk-gm01",
+  "published": true,
+  "slug": {
+    "ru": "pokrytie-vpk-gm01",
+    "en": "pokrytie-vpk-gm01"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-ГМ01",
+    "en": "Покрытие ВПК-ГМ01"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
+  "process": [
+    "lgm"
+  ],
+  "base": [
+    "water-based"
+  ],
+  "filler": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-24T14:10:44.066Z"
+}
