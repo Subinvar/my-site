@@ -1,6 +1,7 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 
 import { CATALOG_CATEGORIES, getCatalogTaxonomyOptions } from './src/lib/catalog/constants';
+import { config as markdocConfig } from './src/lib/markdoc';
 import { defaultLocale } from './src/lib/i18n';
 
 const taxonomyOptions = getCatalogTaxonomyOptions(defaultLocale);
@@ -68,6 +69,7 @@ const localizedMarkdocContent = (label: string) =>
               publicPath: '/uploads/',
             },
           },
+          config: markdocConfig,
           extension: 'mdoc',
         }),
       ])
