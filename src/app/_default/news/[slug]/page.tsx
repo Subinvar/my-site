@@ -34,7 +34,7 @@ export default async function DefaultLocalePostPage({ params }: PostPageProps) {
     collection: 'posts',
     slugs: post.slugByLocale,
   });
-  const currentPath = buildPath(locale, ['posts', slug]);
+  const currentPath = buildPath(locale, ['news', slug]);
 
   return (
     <SiteShell

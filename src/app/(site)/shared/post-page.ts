@@ -29,7 +29,7 @@ const buildSlugMap = (slugByLocale: Partial<Record<Locale, string>>): SlugMap =>
     if (!slug) {
       continue;
     }
-    record[candidate] = buildPath(candidate, ['posts', slug]);
+    record[candidate] = buildPath(candidate, ['news', slug]);
   }
   return record;
 };
