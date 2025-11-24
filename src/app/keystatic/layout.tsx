@@ -2,43 +2,22 @@
 import Link from 'next/link';
 import type { ReactElement, ReactNode } from 'react';
 
-const currentYear = new Date().getFullYear();
-
 export default function Layout({
   children,
 }: {
   children: ReactNode;
 }): ReactElement {
   return (
-    <div className="flex min-h-0 min-h-screen flex-col bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800 bg-slate-900">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-200">
-              Intema Group Admin
-            </p>
-            <p className="text-xs text-slate-400">Управление контентом сайта</p>
-          </div>
-          <Link
-            href="/"
-            className="inline-flex items-center rounded-md border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-          >
-            На сайт
-          </Link>
-        </div>
-      </header>
-      <main className="flex-1 overflow-y-auto min-h-0">
-        <div className="mx-auto w-full max-w-6xl px-6 py-6">
-          <div className="rounded-2xl border border-slate-800 bg-white/5 p-4 shadow-lg shadow-slate-950/20 backdrop-blur">
-            {children}
-          </div>
-        </div>
-      </main>
-      <footer className="border-t border-slate-800 bg-slate-900">
-        <div className="mx-auto w-full max-w-6xl px-6 py-4 text-xs text-slate-400">
-          © {currentYear} Intema Group. Доступ только для сотрудников.
-        </div>
-      </footer>
+    <div className="relative min-h-screen bg-slate-950 text-slate-100">
+      {/* Плавающая кнопка "На сайт" — не влияет на высоту Keystatic */}
+      <Link
+        href="/"
+        className="fixed bottom-4 right-4 z-50 inline-flex items-center rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-100 shadow-lg shadow-slate-900/40 transition hover:border-slate-500 hover:bg-slate-800"
+      >
+        На сайт
+      </Link>
+
+      {children}
     </div>
   );
 }
