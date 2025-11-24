@@ -1,3 +1,3 @@
-import { config } from "../src/lib/markdoc";
+import { keystaticMarkdocConfig } from "../src/lib/markdoc";
 
-export default config;
+export default keystaticMarkdocConfig;
