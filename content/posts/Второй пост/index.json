@@ -1,7 +1,7 @@
 {
   "id": "modernizaciya-proizvodstva",
   "published": true,
-  "date": "2024-03-18T09:00",
+  "date": "2024-03-18T09:00:00.000Z",
   "slug": {
     "ru": "modernizaciya-proizvodstva",
     "en": "modernising-operations"
@@ -51,5 +51,5 @@
       "alt": "Обновленная формовочная линия после модернизации"
     }
   },
-  "updatedAt": "2024-03-20T11:45"
+  "updatedAt": "2024-03-20T11:45:00.000Z"
 }

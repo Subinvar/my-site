@@ -1,7 +1,7 @@
 {
   "id": "first-post",
   "published": true,
-  "date": "2024-02-05T07:00",
+  "date": "2024-02-05T07:00:00.000Z",
   "slug": {
     "ru": "snizhenie-prigara-case-40",
     "en": "burn-on-defects-40"
@@ -51,5 +51,5 @@
       "alt": "Литейная линия после внедрения нового покрытия"
     }
   },
-  "updatedAt": "2024-02-12T12:15"
+  "updatedAt": "2024-02-12T12:15:00.000Z"
 }
