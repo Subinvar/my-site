@@ -58,7 +58,6 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@poupe/eslint-plugin-tailwindcss",
       "lightningcss",
       "lightningcss-win32-x64-msvc",
       "sharp",
