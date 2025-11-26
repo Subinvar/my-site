@@ -1,5 +1,8 @@
 {
-  "slugKey": "smola-fs-06co2",
+  "slugKey": {
+    "name": "smola-fs-06co2",
+    "slug": "smola-fs-06co2"
+  },
   "published": true,
   "slug": {
     "ru": "smola-fs-06co2",

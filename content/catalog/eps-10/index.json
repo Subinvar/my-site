@@ -1,5 +1,8 @@
 {
-  "slugKey": "eps-10",
+  "slugKey": {
+    "name": "eps-10",
+    "slug": "eps-10"
+  },
   "published": true,
   "slug": {
     "ru": "eps-10",

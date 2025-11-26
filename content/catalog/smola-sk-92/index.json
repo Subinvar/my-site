@@ -1,5 +1,8 @@
 {
-  "slugKey": "smola-sk-92",
+  "slugKey": {
+    "name": "smola-sk-92",
+    "slug": "smola-sk-92"
+  },
   "published": true,
   "slug": {
     "ru": "smola-sk-92",

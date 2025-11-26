@@ -1,5 +1,8 @@
 {
-  "slugKey": "smola-fk-70",
+  "slugKey": {
+    "name": "smola-fk-70",
+    "slug": "smola-fk-70"
+  },
   "published": true,
   "slug": {
     "ru": "smola-fk-70",

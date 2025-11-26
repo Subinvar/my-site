@@ -1,5 +1,8 @@
 {
-  "slugKey": "kley-kfs-02",
+  "slugKey": {
+    "name": "kley-kfs-02",
+    "slug": "kley-kfs-02"
+  },
   "published": true,
   "slug": {
     "ru": "kley-kfs-02",

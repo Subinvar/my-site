@@ -1,5 +1,8 @@
 {
-  "slugKey": "otverditel-a",
+  "slugKey": {
+    "name": "otverditel-a",
+    "slug": "otverditel-a"
+  },
   "published": true,
   "slug": {
     "ru": "otverditel-a",

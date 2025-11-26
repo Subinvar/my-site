@@ -1,5 +1,8 @@
 {
-  "value": "Клей",
+  "value": {
+    "name": "Клей",
+    "slug": "Клей"
+  },
   "label": {
     "ru": "клей",
     "en": "Adhesive"

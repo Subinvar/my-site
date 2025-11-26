@@ -1,5 +1,8 @@
 {
-  "slugKey": "aips",
+  "slugKey": {
+    "name": "aips",
+    "slug": "aips"
+  },
   "published": true,
   "slug": {
     "ru": "aips",

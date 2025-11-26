@@ -1,5 +1,8 @@
 {
-  "slugKey": "pokrytie-pk-72gc",
+  "slugKey": {
+    "name": "pokrytie-pk-72gc",
+    "slug": "pokrytie-pk-72gc"
+  },
   "published": true,
   "slug": {
     "ru": "pokrytie-pk-72gc",
