@@ -23,33 +23,33 @@
     "@markdoc/next.js": "^0.5.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "next": "16.0.3",
-    "nodemailer": "^7.0.10",
+    "next": "16.0.4",
+    "nodemailer": "^7.0.11",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.57.0",
     "@poupe/eslint-plugin-tailwindcss": "^0.2.4",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@types/nodemailer": "^7.0.4",
-    "@types/react": "^19.2.6",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "babel-plugin-react-compiler": "1.0.0",
     "depcheck": "^1.4.7",
     "eslint": "^9",
-    "eslint-config-next": "16.0.3",
+    "eslint-config-next": "16.0.4",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-tailwindcss": "4.0.0-beta.0",
     "eslint-plugin-unused-imports": "^4.3.0",
-    "knip": "^5.70.1",
+    "knip": "^5.70.2",
     "lightningcss-win32-x64-msvc": "1.30.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^4.1.17",
@@ -81,5 +81,5 @@
   "engines": {
     "node": "22.x"
   },
-  "packageManager": "pnpm@10.22.0"
+  "packageManager": "pnpm@10.23.0"
 }
