@@ -7,6 +7,7 @@
     "build": "next build --webpack && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "node scripts/cleanup-next-types.mjs && tsc -b --noEmit",
     "knip": "knip",
     "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,@tailwindcss/postcss,postcss,tailwindcss,sharp,lightningcss,lightningcss-wasm,lightningcss-win32-x64-msvc,unrs-resolver",
     "test": "tsx --test",
