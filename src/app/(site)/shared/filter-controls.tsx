@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import type { FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type {
@@ -59,6 +59,10 @@ export function CatalogFilters({
   const searchParams = useSearchParams();
   const [state, setState] = useState(initialValues);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setState(initialValues);
+  }, [initialValues]);
 
   const syncQuery = useCallback(
     (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
@@ -266,6 +270,10 @@ export function DocumentsFilters({
   const searchParams = useSearchParams();
   const [state, setState] = useState(initialValues);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setState(initialValues);
+  }, [initialValues]);
 
   const syncQuery = useCallback(
     (nextState: DocumentFilterValues) => {
