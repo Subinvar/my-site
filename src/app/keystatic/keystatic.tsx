@@ -8,6 +8,17 @@ import config from '../../../keystatic.config';
 
 const KeystaticPage = makePage(config);
 
+const originalToISOString = Date.prototype.toISOString;
+
+Date.prototype.toISOString = function toISOStringSafe() {
+  if (Number.isNaN(this.getTime())) {
+    console.warn('Keystatic: попытка преобразовать некорректную дату, возвращаю пустое значение');
+    return '';
+  }
+
+  return originalToISOString.call(this);
+};
+
 class KeystaticErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   constructor(props: { children: ReactNode }) {
     super(props);
