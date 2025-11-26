@@ -1,5 +1,8 @@
 {
-  "slugKey": "os-1",
+  "slugKey": {
+    "name": "os-1",
+    "slug": "os-1"
+  },
   "published": true,
   "slug": {
     "ru": "os-1",

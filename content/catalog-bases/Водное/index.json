@@ -1,5 +1,8 @@
 {
-  "value": "Водное",
+  "value": {
+    "name": "Водное",
+    "slug": "Водное"
+  },
   "label": {
     "ru": "водное",
     "en": "Water-based"

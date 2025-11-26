@@ -1,5 +1,8 @@
 {
-  "slugKey": "smola-fs-03",
+  "slugKey": {
+    "name": "smola-fs-03",
+    "slug": "smola-fs-03"
+  },
   "published": true,
   "slug": {
     "ru": "smola-fs-03",

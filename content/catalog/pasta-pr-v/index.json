@@ -1,5 +1,8 @@
 {
-  "slugKey": "pasta-pr-v",
+  "slugKey": {
+    "name": "pasta-pr-v",
+    "slug": "pasta-pr-v"
+  },
   "published": true,
   "slug": {
     "ru": "pasta-pr-v",
