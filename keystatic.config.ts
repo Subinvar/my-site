@@ -86,10 +86,19 @@ const localizedSeoTextFields = (label: string, options: LocalizedFieldOptions = 
     { label }
   );
 
-const slugKeyField = (entityLabel: string) =>
-  fields.text({
-    label: `${entityLabel} — slug`,
-    validation: { isRequired: true },
+const slugField = (entityLabel: string) =>
+  fields.slug({
+    name: {
+      label: `${entityLabel} — название для slug`,
+      validation: { isRequired: true },
+    },
+    slug: {
+      label: `${entityLabel} — slug`,
+      generate: (name) => name,
+      validation: {
+        length: { min: 1 },
+      },
+    },
   });
 
 const localizedSeoGroup = () =>
@@ -382,10 +391,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'value',
       schema: {
-        value: fields.text({
-          label: 'Значение категории',
-          validation: { isRequired: true },
-        }),
+        value: slugField('Категория'),
         label: localizedText('Подпись категории', { isRequired: true }),
         isAuxiliaryCategory: fields.checkbox({
           label: 'Категория для вспомогательных материалов',
@@ -399,10 +405,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'value',
       schema: {
-        value: fields.text({
-          label: 'Значение процесса',
-          validation: { isRequired: true },
-        }),
+        value: slugField('Процесс'),
         label: localizedText('Подпись процесса', { isRequired: true }),
       },
     }),
@@ -412,10 +415,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'value',
       schema: {
-        value: fields.text({
-          label: 'Значение основы покрытия',
-          validation: { isRequired: true },
-        }),
+        value: slugField('Основа покрытия'),
         label: localizedText('Подпись основы', { isRequired: true }),
       },
     }),
@@ -425,10 +425,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'value',
       schema: {
-        value: fields.text({
-          label: 'Значение наполнителя',
-          validation: { isRequired: true },
-        }),
+        value: slugField('Наполнитель'),
         label: localizedText('Подпись наполнителя', { isRequired: true }),
       },
     }),
@@ -438,10 +435,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'value',
       schema: {
-        value: fields.text({
-          label: 'Значение направления',
-          validation: { isRequired: true },
-        }),
+        value: slugField('Вспомогательное направление'),
         label: localizedText('Подпись направления', { isRequired: true }),
       },
     }),
@@ -451,7 +445,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
-        slugKey: slugKeyField('Страница'),
+        slugKey: slugField('Страница'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         slug: localizedSlug('Slug'),
@@ -476,7 +470,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
-        slugKey: slugKeyField('Пост'),
+        slugKey: slugField('Пост'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         date: fields.datetime({ label: 'Дата публикации' }),
@@ -503,7 +497,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
-        slugKey: slugKeyField('Документ'),
+        slugKey: slugField('Документ'),
         id: fields.text({ label: 'ID', validation: { isRequired: true } }),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
         title: localizedText('Название', { isRequired: true }),
@@ -545,7 +539,7 @@ export default config({
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
-        slugKey: slugKeyField('Товар'),
+        slugKey: slugField('Товар'),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: false }),
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),
