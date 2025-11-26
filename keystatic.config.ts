@@ -377,7 +377,7 @@ export default config({
   },
   collections: {
     catalogCategories: collection({
-      label: 'Каталог — верхний уровень',
+      label: 'Каталог — направления',
       path: 'content/catalog-categories/**/index',
       format: { data: 'json' },
       slugField: 'value',
@@ -580,5 +580,29 @@ export default config({
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
+  },
+  ui: {
+    navigation: {
+      'Каталог': [
+        'catalogCategories',
+        'catalogProcesses',
+        'catalogBases',
+        'catalogFillers',
+        'catalogAuxiliaries',
+        'catalog',
+      ],
+      'Контент': [
+        'pages',
+        'posts',
+        'documents',
+      ],
+      'Настройки': [
+        'site',
+        'navigation',
+        'dictionary',
+        'documentsPage',
+        'catalogPage',
+      ],
+    },
   },
 });
