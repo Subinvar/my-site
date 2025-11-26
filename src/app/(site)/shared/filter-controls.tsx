@@ -92,14 +92,19 @@ export function CatalogFilters({
 
   const updateState = useCallback(
     (updater: (prev: CatalogFilterValues) => CatalogFilterValues) => {
+      let nextState: CatalogFilterValues | null = null;
       setState((prev) => {
         const next = updater(prev);
         if (next === prev) {
           return prev;
         }
-        syncQuery(next, { navigate: false });
+        nextState = next;
         return next;
       });
+
+      if (nextState) {
+        syncQuery(nextState, { navigate: false });
+      }
     },
     [syncQuery]
   );
@@ -285,14 +290,19 @@ export function DocumentsFilters({
 
   const updateState = useCallback(
     (updater: (prev: DocumentFilterValues) => DocumentFilterValues) => {
+      let nextState: DocumentFilterValues | null = null;
       setState((prev) => {
         const next = updater(prev);
         if (next === prev) {
           return prev;
         }
-        syncQuery(next);
+        nextState = next;
         return next;
       });
+
+      if (nextState) {
+        syncQuery(nextState);
+      }
     },
     [syncQuery]
   );
