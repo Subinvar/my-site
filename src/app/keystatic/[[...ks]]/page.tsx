@@ -4,6 +4,6 @@ export const revalidate = 0;
 
 import KeystaticApp from '../keystatic';
 
-export default function KeystaticCatchAllPage() {
-  return <KeystaticApp />;
+export default function KeystaticCatchAllPage({ params }: { params: { ks?: string[] } }) {
+  return <KeystaticApp params={params} />;
 }

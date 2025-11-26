@@ -51,10 +51,12 @@ class KeystaticErrorBoundary extends Component<{ children: ReactNode }, { error:
   }
 }
 
-export default function KeystaticApp() {
+type KeystaticParams = { ks?: string[] };
+
+export default function KeystaticApp({ params }: { params: KeystaticParams }) {
   return (
     <KeystaticErrorBoundary>
-      <KeystaticPage />
+      <KeystaticPage params={params} />
     </KeystaticErrorBoundary>
   );
 }
