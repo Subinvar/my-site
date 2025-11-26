@@ -19,7 +19,6 @@ class KeystaticErrorBoundary extends Component<{ children: ReactNode }, { error:
   }
 
   componentDidCatch(error: Error) {
-    // eslint-disable-next-line no-console
     console.error('Keystatic failed to render', error);
   }
 
