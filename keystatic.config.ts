@@ -387,7 +387,7 @@ export default config({
   collections: {
     catalogCategories: collection({
       label: 'Каталог — направления',
-      path: 'content/catalog-categories/**/index',
+      path: 'content/catalog-categories/{value}/index',
       format: { data: 'json' },
       slugField: 'value',
       schema: {
@@ -401,7 +401,7 @@ export default config({
     }),
     catalogProcesses: collection({
       label: 'Каталог — процессы',
-      path: 'content/catalog-processes/**/index',
+      path: 'content/catalog-processes/{value}/index',
       format: { data: 'json' },
       slugField: 'value',
       schema: {
@@ -411,7 +411,7 @@ export default config({
     }),
     catalogBases: collection({
       label: 'Каталог — типы покрытий',
-      path: 'content/catalog-bases/**/index',
+      path: 'content/catalog-bases/{value}/index',
       format: { data: 'json' },
       slugField: 'value',
       schema: {
@@ -421,7 +421,7 @@ export default config({
     }),
     catalogFillers: collection({
       label: 'Каталог — наполнители',
-      path: 'content/catalog-fillers/**/index',
+      path: 'content/catalog-fillers/{value}/index',
       format: { data: 'json' },
       slugField: 'value',
       schema: {
@@ -431,7 +431,7 @@ export default config({
     }),
     catalogAuxiliaries: collection({
       label: 'Каталог — вспомогательные направления',
-      path: 'content/catalog-auxiliaries/**/index',
+      path: 'content/catalog-auxiliaries/{value}/index',
       format: { data: 'json' },
       slugField: 'value',
       schema: {
@@ -441,7 +441,7 @@ export default config({
     }),
     pages: collection({
       label: 'Страницы',
-      path: 'content/pages/**/index',
+      path: 'content/pages/{slugKey}/index',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -466,7 +466,7 @@ export default config({
     }),
     posts: collection({
       label: 'Посты',
-      path: 'content/posts/**/index',
+      path: 'content/posts/{slugKey}/index',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -493,7 +493,7 @@ export default config({
     }),
     documents: collection({
       label: 'Документы',
-      path: 'content/documents/**/index',
+      path: 'content/documents/{slugKey}/index',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
@@ -535,7 +535,7 @@ export default config({
     }),
     catalog: collection({
       label: 'Каталог',
-      path: 'content/catalog/**/index',
+      path: 'content/catalog/{slugKey}/index',
       format: { data: 'json' },
       slugField: 'slugKey',
       schema: {
