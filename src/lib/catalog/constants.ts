@@ -11,7 +11,20 @@ type CatalogTaxonomyEntry = {
   isAuxiliaryCategory?: boolean;
 };
 
-type CatalogTaxonomyEntryInput = CatalogTaxonomyEntry | null | undefined;
+type LegacyTaxonomyValue =
+  | string
+  | null
+  | undefined
+  | {
+      name?: string | null | undefined;
+      slug?: string | null | undefined;
+    };
+
+type CatalogTaxonomyEntryInput = {
+  value?: LegacyTaxonomyValue;
+  label?: LocalizedRecord;
+  isAuxiliaryCategory?: boolean;
+} | null;
 
 type CatalogTaxonomy = {
   categories?: CatalogTaxonomyEntryInput[];
@@ -48,6 +61,40 @@ function readJsonFile<T>(filePath: string): T | null {
   }
 }
 
+function normalizeValue(rawValue: LegacyTaxonomyValue): string | null {
+  if (typeof rawValue === 'string') {
+    const trimmed = rawValue.trim();
+    return trimmed || null;
+  }
+
+  if (rawValue && typeof rawValue === 'object') {
+    const { slug, name } = rawValue;
+    const slugValue = typeof slug === 'string' ? slug.trim() : '';
+    if (slugValue) {
+      return slugValue;
+    }
+    const nameValue = typeof name === 'string' ? name.trim() : '';
+    if (nameValue) {
+      return nameValue;
+    }
+  }
+
+  return null;
+}
+
+function coerceEntry(entry: CatalogTaxonomyEntryInput): CatalogTaxonomyEntry | null {
+  if (!entry) {
+    return null;
+  }
+
+  const value = normalizeValue(entry.value ?? null);
+  if (!value) {
+    return null;
+  }
+
+  return { ...entry, value } satisfies CatalogTaxonomyEntry;
+}
+
 function readEntriesFromDirectory(directory: string): CatalogTaxonomyEntry[] {
   const absoluteDir = path.join(process.cwd(), directory);
 
@@ -64,11 +111,7 @@ function readEntriesFromDirectory(directory: string): CatalogTaxonomyEntry[] {
       const candidatePath = path.join(absoluteDir, entry.name, 'index.json');
       const parsed = readJsonFile<CatalogTaxonomyEntryInput>(candidatePath);
 
-      if (!parsed || typeof parsed.value !== 'string' || !parsed.value.trim()) {
-        return null;
-      }
-
-      return parsed as CatalogTaxonomyEntry;
+      return coerceEntry(parsed);
     })
     .filter((entry): entry is CatalogTaxonomyEntry => Boolean(entry));
 }
@@ -78,9 +121,9 @@ function normalizeEntries(entries: CatalogTaxonomyEntryInput[] | undefined): Cat
     return [];
   }
 
-  return entries.filter((entry): entry is CatalogTaxonomyEntry => {
-    return Boolean(entry && typeof entry.value === 'string' && entry.value.trim());
-  });
+  return entries
+    .map((entry) => coerceEntry(entry))
+    .filter((entry): entry is CatalogTaxonomyEntry => Boolean(entry));
 }
 
 const taxonomyData: CatalogTaxonomy = Object.fromEntries(
