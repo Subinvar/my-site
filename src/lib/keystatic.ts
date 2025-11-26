@@ -72,6 +72,10 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
         (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
 
       if (!existingIndexPath) {
+        const files = await fs.readdir(dir).catch(() => null);
+        if (files && files.length === 0) {
+          await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
+        }
         continue;
       }
 
