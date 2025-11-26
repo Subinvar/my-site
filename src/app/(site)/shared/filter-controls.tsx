@@ -75,10 +75,6 @@ export function CatalogFilters({
 
         if (typeof window !== 'undefined') {
           window.history.replaceState(null, '', nextUrl);
-          if (shouldNavigate) {
-            window.location.href = nextUrl;
-            return;
-          }
         }
 
         if (shouldNavigate) {
