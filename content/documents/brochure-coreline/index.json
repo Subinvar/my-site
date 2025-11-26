@@ -1,9 +1,6 @@
 {
   "id": "brochure-coreline",
-  "slugKey": {
-    "name": "brochure-coreline",
-    "slug": "brochure-coreline"
-  },
+  "slugKey": "brochure-coreline",
   "published": true,
   "title": {
     "ru": "Брошюра CoreLine: оборудование и расходники для стержневого участка",

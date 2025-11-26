@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "Кокиль",
-    "slug": "Кокиль"
-  },
+  "value": "Кокиль",
   "label": {
     "ru": "кокиль",
     "en": "Permanent mold"

@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "smola-fk-5",
-    "slug": "smola-fk-5"
-  },
+  "slugKey": "smola-fk-5",
   "published": true,
   "slug": {
     "ru": "smola-fk-5",

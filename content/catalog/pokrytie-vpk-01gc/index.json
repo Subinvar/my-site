@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "pokrytie-vpk-01gc",
-    "slug": "pokrytie-vpk-01gc"
-  },
+  "slugKey": "pokrytie-vpk-01gc",
   "published": true,
   "slug": {
     "ru": "pokrytie-vpk-01gc",

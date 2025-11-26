@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "Графит",
-    "slug": "Графит"
-  },
+  "value": "Графит",
   "label": {
     "ru": "графит",
     "en": "Graphite"

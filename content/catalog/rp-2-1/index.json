@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "rp-2-1",
-    "slug": "rp-2-1"
-  },
+  "slugKey": "rp-2-1",
   "published": true,
   "slug": {
     "ru": "rp-2-1",

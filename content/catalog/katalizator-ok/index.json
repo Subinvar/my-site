@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "katalizator-ok",
-    "slug": "katalizator-ok"
-  },
+  "slugKey": "katalizator-ok",
   "published": true,
   "slug": {
     "ru": "katalizator-ok",

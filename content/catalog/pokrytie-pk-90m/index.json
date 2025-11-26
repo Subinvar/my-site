@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "pokrytie-pk-90m",
-    "slug": "pokrytie-pk-90m"
-  },
+  "slugKey": "pokrytie-pk-90m",
   "published": true,
   "slug": {
     "ru": "pokrytie-pk-90m",

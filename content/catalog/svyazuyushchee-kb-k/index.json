@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "svyazuyushchee-kb-k",
-    "slug": "svyazuyushchee-kb-k"
-  },
+  "slugKey": "svyazuyushchee-kb-k",
   "published": true,
   "slug": {
     "ru": "svyazuyushchee-kb-k",
