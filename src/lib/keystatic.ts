@@ -72,6 +72,7 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
         (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
 
       if (!existingIndexPath) {
+        await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
         continue;
       }
 
