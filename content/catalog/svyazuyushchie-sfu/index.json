@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "svyazuyushchie-sfu",
-    "slug": "svyazuyushchie-sfu"
-  },
+  "slugKey": "svyazuyushchie-sfu",
   "published": true,
   "slug": {
     "ru": "svyazuyushchie-sfu",

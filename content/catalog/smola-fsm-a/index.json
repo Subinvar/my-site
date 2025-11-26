@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "smola-fsm-a",
-    "slug": "smola-fsm-a"
-  },
+  "slugKey": "smola-fsm-a",
   "published": true,
   "slug": {
     "ru": "smola-fsm-a",

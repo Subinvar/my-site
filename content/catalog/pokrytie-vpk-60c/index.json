@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "pokrytie-vpk-60c",
-    "slug": "pokrytie-vpk-60c"
-  },
+  "slugKey": "pokrytie-vpk-60c",
   "published": true,
   "slug": {
     "ru": "pokrytie-vpk-60c",

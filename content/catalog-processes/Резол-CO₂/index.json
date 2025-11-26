@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "Резол-CO₂",
-    "slug": "Резол-CO₂"
-  },
+  "value": "Резол-CO₂",
   "label": {
     "ru": "Резол-CO₂",
     "en": "Resol-CO₂"

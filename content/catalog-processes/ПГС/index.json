@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "ПГС",
-    "slug": "ПГС"
-  },
+  "value": "ПГС",
   "label": {
     "ru": "ПГС",
     "en": "PGS"

@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "nodulant",
-    "slug": "nodulant"
-  },
+  "slugKey": "nodulant",
   "published": true,
   "slug": {
     "ru": "nodulant",

@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "inokulant",
-    "slug": "inokulant"
-  },
+  "slugKey": "inokulant",
   "published": true,
   "slug": {
     "ru": "inokulant",

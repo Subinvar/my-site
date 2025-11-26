@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "ЖСС",
-    "slug": "ЖСС"
-  },
+  "value": "ЖСС",
   "label": {
     "ru": "ЖСС",
     "en": "Water glass"

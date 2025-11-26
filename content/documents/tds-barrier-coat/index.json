@@ -1,9 +1,6 @@
 {
   "id": "tds-barrier-coat",
-  "slugKey": {
-    "name": "tds-barrier-coat",
-    "slug": "tds-barrier-coat"
-  },
+  "slugKey": "tds-barrier-coat",
   "published": true,
   "title": {
     "ru": "Технические данные: противопригарное покрытие Barrier Coat 230",

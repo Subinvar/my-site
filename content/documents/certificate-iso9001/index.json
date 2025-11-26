@@ -1,9 +1,6 @@
 {
   "id": "certificate-iso9001",
-  "slugKey": {
-    "name": "certificate-iso9001",
-    "slug": "certificate-iso9001"
-  },
+  "slugKey": "certificate-iso9001",
   "published": true,
   "title": {
     "ru": "Сертификат ISO 9001:2015 на систему менеджмента качества",

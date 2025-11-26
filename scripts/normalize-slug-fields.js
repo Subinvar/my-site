@@ -15,11 +15,11 @@ const slugDirectories = [
 
 function normalizeSlugValue(value) {
   if (value === null || value === undefined) return value;
-  if (typeof value === 'string') return { name: value, slug: value };
+  if (typeof value === 'string') return value;
   if (typeof value === 'object') {
     const name = 'name' in value ? value.name ?? null : value.slug ?? null;
     const slug = 'slug' in value ? value.slug ?? null : value.name ?? null;
-    return { name, slug };
+    return slug ?? name ?? value;
   }
   return value;
 }
@@ -31,7 +31,13 @@ async function processFile(filePath) {
 
   if ('slugKey' in data) {
     const next = normalizeSlugValue(data.slugKey);
-    if (JSON.stringify(next) !== JSON.stringify(data.slugKey)) {
+    if (typeof next === 'object') {
+      const normalized = normalizeSlugValue(next.slug ?? next.name ?? next);
+      if (JSON.stringify(normalized) !== JSON.stringify(data.slugKey)) {
+        data.slugKey = normalized;
+        changed = true;
+      }
+    } else if (JSON.stringify(next) !== JSON.stringify(data.slugKey)) {
       data.slugKey = next;
       changed = true;
     }
@@ -39,7 +45,13 @@ async function processFile(filePath) {
 
   if ('value' in data) {
     const next = normalizeSlugValue(data.value);
-    if (JSON.stringify(next) !== JSON.stringify(data.value)) {
+    if (typeof next === 'object') {
+      const normalized = normalizeSlugValue(next.slug ?? next.name ?? next);
+      if (JSON.stringify(normalized) !== JSON.stringify(data.value)) {
+        data.value = normalized;
+        changed = true;
+      }
+    } else if (JSON.stringify(next) !== JSON.stringify(data.value)) {
       data.value = next;
       changed = true;
     }

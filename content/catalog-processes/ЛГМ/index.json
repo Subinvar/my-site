@@ -1,8 +1,5 @@
 {
-  "value": {
-    "name": "ЛГМ",
-    "slug": "ЛГМ"
-  },
+  "value": "ЛГМ",
   "label": {
     "ru": "ЛГМ",
     "en": "Lost foam"

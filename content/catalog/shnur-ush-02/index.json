@@ -1,8 +1,5 @@
 {
-  "slugKey": {
-    "name": "shnur-ush-02",
-    "slug": "shnur-ush-02"
-  },
+  "slugKey": "shnur-ush-02",
   "published": true,
   "slug": {
     "ru": "shnur-ush-02",
