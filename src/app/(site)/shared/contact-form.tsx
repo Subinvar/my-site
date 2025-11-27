@@ -35,12 +35,16 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [contactError, setContactError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const successVisible = localStatus === 'success';
   const errorVisible = localStatus === 'error';
 
   useEffect(() => {
     setLocalStatus(status);
+    if (status !== null) {
+      setIsSubmitting(false);
+    }
   }, [status]);
 
   const triggerDryRunSuccess = () => {
@@ -67,12 +71,15 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
       return;
     }
 
+    setIsSubmitting(true);
+
     if (!isDryRun) {
       return;
     }
 
     event.preventDefault();
     triggerDryRunSuccess();
+    setIsSubmitting(false);
   };
 
   return (
@@ -192,9 +199,10 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-base font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:w-auto"
         >
-          {copy.submit}
+          {isSubmitting ? 'Отправка…' : copy.submit}
         </button>
       </form>
     </div>
