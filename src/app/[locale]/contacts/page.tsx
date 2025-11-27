@@ -26,6 +26,7 @@ const COPY = {
   ru: {
     title: 'Свяжитесь с нами',
     description: 'Заполните форму или воспользуйтесь контактами — мы ответим на ваш запрос в ближайшее время.',
+    dryRunNotice: 'Сейчас форма работает в тестовом режиме: данные не отправляются.',
     name: 'Имя',
     email: 'Email',
     phone: 'Телефон',
@@ -40,6 +41,7 @@ const COPY = {
   en: {
     title: 'Contact us',
     description: 'Fill out the form or use the details — we will get back to you shortly.',
+    dryRunNotice: 'The form is in test mode right now: submissions are not sent.',
     name: 'Name',
     email: 'Email',
     phone: 'Phone',
@@ -54,6 +56,7 @@ const COPY = {
 } satisfies Record<Locale, {
   title: string;
   description: string;
+  dryRunNotice: string;
   name: string;
   email: string;
   phone: string;
@@ -93,8 +96,8 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   }
 
   const locale = rawLocale;
-  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
-  const status = isDryRun ? 'success' : resolveStatus(rawSearchParams.ok);
+  const isDryRun = process.env.LEADS_DRY_RUN === '1';
+  const status = isDryRun ? null : resolveStatus(rawSearchParams.ok);
   const [shell, page] = await Promise.all([
     getSiteShellData(locale),
     getPageBySlug('contacts', locale),

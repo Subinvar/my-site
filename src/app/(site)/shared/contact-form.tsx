@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Locale } from '@/lib/i18n';
 
 type Copy = {
   title: string;
   description: string;
+  dryRunNotice: string;
   name: string;
   email: string;
   phone: string;
@@ -31,24 +32,18 @@ type ContactFormProps = {
 export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction, isDryRun }: ContactFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [localStatus, setLocalStatus] = useState<'success' | 'error' | null>(status);
+  const [dryRunStatus, setDryRunStatus] = useState<'success' | 'error' | null>(null);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [contactError, setContactError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const successVisible = localStatus === 'success';
-  const errorVisible = localStatus === 'error';
-
-  useEffect(() => {
-    setLocalStatus(status);
-    if (status !== null) {
-      setIsSubmitting(false);
-    }
-  }, [status]);
+  const currentStatus = isDryRun ? dryRunStatus : status;
+  const successVisible = currentStatus === 'success';
+  const errorVisible = currentStatus === 'error';
 
   const triggerDryRunSuccess = () => {
-    setLocalStatus('success');
+    setDryRunStatus('success');
     const params = new URLSearchParams(searchParams?.toString() ?? '');
     params.set('ok', '1');
     router.replace(`${contactsPath}?${params.toString()}`, { scroll: false });
@@ -71,15 +66,15 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
       return;
     }
 
-    setIsSubmitting(true);
-
-    if (!isDryRun) {
+    if (isDryRun) {
+      event.preventDefault();
+      setIsSubmitting(true);
+      triggerDryRunSuccess();
+      setIsSubmitting(false);
       return;
     }
 
-    event.preventDefault();
-    triggerDryRunSuccess();
-    setIsSubmitting(false);
+    setIsSubmitting(true);
   };
 
   return (
@@ -95,8 +90,14 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
         </div>
       ) : null}
 
+      {isDryRun && copy.dryRunNotice ? (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+          {copy.dryRunNotice}
+        </div>
+      ) : null}
+
       <form
-        action={isDryRun ? undefined : onSubmitAction}
+        action={onSubmitAction}
         onSubmit={handleSubmit}
         className="space-y-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
       >
