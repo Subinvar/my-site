@@ -97,7 +97,6 @@ const slugField = (entityLabel: string) =>
     },
     slug: {
       label: `${entityLabel} — slug`,
-      generate: (name: string) => name,
       validation: {
         length: { min: 1 },
       },
