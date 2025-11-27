@@ -66,4 +66,3 @@ export function proxy(request: NextRequest) {
   applySecurityHeaders(response, { allowInlineScripts: allowInline, allowInlineStyles: allowInline });
   return response;
 }
-
