@@ -1,9 +1,22 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 import type { Dirent } from 'fs';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const isBrowser = typeof window !== 'undefined';
+
+let nodeFs: typeof import('fs') | null = null;
+let nodePath: typeof import('path') | null = null;
+
+const ensureNodeModules = () => {
+  if (nodeFs && nodePath) return true;
+  if (isBrowser) return false;
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- Lazy-load Node built-ins only on the server
+  nodeFs = require('fs');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- Lazy-load Node built-ins only on the server
+  nodePath = require('path');
+
+  return true;
+};
 
 const locales = ['ru', 'en'] as const;
 
@@ -179,19 +192,19 @@ const getTaxonomyLabel = (data: unknown): string | null => {
 };
 
 function readTaxonomyOptions(directory: string): TaxonomyOption[] {
-  if (isBrowser) return [];
+  if (!ensureNodeModules() || !nodeFs || !nodePath) return [];
 
-  const absoluteDir = path.join(process.cwd(), directory);
+  const absoluteDir = nodePath.join(process.cwd(), directory);
 
   try {
-    const entries: Dirent[] = fs.readdirSync(absoluteDir, { withFileTypes: true });
+    const entries: Dirent[] = nodeFs.readdirSync(absoluteDir, { withFileTypes: true });
 
     return entries
       .filter((entry: Dirent) => entry.isDirectory())
       .map((entry: Dirent) => {
-        const candidatePath = path.join(absoluteDir, entry.name, 'index.json');
+        const candidatePath = nodePath.join(absoluteDir, entry.name, 'index.json');
         try {
-          const raw = fs.readFileSync(candidatePath, 'utf-8');
+          const raw = nodeFs.readFileSync(candidatePath, 'utf-8');
           const parsed = JSON.parse(raw) as { value?: unknown };
           const value = typeof parsed.value === 'string' ? parsed.value : null;
           if (!value) return null;
