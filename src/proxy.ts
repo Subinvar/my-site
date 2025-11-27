@@ -80,21 +80,26 @@ const unauthorizedResponse = (): NextResponse =>
   });
 
 export function proxy(request: NextRequest) {
-  // Для Keystatic включаем явную Basic Auth, чтобы браузер показал диалог вместо пустого экрана
-  if (isKeystaticPath(request.nextUrl.pathname) && !isAuthorizedForKeystatic(request)) {
-    return unauthorizedResponse();
+  try {
+    // Для Keystatic включаем явную Basic Auth, чтобы браузер показал диалог вместо пустого экрана
+    if (isKeystaticPath(request.nextUrl.pathname) && !isAuthorizedForKeystatic(request)) {
+      return unauthorizedResponse();
+    }
+
+    // Прогоняем ТОЛЬКО обычные страницы через locale-мидлвару
+    const response = applyLocaleProxy(request);
+
+    const isProd = process.env.NODE_ENV === 'production';
+    const allowInline = !isProd;
+
+    applySecurityHeaders(response, {
+      allowInlineScripts: allowInline,
+      allowInlineStyles: allowInline,
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Middleware failed, falling back to pass-through response', error);
+    return NextResponse.next();
   }
-
-  // Прогоняем ТОЛЬКО обычные страницы через locale-мидлвару
-  const response = applyLocaleProxy(request);
-
-  const isProd = process.env.NODE_ENV === 'production';
-  const allowInline = !isProd;
-
-  applySecurityHeaders(response, {
-    allowInlineScripts: allowInline,
-    allowInlineStyles: allowInline,
-  });
-
-  return response;
 }
