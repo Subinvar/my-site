@@ -1,28 +1,26 @@
 {
-  "slugKey": "kley-kfs-01",
+  "slugKey": "ЭПС-10",
   "published": true,
   "slug": {
-    "ru": "kley-kfs-01",
-    "en": "kley-kfs-01"
+    "ru": "ЭПС-10",
+    "en": "EPS-10"
   },
   "title": {
-    "ru": "Клей КФС-01",
-    "en": "Клей КФС-01"
+    "ru": "ЭПС-10",
+    "en": "EPS-10"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "category": "Вспомогательные материалы",
   "process": [],
   "base": [],
   "filler": [],
+  "metals": [],
   "auxiliary": [
-    "Клей"
+    "Экзотермическая смесь"
   ],
-  "updatedAt": "2025-11-24T14:10:44.066Z"
+  "updatedAt": "2025-11-27T14:53"
 }

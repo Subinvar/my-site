@@ -1,28 +1,26 @@
 {
-  "slugKey": "kley-kfs-02",
+  "slugKey": "Клей КФС-02",
   "published": true,
   "slug": {
-    "ru": "kley-kfs-02",
-    "en": "kley-kfs-02"
+    "ru": "Клей КФС-02",
+    "en": "Kley KFS-02"
   },
   "title": {
     "ru": "Клей КФС-02",
-    "en": "Клей КФС-02"
+    "en": "Kley KFS-02"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "category": "Вспомогательные материалы",
   "process": [],
   "base": [],
   "filler": [],
+  "metals": [],
   "auxiliary": [
     "Клей"
   ],
-  "updatedAt": "2025-11-24T14:10:44.066Z"
+  "updatedAt": "2025-11-27T14:57"
 }

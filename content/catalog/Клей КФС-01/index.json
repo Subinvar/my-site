@@ -1,28 +1,26 @@
 {
-  "slugKey": "os-1",
+  "slugKey": "Клей КФС-01",
   "published": true,
   "slug": {
-    "ru": "os-1",
-    "en": "os-1"
+    "ru": "Клей КФС-01",
+    "en": "Kley KFS-01"
   },
   "title": {
-    "ru": "Отмывающий состав ОС-1",
-    "en": "Отмывающий состав ОС-1"
+    "ru": "Клей КФС-01",
+    "en": "Kley KFS-01"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "category": "Вспомогательные материалы",
   "process": [],
   "base": [],
   "filler": [],
+  "metals": [],
   "auxiliary": [
-    "Отмывающий состав"
+    "Клей"
   ],
-  "updatedAt": "2025-11-24T14:10:44.066Z"
+  "updatedAt": "2025-11-27T14:57"
 }

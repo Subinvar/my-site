@@ -1,28 +1,26 @@
 {
-  "slugKey": "eps-10",
+  "slugKey": "Отмывающий состав ОС-1",
   "published": true,
   "slug": {
-    "ru": "eps-10",
-    "en": "eps-10"
+    "ru": "Отмывающий состав ОС-1",
+    "en": "Cleaner OS-1"
   },
   "title": {
-    "ru": "ЭПС-10",
-    "en": "ЭПС-10"
+    "ru": "Отмывающий состав ОС-1",
+    "en": "Cleaner OS-1"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "category": "Вспомогательные материалы",
   "process": [],
   "base": [],
   "filler": [],
+  "metals": [],
   "auxiliary": [
-    "Экзотермическая смесь"
+    "Отмывающий состав"
   ],
-  "updatedAt": "2025-11-24T14:10:44.066Z"
+  "updatedAt": "2025-11-27T15:00"
 }

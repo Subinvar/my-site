@@ -1,28 +1,26 @@
 {
-  "slugKey": "nodulant",
+  "slugKey": "Инокулант",
   "published": true,
   "slug": {
-    "ru": "nodulant",
-    "en": "nodulant"
+    "ru": "Инокулант",
+    "en": "Inoculant"
   },
   "title": {
-    "ru": "Нодулант",
-    "en": "Нодулант"
+    "ru": "Инокулант",
+    "en": "Inoculant"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": null,
-    "en": null
-  },
+  "content": {},
   "category": "Вспомогательные материалы",
   "process": [],
   "base": [],
   "filler": [],
+  "metals": [],
   "auxiliary": [
     "Модификатор"
   ],
-  "updatedAt": "2025-11-24T14:10:44.066Z"
+  "updatedAt": "2025-11-27T14:54"
 }
