@@ -47,57 +47,22 @@ const applySecurityHeaders = (response: NextResponse, options?: SecurityOptions)
   }
 };
 
-const normalizeEnv = (value?: string): string | undefined => {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : undefined;
-};
-
-const KEYSTATIC_USERNAME = normalizeEnv(process.env.KEYSTATIC_BASIC_USER) ?? 'admin';
-const KEYSTATIC_PASSWORD =
-  normalizeEnv(process.env.KEYSTATIC_BASIC_PASSWORD) ??
-  normalizeEnv(process.env.KEYSTATIC_SECRET) ??
-  'stub-keystatic-secret';
-
 function isKeystaticRequest(pathname: string): boolean {
   return pathname === '/keystatic' || pathname.startsWith('/keystatic/') || pathname.startsWith('/api/keystatic');
 }
-
-function unauthorized(): NextResponse {
-  const response = new NextResponse('Authentication required', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Keystatic CMS"',
-    },
-  });
-  applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
-  return response;
-}
-
-function withKeystaticAuth(request: NextRequest): NextResponse {
-  if (!KEYSTATIC_PASSWORD) {
-    return unauthorized();
-  }
-
-  const authorizationHeader = request.headers.get('authorization');
-  if (authorizationHeader?.startsWith('Basic ')) {
-    const authValue = authorizationHeader.split(' ')[1] ?? '';
-    const decoded = atob(authValue);
-    const [username, password] = decoded.split(':');
-    if (username === KEYSTATIC_USERNAME && password === KEYSTATIC_PASSWORD) {
-      const response = NextResponse.next();
-      applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
-      return response;
-    }
-  }
-  return unauthorized();
-}
-
 export function proxy(request: NextRequest) {
-  if (isKeystaticRequest(request.nextUrl.pathname)) {
-    return withKeystaticAuth(request);
+  const pathname = request.nextUrl.pathname;
+  const isKeystatic = isKeystaticRequest(pathname);
+  const isProd = process.env.NODE_ENV === 'production';
+
+  if (isKeystatic) {
+    const response = NextResponse.next();
+    applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
+    return response;
   }
+
   const response = applyLocaleProxy(request);
-  const allowInline = process.env.NODE_ENV !== 'production';
+  const allowInline = !isProd;
   applySecurityHeaders(response, { allowInlineScripts: allowInline, allowInlineStyles: allowInline });
   return response;
 }
