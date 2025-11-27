@@ -3,5 +3,6 @@
   "label": {
     "ru": "Ремонтная паста",
     "en": "Repair paste"
-  }
+  },
+  "order": 5
 }

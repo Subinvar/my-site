@@ -3,5 +3,6 @@
   "label": {
     "ru": "Графит",
     "en": "Graphite"
-  }
+  },
+  "order": 1
 }

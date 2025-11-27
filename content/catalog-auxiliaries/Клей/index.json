@@ -3,5 +3,6 @@
   "label": {
     "ru": "Клей",
     "en": "Adhesive"
-  }
+  },
+  "order": 1
 }

@@ -3,5 +3,6 @@
   "label": {
     "ru": "Цветные сплавы",
     "en": "Non-ferrous alloys"
-  }
+  },
+  "order": 1
 }

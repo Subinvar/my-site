@@ -3,5 +3,6 @@
   "label": {
     "ru": "Модификатор",
     "en": "Modifier"
-  }
+  },
+  "order": 2
 }

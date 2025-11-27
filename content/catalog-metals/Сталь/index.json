@@ -3,5 +3,6 @@
   "label": {
     "ru": "Сталь",
     "en": "Steel"
-  }
+  },
+  "order": 0
 }

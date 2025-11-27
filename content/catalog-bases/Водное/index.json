@@ -3,5 +3,6 @@
   "label": {
     "ru": "Водное",
     "en": "Water-based"
-  }
+  },
+  "order": 0
 }
