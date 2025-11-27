@@ -19,15 +19,15 @@
   },
   "category": "Противопригарные покрытия",
   "process": [
-    "alpha-set",
-    "furan",
-    "resol-co2",
-    "liquid-glass",
-    "pep-set",
-    "croning"
+    "Альфа-cет",
+    "Фуран",
+    "Резол-CO₂",
+    "ЖСС",
+    "Пеп-сет",
+    "Кронинг"
   ],
   "base": [
-    "alcohol-based"
+    "Спиртовое"
   ],
   "filler": [],
   "auxiliary": [],
