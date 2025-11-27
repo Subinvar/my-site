@@ -1,5 +1,5 @@
+// src/proxy.ts
 import { NextResponse, type NextRequest } from 'next/server';
-
 import { proxy as applyLocaleProxy } from './lib/locale-middleware';
 
 const self = "'self'";
@@ -47,22 +47,17 @@ const applySecurityHeaders = (response: NextResponse, options?: SecurityOptions)
   }
 };
 
-function isKeystaticRequest(pathname: string): boolean {
-  return pathname === '/keystatic' || pathname.startsWith('/keystatic/') || pathname.startsWith('/api/keystatic');
-}
 export function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const isKeystatic = isKeystaticRequest(pathname);
-  const isProd = process.env.NODE_ENV === 'production';
-
-  if (isKeystatic) {
-    const response = NextResponse.next();
-    applySecurityHeaders(response, { allowInlineScripts: true, allowInlineStyles: true });
-    return response;
-  }
-
+  // Прогоняем ТОЛЬКО обычные страницы через locale-мидлвару
   const response = applyLocaleProxy(request);
+
+  const isProd = process.env.NODE_ENV === 'production';
   const allowInline = !isProd;
-  applySecurityHeaders(response, { allowInlineScripts: allowInline, allowInlineStyles: allowInline });
+
+  applySecurityHeaders(response, {
+    allowInlineScripts: allowInline,
+    allowInlineStyles: allowInline,
+  });
+
   return response;
 }
