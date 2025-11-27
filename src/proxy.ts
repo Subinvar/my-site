@@ -2,6 +2,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { proxy as applyLocaleProxy } from './lib/locale-middleware';
 
+const keystaticBasicAuthUser = process.env.KEYSTATIC_BASIC_AUTH_USER;
+const keystaticBasicAuthPass = process.env.KEYSTATIC_BASIC_AUTH_PASS;
+
 const self = "'self'";
 const data = 'data:';
 const blob = 'blob:';
@@ -47,7 +50,41 @@ const applySecurityHeaders = (response: NextResponse, options?: SecurityOptions)
   }
 };
 
+const isKeystaticPath = (pathname: string): boolean =>
+  pathname === '/keystatic' ||
+  pathname.startsWith('/keystatic/') ||
+  pathname === '/api/keystatic' ||
+  pathname.startsWith('/api/keystatic/');
+
+const isAuthorizedForKeystatic = (request: NextRequest): boolean => {
+  if (!keystaticBasicAuthUser || !keystaticBasicAuthPass) return true;
+
+  const header = request.headers.get('authorization');
+  if (!header?.startsWith('Basic ')) return false;
+
+  try {
+    const credentials = atob(header.slice('Basic '.length));
+    const [user, pass] = credentials.split(':');
+    return user === keystaticBasicAuthUser && pass === keystaticBasicAuthPass;
+  } catch {
+    return false;
+  }
+};
+
+const unauthorizedResponse = (): NextResponse =>
+  new NextResponse('Keystatic защищён Basic Auth. Разрешите диалог логина или введите правильные учетные данные.', {
+    status: 401,
+    headers: {
+      'WWW-Authenticate': 'Basic realm="Keystatic Admin", charset="UTF-8"',
+    },
+  });
+
 export function proxy(request: NextRequest) {
+  // Для Keystatic включаем явную Basic Auth, чтобы браузер показал диалог вместо пустого экрана
+  if (isKeystaticPath(request.nextUrl.pathname) && !isAuthorizedForKeystatic(request)) {
+    return unauthorizedResponse();
+  }
+
   // Прогоняем ТОЛЬКО обычные страницы через locale-мидлвару
   const response = applyLocaleProxy(request);
 

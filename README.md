@@ -38,11 +38,16 @@ KEYSTATIC_GITHUB_CLIENT_ID=...
 KEYSTATIC_GITHUB_CLIENT_SECRET=...
 KEYSTATIC_SECRET=...
 NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=...
+# Опционально: включите Basic Auth только для админки Keystatic
+# чтобы браузер показывал диалог логина вместо пустого экрана, если кто-то блокирует авторизацию
+KEYSTATIC_BASIC_AUTH_USER=admin
+KEYSTATIC_BASIC_AUTH_PASS=super-secret
 ```
 
 - `KEYSTATIC_GITHUB_CLIENT_ID` и `KEYSTATIC_GITHUB_CLIENT_SECRET` — данные OAuth-приложения GitHub.
 - `KEYSTATIC_SECRET` — секрет для подписи токенов Keystatic.
 - `NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` — slug установленного GitHub App.
+- `KEYSTATIC_BASIC_AUTH_USER` и `KEYSTATIC_BASIC_AUTH_PASS` — включают Basic Auth только для `/keystatic` и `/api/keystatic`. Если не заданы, админка открывается без логина/пароля. Диалог авторизации предотвращает ситуацию с «пустым экраном», когда браузер блокирует запросы без учётных данных.
 
 Keystatic всегда работает в GitHub Mode и коммитит прямо в ветку `main` этого репозитория. Поэтому достаточно добавить эти четыре переменные в `.env.local` (для локальной разработки) и в настройки окружений Vercel (preview/production). После деплоя админка `/keystatic` сразу потребует авторизацию через GitHub и будет писать изменения непосредственно в репозиторий.
 
