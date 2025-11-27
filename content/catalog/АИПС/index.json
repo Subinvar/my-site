@@ -13,7 +13,10 @@
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {},
+  "content": {
+    "ru": "catalog/АИПС/index/content/ru.mdoc",
+    "en": "catalog/АИПС/index/content/en.mdoc"
+  },
   "category": "Противопригарные покрытия",
   "process": [],
   "base": [
