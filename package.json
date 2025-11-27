@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
+    "build": "next build --webpack && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "node scripts/cleanup-next-types.mjs && tsc -b --noEmit",
