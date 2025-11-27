@@ -70,7 +70,7 @@ const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
-const localizedMarkdocContent = (label: string) => {
+const localizedMarkdocContent = (label: string, options: LocalizedFieldOptions = {}) => {
   const fieldsByLocale = locales.reduce(
     (acc, locale) => ({
       ...acc,
@@ -83,6 +83,7 @@ const localizedMarkdocContent = (label: string) => {
           },
         },
         extension: 'mdoc',
+        validation: options.isRequired ? { isRequired: true } : undefined,
       }),
     }),
     {} as Record<(typeof locales)[number], ReturnType<typeof fields.markdoc>>
@@ -686,7 +687,7 @@ export default config({
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),
         excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
-        content: localizedMarkdocContent('Контент (Markdoc)'),
+        content: localizedMarkdocContent('Контент (Markdoc)', { isRequired: true }),
         category: fields.relationship({
           label: 'Категория',
           collection: 'catalogCategories',
