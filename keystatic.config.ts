@@ -1,8 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-
 import { collection, config, fields, singleton } from '@keystatic/core';
 
+const isBrowser = typeof window !== 'undefined';
 
 const locales = ['ru', 'en'] as const;
 
@@ -178,6 +176,11 @@ const getTaxonomyLabel = (data: unknown): string | null => {
 };
 
 function readTaxonomyOptions(directory: string): TaxonomyOption[] {
+  if (isBrowser) return [];
+
+  const fs = require('fs');
+  const path = require('path');
+
   const absoluteDir = path.join(process.cwd(), directory);
 
   try {

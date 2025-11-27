@@ -1,12 +1,11 @@
-// src/app/keystatic/keystatic.tsx
-import { Suspense } from 'react';
+'use client';
 
-import { makePage } from '@keystatic/next/ui/app';
+// src/app/keystatic/keystatic.tsx
+import { Keystatic } from '@keystatic/core/ui';
+import { Suspense } from 'react';
 
 import config from '../../../keystatic.config';
 import KeystaticClientWrapper from './KeystaticClientWrapper';
-
-const KeystaticPage = makePage(config);
 
 export default function KeystaticApp() {
   return (
@@ -22,7 +21,7 @@ export default function KeystaticApp() {
           </div>
         }
       >
-        <KeystaticPage />
+        <Keystatic config={config} />
       </Suspense>
     </KeystaticClientWrapper>
   );
