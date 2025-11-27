@@ -6,14 +6,17 @@ type NodePathModule = typeof import('path');
 
 const isBrowser = typeof window !== 'undefined';
 
-const nodeFs: NodeFsModule | null = isBrowser
-  ? null
-  : // eslint-disable-next-line @typescript-eslint/no-require-imports -- require keeps built-in available in Node-only branch
-    require('fs');
-const nodePath: NodePathModule | null = isBrowser
-  ? null
-  : // eslint-disable-next-line @typescript-eslint/no-require-imports -- require keeps built-in available in Node-only branch
-    require('path');
+const loadNodeModule = <T>(moduleName: 'fs' | 'path'): T | null => {
+  if (isBrowser) return null;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval -- using Function to avoid bundler static analysis for Node-only imports
+    const nodeRequire = new Function('return require')();
+    return nodeRequire(moduleName) as T;
+  } catch {
+    return null;
+  }
+};
 
 const locales = ['ru', 'en'] as const;
 
@@ -189,6 +192,9 @@ const getTaxonomyLabel = (data: unknown): string | null => {
 };
 
 function readTaxonomyOptions(directory: string): TaxonomyOption[] {
+  const nodeFs = loadNodeModule<NodeFsModule>('fs');
+  const nodePath = loadNodeModule<NodePathModule>('path');
+
   if (!nodeFs || !nodePath) return [];
 
   const absoluteDir = nodePath.join(process.cwd(), directory);
