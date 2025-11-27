@@ -204,26 +204,39 @@ function readTaxonomyOptions(directory: string): TaxonomyOption[] {
   try {
     const entries: Dirent[] = nodeFs.readdirSync(absoluteDir, { withFileTypes: true });
 
-    return entries
+    const optionsWithOrder = entries
       .filter((entry: Dirent) => entry.isDirectory())
       .map((entry: Dirent) => {
         const candidatePath = nodePath.join(absoluteDir, entry.name, 'index.json');
         try {
           const raw = nodeFs.readFileSync(candidatePath, 'utf-8');
-          const parsed = JSON.parse(raw) as { value?: unknown };
+          const parsed = JSON.parse(raw) as { value?: unknown; order?: unknown };
           const value = typeof parsed.value === 'string' ? parsed.value : null;
           if (!value) return null;
 
           const label = getTaxonomyLabel(parsed) ?? value;
-          return { value, label } satisfies TaxonomyOption;
+          const order = typeof parsed.order === 'number' ? parsed.order : 0;
+          return { value, label, order } as const;
         } catch {
           return null;
         }
       })
-      .filter((entry): entry is TaxonomyOption => Boolean(entry))
-      .sort((a: TaxonomyOption, b: TaxonomyOption) =>
-        a.label.localeCompare(b.label, 'ru')
+      .filter(
+        (
+          entry
+        ): entry is {
+          value: string;
+          label: string;
+          order: number;
+        } => Boolean(entry)
       );
+
+    return optionsWithOrder
+      .sort((a, b) => {
+        if (a.order !== b.order) return a.order - b.order;
+        return a.label.localeCompare(b.label, 'ru');
+      })
+      .map(({ value, label }) => ({ value, label } satisfies TaxonomyOption));
   } catch {
     return [];
   }
@@ -517,6 +530,7 @@ export default config({
       schema: {
         value: slugField('Процесс'),
         label: localizedText('Подпись процесса', { isRequired: true }),
+        order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
       },
     }),
     catalogBases: collection({
@@ -527,6 +541,7 @@ export default config({
       schema: {
         value: slugField('Основа покрытия'),
         label: localizedText('Подпись основы', { isRequired: true }),
+        order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
       },
     }),
     catalogFillers: collection({
@@ -537,6 +552,7 @@ export default config({
       schema: {
         value: slugField('Наполнитель'),
         label: localizedText('Подпись наполнителя', { isRequired: true }),
+        order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
       },
     }),
     catalogMetals: collection({
@@ -547,6 +563,7 @@ export default config({
       schema: {
         value: slugField('Металл'),
         label: localizedText('Подпись металла', { isRequired: true }),
+        order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
       },
     }),
     catalogAuxiliaries: collection({
@@ -557,6 +574,7 @@ export default config({
       schema: {
         value: slugField('Вспомогательное направление'),
         label: localizedText('Подпись направления', { isRequired: true }),
+        order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
       },
     }),
     pages: collection({

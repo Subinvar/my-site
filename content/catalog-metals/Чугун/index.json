@@ -3,5 +3,6 @@
   "label": {
     "ru": "Чугун",
     "en": "Cast iron"
-  }
+  },
+  "order": 2
 }

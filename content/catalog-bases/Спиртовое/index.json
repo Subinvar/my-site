@@ -3,5 +3,6 @@
   "label": {
     "ru": "Спиртовое",
     "en": "Alcohol-based"
-  }
+  },
+  "order": 1
 }

@@ -3,5 +3,6 @@
   "label": {
     "ru": "Разделительный состав",
     "en": "Release agent"
-  }
+  },
+  "order": 4
 }

@@ -3,5 +3,6 @@
   "label": {
     "ru": "Экзотермическая смесь",
     "en": "Exothermic mix"
-  }
+  },
+  "order": 7
 }
