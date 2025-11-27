@@ -605,7 +605,7 @@ export default config({
   catalog: collection({
     label: 'Каталог',
     path: 'content/catalog/*/index',
-    format: { data: 'json', contentField: 'content' },
+    format: { data: 'json' },
     slugField: 'slugKey',
     // Keystatic не переименовывает папку при изменении slugKey:
     // запись считается новой и сохраняется в отдельную директорию.
