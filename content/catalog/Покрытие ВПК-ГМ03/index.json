@@ -1,0 +1,28 @@
+{
+  "slugKey": "Покрытие ВПК-ГМ03",
+  "published": true,
+  "slug": {
+    "ru": "Покрытие ВПК-ГМ03",
+    "en": "VPK-GM03"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-ГМ03",
+    "en": "VPK-GM03"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Противопригарные покрытия",
+  "process": [
+    "ЛГМ"
+  ],
+  "base": [
+    "Водное"
+  ],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:25"
+}

@@ -1,0 +1,28 @@
+{
+  "slugKey": "Покрытие ВПК-90М",
+  "published": true,
+  "slug": {
+    "ru": "Покрытие ВПК-90М",
+    "en": "VPK-90M"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-90М",
+    "en": "VPK-90M"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Противопригарные покрытия",
+  "process": [
+    "ПГС"
+  ],
+  "base": [
+    "Водное"
+  ],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:23"
+}

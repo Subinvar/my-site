@@ -1,0 +1,26 @@
+{
+  "slugKey": "Смола СК-92",
+  "published": true,
+  "slug": {
+    "ru": "Смола СК-92",
+    "en": "SK-92"
+  },
+  "title": {
+    "ru": "Смола СК-92",
+    "en": "SK-92"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Кронинг"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:29"
+}

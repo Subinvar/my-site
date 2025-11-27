@@ -1,0 +1,26 @@
+{
+  "slugKey": "Отвердитель серии АМ",
+  "published": true,
+  "slug": {
+    "ru": "otverditel-am",
+    "en": "Otverditel AM"
+  },
+  "title": {
+    "ru": "Отвердитель серии АМ",
+    "en": "Otverditel AM"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "ЖСС"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:15"
+}

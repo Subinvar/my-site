@@ -1,0 +1,26 @@
+{
+  "slugKey": "Смола ФС-06CO₂",
+  "published": true,
+  "slug": {
+    "ru": "Смола ФС-06CO₂",
+    "en": "FS-06CO₂"
+  },
+  "title": {
+    "ru": "Смола ФС-06CO₂",
+    "en": "FS-06CO₂"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Резол-CO₂"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:29"
+}

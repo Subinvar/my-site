@@ -1,0 +1,26 @@
+{
+  "slugKey": "Связующее КБ-К",
+  "published": true,
+  "slug": {
+    "ru": "Связующее КБ-К",
+    "en": "KB-K"
+  },
+  "title": {
+    "ru": "Связующее КБ-К",
+    "en": "KB-K"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Колд-Бокс"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:30"
+}

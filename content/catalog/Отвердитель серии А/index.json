@@ -1,0 +1,26 @@
+{
+  "slugKey": "Отвердитель серии А",
+  "published": true,
+  "slug": {
+    "ru": "Отвердитель серии А",
+    "en": "Otverditel A"
+  },
+  "title": {
+    "ru": "Отвердитель серии А",
+    "en": "Otverditel A"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Альфа-cет"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:15"
+}

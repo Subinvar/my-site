@@ -1,0 +1,26 @@
+{
+  "slugKey": "Паста ПР-В",
+  "published": true,
+  "slug": {
+    "ru": "Паста ПР-В",
+    "en": "PR-V"
+  },
+  "title": {
+    "ru": "Паста ПР-В",
+    "en": "PR-V"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Ремонтная паста"
+  ],
+  "updatedAt": "2025-11-27T15:17"
+}

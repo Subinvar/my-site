@@ -1,0 +1,26 @@
+{
+  "slugKey": "Смола ФС-04",
+  "published": true,
+  "slug": {
+    "ru": "Смола ФС-04",
+    "en": "FS-04"
+  },
+  "title": {
+    "ru": "Смола ФС-04",
+    "en": "FS-04"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Альфа-cет"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:27"
+}

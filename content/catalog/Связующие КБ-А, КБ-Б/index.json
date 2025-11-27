@@ -1,0 +1,26 @@
+{
+  "slugKey": "Связующие КБ-А, КБ-Б",
+  "published": true,
+  "slug": {
+    "ru": "Связующие КБ-А, КБ-Б",
+    "en": "KB-A-B"
+  },
+  "title": {
+    "ru": "Связующие КБ-А, КБ-Б",
+    "en": "KB-A-B"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Колд-Бокс"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:30"
+}

@@ -1,0 +1,26 @@
+{
+  "slugKey": "Смола ФСМ-А",
+  "published": true,
+  "slug": {
+    "ru": "Смола ФСМ-А",
+    "en": "FSM-A"
+  },
+  "title": {
+    "ru": "Смола ФСМ-А",
+    "en": "FSM-A"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Связующие",
+  "process": [
+    "Альфа-cет"
+  ],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:29"
+}

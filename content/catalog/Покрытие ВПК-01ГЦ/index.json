@@ -1,0 +1,28 @@
+{
+  "slugKey": "Покрытие ВПК-01ГЦ",
+  "published": true,
+  "slug": {
+    "ru": "Покрытие ВПК-01ГЦ",
+    "en": "VPK-01GC"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-01ГЦ",
+    "en": "VPK-01GC"
+  },
+  "excerpt": {
+    "ru": "Описание будет добавлено позже",
+    "en": "Description will be added later"
+  },
+  "content": {},
+  "category": "Противопригарные покрытия",
+  "process": [
+    "ПГС"
+  ],
+  "base": [
+    "Водное"
+  ],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [],
+  "updatedAt": "2025-11-27T15:22"
+}
