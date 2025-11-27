@@ -11,6 +11,7 @@ type Copy = {
   email: string;
   phone: string;
   phoneHint: string;
+  contactRequired: string;
   message: string;
   agree: string;
   submit: string;
@@ -31,6 +32,9 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
   const router = useRouter();
   const searchParams = useSearchParams();
   const [localStatus, setLocalStatus] = useState<'success' | 'error' | null>(status);
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [contactError, setContactError] = useState(false);
 
   const successVisible = localStatus === 'success';
   const errorVisible = localStatus === 'error';
@@ -46,10 +50,27 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
     router.replace(`${contactsPath}?${params.toString()}`, { scroll: false });
   };
 
+  const validateContacts = () => {
+    const hasEmail = email.trim().length > 0;
+    const hasPhone = phone.trim().length > 0;
+    const isValid = hasEmail || hasPhone;
+
+    setContactError(!isValid);
+
+    return isValid;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const isValid = validateContacts();
+    if (!isValid) {
+      event.preventDefault();
+      return;
+    }
+
     if (!isDryRun) {
       return;
     }
+
     event.preventDefault();
     triggerDryRunSuccess();
   };
@@ -105,6 +126,13 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
               id="email"
               name="email"
               type="email"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (contactError && event.target.value.trim()) {
+                  setContactError(false);
+                }
+              }}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
@@ -119,9 +147,21 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
               type="tel"
               inputMode="tel"
               pattern="[0-9+()\\s-]{7,}"
+              value={phone}
+              onChange={(event) => {
+                setPhone(event.target.value);
+                if (contactError && event.target.value.trim()) {
+                  setContactError(false);
+                }
+              }}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
             <p className="text-sm text-zinc-500">{copy.phoneHint}</p>
+            {contactError ? (
+              <p className="text-sm text-red-600" role="alert" aria-live="polite">
+                {copy.contactRequired}
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -152,7 +192,6 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
 
         <button
           type="submit"
-          onClick={isDryRun ? triggerDryRunSuccess : undefined}
           className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-base font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:w-auto"
         >
           {copy.submit}

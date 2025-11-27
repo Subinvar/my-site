@@ -30,6 +30,7 @@ const COPY = {
     email: 'Email',
     phone: 'Телефон',
     phoneHint: 'Можно оставить телефон или email — достаточно одного контакта.',
+    contactRequired: 'Укажите хотя бы email или телефон.',
     message: 'Сообщение',
     agree: 'Я согласен на обработку персональных данных',
     submit: 'Отправить',
@@ -43,6 +44,7 @@ const COPY = {
     email: 'Email',
     phone: 'Phone',
     phoneHint: 'You can leave either a phone number or an email — one contact is enough.',
+    contactRequired: 'Please provide at least an email or a phone number.',
     message: 'Message',
     agree: 'I agree to the processing of personal data',
     submit: 'Send',
@@ -56,6 +58,7 @@ const COPY = {
   email: string;
   phone: string;
   phoneHint: string;
+  contactRequired: string;
   message: string;
   agree: string;
   submit: string;
