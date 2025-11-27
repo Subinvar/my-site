@@ -1,12 +1,16 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 
 const nextDir = path.join(process.cwd(), '.next');
 const lockPath = path.join(nextDir, 'lock');
 const traceDir = path.join(nextDir, 'server');
 const middlewarePath = path.join(traceDir, 'middleware.js');
 const traceFilenames = ['proxy.js.nft.json', 'middleware.js.nft.json'];
-const payload = { version: 1, files: [] };
+
+const require = createRequire(import.meta.url);
+const nextServerEntry = path.relative(traceDir, require.resolve('next/server'));
+const payload = { version: 1, files: [nextServerEntry] };
 
 await mkdir(traceDir, { recursive: true });
 
