@@ -1,5 +1,7 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 import type { Dirent } from 'fs';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -178,9 +180,6 @@ const getTaxonomyLabel = (data: unknown): string | null => {
 
 function readTaxonomyOptions(directory: string): TaxonomyOption[] {
   if (isBrowser) return [];
-
-  const fs = require('fs');
-  const path = require('path');
 
   const absoluteDir = path.join(process.cwd(), directory);
 
