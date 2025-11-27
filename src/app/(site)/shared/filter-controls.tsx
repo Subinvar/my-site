@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import type { FormEvent } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type {
   CatalogAuxiliary,
   CatalogBase,
@@ -64,7 +64,7 @@ export function CatalogFilters({
   }, [initialValues]);
 
   const syncQuery = useCallback(
-    async (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
+    (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
       const shouldNavigate = options?.navigate !== false;
       setIsPending(true);
       const params = new URLSearchParams();
@@ -78,7 +78,7 @@ export function CatalogFilters({
 
       try {
         if (shouldNavigate) {
-          await router.replace(nextUrl, { scroll: false });
+          router.replace(nextUrl, { scroll: false });
           router.refresh();
         } else if (typeof window !== 'undefined') {
           window.history.replaceState(null, '', nextUrl);
