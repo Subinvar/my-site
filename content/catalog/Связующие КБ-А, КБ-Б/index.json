@@ -1,9 +1,9 @@
 {
-  "slugKey": "Связующие КБ-А, КБ-Б",
+  "slugKey": "kb-a-b",
   "published": true,
   "slug": {
-    "ru": "Связующие КБ-А, КБ-Б",
-    "en": "KB-A-B"
+    "ru": "kb-a-b",
+    "en": "kb-a-b"
   },
   "title": {
     "ru": "Связующие КБ-А, КБ-Б",

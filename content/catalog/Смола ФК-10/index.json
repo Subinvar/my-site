@@ -1,9 +1,9 @@
 {
-  "slugKey": "Смола ФК-10",
+  "slugKey": "fk-10",
   "published": true,
   "slug": {
-    "ru": "Смола ФК-10",
-    "en": "FK-10"
+    "ru": "fk-10",
+    "en": "fk-10"
   },
   "title": {
     "ru": "Смола ФК-10",

@@ -1,9 +1,9 @@
 {
-  "slugKey": "Паста ПР-В",
+  "slugKey": "pr-v",
   "published": true,
   "slug": {
-    "ru": "Паста ПР-В",
-    "en": "PR-V"
+    "ru": "pr-v",
+    "en": "pr-v"
   },
   "title": {
     "ru": "Паста ПР-В",

@@ -1,9 +1,9 @@
 {
-  "slugKey": "Смола ФК-70",
+  "slugKey": "fk-70",
   "published": true,
   "slug": {
-    "ru": "Смола ФК-70",
-    "en": "FK-70"
+    "ru": "fk-70",
+    "en": "fk-70"
   },
   "title": {
     "ru": "Смола ФК-70",

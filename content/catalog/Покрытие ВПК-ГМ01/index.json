@@ -1,9 +1,9 @@
 {
-  "slugKey": "Покрытие ВПК-ГМ01",
+  "slugKey": "vpk-gm01",
   "published": true,
   "slug": {
-    "ru": "Покрытие ВПК-ГМ01",
-    "en": "VPK-GM01"
+    "ru": "vpk-gm01",
+    "en": "vpk-gm01"
   },
   "title": {
     "ru": "Покрытие ВПК-ГМ01",

@@ -1,9 +1,9 @@
 {
-  "slugKey": "Отвердитель серии А",
+  "slugKey": "otverditel-a",
   "published": true,
   "slug": {
-    "ru": "Отвердитель серии А",
-    "en": "Otverditel A"
+    "ru": "otverditel-a",
+    "en": "otverditel-a"
   },
   "title": {
     "ru": "Отвердитель серии А",

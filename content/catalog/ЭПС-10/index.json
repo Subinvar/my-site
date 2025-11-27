@@ -1,9 +1,9 @@
 {
-  "slugKey": "ЭПС-10",
+  "slugKey": "eps-10",
   "published": true,
   "slug": {
-    "ru": "ЭПС-10",
-    "en": "EPS-10"
+    "ru": "eps-10",
+    "en": "eps-10"
   },
   "title": {
     "ru": "ЭПС-10",
