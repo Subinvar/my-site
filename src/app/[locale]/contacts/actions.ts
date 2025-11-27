@@ -27,10 +27,15 @@ export async function sendContact(formData: FormData) {
   const agree = formData.get('agree') === 'on';
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const hasAnyContact = email.length > 0 || phoneRaw.trim().length > 0;
   const hasEmail = email.length > 0 && emailPattern.test(email);
   const hasPhone = phone.length >= 7 && phone.length <= 15;
 
   if (name.length < 2 || name.length > 100) {
+    redirect(errorRedirect);
+  }
+
+  if (!hasAnyContact) {
     redirect(errorRedirect);
   }
 
