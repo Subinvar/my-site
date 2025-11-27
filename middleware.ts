@@ -3,7 +3,9 @@ import { proxy } from './src/proxy';
 
 export const config = {
   matcher: [
-    '/((?!_next|api|keystatic|.*\\.[^/]+$).*)',
+    '/keystatic/:path*',
+    '/api/keystatic/:path*',
+    '/((?!_next|api|.*\\.[^/]+$).*)',
     '/((?=.+\\.(?:xml|webmanifest)$).*)',
   ],
 };
