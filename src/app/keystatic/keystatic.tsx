@@ -1,4 +1,6 @@
 // src/app/keystatic/keystatic.tsx
+import { Suspense } from 'react';
+
 import { makePage } from '@keystatic/next/ui/app';
 
 import config from '../../../keystatic.config';
@@ -9,7 +11,19 @@ const KeystaticPage = makePage(config);
 export default function KeystaticApp() {
   return (
     <KeystaticClientWrapper>
-      <KeystaticPage />
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-slate-100">
+            <p className="text-base font-medium">Загружаем Keystatic…</p>
+            <p className="mt-2 max-w-lg text-center text-sm text-slate-300">
+              Если экран остаётся пустым, проверьте, что браузер не блокирует авторизацию по Basic Auth
+              и обновите страницу.
+            </p>
+          </div>
+        }
+      >
+        <KeystaticPage />
+      </Suspense>
     </KeystaticClientWrapper>
   );
 }
