@@ -1760,5 +1760,6 @@ export type {
   CatalogBase,
   CatalogCategory,
   CatalogFiller,
+  CatalogMetal,
   CatalogProcess,
 } from './catalog/constants';
