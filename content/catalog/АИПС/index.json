@@ -1,28 +1,26 @@
 {
-  "slugKey": "aips",
+  "slugKey": "АИПС",
   "published": true,
   "slug": {
-    "ru": "aips",
-    "en": "aips"
+    "ru": "АИПС",
+    "en": "AIPS"
   },
   "title": {
     "ru": "АИПС",
-    "en": "АИПС"
+    "en": "AIPS"
   },
   "excerpt": {
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {
-    "ru": "catalog\\aips\\index\\content\\ru.mdoc",
-    "en": "catalog\\aips\\index\\content\\en.mdoc"
-  },
+  "content": {},
   "category": "Противопригарные покрытия",
   "process": [],
   "base": [
     "Спиртовое"
   ],
   "filler": [],
+  "metals": [],
   "auxiliary": [
     "Вспомогательный материал"
   ],
