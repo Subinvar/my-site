@@ -37,6 +37,7 @@ type DictionarySource = {
       process?: LocalizedRecord;
       base?: LocalizedRecord;
       filler?: LocalizedRecord;
+      metal?: LocalizedRecord;
       auxiliary?: LocalizedRecord;
     };
     summaryLabel?: LocalizedRecord;
@@ -94,6 +95,7 @@ type InterfaceDictionary = {
       process: string;
       base: string;
       filler: string;
+      metal: string;
       auxiliary: string;
     };
     summaryLabel: string;
@@ -210,6 +212,7 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
         process: pickLocalized(attributes.process, locale, 'catalog.attributes.process'),
         base: pickLocalized(attributes.base, locale, 'catalog.attributes.base'),
         filler: pickLocalized(attributes.filler, locale, 'catalog.attributes.filler'),
+        metal: pickLocalized(attributes.metal, locale, 'catalog.attributes.metal'),
         auxiliary: pickLocalized(attributes.auxiliary, locale, 'catalog.attributes.auxiliary'),
       },
       summaryLabel: pickLocalized(catalog.summaryLabel, locale, 'catalog.summaryLabel'),

@@ -61,6 +61,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
     process: filters.process.values,
     base: filters.base.values,
     filler: filters.filler.values,
+    metal: filters.metal.values,
     auxiliary: filters.auxiliary.values,
   };
 
@@ -155,13 +156,21 @@ function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): str
 function resolveGroupLabels(
   page: CatalogPageContent | null,
   locale: Locale
-): { category: string; process: string; base: string; filler: string; auxiliary: string } {
+): {
+  category: string;
+  process: string;
+  base: string;
+  filler: string;
+  metal: string;
+  auxiliary: string;
+} {
   const source = page?.groupLabels;
   return {
     category: resolveLocalizedValue(source?.category ?? null, locale),
     process: resolveLocalizedValue(source?.process ?? null, locale),
     base: resolveLocalizedValue(source?.base ?? null, locale),
     filler: resolveLocalizedValue(source?.filler ?? null, locale),
+    metal: resolveLocalizedValue(source?.metal ?? null, locale),
     auxiliary: resolveLocalizedValue(source?.auxiliary ?? null, locale),
   };
 }

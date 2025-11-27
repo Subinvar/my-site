@@ -13,11 +13,13 @@ import {
   CATALOG_CATEGORIES,
   CATALOG_AUXILIARIES,
   CATALOG_FILLERS,
+  CATALOG_METALS,
   CATALOG_PROCESSES,
   type CatalogBase,
   type CatalogCategory,
   type CatalogAuxiliary,
   type CatalogFiller,
+  type CatalogMetal,
   type CatalogProcess,
 } from './catalog/constants';
 
@@ -31,6 +33,7 @@ const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
 const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
 const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
 const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
+const CATALOG_METAL_SET = new Set<string>(CATALOG_METALS);
 const DOCUMENT_TYPE_SET = new Set<DocumentType>(['certificate', 'tds', 'msds', 'brochure']);
 const DOCUMENT_LANGUAGE_SET = new Set<DocumentLanguage>(['ru', 'en']);
 const DOCUMENT_TYPE_ORDER: DocumentType[] = ['certificate', 'tds', 'msds', 'brochure'];
@@ -327,6 +330,7 @@ type RawCatalogEntry = {
   process?: string[] | null;
   base?: string[] | null;
   filler?: string[] | null;
+  metals?: string[] | null;
   auxiliary?: string[] | null;
   image?: RawMedia;
   docs?: string | { value?: string | null; slug?: string | null; name?: string | null } | null;
@@ -379,6 +383,7 @@ type CatalogPageSingleton = {
     process?: Localized<string>;
     base?: Localized<string>;
     filler?: Localized<string>;
+    metal?: Localized<string>;
     auxiliary?: Localized<string>;
   } | null;
   seo?: RawSeoGroup;
@@ -502,6 +507,7 @@ export type CatalogListItem = {
   process: CatalogProcess[];
   base: CatalogBase[];
   filler: CatalogFiller[];
+  metals: CatalogMetal[];
   auxiliary: CatalogAuxiliary[];
   image: CatalogImage | null;
   docs: string | null;
@@ -569,6 +575,7 @@ export type CatalogPageContent = {
     process: Partial<Record<Locale, string>>;
     base: Partial<Record<Locale, string>>;
     filler: Partial<Record<Locale, string>>;
+    metal: Partial<Record<Locale, string>>;
     auxiliary: Partial<Record<Locale, string>>;
   };
   seo: ResolvedSeo | null;
@@ -1397,6 +1404,7 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
   const process = filterValidValues<CatalogProcess>(entry.process, CATALOG_PROCESS_SET);
   const base = filterValidValues<CatalogBase>(entry.base, CATALOG_BASE_SET);
   const filler = filterValidValues<CatalogFiller>(entry.filler, CATALOG_FILLER_SET);
+  const metals = filterValidValues<CatalogMetal>(entry.metals, CATALOG_METAL_SET);
   const auxiliary = filterValidValues<CatalogAuxiliary>(entry.auxiliary, CATALOG_AUXILIARY_SET);
   const imageAsset = normalizeImageAsset(entry.image ?? null);
   const image = imageAsset
@@ -1415,6 +1423,7 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
     process,
     base,
     filler,
+    metals,
     auxiliary,
     image,
     docs,
@@ -1686,6 +1695,7 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
     process: mapLocalizedTextRecord(groupLabelsSource.process),
     base: mapLocalizedTextRecord(groupLabelsSource.base),
     filler: mapLocalizedTextRecord(groupLabelsSource.filler),
+    metal: mapLocalizedTextRecord(groupLabelsSource.metal),
     auxiliary: mapLocalizedTextRecord(groupLabelsSource.auxiliary),
   };
   const seo = mapResolvedSeo(catalogPage.seo ?? null, locale);

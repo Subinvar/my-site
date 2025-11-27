@@ -74,6 +74,10 @@
       "auxiliary": {
         "ru": "Вспомогательные материалы",
         "en": "Auxiliary supplies"
+      },
+      "metal": {
+        "ru": "Металл",
+        "en": "Metal"
       }
     },
     "summaryLabel": {

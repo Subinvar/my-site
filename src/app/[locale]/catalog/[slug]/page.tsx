@@ -18,6 +18,7 @@ const TAXONOMY_KEYS = {
   process: 'processes',
   base: 'bases',
   filler: 'fillers',
+  metal: 'metals',
   auxiliary: 'auxiliaries',
 } as const;
 
@@ -61,6 +62,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   const processValues = mapAttributeValues(item.process, TAXONOMY_KEYS.process, locale);
   const baseValues = mapAttributeValues(item.base, TAXONOMY_KEYS.base, locale);
   const fillerValues = mapAttributeValues(item.filler, TAXONOMY_KEYS.filler, locale);
+  const metalValues = mapAttributeValues(item.metals, TAXONOMY_KEYS.metal, locale);
   const auxiliaryValues = mapAttributeValues(item.auxiliary, TAXONOMY_KEYS.auxiliary, locale);
   const showAuxiliary = item.category === AUXILIARY_CATEGORY;
 
@@ -98,6 +100,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
           <AttributeList label={attributes.process} values={processValues} emptyValue={emptyValue} />
           <AttributeList label={attributes.base} values={baseValues} emptyValue={emptyValue} />
           <AttributeList label={attributes.filler} values={fillerValues} emptyValue={emptyValue} />
+          <AttributeList label={attributes.metal} values={metalValues} emptyValue={emptyValue} />
           {showAuxiliary ? (
             <AttributeList label={attributes.auxiliary} values={auxiliaryValues} emptyValue={emptyValue} />
           ) : null}
@@ -126,7 +129,7 @@ function AttributeList({ label, values, emptyValue }: AttributeListProps) {
 
 function mapAttributeValues<T extends string>(
   values: readonly T[],
-  taxonomyKey: 'processes' | 'bases' | 'fillers' | 'auxiliaries',
+  taxonomyKey: 'processes' | 'bases' | 'fillers' | 'metals' | 'auxiliaries',
   locale: Locale
 ): string[] {
   if (!Array.isArray(values)) {

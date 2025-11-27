@@ -32,9 +32,10 @@ type CatalogTaxonomy = {
   bases?: CatalogTaxonomyEntryInput[];
   fillers?: CatalogTaxonomyEntryInput[];
   auxiliaries?: CatalogTaxonomyEntryInput[];
+  metals?: CatalogTaxonomyEntryInput[];
 };
 
-type TaxonomyKey = 'categories' | 'processes' | 'bases' | 'fillers' | 'auxiliaries';
+type TaxonomyKey = 'categories' | 'processes' | 'bases' | 'fillers' | 'auxiliaries' | 'metals';
 
 type TaxonomyEntryMap = {
   categories: CatalogTaxonomyEntry[];
@@ -42,6 +43,7 @@ type TaxonomyEntryMap = {
   bases: CatalogTaxonomyEntry[];
   fillers: CatalogTaxonomyEntry[];
   auxiliaries: CatalogTaxonomyEntry[];
+  metals: CatalogTaxonomyEntry[];
 };
 
 const TAXONOMY_DIRECTORIES: Record<TaxonomyKey, string> = {
@@ -50,6 +52,7 @@ const TAXONOMY_DIRECTORIES: Record<TaxonomyKey, string> = {
   bases: 'content/catalog-bases',
   fillers: 'content/catalog-fillers',
   auxiliaries: 'content/catalog-auxiliaries',
+  metals: 'content/catalog-metals',
 };
 
 function readJsonFile<T>(filePath: string): T | null {
@@ -138,6 +141,7 @@ const processes = normalizeEntries(taxonomyData.processes);
 const bases = normalizeEntries(taxonomyData.bases);
 const fillers = normalizeEntries(taxonomyData.fillers);
 const auxiliaries = normalizeEntries(taxonomyData.auxiliaries);
+const metals = normalizeEntries(taxonomyData.metals);
 
 function toValues(entries: CatalogTaxonomyEntry[]): readonly string[] {
   return entries.map((entry) => entry.value) as readonly string[];
@@ -163,12 +167,14 @@ export const CATALOG_PROCESSES = toValues(processes);
 export const CATALOG_BASES = toValues(bases);
 export const CATALOG_FILLERS = toValues(fillers);
 export const CATALOG_AUXILIARIES = toValues(auxiliaries);
+export const CATALOG_METALS = toValues(metals);
 
 export type CatalogCategory = (typeof CATALOG_CATEGORIES)[number];
 export type CatalogProcess = (typeof CATALOG_PROCESSES)[number];
 export type CatalogBase = (typeof CATALOG_BASES)[number];
 export type CatalogFiller = (typeof CATALOG_FILLERS)[number];
 export type CatalogAuxiliary = (typeof CATALOG_AUXILIARIES)[number];
+export type CatalogMetal = (typeof CATALOG_METALS)[number];
 
 const TAXONOMY_MAP: TaxonomyEntryMap = {
   categories,
@@ -176,6 +182,7 @@ const TAXONOMY_MAP: TaxonomyEntryMap = {
   bases,
   fillers,
   auxiliaries,
+  metals,
 };
 
 export function getCatalogTaxonomyLabel(
@@ -198,6 +205,7 @@ export function getCatalogTaxonomyOptions(
   bases: ReadonlyArray<{ value: CatalogBase; label: string }>;
   fillers: ReadonlyArray<{ value: CatalogFiller; label: string }>;
   auxiliaries: ReadonlyArray<{ value: CatalogAuxiliary; label: string }>;
+  metals: ReadonlyArray<{ value: CatalogMetal; label: string }>;
 } {
   return {
     categories: categories.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
@@ -205,6 +213,7 @@ export function getCatalogTaxonomyOptions(
     bases: bases.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
     fillers: fillers.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
     auxiliaries: auxiliaries.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
+    metals: metals.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
   };
 }
 
@@ -217,6 +226,7 @@ export const CATALOG_TAXONOMY_VALUES = {
   bases: CATALOG_BASES,
   fillers: CATALOG_FILLERS,
   auxiliaries: CATALOG_AUXILIARIES,
+  metals: CATALOG_METALS,
   auxiliaryCategory: AUXILIARY_CATEGORY,
 } as const;
 
