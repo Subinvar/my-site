@@ -1,4 +1,5 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
+import type { Dirent } from 'fs';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -184,11 +185,11 @@ function readTaxonomyOptions(directory: string): TaxonomyOption[] {
   const absoluteDir = path.join(process.cwd(), directory);
 
   try {
-    const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
+    const entries: Dirent[] = fs.readdirSync(absoluteDir, { withFileTypes: true });
 
     return entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => {
+      .filter((entry: Dirent) => entry.isDirectory())
+      .map((entry: Dirent) => {
         const candidatePath = path.join(absoluteDir, entry.name, 'index.json');
         try {
           const raw = fs.readFileSync(candidatePath, 'utf-8');
@@ -203,7 +204,9 @@ function readTaxonomyOptions(directory: string): TaxonomyOption[] {
         }
       })
       .filter((entry): entry is TaxonomyOption => Boolean(entry))
-      .sort((a, b) => a.label.localeCompare(b.label, 'ru'));
+      .sort((a: TaxonomyOption, b: TaxonomyOption) =>
+        a.label.localeCompare(b.label, 'ru')
+      );
   } catch {
     return [];
   }
