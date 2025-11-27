@@ -17,14 +17,14 @@
     "ru": null,
     "en": null
   },
-  "category": "auxiliary",
+  "category": "Вспомогательные материалы",
   "process": [
     "pgs"
   ],
   "base": [],
   "filler": [],
   "auxiliary": [
-    "release-agent"
+    "Разделительный состав"
   ],
   "updatedAt": "2025-11-24T14:10:44.066Z"
 }
