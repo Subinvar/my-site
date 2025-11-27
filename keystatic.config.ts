@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import { collection, config, fields, singleton } from '@keystatic/core';
 
 
@@ -148,6 +151,73 @@ const storage =
     : ({
         kind: 'local',
       } as const);
+
+type TaxonomyKey = 'processes' | 'bases' | 'fillers' | 'auxiliaries';
+
+type TaxonomyOption = { label: string; value: string };
+
+const TAXONOMY_DIRECTORIES: Record<TaxonomyKey, string> = {
+  processes: 'content/catalog-processes',
+  bases: 'content/catalog-bases',
+  fillers: 'content/catalog-fillers',
+  auxiliaries: 'content/catalog-auxiliaries',
+};
+
+const getTaxonomyLabel = (data: unknown): string | null => {
+  if (!data || typeof data !== 'object') return null;
+  const label = (data as { label?: Record<string, unknown> }).label;
+  if (!label || typeof label !== 'object') return null;
+
+  const ru = label['ru'];
+  if (typeof ru === 'string' && ru.trim()) return ru;
+
+  const en = label['en'];
+  if (typeof en === 'string' && en.trim()) return en;
+
+  return null;
+};
+
+function readTaxonomyOptions(directory: string): TaxonomyOption[] {
+  const absoluteDir = path.join(process.cwd(), directory);
+
+  try {
+    const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
+
+    return entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const candidatePath = path.join(absoluteDir, entry.name, 'index.json');
+        try {
+          const raw = fs.readFileSync(candidatePath, 'utf-8');
+          const parsed = JSON.parse(raw) as { value?: unknown };
+          const value = typeof parsed.value === 'string' ? parsed.value : null;
+          if (!value) return null;
+
+          const label = getTaxonomyLabel(parsed) ?? value;
+          return { value, label } satisfies TaxonomyOption;
+        } catch {
+          return null;
+        }
+      })
+      .filter((entry): entry is TaxonomyOption => Boolean(entry))
+      .sort((a, b) => a.label.localeCompare(b.label, 'ru'));
+  } catch {
+    return [];
+  }
+}
+
+const taxonomyOptions: Record<TaxonomyKey, TaxonomyOption[]> = {
+  processes: readTaxonomyOptions(TAXONOMY_DIRECTORIES.processes),
+  bases: readTaxonomyOptions(TAXONOMY_DIRECTORIES.bases),
+  fillers: readTaxonomyOptions(TAXONOMY_DIRECTORIES.fillers),
+  auxiliaries: readTaxonomyOptions(TAXONOMY_DIRECTORIES.auxiliaries),
+};
+
+const taxonomyMultiselect = (label: string, key: TaxonomyKey) =>
+  fields.multiselect({
+    label,
+    options: taxonomyOptions[key],
+  });
 
 export default config({
   storage,
@@ -554,22 +624,10 @@ export default config({
           collection: 'catalogCategories',
           validation: { isRequired: true },
         }),
-        process: fields.array(fields.relationship({ label: 'Процесс', collection: 'catalogProcesses' }), {
-          label: 'Процессы',
-          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Процесс',
-        }),
-        base: fields.array(fields.relationship({ label: 'Основа', collection: 'catalogBases' }), {
-          label: 'Основы',
-          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Основа',
-        }),
-        filler: fields.array(fields.relationship({ label: 'Наполнитель', collection: 'catalogFillers' }), {
-          label: 'Наполнители',
-          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Наполнитель',
-        }),
-        auxiliary: fields.array(fields.relationship({ label: 'Вспомогательный', collection: 'catalogAuxiliaries' }), {
-          label: 'Вспомогательные',
-          itemLabel: ({ value }: { value?: string | null }) => value ?? 'Вспомогательный',
-        }),
+        process: taxonomyMultiselect('Процессы', 'processes'),
+        base: taxonomyMultiselect('Основы', 'bases'),
+        filler: taxonomyMultiselect('Наполнители', 'fillers'),
+        auxiliary: taxonomyMultiselect('Вспомогательные', 'auxiliaries'),
         image: imageField('Изображение'),
         docs: fields.relationship({
           label: 'Документ',
