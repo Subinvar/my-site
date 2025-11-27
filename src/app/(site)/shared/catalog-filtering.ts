@@ -4,6 +4,7 @@ import type {
   CatalogBase,
   CatalogCategory,
   CatalogFiller,
+  CatalogMetal,
   CatalogProcess,
 } from '@/lib/catalog/constants';
 
@@ -16,6 +17,7 @@ export type CatalogListItem = {
   process: CatalogProcess[];
   base: CatalogBase[];
   filler: CatalogFiller[];
+  metals: CatalogMetal[];
   auxiliary: CatalogAuxiliary[];
   image: { src: string; width?: number | null; height?: number | null } | null;
   docs: string | null;
@@ -32,6 +34,7 @@ export type FilterState = {
   process: MultiFilter<CatalogProcess>;
   base: MultiFilter<CatalogBase>;
   filler: MultiFilter<CatalogFiller>;
+  metal: MultiFilter<CatalogMetal>;
   auxiliary: MultiFilter<CatalogAuxiliary>;
 };
 
@@ -39,7 +42,7 @@ export function parseFilters(
   params: Record<string, string | string[] | undefined>,
   taxonomy: CatalogTaxonomyValues
 ): FilterState {
-  const { categories, processes, bases, fillers, auxiliaries } = taxonomy;
+  const { categories, processes, bases, fillers, metals, auxiliaries } = taxonomy;
   const categoryValue = toSingle(params.category);
   const category = categoryValue && categories.includes(categoryValue as CatalogCategory)
     ? (categoryValue as CatalogCategory)
@@ -50,6 +53,7 @@ export function parseFilters(
     process: toMulti<CatalogProcess>(params.process, processes),
     base: toMulti<CatalogBase>(params.base, bases),
     filler: toMulti<CatalogFiller>(params.filler, fillers),
+    metal: toMulti<CatalogMetal>(params.metal, metals),
     auxiliary: toMulti<CatalogAuxiliary>(params.auxiliary, auxiliaries),
   } satisfies FilterState;
 }
@@ -72,6 +76,9 @@ export function applyFilters(
       return false;
     }
     if (filters.filler.values.length > 0 && !hasIntersection(item.filler, filters.filler.lookup)) {
+      return false;
+    }
+    if (filters.metal.values.length > 0 && !hasIntersection(item.metals, filters.metal.lookup)) {
       return false;
     }
     if (shouldFilterAuxiliary) {

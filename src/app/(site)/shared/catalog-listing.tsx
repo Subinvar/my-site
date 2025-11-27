@@ -110,6 +110,12 @@ export function CatalogListing({
                   <dd>{item.filler.join(', ')}</dd>
                 </div>
               ) : null}
+              {item.metals.length > 0 ? (
+                <div className="space-y-1">
+                  <dt className="font-semibold uppercase tracking-wide">Металл</dt>
+                  <dd>{item.metals.join(', ')}</dd>
+                </div>
+              ) : null}
               {item.auxiliary.length > 0 ? (
                 <div className="space-y-1">
                   <dt className="font-semibold uppercase tracking-wide">Вспомогательное</dt>

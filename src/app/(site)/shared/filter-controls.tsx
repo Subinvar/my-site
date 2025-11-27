@@ -8,6 +8,7 @@ import type {
   CatalogBase,
   CatalogCategory,
   CatalogFiller,
+  CatalogMetal,
   CatalogProcess,
   DocumentLanguage,
   DocumentType,
@@ -18,6 +19,7 @@ type CatalogTaxonomyOptions = {
   processes: ReadonlyArray<{ value: CatalogProcess; label: string }>;
   bases: ReadonlyArray<{ value: CatalogBase; label: string }>;
   fillers: ReadonlyArray<{ value: CatalogFiller; label: string }>;
+  metals: ReadonlyArray<{ value: CatalogMetal; label: string }>;
   auxiliaries: ReadonlyArray<{ value: CatalogAuxiliary; label: string }>;
 };
 
@@ -26,6 +28,7 @@ type CatalogGroupLabels = {
   process: string;
   base: string;
   filler: string;
+  metal: string;
   auxiliary: string;
 };
 
@@ -34,6 +37,7 @@ export type CatalogFilterValues = {
   process: CatalogProcess[];
   base: CatalogBase[];
   filler: CatalogFiller[];
+  metal: CatalogMetal[];
   auxiliary: CatalogAuxiliary[];
 };
 
@@ -72,6 +76,7 @@ export function CatalogFilters({
       setMultiParam(params, 'process', nextState.process);
       setMultiParam(params, 'base', nextState.base);
       setMultiParam(params, 'filler', nextState.filler);
+      setMultiParam(params, 'metal', nextState.metal);
       setMultiParam(params, 'auxiliary', nextState.auxiliary);
       const query = params.toString();
       const nextUrl = query ? `${pathname}?${query}` : pathname;
@@ -198,6 +203,14 @@ export function CatalogFilters({
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
           {renderCheckboxGroup('filler', taxonomyOptions.fillers, state.filler)}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+          {groupLabels.metal}
+        </legend>
+        <div className="mt-3 flex flex-wrap gap-3">
+          {renderCheckboxGroup('metal', taxonomyOptions.metals, state.metal)}
         </div>
       </fieldset>
       <fieldset>
@@ -424,6 +437,7 @@ function createEmptyCatalogFilters(): CatalogFilterValues {
     process: [],
     base: [],
     filler: [],
+    metal: [],
     auxiliary: [],
   };
 }
