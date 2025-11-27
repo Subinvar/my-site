@@ -72,12 +72,31 @@ const isAuthorizedForKeystatic = (request: NextRequest): boolean => {
 };
 
 const unauthorizedResponse = (): NextResponse =>
-  new NextResponse('Keystatic защищён Basic Auth. Разрешите диалог логина или введите правильные учетные данные.', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Keystatic Admin", charset="UTF-8"',
+  new NextResponse(
+    'Keystatic защищён Basic Auth. Разрешите диалог логина или введите правильные учетные данные.',
+    {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="Keystatic Admin", charset="UTF-8"',
+      },
     },
+  );
+
+const logMiddlewareFailure = (request: NextRequest, error: unknown): void => {
+  const { pathname, search } = request.nextUrl;
+  const maskedAuthHeader = request.headers.get('authorization')?.slice(0, 10) ?? null;
+
+  console.error('[middleware] invocation failed', {
+    url: request.url,
+    method: request.method,
+    pathname,
+    search,
+    hasAuthorization: Boolean(request.headers.get('authorization')),
+    authorizationPreview: maskedAuthHeader,
   });
+
+  console.error('[middleware] error details', error);
+};
 
 export function proxy(request: NextRequest) {
   try {
@@ -99,7 +118,7 @@ export function proxy(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Middleware failed, falling back to pass-through response', error);
+    logMiddlewareFailure(request, error);
     return NextResponse.next();
   }
 }
