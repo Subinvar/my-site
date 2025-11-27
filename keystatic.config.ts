@@ -1,6 +1,8 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
 import type { Dirent } from 'fs';
 
+import taxonomyOptionsFallback from './taxonomy-options.json';
+
 type NodeFsModule = typeof import('fs');
 type NodePathModule = typeof import('path');
 
@@ -227,12 +229,28 @@ function readTaxonomyOptions(directory: string): TaxonomyOption[] {
   }
 }
 
+const withFallbackOptions = (key: TaxonomyKey, values: TaxonomyOption[]): TaxonomyOption[] => {
+  if (values.length > 0) return values;
+
+  const fallback = taxonomyOptionsFallback[key] ?? [];
+  return fallback.map(({ value, label }) => ({ value, label }));
+};
+
 const taxonomyOptions: Record<TaxonomyKey, TaxonomyOption[]> = {
-  processes: readTaxonomyOptions(TAXONOMY_DIRECTORIES.processes),
-  bases: readTaxonomyOptions(TAXONOMY_DIRECTORIES.bases),
-  fillers: readTaxonomyOptions(TAXONOMY_DIRECTORIES.fillers),
-  auxiliaries: readTaxonomyOptions(TAXONOMY_DIRECTORIES.auxiliaries),
-  metals: readTaxonomyOptions(TAXONOMY_DIRECTORIES.metals),
+  processes: withFallbackOptions(
+    'processes',
+    readTaxonomyOptions(TAXONOMY_DIRECTORIES.processes)
+  ),
+  bases: withFallbackOptions('bases', readTaxonomyOptions(TAXONOMY_DIRECTORIES.bases)),
+  fillers: withFallbackOptions(
+    'fillers',
+    readTaxonomyOptions(TAXONOMY_DIRECTORIES.fillers)
+  ),
+  auxiliaries: withFallbackOptions(
+    'auxiliaries',
+    readTaxonomyOptions(TAXONOMY_DIRECTORIES.auxiliaries)
+  ),
+  metals: withFallbackOptions('metals', readTaxonomyOptions(TAXONOMY_DIRECTORIES.metals)),
 };
 
 const taxonomyMultiselect = (label: string, key: TaxonomyKey) =>
