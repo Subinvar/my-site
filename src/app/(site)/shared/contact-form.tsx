@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Locale } from '@/lib/i18n';
 
@@ -30,12 +30,14 @@ type ContactFormProps = {
 export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction, isDryRun }: ContactFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [localStatus, setLocalStatus] = useState<'success' | 'error' | null>(
-    isDryRun ? 'success' : status
-  );
+  const [localStatus, setLocalStatus] = useState<'success' | 'error' | null>(status);
 
   const successVisible = localStatus === 'success';
   const errorVisible = localStatus === 'error';
+
+  useEffect(() => {
+    setLocalStatus(status);
+  }, [status]);
 
   const triggerDryRunSuccess = () => {
     setLocalStatus('success');
