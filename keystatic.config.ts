@@ -151,7 +151,7 @@ const storage =
         kind: 'local',
       } as const);
 
-type TaxonomyKey = 'processes' | 'bases' | 'fillers' | 'auxiliaries';
+type TaxonomyKey = 'processes' | 'bases' | 'fillers' | 'auxiliaries' | 'metals';
 
 type TaxonomyOption = { label: string; value: string };
 
@@ -160,6 +160,7 @@ const TAXONOMY_DIRECTORIES: Record<TaxonomyKey, string> = {
   bases: 'content/catalog-bases',
   fillers: 'content/catalog-fillers',
   auxiliaries: 'content/catalog-auxiliaries',
+  metals: 'content/catalog-metals',
 };
 
 const getTaxonomyLabel = (data: unknown): string | null => {
@@ -210,6 +211,7 @@ const taxonomyOptions: Record<TaxonomyKey, TaxonomyOption[]> = {
   bases: readTaxonomyOptions(TAXONOMY_DIRECTORIES.bases),
   fillers: readTaxonomyOptions(TAXONOMY_DIRECTORIES.fillers),
   auxiliaries: readTaxonomyOptions(TAXONOMY_DIRECTORIES.auxiliaries),
+  metals: readTaxonomyOptions(TAXONOMY_DIRECTORIES.metals),
 };
 
 const taxonomyMultiselect = (label: string, key: TaxonomyKey) =>
@@ -498,6 +500,16 @@ export default config({
         label: localizedText('Подпись наполнителя', { isRequired: true }),
       },
     }),
+    catalogMetals: collection({
+      label: 'Каталог — металлы',
+      path: 'content/catalog-metals/*/index',
+      format: { data: 'json' },
+      slugField: 'value',
+      schema: {
+        value: slugField('Металл'),
+        label: localizedText('Подпись металла', { isRequired: true }),
+      },
+    }),
     catalogAuxiliaries: collection({
       label: 'Каталог — вспомогательные направления',
       path: 'content/catalog-auxiliaries/*/index',
@@ -626,6 +638,7 @@ export default config({
         process: taxonomyMultiselect('Процессы', 'processes'),
         base: taxonomyMultiselect('Основы', 'bases'),
         filler: taxonomyMultiselect('Наполнители', 'fillers'),
+        metals: taxonomyMultiselect('Металл', 'metals'),
         auxiliary: taxonomyMultiselect('Вспомогательные', 'auxiliaries'),
         image: imageField('Изображение'),
         docs: fields.relationship({
@@ -643,6 +656,7 @@ export default config({
         'catalogProcesses',
         'catalogBases',
         'catalogFillers',
+        'catalogMetals',
         'catalogAuxiliaries',
         'catalog',
       ],
