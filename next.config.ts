@@ -60,6 +60,7 @@ const nextConfig: NextConfig = {
     '*': [
       './.next/cache/webpack/**',
       './.next/cache/swc/**',
+      './.next/cache/turbopack/**',
     ],
   },
   async headers() {

@@ -4,6 +4,7 @@ import path from 'node:path';
 const cleanupTargets = [
   '.next/cache/webpack',
   '.next/cache/swc',
+  '.next/cache/turbopack',
 ];
 
 const removeDirectory = async (relativePath) => {
