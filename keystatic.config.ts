@@ -533,13 +533,17 @@ export default config({
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
-    catalog: collection({
-      label: 'Каталог',
-      path: 'content/catalog/*/index',
-      format: { data: 'json' },
-      slugField: 'slugKey',
-      schema: {
-        slugKey: slugField('Товар'),
+  catalog: collection({
+    label: 'Каталог',
+    path: 'content/catalog/*/index',
+    format: { data: 'json' },
+    slugField: 'slugKey',
+    // Keystatic не переименовывает папку при изменении slugKey:
+    // запись считается новой и сохраняется в отдельную директорию.
+    // Старый путь остаётся на диске до ручной очистки (мы чистим пустые
+    // каталоги при чтении на стороне Next.js).
+    schema: {
+      slugKey: slugField('Товар'),
         published: fields.checkbox({ label: 'Опубликовано', defaultValue: false }),
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),

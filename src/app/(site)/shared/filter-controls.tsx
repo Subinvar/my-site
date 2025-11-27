@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type {
   CatalogAuxiliary,
   CatalogBase,
@@ -56,55 +56,44 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [state, setState] = useState(initialValues);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     setState(initialValues);
   }, [initialValues]);
 
   const syncQuery = useCallback(
-    (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
+    async (nextState: CatalogFilterValues, options?: { navigate?: boolean }) => {
       const shouldNavigate = options?.navigate !== false;
-      startTransition(() => {
-        const params = new URLSearchParams(searchParams.toString());
-        updateCategoryParam(params, nextState.category);
-        setMultiParam(params, 'process', nextState.process);
-        setMultiParam(params, 'base', nextState.base);
-        setMultiParam(params, 'filler', nextState.filler);
-        setMultiParam(params, 'auxiliary', nextState.auxiliary);
-        const query = params.toString();
-        const nextUrl = query ? `${pathname}?${query}` : pathname;
+      setIsPending(true);
+      const params = new URLSearchParams();
+      updateCategoryParam(params, nextState.category);
+      setMultiParam(params, 'process', nextState.process);
+      setMultiParam(params, 'base', nextState.base);
+      setMultiParam(params, 'filler', nextState.filler);
+      setMultiParam(params, 'auxiliary', nextState.auxiliary);
+      const query = params.toString();
+      const nextUrl = query ? `${pathname}?${query}` : pathname;
 
-        if (typeof window !== 'undefined') {
+      try {
+        if (shouldNavigate) {
+          await router.replace(nextUrl, { scroll: false });
+          router.refresh();
+        } else if (typeof window !== 'undefined') {
           window.history.replaceState(null, '', nextUrl);
         }
-
-        if (shouldNavigate) {
-          router.replace(nextUrl, { scroll: false });
-          router.refresh();
-        }
-      });
+      } finally {
+        setIsPending(false);
+      }
     },
-    [pathname, router, searchParams]
+    [pathname, router]
   );
 
-  const updateState = useCallback(
-    (updater: (prev: CatalogFilterValues) => CatalogFilterValues) => {
-      let nextState: CatalogFilterValues | null = null;
-      setState((prev) => {
-        const next = updater(prev);
-        if (next === prev) {
-          return prev;
-        }
-        nextState = next;
-        return next;
-      });
-
-      if (nextState) {
-        syncQuery(nextState, { navigate: false });
-      }
+  const applyNextState = useCallback(
+    (nextState: CatalogFilterValues) => {
+      setState(nextState);
+      void syncQuery(nextState);
     },
     [syncQuery]
   );
@@ -119,9 +108,8 @@ export function CatalogFilters({
 
   const handleReset = useCallback(() => {
     const cleared = createEmptyCatalogFilters();
-    setState(cleared);
-    syncQuery(cleared);
-  }, [syncQuery]);
+    applyNextState(cleared);
+  }, [applyNextState]);
 
   const renderCategoryOption = (value: CatalogCategory | null, label: string) => {
     const id = value ? `category-${value}` : 'category-all';
@@ -133,9 +121,12 @@ export function CatalogFilters({
           name="category"
           value={value ?? ''}
           checked={state.category === value}
-          onChange={() =>
-            updateState((prev) => (prev.category === value ? prev : { ...prev, category: value }))
-          }
+          onChange={() => {
+            if (state.category === value) {
+              return;
+            }
+            applyNextState({ ...state, category: value });
+          }}
           className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
         />
         {label}
@@ -159,15 +150,13 @@ export function CatalogFilters({
             value={option.value}
             checked={selected.includes(option.value)}
             data-testid="catalog-filter-checkbox"
-            onChange={(event) =>
-              updateState((prev) => {
-                const nextValues = toggleValue(prev[name] as T[], option.value, event.target.checked);
-                if (nextValues === prev[name]) {
-                  return prev;
-                }
-                return { ...prev, [name]: nextValues } as CatalogFilterValues;
-              })
-            }
+            onChange={(event) => {
+              const nextValues = toggleValue(state[name] as T[], option.value, event.target.checked);
+              if (nextValues === state[name]) {
+                return;
+              }
+              applyNextState({ ...state, [name]: nextValues } as CatalogFilterValues);
+            }}
             className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
           />
           {option.label}

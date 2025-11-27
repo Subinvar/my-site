@@ -13,15 +13,18 @@
     "ru": "Описание будет добавлено позже",
     "en": "Description will be added later"
   },
-  "content": {},
-  "category": "Противопригарные покрытия",
+  "content": {
+    "ru": null,
+    "en": null
+  },
+  "category": "coatings",
   "process": [],
   "base": [
-    "Спиртовое"
+    "alcohol-based"
   ],
   "filler": [],
   "auxiliary": [
-    "Вспомогательный материал"
+    "aux-material"
   ],
   "updatedAt": "2025-11-26T16:11"
 }
