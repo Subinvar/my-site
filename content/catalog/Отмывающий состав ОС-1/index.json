@@ -1,9 +1,9 @@
 {
-  "slugKey": "Отмывающий состав ОС-1",
+  "slugKey": "cleaner-os-1",
   "published": true,
   "slug": {
-    "ru": "Отмывающий состав ОС-1",
-    "en": "Cleaner OS-1"
+    "ru": "cleaner-os-1",
+    "en": "cleaner-os-1"
   },
   "title": {
     "ru": "Отмывающий состав ОС-1",

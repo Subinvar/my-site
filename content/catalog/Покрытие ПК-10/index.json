@@ -1,9 +1,9 @@
 {
-  "slugKey": "Покрытие ПК-10",
+  "slugKey": "pk-10",
   "published": true,
   "slug": {
-    "ru": "Покрытие ПК-10",
-    "en": "PK-10"
+    "ru": "pk-10",
+    "en": "pk-10"
   },
   "title": {
     "ru": "Покрытие ПК-10",

@@ -1,9 +1,9 @@
 {
-  "slugKey": "Смола ФС-01",
+  "slugKey": "fs-01",
   "published": true,
   "slug": {
-    "ru": "Смола ФС-01",
-    "en": "FS-01"
+    "ru": "fs-01",
+    "en": "fs-01"
   },
   "title": {
     "ru": "Смола ФС-01",

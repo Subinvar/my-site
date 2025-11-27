@@ -1,9 +1,9 @@
 {
-  "slugKey": "Смола ФС-06CO₂",
+  "slugKey": "fs-06co2",
   "published": true,
   "slug": {
-    "ru": "Смола ФС-06CO₂",
-    "en": "FS-06CO₂"
+    "ru": "fs-06co2",
+    "en": "fs-06co2"
   },
   "title": {
     "ru": "Смола ФС-06CO₂",

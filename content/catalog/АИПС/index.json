@@ -1,9 +1,9 @@
 {
-  "slugKey": "АИПС",
+  "slugKey": "aips",
   "published": true,
   "slug": {
-    "ru": "АИПС",
-    "en": "AIPS"
+    "ru": "aips",
+    "en": "aips"
   },
   "title": {
     "ru": "АИПС",

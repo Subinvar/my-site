@@ -1,9 +1,9 @@
 {
-  "slugKey": "Инокулант",
+  "slugKey": "inoculant",
   "published": true,
   "slug": {
-    "ru": "Инокулант",
-    "en": "Inoculant"
+    "ru": "inoculant",
+    "en": "inoculant"
   },
   "title": {
     "ru": "Инокулант",
