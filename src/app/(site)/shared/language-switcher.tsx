@@ -22,13 +22,15 @@ export function LanguageSwitcher({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{currentLocale.toUpperCase()}</span>
-      <span aria-hidden="true" className="text-zinc-300">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {currentLocale.toUpperCase()}
+      </span>
+      <span aria-hidden="true" className="text-muted-foreground">
         /
       </span>
       <Link
         href={targetHref}
-        className="rounded-full border border-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        className="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         aria-label={ariaLabel}
       >
         {targetLocale.toUpperCase()}

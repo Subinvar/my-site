@@ -44,7 +44,7 @@ export function NavigationList({ links, ariaLabel, currentPath = '/' }: Navigati
             ${
               isActive
                 ? 'bg-brand-50 text-brand-700'
-                : 'text-zinc-700'
+                : 'text-muted-foreground'
             }
           `;
 

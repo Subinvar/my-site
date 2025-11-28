@@ -104,7 +104,7 @@ export function SiteShell({
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
-      <header className="border-b border-brand-100 bg-white">
+      <header className="border-b border-border bg-background/80 backdrop-blur">
         {hasContacts ? (
           <div className="border-b border-brand-100 bg-brand-900 text-sm text-brand-50">
             <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 px-6 py-2">
@@ -137,7 +137,7 @@ export function SiteShell({
                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700">{brandName}</span>
                 ) : null}
                 {site.tagline ? (
-                  <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
+                  <span className="block text-2xl font-semibold text-foreground">{site.tagline}</span>
                 ) : null}
               </span>
             </a>
@@ -163,16 +163,16 @@ export function SiteShell({
       <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
         {children}
       </main>
-      <footer className="border-t border-brand-100 bg-zinc-50">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-zinc-600">
+      <footer className="border-t border-border bg-muted">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
           <div className="h-px w-full bg-brand-50" aria-hidden="true" />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
             <div className="space-y-1">
               {hasBrandName ? (
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{brandName}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{brandName}</p>
               ) : null}
               {site.tagline ? (
-                <p className="max-w-xl text-base text-zinc-700">{site.tagline}</p>
+                <p className="max-w-xl text-base text-muted-foreground">{site.tagline}</p>
               ) : null}
             </div>
             {hasContacts ? (
@@ -180,7 +180,7 @@ export function SiteShell({
                 {contactLinks.map((link) => (
                   <a
                     key={`footer-${link.id}`}
-                    className="text-zinc-600 transition hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                    className="text-muted-foreground transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                     href={link.href}
                   >
                     {link.label}
@@ -196,7 +196,7 @@ export function SiteShell({
               ariaLabel={navigationLabels.footerLabel}
               currentPath={currentPath}
             />
-            {hasCopyright ? <p className="text-xs text-zinc-500">{copyrightText}</p> : null}
+            {hasCopyright ? <p className="text-xs text-muted-foreground">{copyrightText}</p> : null}
           </div>
         </div>
       </footer>
