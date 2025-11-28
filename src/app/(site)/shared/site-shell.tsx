@@ -10,6 +10,7 @@ import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
+import { ThemeToggle } from './theme-toggle';
 
 const brandFont = localFont({
   src: [
@@ -146,12 +147,15 @@ export function SiteShell({
                 ariaLabel={navigationLabels.headerLabel}
                 currentPath={currentPath}
               />
-              <LanguageSwitcher
-                currentLocale={locale}
-                targetLocale={targetLocale}
-                href={switcherHref}
-                switchToLabels={switchToLabels}
-              />
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                <LanguageSwitcher
+                  currentLocale={locale}
+                  targetLocale={targetLocale}
+                  href={switcherHref}
+                  switchToLabels={switchToLabels}
+                />
+              </div>
             </div>
           </div>
         </div>
