@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import localFont from 'next/font/local';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
@@ -125,14 +126,19 @@ export function SiteShell({
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <a
               href={buildPath(locale)}
-              className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              className="flex items-center gap-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
             >
-              {hasBrandName ? (
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{brandName}</span>
-              ) : null}
-              {site.tagline ? (
-                <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
-              ) : null}
+              <span className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-600">
+                <Image src="/uploads/logo.svg" alt={brandName || 'Интема Групп'} width={40} height={40} />
+              </span>
+              <span className="space-y-1">
+                {hasBrandName ? (
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700">{brandName}</span>
+                ) : null}
+                {site.tagline ? (
+                  <span className="block text-2xl font-semibold text-zinc-900">{site.tagline}</span>
+                ) : null}
+              </span>
             </a>
             <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
               <NavigationList
