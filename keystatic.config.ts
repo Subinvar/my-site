@@ -12,7 +12,6 @@ const loadNodeModule = <T>(moduleName: 'fs' | 'path'): T | null => {
   if (isBrowser) return null;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval -- using Function to avoid bundler static analysis for Node-only imports
     const nodeRequire = new Function('return require')();
     return nodeRequire(moduleName) as T;
   } catch {

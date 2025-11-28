@@ -91,7 +91,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
       ) : null}
 
       {isDryRun && copy.dryRunNotice ? (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        <div className="rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-700">
           {copy.dryRunNotice}
         </div>
       ) : null}
@@ -121,7 +121,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             required
             minLength={2}
             maxLength={100}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
           />
         </div>
 
@@ -141,7 +141,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
             />
           </div>
 
@@ -162,7 +162,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
             />
             <p className="text-sm text-zinc-500">{copy.phoneHint}</p>
             {contactError ? (
@@ -184,7 +184,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             minLength={10}
             maxLength={2000}
             rows={6}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
           />
         </div>
 
@@ -193,7 +193,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             type="checkbox"
             name="agree"
             required
-            className="mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+            className="mt-1 h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-600"
           />
           <span>{copy.agree}</span>
         </label>
@@ -201,7 +201,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-base font-semibold text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:w-auto"
+          className="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:w-auto"
         >
           {isSubmitting ? 'Отправка…' : copy.submit}
         </button>

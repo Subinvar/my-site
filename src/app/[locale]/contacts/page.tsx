@@ -155,7 +155,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             {address ? <p className="text-base font-medium text-zinc-900">{address}</p> : null}
             {phone ? (
               <a
-                className="block text-sm text-blue-700 underline underline-offset-4 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 href={`tel:${phone}`}
               >
                 {phone}
@@ -163,7 +163,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             ) : null}
             {email ? (
               <a
-                className="block text-sm text-blue-700 underline underline-offset-4 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 href={`mailto:${email}`}
               >
                 {email}
@@ -171,7 +171,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             ) : null}
             {telegramUrl ? (
               <a
-                className="block text-sm text-blue-700 underline underline-offset-4 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 href={telegramUrl}
                 target="_blank"
                 rel="noreferrer"

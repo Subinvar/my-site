@@ -132,7 +132,7 @@ export function CatalogFilters({
             }
             applyNextState({ ...state, category: value });
           }}
-          className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
         />
         {label}
       </label>
@@ -162,7 +162,7 @@ export function CatalogFilters({
               }
               applyNextState({ ...state, [name]: nextValues } as CatalogFilterValues);
             }}
-            className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
+            className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
           />
           {option.label}
         </label>
@@ -224,7 +224,7 @@ export function CatalogFilters({
       <div className="flex flex-wrap gap-3">
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-70"
+          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:opacity-70"
           disabled={isPending}
         >
           {submitLabel}
@@ -232,7 +232,7 @@ export function CatalogFilters({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {resetLabel}
         </button>
@@ -351,7 +351,7 @@ export function DocumentsFilters({
                       return { ...prev, types: nextValues };
                     })
                   }
-                  className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-600"
                 />
                 {option.label}
               </label>
@@ -377,7 +377,7 @@ export function DocumentsFilters({
                       prev.lang === option.value ? prev : { ...prev, lang: option.value }
                     )
                   }
-                  className="h-4 w-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
                 />
                 {option.label}
               </label>
@@ -388,7 +388,7 @@ export function DocumentsFilters({
       <div className="flex flex-wrap gap-3">
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-70"
+          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:opacity-70"
           disabled={isPending}
         >
           {applyLabel}
@@ -396,7 +396,7 @@ export function DocumentsFilters({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {resetLabel}
         </button>
