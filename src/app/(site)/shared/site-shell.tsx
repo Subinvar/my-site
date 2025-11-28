@@ -103,21 +103,21 @@ export function SiteShell({
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
-      <header className="border-b border-zinc-200 bg-white">
+      <header className="border-b border-brand-100 bg-white">
         {hasContacts ? (
-          <div className="border-b border-zinc-200 bg-zinc-900 text-sm text-zinc-100">
+          <div className="border-b border-brand-100 bg-brand-900 text-sm text-brand-50">
             <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 px-6 py-2">
               {contactLinks.map((link) => (
                 <a
                   key={link.id}
                   href={link.href}
-                  className="inline-flex items-center gap-2 text-zinc-100 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm text-brand-50 hover:text-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 >
                   {link.label}
                 </a>
               ))}
               {site.contacts.address ? (
-                <span className="text-zinc-300">{site.contacts.address}</span>
+                <span className="text-xs text-brand-100/80 sm:text-sm">{site.contacts.address}</span>
               ) : null}
             </div>
           </div>
