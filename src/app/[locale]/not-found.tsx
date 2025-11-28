@@ -25,7 +25,7 @@ export default function LocaleNotFound() {
       <p className="text-lg text-zinc-600">{copy.description}</p>
       <Link
         href={buildPath(locale)}
-        className="rounded-full border border-zinc-900 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        className="rounded-full border border-zinc-900 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
       >
         {dictionary.common.buttons.goHome}
       </Link>
