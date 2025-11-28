@@ -100,7 +100,7 @@ export function SiteShell({
   const hasCopyright = copyrightText.length > 0;
 
   return (
-    <div className={`${brandFont.variable} flex min-h-screen flex-col bg-white text-zinc-900`}>
+    <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
       <header className="border-b border-brand-100 bg-white">

@@ -23,14 +23,19 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     : isLocale(cookieLocale)
       ? cookieLocale
       : defaultLocale;
+
+  const themeCookie = cookieStore.get('theme')?.value;
+  const theme = themeCookie === 'dark' || themeCookie === 'light' ? themeCookie : undefined;
+
   return (
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable}`}
       data-locales={locales.join(',')}
       data-default-locale={defaultLocale}
+      data-theme={theme}
     >
-      <body className="bg-white text-zinc-900 antialiased">
+      <body className="antialiased">
         <HtmlLangSync />
         {children}
       </body>
