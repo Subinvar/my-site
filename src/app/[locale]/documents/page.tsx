@@ -159,7 +159,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                           <a
                             href={document.file}
                             download={document.fileName ?? undefined}
-                            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                            className="inline-flex items-center gap-2 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                           >
                             {downloadText}
                           </a>
@@ -176,7 +176,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                                   {index > 0 ? ', ' : ''}
                                   <Link
                                     href={href}
-                                    className="text-blue-600 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                                    className="text-brand-700 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                                   >
                                     {product.title}
                                   </Link>

@@ -42,7 +42,7 @@ function SkipToContentLink({ label }: { label: string }) {
   return (
     <a
       href="#main"
-      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-blue-600 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-brand-600 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       {label}
     </a>
@@ -110,7 +110,7 @@ export function SiteShell({
                 <a
                   key={link.id}
                   href={link.href}
-                  className="inline-flex items-center gap-2 text-zinc-100 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                  className="inline-flex items-center gap-2 text-zinc-100 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 >
                   {link.label}
                 </a>
@@ -125,7 +125,7 @@ export function SiteShell({
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <a
               href={buildPath(locale)}
-              className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="max-w-xl space-y-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
             >
               {hasBrandName ? (
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{brandName}</span>
@@ -169,7 +169,7 @@ export function SiteShell({
                 {contactLinks.map((link) => (
                   <a
                     key={`footer-${link.id}`}
-                    className="text-zinc-600 transition hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                    className="text-zinc-600 transition hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                     href={link.href}
                   >
                     {link.label}

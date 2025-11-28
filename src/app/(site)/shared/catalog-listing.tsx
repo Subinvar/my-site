@@ -129,7 +129,7 @@ export function CatalogListing({
               </div>
               <Link
                 href={buildPath(locale, ['catalog', item.slug])}
-                className="text-sm font-semibold text-blue-600 hover:text-blue-500"
+                className="text-sm font-semibold text-brand-700 hover:text-brand-600"
               >
                 {detailLabel}
               </Link>

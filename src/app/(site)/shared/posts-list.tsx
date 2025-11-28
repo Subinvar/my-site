@@ -102,8 +102,8 @@ export async function PostsList({ locale }: { locale: Locale }) {
                 href={post.href}
                 className="group block h-full rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
               >
-                <div className="flex items-start justify-between gap-4 text-sm text-blue-600">
-                  <span className="font-semibold transition group-hover:text-blue-500">{READ_MORE_LABEL[locale]}</span>
+                <div className="flex items-start justify-between gap-4 text-sm text-brand-700">
+                  <span className="font-semibold transition group-hover:text-brand-600">{READ_MORE_LABEL[locale]}</span>
                   {formattedDate ? (
                     <time dateTime={post.date ?? undefined} className="text-xs font-medium uppercase tracking-wide text-zinc-500">
                       {formattedDate}

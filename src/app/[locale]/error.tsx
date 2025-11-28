@@ -32,13 +32,13 @@ export default function LocaleError({ error, reset }: LocaleErrorProps) {
         <button
           type="button"
           onClick={() => reset()}
-          className="rounded-full border border-zinc-900 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="rounded-full border border-zinc-900 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {dictionary.common.buttons.retry}
         </button>
         <Link
           href={buildPath(locale)}
-          className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:border-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-zinc-900 transition-colors hover:border-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {dictionary.common.buttons.goHome}
         </Link>
