@@ -36,12 +36,17 @@ export function NavigationList({ links, ariaLabel, currentPath = '/' }: Navigati
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
-          const baseClass =
-            'inline-flex items-center gap-1 rounded px-2 py-1 text-zinc-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-600';
-          const stateClass = isActive
-            ? 'text-brand-600 underline underline-offset-4'
-            : 'hover:text-zinc-900';
-          const className = `${baseClass} ${stateClass}`;
+          const className = `
+            inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm
+            transition-colors
+            hover:bg-brand-50 hover:text-brand-700
+            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600
+            ${
+              isActive
+                ? 'bg-brand-50 text-brand-700'
+                : 'text-zinc-700'
+            }
+          `;
 
           if (link.isExternal) {
             return (
