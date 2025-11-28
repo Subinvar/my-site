@@ -86,21 +86,32 @@ html[data-theme='dark'] {
   --color-brand-600: #941b20;
   --color-brand-700: #7b141a;
 
-  /* шрифты оставляем как были — Geist через next/font/local */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  /* Шрифты */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+
+  --font-heading: var(--font-heading), var(--font-body), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+    sans-serif;
+
+  /* если у тебя есть mono — можешь отдельно добавить:
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+  */
 }
 
-/* Никакого ручного font-family для body — используем утилиты Tailwind в layout.tsx */
-
 @layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
   body {
+    font-family: var(--font-sans);
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
@@ -109,9 +120,15 @@ html[data-theme='dark'] {
   h2,
   h3,
   h4 {
+    font-family: var(--font-heading);
     font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--color-foreground);
+  }
+
+  h5,
+  h6 {
+    font-family: var(--font-heading);
   }
 
   h1 {

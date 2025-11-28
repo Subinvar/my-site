@@ -1,14 +1,15 @@
-// src/app/fonts.ts
-import localFont from 'next/font/local';
+import { Montserrat, Open_Sans } from 'next/font/google';
 
-export const geistSans = localFont({
-  src: [{ path: '../../public/fonts/geist/GeistVF.woff2', style: 'normal', weight: '100 900' }],
-  variable: '--font-geist-sans',
+export const headingFont = Montserrat({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['500', '600', '700'],
+  variable: '--font-heading',
   display: 'swap',
 });
 
-export const geistMono = localFont({
-  src: [{ path: '../../public/fonts/geist/GeistMonoVF.woff2', style: 'normal', weight: '100 900' }],
-  variable: '--font-geist-mono',
+export const bodyFont = Open_Sans({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
   display: 'swap',
 });
