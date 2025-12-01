@@ -4,7 +4,7 @@ import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/k
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 import { HREFLANG_CODE } from '@/lib/seo';
-import { normalizeBaseUrl } from '@/lib/url';
+import { normalizeBaseUrl, resolvePublicBaseUrl } from '@/lib/url';
 
 type Collection = 'pages' | 'posts' | 'catalog';
 
@@ -25,22 +25,35 @@ const buildSegments = (collection: Collection, slug: string): string[] => {
   return slug.length ? [slug] : [];
 };
 
-const toAbsoluteUrl = (baseUrl: string | null, path: string): string => {
-  if (!baseUrl) {
-    return path;
+const toAbsoluteUrl = (
+  baseUrl: string | null,
+  path: string,
+  fallbackBaseUrl?: string | null
+): string | null => {
+  const resolvedBaseUrl =
+    normalizeBaseUrl(baseUrl) ??
+    normalizeBaseUrl(fallbackBaseUrl) ??
+    normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL ?? null);
+  if (!resolvedBaseUrl) {
+    return null;
   }
+
   try {
-    return new URL(path, baseUrl).toString();
+    return new URL(path, resolvedBaseUrl).toString();
   } catch {
-    return path;
+    return null;
   }
 };
 
 const buildLocalizedUrls = (
   baseUrl: string | null,
-  { collection, slugByLocale }: Pick<DatedEntry, 'collection' | 'slugByLocale'>
+  { collection, slugByLocale }: Pick<DatedEntry, 'collection' | 'slugByLocale'>,
+  fallbackBaseUrl?: string | null
 ): Partial<Record<Locale, string>> => {
   const record: Partial<Record<Locale, string>> = {};
+  if (!slugByLocale) {
+    return record;
+  }
   for (const locale of locales) {
     const raw = slugByLocale[locale];
     if (raw === undefined || raw === null) {
@@ -52,7 +65,10 @@ const buildLocalizedUrls = (
     }
     const segments = buildSegments(collection, normalized);
     const relative = buildPath(locale, segments);
-    record[locale] = toAbsoluteUrl(baseUrl, relative);
+    const absoluteUrl = toAbsoluteUrl(baseUrl, relative, fallbackBaseUrl);
+    if (absoluteUrl) {
+      record[locale] = absoluteUrl;
+    }
   }
 
   return record;
@@ -92,10 +108,10 @@ const buildAlternateLanguages = (
 };
 
 const createSitemapEntries = (
-  baseUrl: string | null,
+  baseUrl: string,
   entry: DatedEntry
 ): MetadataRoute.Sitemap => {
-  const urls = buildLocalizedUrls(baseUrl, entry);
+  const urls = buildLocalizedUrls(baseUrl, entry, baseUrl);
   const lastModified = toLastModified(entry);
   const entries: MetadataRoute.Sitemap = [];
 
@@ -124,7 +140,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getAllCatalogEntries(),
   ]);
 
-  const baseUrl = normalizeBaseUrl(site.seo.canonicalBase ?? null);
+  const baseUrl = resolvePublicBaseUrl(site.seo.canonicalBase ?? null, {
+    fallbackHost: site.domain,
+  });
 
   const pageEntries = pages
     .filter((page) => page.published)
