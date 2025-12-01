@@ -1,0 +1,48 @@
+import type { HTMLAttributes } from 'react';
+
+import { cn } from '@/lib/cn';
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  as?: 'div' | 'article' | 'section';
+}
+
+export function Card({ as = 'div', className, children, ...rest }: CardProps) {
+  const Component = as;
+  return (
+    <Component
+      className={cn(
+        'rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]',
+        'shadow-sm hover:shadow-md transition-shadow',
+        'p-4 sm:p-5',
+        className,
+      )}
+      {...rest}
+    >
+      {children}
+    </Component>
+  );
+}
+
+export function CardHeader({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('flex flex-col gap-1 mb-3', className)} {...rest} />;
+}
+
+export function CardTitle({ className, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
+  return <h3 className={cn('text-base sm:text-lg font-semibold', className)} {...rest} />;
+}
+
+export function CardDescription({ className, ...rest }: HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn(
+        'text-sm text-[var(--muted-foreground)] leading-relaxed',
+        className,
+      )}
+      {...rest}
+    />
+  );
+}
+
+export function CardFooter({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('mt-4 flex items-center justify-between gap-2', className)} {...rest} />;
+}

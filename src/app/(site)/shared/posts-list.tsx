@@ -1,7 +1,6 @@
-import Link from 'next/link';
-
 import { getAllPosts, getPostBySlug } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
+import { NewsCard } from './ui/news-card';
 import type { Locale } from '@/lib/i18n';
 
 type PostListItem = {
@@ -98,23 +97,14 @@ export async function PostsList({ locale }: { locale: Locale }) {
           const formattedDate = formatDisplayDate(post.date, locale);
           return (
             <li key={post.id}>
-              <Link
+              <NewsCard
+                title={post.title}
+                description={post.description}
+                date={formattedDate}
+                dateTime={post.date}
                 href={post.href}
-                className="group block h-full rounded-lg border border-border bg-background p-6 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
-              >
-                <div className="flex items-start justify-between gap-4 text-sm text-brand-700">
-                  <span className="font-semibold transition group-hover:text-brand-600">{READ_MORE_LABEL[locale]}</span>
-                  {formattedDate ? (
-                    <time dateTime={post.date ?? undefined} className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      {formattedDate}
-                    </time>
-                  ) : null}
-                </div>
-                <h2 className="mt-3 text-xl font-semibold leading-tight text-foreground">{post.title}</h2>
-                  {post.description ? (
-                    <p className="mt-2 text-sm text-muted-foreground">{post.description}</p>
-                  ) : null}
-              </Link>
+                readMoreLabel={READ_MORE_LABEL[locale]}
+              />
             </li>
           );
         })}

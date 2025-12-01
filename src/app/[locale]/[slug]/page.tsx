@@ -7,6 +7,9 @@ import {
   getLocalizedPageParams,
   resolveContentPageMetadata,
 } from '@/app/(site)/shared/content-page';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
+import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
+import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
 import { PostsList } from '@/app/(site)/shared/posts-list';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -37,12 +40,14 @@ export default async function Page({ params }: PageProps) {
 
   const { page, content, summary } = data;
   const isNewsPage = page.id === 'news';
+  const isProductsPage = page.id === 'products';
   const targetLocale = findTargetLocale(locale);
   const switcherHref = switchLocalePath(locale, targetLocale, {
     collection: 'pages',
     slugs: page.slugByLocale,
   });
   const currentPath = buildPath(locale, [slug]);
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
     <SiteShell
@@ -53,14 +58,23 @@ export default async function Page({ params }: PageProps) {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <article className="max-w-none">
-        <header className="mb-10 space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
-          {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
-        </header>
-        <div className="prose-markdoc">{content}</div>
-      </article>
-      {isNewsPage ? <PostsList locale={locale} /> : null}
+      <div className="space-y-12">
+        <article className="max-w-none space-y-6">
+          <div className="space-y-4">
+            <Breadcrumbs
+              items={[
+                { label: homeLabel, href: buildPath(locale) },
+                { label: page.title },
+              ]}
+            />
+            <SectionHeading title={page.title} description={summary ?? undefined} as="h1" />
+          </div>
+          <div className="prose-markdoc">{content}</div>
+        </article>
+
+        {isProductsPage ? <ProductCategoriesSection locale={locale} /> : null}
+        {isNewsPage ? <PostsList locale={locale} /> : null}
+      </div>
     </SiteShell>
   );
 }
