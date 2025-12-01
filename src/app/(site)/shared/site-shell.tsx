@@ -61,7 +61,6 @@ export function SiteShell({
   children,
 }: SiteShellProps) {
   const brandName = site.name?.trim() ?? '';
-  const hasBrandName = brandName.length > 0;
   const dictionary = getInterfaceDictionary(locale);
   const skipLinkLabel = dictionary.common.skipToContent;
   const navigationLabels = dictionary.navigation;
@@ -104,61 +103,59 @@ export function SiteShell({
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-        {hasContacts ? (
-          <div className="border-b border-brand-100 bg-brand-900 text-xs text-brand-50 sm:text-sm">
-            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-2 sm:px-6">
-              {contactLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm text-brand-50 hover:text-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                >
-                  {link.label}
-                </a>
-              ))}
-              {site.contacts.address ? (
-                <span className="text-xs text-brand-100/80 sm:text-sm">{site.contacts.address}</span>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
-        <div className="mx-auto w-full max-w-5xl px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur">
+        <div className="border-b border-border">
+          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <a
               href={buildPath(locale)}
-              className="flex items-center gap-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              <span className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-600">
-                <Image src="/uploads/logo.svg" alt={brandName || 'Интема Групп'} width={40} height={40} />
-              </span>
-              <span className="space-y-1">
-                {hasBrandName ? (
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700">{brandName}</span>
-                ) : null}
-                {site.tagline ? (
-                  <span className="block text-2xl font-semibold text-foreground">{site.tagline}</span>
-                ) : null}
-              </span>
-            </a>
-            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-              <NavigationList
-                links={navigation.header}
-                ariaLabel={navigationLabels.headerLabel}
-                currentPath={currentPath}
+              <Image
+                src="/uploads/logo.svg"
+                alt={brandName || 'Интема Групп'}
+                width={40}
+                height={40}
+                className="h-10 w-auto"
               />
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <LanguageSwitcher
-                  currentLocale={locale}
-                  targetLocale={targetLocale}
-                  href={switcherHref}
-                  switchToLabels={switchToLabels}
-                />
-              </div>
+            </a>
+
+            <NavigationList
+              links={navigation.header}
+              ariaLabel={navigationLabels.headerLabel}
+              currentPath={currentPath}
+              className="hidden md:flex"
+            />
+
+            <div className="flex items-center gap-3">
+              {site.contacts.phone ? (
+                <a
+                  href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                  className="hidden text-sm font-medium text-foreground md:inline-flex"
+                >
+                  {site.contacts.phone}
+                </a>
+              ) : null}
+
+              {site.contacts.email ? (
+                <a
+                  href={`mailto:${site.contacts.email}`}
+                  className="hidden text-sm text-muted-foreground hover:text-foreground md:inline-flex"
+                >
+                  {site.contacts.email}
+                </a>
+              ) : null}
+
+              <ThemeToggle />
+              <LanguageSwitcher
+                currentLocale={locale}
+                targetLocale={targetLocale}
+                href={switcherHref}
+                switchToLabels={switchToLabels}
+              />
             </div>
           </div>
         </div>
+        <div className="h-[3px] w-full bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700" />
       </header>
       <main
         id="main"
@@ -168,42 +165,44 @@ export function SiteShell({
       >
         {children}
       </main>
-      <footer className="border-t border-border bg-background">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-10 text-sm text-muted-foreground sm:px-6">
-          <div className="h-px w-full bg-brand-50" aria-hidden="true" />
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
-            <div className="space-y-1">
-              {hasBrandName ? (
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{brandName}</p>
-              ) : null}
-              {site.tagline ? (
-                <p className="max-w-xl text-base text-muted-foreground">{site.tagline}</p>
-              ) : null}
-            </div>
+      <footer className="border-t border-border bg-muted/60">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <a
+              href={buildPath(locale)}
+              className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
+            >
+              <Image
+                src="/uploads/logo.svg"
+                alt={brandName || 'Интема Групп'}
+                width={32}
+                height={32}
+                className="h-8 w-auto"
+              />
+            </a>
+
             {hasContacts ? (
-              <div className="flex flex-wrap items-center gap-3 text-sm sm:gap-4">
-                {contactLinks.map((link) => (
-                  <a
-                    key={`footer-${link.id}`}
-                    className="text-muted-foreground transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                    href={link.href}
-                  >
-                    {link.label}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                {site.contacts.phone ? (
+                  <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>
+                    {site.contacts.phone}
                   </a>
-                ))}
-                {site.contacts.address ? (
-                  <span className="text-xs text-muted-foreground sm:text-sm">{site.contacts.address}</span>
                 ) : null}
+                {site.contacts.email ? <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> : null}
+                {site.contacts.address ? <span>{site.contacts.address}</span> : null}
               </div>
             ) : null}
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <NavigationList
               links={navigation.footer}
               ariaLabel={navigationLabels.footerLabel}
               currentPath={currentPath}
             />
-            {hasCopyright ? <p className="text-xs text-muted-foreground">{copyrightText}</p> : null}
+            {hasCopyright ? (
+              <p className="text-[11px] sm:text-xs">{copyrightText}</p>
+            ) : null}
           </div>
         </div>
       </footer>
