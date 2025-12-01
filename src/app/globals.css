@@ -16,6 +16,16 @@ html {
 
   --border: #e5e7eb;
   --input: #e5e7eb;
+
+  --success: #16a34a;
+  --success-foreground: #14532d;
+  --success-surface: #f0fdf4;
+  --success-border: #bbf7d0;
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #7f1d1d;
+  --destructive-surface: #fef2f2;
+  --destructive-border: #fecdd3;
 }
 
 /* Если куки нет, ориентируемся на систему */
@@ -33,6 +43,16 @@ html {
 
     --border: #1f2937;
     --input: #1f2937;
+
+    --success: #22c55e;
+    --success-foreground: #ecfdf3;
+    --success-surface: #0f2d1d;
+    --success-border: #14532d;
+
+    --destructive: #f87171;
+    --destructive-foreground: #fef2f2;
+    --destructive-surface: #2a0c0c;
+    --destructive-border: #7f1d1d;
   }
 }
 
@@ -51,6 +71,16 @@ html[data-theme='light'] {
 
   --border: #e5e7eb;
   --input: #e5e7eb;
+
+  --success: #16a34a;
+  --success-foreground: #14532d;
+  --success-surface: #f0fdf4;
+  --success-border: #bbf7d0;
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #7f1d1d;
+  --destructive-surface: #fef2f2;
+  --destructive-border: #fecdd3;
 }
 
 html[data-theme='dark'] {
@@ -66,6 +96,16 @@ html[data-theme='dark'] {
 
   --border: #1f2937;
   --input: #1f2937;
+
+  --success: #22c55e;
+  --success-foreground: #ecfdf3;
+  --success-surface: #0f2d1d;
+  --success-border: #14532d;
+
+  --destructive: #f87171;
+  --destructive-foreground: #fef2f2;
+  --destructive-surface: #2a0c0c;
+  --destructive-border: #7f1d1d;
 }
 
 @theme {
