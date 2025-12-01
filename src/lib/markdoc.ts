@@ -22,12 +22,13 @@ export const CALLOUT_LABELS: Record<CalloutKind, Record<Locale, string>> = {
   warning: { ru: 'Предупреждение', en: 'Warning' },
 };
 
-export const BUTTON_VARIANTS = ['primary', 'ghost'] as const;
+export const BUTTON_VARIANTS = ['primary', 'outline', 'ghost'] as const;
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 
 export const BUTTON_LABELS: Record<ButtonVariant, Record<Locale, string>> = {
   primary: { ru: 'Подробнее', en: 'Read more' },
+  outline: { ru: 'Подробнее', en: 'Read more' },
   ghost: { ru: 'Узнать', en: 'Learn more' },
 };
 
@@ -40,35 +41,35 @@ export const ALERT_LABELS: Record<AlertTone, Record<Locale, string>> = {
 
 export const ALERT_TONE_CLASSES: Record<AlertTone, { border: string; background: string; text: string; heading: string }> = {
   info: {
-    border: 'border-sky-200 dark:border-sky-400/50',
-    background: 'bg-sky-50/80 dark:bg-sky-900/20',
-    text: 'text-sky-900 dark:text-sky-100',
-    heading: 'text-sky-700 dark:text-sky-200',
+    border: 'border-border',
+    background: 'bg-card',
+    text: 'text-muted-foreground',
+    heading: 'text-foreground',
   },
   success: {
-    border: 'border-emerald-200 dark:border-emerald-500/50',
-    background: 'bg-emerald-50/80 dark:bg-emerald-900/20',
-    text: 'text-emerald-900 dark:text-emerald-50',
-    heading: 'text-emerald-700 dark:text-emerald-200',
+    border: 'border-border',
+    background: 'bg-card',
+    text: 'text-muted-foreground',
+    heading: 'text-foreground',
   },
   warning: {
-    border: 'border-amber-200 dark:border-amber-500/50',
-    background: 'bg-amber-50/80 dark:bg-amber-900/20',
-    text: 'text-amber-900 dark:text-amber-100',
-    heading: 'text-amber-700 dark:text-amber-200',
+    border: 'border-border',
+    background: 'bg-card',
+    text: 'text-muted-foreground',
+    heading: 'text-foreground',
   },
   error: {
-    border: 'border-rose-200 dark:border-rose-500/50',
-    background: 'bg-rose-50/80 dark:bg-rose-900/20',
-    text: 'text-rose-900 dark:text-rose-50',
-    heading: 'text-rose-700 dark:text-rose-200',
+    border: 'border-border',
+    background: 'bg-card',
+    text: 'text-muted-foreground',
+    heading: 'text-foreground',
   },
 };
 
 export const config: Config = {
   nodes: {
     fence: {
-      render: 'pre',
+      render: 'CodeBlock',
       attributes: {
         language: { type: String },
       },
@@ -82,6 +83,12 @@ export const config: Config = {
         width: { type: String },
         height: { type: String },
       },
+    },
+    table: {
+      render: 'Table',
+    },
+    thead: {
+      render: 'TableHead',
     },
   },
   tags: {
@@ -201,14 +208,12 @@ export function createComponents(locale: Locale) {
       return React.createElement(
         'aside',
         {
-          className:
-            'rounded-lg border border-border bg-card p-4 text-sm text-foreground dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-100',
+          className: 'mb-6 rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground',
         },
         React.createElement(
           'strong',
           {
-            className:
-              'block text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:text-zinc-400',
+            className: 'mb-1 font-semibold text-foreground',
           },
           heading
         ),
@@ -216,6 +221,24 @@ export function createComponents(locale: Locale) {
           'div',
           { className: 'mt-2 space-y-2 leading-relaxed' },
           children
+        )
+      );
+    },
+    CodeBlock({
+      children,
+      language,
+    }: {
+      children?: ReactNode;
+      language?: string;
+    }) {
+      const codeClass = language ? `language-${language}` : undefined;
+      return React.createElement(
+        'div',
+        { className: 'rounded-lg bg-muted px-4 py-3 text-sm text-foreground' },
+        React.createElement(
+          'pre',
+          { className: 'overflow-x-auto' },
+          React.createElement('code', codeClass ? { className: codeClass } : null, children)
         )
       );
     },
@@ -242,16 +265,28 @@ export function createComponents(locale: Locale) {
         : 'primary';
       const computedLabel = label?.trim() || buttonLabelFallback[normalizedVariant];
       const baseClass =
-        'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+        'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-600';
       const variantClass =
-        normalizedVariant === 'ghost'
-          ? 'border-transparent text-zinc-700 hover:text-foreground focus-visible:ring-zinc-400'
-          : 'border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 focus-visible:ring-zinc-900';
+        normalizedVariant === 'primary'
+          ? 'border-brand-700 bg-brand-700 text-white hover:bg-brand-600'
+          : normalizedVariant === 'outline'
+            ? 'border-brand-700 text-brand-700 hover:bg-brand-700/5'
+            : 'border-transparent text-muted-foreground hover:bg-muted';
       return React.createElement(
         'a',
         { href, className: `${baseClass} ${variantClass}` },
         children ?? computedLabel
       );
+    },
+    Table({ children }: { children?: ReactNode }) {
+      return React.createElement(
+        'table',
+        { className: 'w-full border-collapse text-sm text-muted-foreground' },
+        children
+      );
+    },
+    TableHead({ children }: { children?: ReactNode }) {
+      return React.createElement('thead', { className: 'bg-card text-foreground' }, children);
     },
     MarkdocImage({
       src,
@@ -326,7 +361,7 @@ export function createComponents(locale: Locale) {
         captionContent || creditContent
           ? React.createElement(
               'figcaption',
-              { className: 'text-sm text-muted-foreground dark:text-zinc-400' },
+              { className: 'text-sm text-muted-foreground' },
               captionContent
                 ? React.createElement('span', { className: 'block' }, captionContent)
                 : null,
