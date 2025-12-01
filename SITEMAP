@@ -30,12 +30,14 @@
 - http://localhost:3000/catalog/pokrytie-vodnoe-zirkon и http://localhost:3000/en/catalog/water-zircon-coating — продукт «Водное циркониевое покрытие» / «Water zircon coating».
 - Добавляя новые продукты в Keystatic, фиксируйте их URL в этом разделе для обеих локалей.
 
-## Блог и материалы
-- http://localhost:3000/posts/modernizaciya-proizvodstva — опубликованный пост блога на русском языке.
-- http://localhost:3000/en/posts/modernising-operations — локализованный вариант поста на английском.
-- http://localhost:3000/posts/snizhenie-prigara — кейс про снижение пригара в русской локали.
-- http://localhost:3000/en/posts/reducing-burn-on — локализованный вариант кейса.
-- http://localhost:3000/en/posts/[slug] и http://localhost:3000/posts/[slug] — динамические маршруты, которые появятся для новых материалов при добавлении записей в Keystatic.
+## Новости и материалы
+- http://localhost:3000/news — русская страница со списком новостей и кейсов (контент из коллекции `pages/news`).
+- http://localhost:3000/en/news — английская версия страницы.
+- http://localhost:3000/news/modernizaciya-proizvodstva — опубликованный кейс на русском языке.
+- http://localhost:3000/en/news/modernising-operations — локализованный вариант кейса на английском.
+- http://localhost:3000/news/snizhenie-prigara — материал про снижение пригара в русской локали.
+- http://localhost:3000/en/news/reducing-burn-on — локализованный вариант кейса.
+- http://localhost:3000/en/news/[slug] и http://localhost:3000/news/[slug] — динамические маршруты, которые появятся для новых материалов при добавлении записей в Keystatic.
 
 ## Служебные и технические маршруты
 - http://localhost:3000/feed.xml — Atom-лента для русской локали (обслуживает перенаправления с `/ru/feed.xml`).
