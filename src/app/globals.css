@@ -179,6 +179,18 @@ html[data-theme='dark'] {
 @layer utilities {
   .prose-markdoc {
     @apply space-y-4 text-base leading-relaxed text-pretty;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+
+  .prose-markdoc h1,
+  .prose-markdoc h2,
+  .prose-markdoc h3,
+  .prose-markdoc h4,
+  .prose-markdoc h5,
+  .prose-markdoc h6 {
+    font-family: var(--font-heading);
+    color: var(--foreground);
   }
 
   .prose-markdoc h2,
