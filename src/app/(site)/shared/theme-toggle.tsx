@@ -4,34 +4,33 @@ import { useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 
+const getInitialTheme = (): Theme | null => {
+  if (typeof document === 'undefined') return null;
+
+  const match = document.cookie.match(/(?:^|\s*)theme=(light|dark)/);
+  if (match) {
+    const value = match[1] as Theme;
+    document.documentElement.dataset.theme = value;
+    return value;
+  }
+
+  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  const initial: Theme = prefersDark ? 'dark' : 'light';
+  document.documentElement.dataset.theme = initial;
+  return initial;
+};
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
+  const [theme, setTheme] = useState<Theme | null>(getInitialTheme);
 
-  // Инициализация: читаем куку или системную тему
   useEffect(() => {
-    const root = document.documentElement;
-
-    const match = document.cookie.match(/(?:^|;\s*)theme=(light|dark)/);
-    if (match) {
-      const value = match[1] as Theme;
-      root.dataset.theme = value;
-      setTheme(value);
-      return;
-    }
-
-    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-    const initial: Theme = prefersDark ? 'dark' : 'light';
-    root.dataset.theme = initial;
-    setTheme(initial);
-  }, []);
+    if (!theme) return;
+    document.documentElement.dataset.theme = theme;
+    document.cookie = `theme=${theme}; path=/; max-age=31536000`;
+  }, [theme]);
 
   const toggle = () => {
-    setTheme((prev) => {
-      const next: Theme = prev === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = next;
-      document.cookie = `theme=${next}; path=/; max-age=31536000`;
-      return next;
-    });
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   // Пока не знаем текущую тему — ничего не рисуем, чтобы избежать мигания

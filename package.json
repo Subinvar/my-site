@@ -24,7 +24,7 @@
     "@markdoc/next.js": "^0.5.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "next": "16.0.5",
+    "next": "16.0.6",
     "nodemailer": "^7.0.11",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -44,7 +44,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "depcheck": "^1.4.7",
     "eslint": "^9",
-    "eslint-config-next": "16.0.4",
+    "eslint-config-next": "16.0.6",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -54,7 +54,7 @@
     "lightningcss-win32-x64-msvc": "1.30.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^4.1.17",
-    "tsx": "^4.20.6",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   },
   "pnpm": {
@@ -73,7 +73,7 @@
       }
     },
     "ignoredBuiltDependencies": [
-      "@vercel/speed-insights",
+      "esbuild",
       "sharp",
       "unrs-resolver"
     ]
@@ -81,5 +81,5 @@
   "engines": {
     "node": "22.x"
   },
-  "packageManager": "pnpm@10.23.0"
+  "packageManager": "pnpm@10.24.0"
 }
