@@ -111,7 +111,9 @@ export async function PostsList({ locale }: { locale: Locale }) {
                   ) : null}
                 </div>
                 <h2 className="mt-3 text-xl font-semibold leading-tight text-foreground">{post.title}</h2>
-                {post.description ? <p className="mt-2 text-sm text-zinc-700">{post.description}</p> : null}
+                  {post.description ? (
+                    <p className="mt-2 text-sm text-muted-foreground">{post.description}</p>
+                  ) : null}
               </Link>
             </li>
           );

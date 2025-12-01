@@ -121,11 +121,11 @@ function AttributeList({ label, values, emptyValue }: AttributeListProps) {
   const hasValues = Array.isArray(values) && values.length > 0;
   return (
     <div>
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{label}</h3>
-      <p className="mt-1 text-sm text-zinc-700">{hasValues ? values.join(', ') : emptyValue}</p>
-    </div>
-  );
-}
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{label}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{hasValues ? values.join(', ') : emptyValue}</p>
+      </div>
+    );
+  }
 
 function mapAttributeValues<T extends string>(
   values: readonly T[],

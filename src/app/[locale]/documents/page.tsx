@@ -165,9 +165,9 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
                           </a>
                         </div>
                       ) : null}
-                      {relatedProducts.length > 0 ? (
-                        <div className="text-sm text-zinc-700">
-                          <span className="font-medium">{relatedProductsLabel} </span>
+                        {relatedProducts.length > 0 ? (
+                          <div className="text-sm text-muted-foreground">
+                            <span className="font-medium">{relatedProductsLabel} </span>
                           <span>
                             {relatedProducts.map((product, index) => {
                               const href = buildPath(locale, ['catalog', product.slug]);
