@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { Alert } from '@/app/(site)/shared/ui/alert';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { Checkbox } from '@/app/(site)/shared/ui/checkbox';
 import { Field } from '@/app/(site)/shared/ui/field';
@@ -86,20 +87,14 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
   return (
     <div className="space-y-6">
       {successVisible ? (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-          {copy.success}
-        </div>
+        <Alert variant="success">{copy.success}</Alert>
       ) : null}
       {errorVisible ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {copy.error}
-        </div>
+        <Alert variant="destructive">{copy.error}</Alert>
       ) : null}
 
       {isDryRun && copy.dryRunNotice ? (
-        <div className="rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-700">
-          {copy.dryRunNotice}
-        </div>
+        <Alert>{copy.dryRunNotice}</Alert>
       ) : null}
 
       <form

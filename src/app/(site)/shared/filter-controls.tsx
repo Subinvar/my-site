@@ -13,6 +13,7 @@ import type {
   DocumentLanguage,
   DocumentType,
 } from '@/lib/keystatic';
+import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import { Radio } from './ui/radio';
 
@@ -218,20 +219,12 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:opacity-70"
-          disabled={isPending}
-        >
+        <Button type="submit" disabled={isPending}>
           {submitLabel}
-        </button>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-          >
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleReset}>
           {resetLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -382,20 +375,12 @@ export function DocumentsFilters({
         </div>
       </fieldset>
       <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:opacity-70"
-          disabled={isPending}
-        >
+        <Button type="submit" disabled={isPending}>
           {applyLabel}
-        </button>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-          >
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleReset}>
           {resetLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );
