@@ -76,10 +76,10 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
     >
       <div className="space-y-12">
         <header className="space-y-3">
-          <h1 className="text-3xl font-semibold text-zinc-900">{heading}</h1>
-          <p className="text-base text-zinc-600">{description}</p>
+          <h1 className="text-3xl font-semibold text-foreground">{heading}</h1>
+          <p className="text-base text-muted-foreground">{description}</p>
         </header>
-        <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
+        <section className="rounded-lg border border-border bg-card p-6">
           <CatalogFilters
             taxonomyOptions={taxonomyOptions}
             groupLabels={groupLabels}

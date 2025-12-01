@@ -109,10 +109,10 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
     >
       <div className="space-y-12">
         <header className="space-y-3">
-          <h1 className="text-3xl font-semibold text-zinc-900">{pageTitle}</h1>
-          {pageDescription ? <p className="text-base text-zinc-600">{pageDescription}</p> : null}
+          <h1 className="text-3xl font-semibold text-foreground">{pageTitle}</h1>
+          {pageDescription ? <p className="text-base text-muted-foreground">{pageDescription}</p> : null}
         </header>
-        <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
+        <section className="rounded-lg border border-border bg-card p-6">
           <DocumentsFilters
             typeOptions={typeOptions}
             languageOptions={languageOptions}
@@ -124,7 +124,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
           />
         </section>
         <section className="space-y-6">
-          <p className="text-sm text-zinc-500">{resultsLabel}</p>
+          <p className="text-sm text-muted-foreground">{resultsLabel}</p>
           {sortedDocuments.length > 0 ? (
             <ul className="space-y-6">
               {sortedDocuments.map((document) => {
@@ -147,10 +147,10 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
 
                 return (
                   <li key={document.id}>
-                    <article className="space-y-4 rounded-lg border border-zinc-200 p-6 shadow-sm">
+                    <article className="space-y-4 rounded-lg border border-border p-6 shadow-sm">
                       <div className="space-y-2">
-                        <h2 className="text-xl font-semibold text-zinc-900">{title}</h2>
-                        <p className="text-sm text-zinc-600">
+                        <h2 className="text-xl font-semibold text-foreground">{title}</h2>
+                        <p className="text-sm text-muted-foreground">
                           {typeLabel} · {langLabel}
                         </p>
                       </div>
@@ -192,7 +192,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
               })}
             </ul>
           ) : (
-            <p className="text-sm text-zinc-600">{emptyStateMessage}</p>
+            <p className="text-sm text-muted-foreground">{emptyStateMessage}</p>
           )}
         </section>
       </div>

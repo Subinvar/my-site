@@ -132,7 +132,7 @@ export function CatalogFilters({
             }
             applyNextState({ ...state, category: value });
           }}
-          className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
+          className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
         />
         {label}
       </label>
@@ -162,7 +162,7 @@ export function CatalogFilters({
               }
               applyNextState({ ...state, [name]: nextValues } as CatalogFilterValues);
             }}
-            className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
+            className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
           />
           {option.label}
         </label>
@@ -173,7 +173,7 @@ export function CatalogFilters({
   return (
     <form className="space-y-6" onSubmit={handleSubmit} aria-busy={isPending}>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.category}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -182,7 +182,7 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.process}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -190,7 +190,7 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.base}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -198,7 +198,7 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.filler}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -206,7 +206,7 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.metal}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -214,7 +214,7 @@ export function CatalogFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.auxiliary}
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -232,7 +232,7 @@ export function CatalogFilters({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {resetLabel}
         </button>
@@ -330,7 +330,7 @@ export function DocumentsFilters({
   return (
     <form className="space-y-6" onSubmit={handleSubmit} aria-busy={isPending}>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{typeLegend}</legend>
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{typeLegend}</legend>
         <div className="mt-3 flex flex-wrap gap-3">
           {typeOptions.map((option) => {
             const id = `type-${option.value}`;
@@ -351,7 +351,7 @@ export function DocumentsFilters({
                       return { ...prev, types: nextValues };
                     })
                   }
-                  className="h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-600"
+                  className="h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-600"
                 />
                 {option.label}
               </label>
@@ -360,7 +360,7 @@ export function DocumentsFilters({
         </div>
       </fieldset>
       <fieldset>
-        <legend className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{languageLegend}</legend>
+        <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{languageLegend}</legend>
         <div className="mt-3 flex flex-wrap gap-3">
           {languageOptions.map((option) => {
             const id = `lang-${option.value}`;
@@ -377,7 +377,7 @@ export function DocumentsFilters({
                       prev.lang === option.value ? prev : { ...prev, lang: option.value }
                     )
                   }
-                  className="h-4 w-4 border-zinc-300 text-brand-600 focus:ring-brand-600"
+                  className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
                 />
                 {option.label}
               </label>
@@ -396,7 +396,7 @@ export function DocumentsFilters({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           {resetLabel}
         </button>

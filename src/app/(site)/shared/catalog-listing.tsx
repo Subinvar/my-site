@@ -55,7 +55,7 @@ export function CatalogListing({
 
   if (filteredItems.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-600">
+      <p className="rounded-lg border border-dashed border-border bg-background p-6 text-sm text-muted-foreground">
         {emptyStateMessage}
       </p>
     );
@@ -65,16 +65,16 @@ export function CatalogListing({
     <ul className="grid gap-8 md:grid-cols-2">
       {filteredItems.map((item) => (
         <li key={`${item.id}:${item.slug}`}>
-          <article className="flex h-full flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+          <article className="flex h-full flex-col gap-4 rounded-lg border border-border bg-background p-5 shadow-sm transition hover:shadow-md">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-zinc-900" data-testid="catalog-item">
+                <h2 className="text-lg font-semibold text-foreground" data-testid="catalog-item">
                   {item.title}
                 </h2>
-                {item.excerpt ? <p className="mt-1 text-sm text-zinc-600">{item.excerpt}</p> : null}
+                {item.excerpt ? <p className="mt-1 text-sm text-muted-foreground">{item.excerpt}</p> : null}
               </div>
               {item.image ? (
-                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
+                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-100 bg-card">
                   <Image
                     src={item.image.src}
                     alt=""
@@ -85,7 +85,7 @@ export function CatalogListing({
                 </div>
               ) : null}
             </div>
-            <dl className="grid gap-3 rounded-md bg-zinc-50 p-3 text-xs text-zinc-700 sm:grid-cols-2">
+            <dl className="grid gap-3 rounded-md bg-card p-3 text-xs text-zinc-700 sm:grid-cols-2">
               {item.category ? (
                 <div className="space-y-1">
                   <dt className="font-semibold uppercase tracking-wide">Категория</dt>
@@ -124,7 +124,7 @@ export function CatalogListing({
               ) : null}
             </dl>
             <div className="mt-auto flex items-center justify-between">
-              <div className="text-xs text-zinc-500">
+              <div className="text-xs text-muted-foreground">
                 {item.updatedAt ? <time dateTime={item.updatedAt}>{item.updatedAt}</time> : null}
               </div>
               <Link

@@ -69,8 +69,8 @@ export default async function HomePage({ params }: PageProps) {
             />
           ) : null}
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-            {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
+            {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
           </div>
         </header>
         <div className="prose-markdoc">{content}</div>
