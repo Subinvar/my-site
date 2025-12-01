@@ -188,7 +188,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
           />
         </div>
 
-        <label className="inline-flex items-start gap-3 text-sm text-zinc-700">
+          <label className="inline-flex items-start gap-3 text-sm text-muted-foreground">
           <input
             type="checkbox"
             name="agree"

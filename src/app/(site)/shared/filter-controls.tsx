@@ -119,7 +119,7 @@ export function CatalogFilters({
   const renderCategoryOption = (value: CatalogCategory | null, label: string) => {
     const id = value ? `category-${value}` : 'category-all';
     return (
-      <label key={id} className="flex items-center gap-2 text-sm text-zinc-700" htmlFor={id}>
+        <label key={id} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
         <input
           id={id}
           type="radio"
@@ -147,7 +147,7 @@ export function CatalogFilters({
     return options.map((option) => {
       const id = `${name}-${encodeURIComponent(option.value).replace(/%/g, '').toLowerCase() || 'option'}`;
       return (
-        <label key={option.value} className="flex items-center gap-2 text-sm text-zinc-700" htmlFor={id}>
+          <label key={option.value} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
           <input
             id={id}
             type="checkbox"
@@ -229,11 +229,11 @@ export function CatalogFilters({
         >
           {submitLabel}
         </button>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        >
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
           {resetLabel}
         </button>
       </div>
@@ -335,7 +335,7 @@ export function DocumentsFilters({
           {typeOptions.map((option) => {
             const id = `type-${option.value}`;
             return (
-              <label key={option.value} className="flex items-center gap-2 text-sm text-zinc-700" htmlFor={id}>
+                <label key={option.value} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
                 <input
                   id={id}
                   type="checkbox"
@@ -365,7 +365,7 @@ export function DocumentsFilters({
           {languageOptions.map((option) => {
             const id = `lang-${option.value}`;
             return (
-              <label key={option.value} className="flex items-center gap-2 text-sm text-zinc-700" htmlFor={id}>
+                <label key={option.value} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
                 <input
                   id={id}
                   type="radio"
@@ -393,11 +393,11 @@ export function DocumentsFilters({
         >
           {applyLabel}
         </button>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-border px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        >
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
           {resetLabel}
         </button>
       </div>

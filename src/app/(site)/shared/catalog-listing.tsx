@@ -73,19 +73,19 @@ export function CatalogListing({
                 </h2>
                 {item.excerpt ? <p className="mt-1 text-sm text-muted-foreground">{item.excerpt}</p> : null}
               </div>
-              {item.image ? (
-                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-100 bg-card">
-                  <Image
-                    src={item.image.src}
-                    alt=""
-                    fill
-                    sizes="80px"
+                {item.image ? (
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-card">
+                    <Image
+                      src={item.image.src}
+                      alt=""
+                      fill
+                      sizes="80px"
                     className="h-full w-full object-contain"
                   />
                 </div>
               ) : null}
             </div>
-            <dl className="grid gap-3 rounded-md bg-card p-3 text-xs text-zinc-700 sm:grid-cols-2">
+              <dl className="grid gap-3 rounded-md bg-card p-3 text-xs text-muted-foreground sm:grid-cols-2">
               {item.category ? (
                 <div className="space-y-1">
                   <dt className="font-semibold uppercase tracking-wide">Категория</dt>
