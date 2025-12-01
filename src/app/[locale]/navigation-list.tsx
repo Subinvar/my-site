@@ -6,6 +6,7 @@ type NavigationListProps = {
   links: NavigationLink[];
   ariaLabel?: string | null;
   currentPath?: string;
+  className?: string;
 };
 
 const normalizePathname = (value: string): string => {
@@ -20,7 +21,7 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-export function NavigationList({ links, ariaLabel, currentPath = '/' }: NavigationListProps) {
+export function NavigationList({ links, ariaLabel, currentPath = '/', className }: NavigationListProps) {
   if (!links.length) {
     return null;
   }
@@ -30,7 +31,7 @@ export function NavigationList({ links, ariaLabel, currentPath = '/' }: Navigati
   const resolvedLabel = label.length > 0 ? label : undefined;
 
   return (
-    <nav aria-label={resolvedLabel}>
+    <nav aria-label={resolvedLabel} className={className}>
       <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
         {links.map((link) => {
           const href = resolveHref(link.href);
