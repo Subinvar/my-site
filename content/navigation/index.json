@@ -43,20 +43,6 @@
       "order": 20
     },
     {
-      "id": "partners",
-      "label": {
-        "ru": "Партнёры",
-        "en": "Partners"
-      },
-      "path": {
-        "ru": "partners",
-        "en": "partners"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 30
-    },
-    {
       "id": "about",
       "label": {
         "ru": "О компании",
@@ -65,6 +51,20 @@
       "path": {
         "ru": "about",
         "en": "about"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 30
+    },
+    {
+      "id": "partners",
+      "label": {
+        "ru": "Партнёры",
+        "en": "Partners"
+      },
+      "path": {
+        "ru": "partners",
+        "en": "partners"
       },
       "externalUrl": "",
       "newTab": false,
@@ -86,20 +86,6 @@
     }
   ],
   "footerLinks": [
-    {
-      "id": "footer-home",
-      "label": {
-        "ru": "Главная",
-        "en": "Home"
-      },
-      "path": {
-        "ru": "",
-        "en": ""
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 0
-    },
     {
       "id": "footer-documents",
       "label": {
@@ -129,6 +115,62 @@
       "order": 20
     },
     {
+      "id": "footer-products",
+      "label": {
+        "ru": "Продукция",
+        "en": "Products"
+      },
+      "path": {
+        "ru": "products",
+        "en": "products"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 30
+    },
+    {
+      "id": "footer-news",
+      "label": {
+        "ru": "Новости",
+        "en": "News"
+      },
+      "path": {
+        "ru": "news",
+        "en": "news"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 40
+    },
+    {
+      "id": "footer-about",
+      "label": {
+        "ru": "О компании",
+        "en": "About"
+      },
+      "path": {
+        "ru": "about",
+        "en": "about"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 50
+    },
+    {
+      "id": "footer-partners",
+      "label": {
+        "ru": "Партнёры",
+        "en": "Partners"
+      },
+      "path": {
+        "ru": "partners",
+        "en": "partners"
+      },
+      "externalUrl": "",
+      "newTab": false,
+      "order": 60
+    },
+    {
       "id": "footer-contacts",
       "label": {
         "ru": "Контакты",
@@ -140,7 +182,7 @@
       },
       "externalUrl": "",
       "newTab": false,
-      "order": 30
+      "order": 70
     }
   ]
 }
