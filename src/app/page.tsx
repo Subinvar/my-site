@@ -1,12 +1,18 @@
-import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getHomePage, resolveHomeMetadata } from '@/app/(site)/shared/home-page';
 import { switchLocalePath, findTargetLocale, buildPath } from '@/lib/paths';
 import { defaultLocale } from '@/lib/i18n';
+import { Hero } from '@/components/home/Hero';
+import { HomeAbout } from '@/components/home/HomeAbout';
+import { HomeStats } from '@/components/home/HomeStats';
+import { ProductDirections } from '@/components/home/ProductDirections';
+import { PartnersStrip } from '@/components/home/PartnersStrip';
+import { NewsPreview } from '@/components/home/NewsPreview';
 
 export const dynamic = 'force-static';
 
@@ -27,8 +33,6 @@ export default async function RootHomePage() {
     collection: 'pages',
     slugs: page.slugByLocale,
   });
-  const heroImage = page.hero?.image;
-  const heroAlt = page.hero?.alt ?? page.title;
   const currentPath = buildPath(locale);
 
   return (
@@ -40,26 +44,29 @@ export default async function RootHomePage() {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <article className="max-w-none">
-        <header className="mb-10 space-y-4">
-          {heroImage ? (
-            <Image
-              src={heroImage.src}
-              alt={heroAlt}
-              width={heroImage.width ?? 1200}
-              height={heroImage.height ?? 675}
-              priority
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="h-auto w-full rounded-xl object-cover"
-            />
-          ) : null}
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
+      <div className="space-y-12">
+        <Hero locale={locale} />
+
+        <ProductDirections locale={locale} />
+
+        <HomeAbout locale={locale} />
+
+        <HomeStats locale={locale} />
+
+        <NewsPreview locale={locale} />
+
+        <PartnersStrip locale={locale} />
+
+        <article className="space-y-6 rounded-2xl border border-border/70 bg-card/80 p-6 shadow-sm sm:p-8">
+          <header className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{page.title}</h1>
             {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
-          </div>
-        </header>
-        <div className="prose-markdoc">{content}</div>
-      </article>
+          </header>
+          <div className="prose-markdoc">{content}</div>
+        </article>
+
+        <ProductCategoriesSection locale={locale} />
+      </div>
     </SiteShell>
   );
 }
