@@ -13,8 +13,10 @@ import type {
   DocumentLanguage,
   DocumentType,
 } from '@/lib/keystatic';
+import { Checkbox } from './ui/checkbox';
+import { Radio } from './ui/radio';
 
-type CatalogTaxonomyOptions = {
+export type CatalogTaxonomyOptions = {
   categories: ReadonlyArray<{ value: CatalogCategory; label: string }>;
   processes: ReadonlyArray<{ value: CatalogProcess; label: string }>;
   bases: ReadonlyArray<{ value: CatalogBase; label: string }>;
@@ -23,7 +25,7 @@ type CatalogTaxonomyOptions = {
   auxiliaries: ReadonlyArray<{ value: CatalogAuxiliary; label: string }>;
 };
 
-type CatalogGroupLabels = {
+export type CatalogGroupLabels = {
   category: string;
   process: string;
   base: string;
@@ -119,23 +121,20 @@ export function CatalogFilters({
   const renderCategoryOption = (value: CatalogCategory | null, label: string) => {
     const id = value ? `category-${value}` : 'category-all';
     return (
-        <label key={id} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
-        <input
-          id={id}
-          type="radio"
-          name="category"
-          value={value ?? ''}
-          checked={state.category === value}
-          onChange={() => {
-            if (state.category === value) {
-              return;
-            }
-            applyNextState({ ...state, category: value });
-          }}
-          className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
-        />
-        {label}
-      </label>
+      <Radio
+        key={id}
+        id={id}
+        name="category"
+        value={value ?? ''}
+        checked={state.category === value}
+        onChange={() => {
+          if (state.category === value) {
+            return;
+          }
+          applyNextState({ ...state, category: value });
+        }}
+        label={label}
+      />
     );
   };
 
@@ -147,25 +146,22 @@ export function CatalogFilters({
     return options.map((option) => {
       const id = `${name}-${encodeURIComponent(option.value).replace(/%/g, '').toLowerCase() || 'option'}`;
       return (
-          <label key={option.value} className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={id}>
-          <input
-            id={id}
-            type="checkbox"
-            name={name}
-            value={option.value}
-            checked={selected.includes(option.value)}
-            data-testid="catalog-filter-checkbox"
-            onChange={(event) => {
-              const nextValues = toggleValue(state[name] as T[], option.value, event.target.checked);
-              if (nextValues === state[name]) {
-                return;
-              }
-              applyNextState({ ...state, [name]: nextValues } as CatalogFilterValues);
-            }}
-            className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
-          />
-          {option.label}
-        </label>
+        <Checkbox
+          key={option.value}
+          id={id}
+          name={name}
+          value={option.value}
+          checked={selected.includes(option.value)}
+          data-testid="catalog-filter-checkbox"
+          onChange={(event) => {
+            const nextValues = toggleValue(state[name] as T[], option.value, event.target.checked);
+            if (nextValues === state[name]) {
+              return;
+            }
+            applyNextState({ ...state, [name]: nextValues } as CatalogFilterValues);
+          }}
+          label={option.label}
+        />
       );
     });
   };

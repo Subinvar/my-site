@@ -1,15 +1,35 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useMemo, useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { applyFilters, parseFilters, type FilterState } from './catalog-filtering';
 import { buildPath } from '@/lib/paths';
+import { CatalogItemCard, type AttributeLabels, type CatalogValueLabels } from './ui/catalog-item-card';
+import { Tag } from './ui/tag';
+import type { CatalogGroupLabels, CatalogTaxonomyOptions } from './filter-controls';
 import type { CatalogTaxonomyValues } from '@/lib/catalog/constants';
 import type { CatalogListItem } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
+
+const ATTRIBUTE_LABELS: Record<Locale, AttributeLabels> = {
+  ru: {
+    category: 'Категория',
+    process: 'Процесс',
+    base: 'Основа',
+    filler: 'Наполнитель',
+    auxiliary: 'Вспомогательные',
+    metal: 'Металл',
+  },
+  en: {
+    category: 'Category',
+    process: 'Process',
+    base: 'Base',
+    filler: 'Filler',
+    auxiliary: 'Auxiliary supplies',
+    metal: 'Metal',
+  },
+};
 
 function toRecord(params: URLSearchParams): Record<string, string | string[]> {
   const record: Record<string, string | string[]> = {};
@@ -33,6 +53,8 @@ type CatalogListingProps = {
   detailLabel: string;
   locale: Locale;
   taxonomy: CatalogTaxonomyValues;
+  taxonomyOptions: CatalogTaxonomyOptions;
+  groupLabels: CatalogGroupLabels;
 };
 
 export function CatalogListing({
@@ -42,8 +64,12 @@ export function CatalogListing({
   detailLabel,
   locale,
   taxonomy,
+  taxonomyOptions,
+  groupLabels,
 }: CatalogListingProps) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const filters = useMemo(() => {
     if (!searchParams) {
       return initialFilters;
@@ -52,6 +78,34 @@ export function CatalogListing({
   }, [initialFilters, searchParams, taxonomy]);
 
   const filteredItems = useMemo(() => applyFilters(items, filters, taxonomy), [items, filters, taxonomy]);
+  const attributeLabels = ATTRIBUTE_LABELS[locale];
+  const valueLabels = useMemo(() => createValueLabels(taxonomyOptions), [taxonomyOptions]);
+  const activeFilters = useMemo(() => buildActiveFilters(filters, valueLabels), [filters, valueLabels]);
+  const removeLabel = locale === 'ru' ? 'Удалить фильтр' : 'Remove filter';
+
+  const handleRemoveFilter = useCallback(
+    (filter: ActiveFilter) => {
+      if (!searchParams) {
+        return;
+      }
+      const params = new URLSearchParams(searchParams.toString());
+      if (filter.key === 'category') {
+        params.delete('category');
+      } else {
+        const key = filter.key;
+        const nextValues = params.getAll(key).filter((value) => value !== filter.value);
+        params.delete(key);
+        for (const value of nextValues) {
+          params.append(key, value);
+        }
+      }
+      const query = params.toString();
+      const nextUrl = query ? `${pathname}?${query}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+      router.refresh();
+    },
+    [pathname, router, searchParams]
+  );
 
   if (filteredItems.length === 0) {
     return (
@@ -62,81 +116,80 @@ export function CatalogListing({
   }
 
   return (
-    <ul className="grid gap-8 md:grid-cols-2">
-      {filteredItems.map((item) => (
-        <li key={`${item.id}:${item.slug}`}>
-          <article className="flex h-full flex-col gap-4 rounded-lg border border-border bg-background p-5 shadow-sm transition hover:shadow-md">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground" data-testid="catalog-item">
-                  {item.title}
-                </h2>
-                {item.excerpt ? <p className="mt-1 text-sm text-muted-foreground">{item.excerpt}</p> : null}
-              </div>
-                {item.image ? (
-                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-card">
-                    <Image
-                      src={item.image.src}
-                      alt=""
-                      fill
-                      sizes="80px"
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-              ) : null}
-            </div>
-              <dl className="grid gap-3 rounded-md bg-card p-3 text-xs text-muted-foreground sm:grid-cols-2">
-              {item.category ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Категория</dt>
-                  <dd>{item.category}</dd>
-                </div>
-              ) : null}
-              {item.process.length > 0 ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Процесс</dt>
-                  <dd>{item.process.join(', ')}</dd>
-                </div>
-              ) : null}
-              {item.base.length > 0 ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Основа</dt>
-                  <dd>{item.base.join(', ')}</dd>
-                </div>
-              ) : null}
-              {item.filler.length > 0 ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Наполнитель</dt>
-                  <dd>{item.filler.join(', ')}</dd>
-                </div>
-              ) : null}
-              {item.metals.length > 0 ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Металл</dt>
-                  <dd>{item.metals.join(', ')}</dd>
-                </div>
-              ) : null}
-              {item.auxiliary.length > 0 ? (
-                <div className="space-y-1">
-                  <dt className="font-semibold uppercase tracking-wide">Вспомогательное</dt>
-                  <dd>{item.auxiliary.join(', ')}</dd>
-                </div>
-              ) : null}
-            </dl>
-            <div className="mt-auto flex items-center justify-between">
-              <div className="text-xs text-muted-foreground">
-                {item.updatedAt ? <time dateTime={item.updatedAt}>{item.updatedAt}</time> : null}
-              </div>
-              <Link
-                href={buildPath(locale, ['catalog', item.slug])}
-                className="text-sm font-semibold text-brand-700 hover:text-brand-600"
-              >
-                {detailLabel}
-              </Link>
-            </div>
-          </article>
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-4">
+      {activeFilters.length > 0 ? (
+        <div className="flex flex-wrap gap-2" aria-live="polite">
+          {activeFilters.map((filter) => (
+            <Tag key={`${filter.key}:${filter.value}`} active onClick={() => handleRemoveFilter(filter)}>
+              <span>
+                {groupLabels[filter.key]}: {filter.label}
+              </span>
+              <span aria-hidden="true">×</span>
+              <span className="sr-only">{`${removeLabel} ${groupLabels[filter.key]}: ${filter.label}`}</span>
+            </Tag>
+          ))}
+        </div>
+      ) : null}
+
+      <ul className="grid gap-8 md:grid-cols-2">
+        {filteredItems.map((item) => (
+          <li key={`${item.id}:${item.slug}`}>
+            <CatalogItemCard
+              item={item}
+              detailHref={buildPath(locale, ['catalog', item.slug])}
+              detailLabel={detailLabel}
+              attributeLabels={attributeLabels}
+              valueLabels={valueLabels}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
+}
+
+type ActiveFilterKey = keyof Pick<FilterState, 'category' | 'process' | 'base' | 'filler' | 'metal' | 'auxiliary'>;
+
+type ActiveFilter = {
+  key: ActiveFilterKey;
+  value: string;
+  label: string;
+};
+
+function buildActiveFilters(filters: FilterState, labels: CatalogValueLabels): ActiveFilter[] {
+  const result: ActiveFilter[] = [];
+
+  if (filters.category) {
+    result.push({ key: 'category', value: filters.category, label: labels.category.get(filters.category) ?? filters.category });
+  }
+
+  addMultiFilter(result, 'process', filters.process.values, labels.process);
+  addMultiFilter(result, 'base', filters.base.values, labels.base);
+  addMultiFilter(result, 'filler', filters.filler.values, labels.filler);
+  addMultiFilter(result, 'metal', filters.metal.values, labels.metal);
+  addMultiFilter(result, 'auxiliary', filters.auxiliary.values, labels.auxiliary);
+
+  return result;
+}
+
+function addMultiFilter(
+  target: ActiveFilter[],
+  key: Exclude<ActiveFilterKey, 'category'>,
+  values: string[],
+  labels: Map<string, string>
+) {
+  for (const value of values) {
+    target.push({ key, value, label: labels.get(value) ?? value });
+  }
+}
+
+function createValueLabels(options: CatalogTaxonomyOptions): CatalogValueLabels {
+  return {
+    category: new Map(options.categories.map((entry) => [entry.value, entry.label])),
+    process: new Map(options.processes.map((entry) => [entry.value, entry.label])),
+    base: new Map(options.bases.map((entry) => [entry.value, entry.label])),
+    filler: new Map(options.fillers.map((entry) => [entry.value, entry.label])),
+    metal: new Map(options.metals.map((entry) => [entry.value, entry.label])),
+    auxiliary: new Map(options.auxiliaries.map((entry) => [entry.value, entry.label])),
+  } satisfies CatalogValueLabels;
 }

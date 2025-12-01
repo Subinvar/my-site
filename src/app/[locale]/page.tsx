@@ -7,6 +7,7 @@ import {
   getHomeStaticLocales,
   resolveHomeMetadata,
 } from '@/app/(site)/shared/home-page';
+import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
@@ -55,26 +56,30 @@ export default async function HomePage({ params }: PageProps) {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <article className="max-w-none">
-        <header className="mb-10 space-y-4">
-          {heroImage ? (
-            <Image
-              src={heroImage.src}
-              alt={heroAlt}
-              width={heroImage.width ?? 1200}
-              height={heroImage.height ?? 675}
-              priority
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="h-auto w-full rounded-xl object-cover"
-            />
-          ) : null}
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
-            {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
-          </div>
-        </header>
-        <div className="prose-markdoc">{content}</div>
-      </article>
+      <div className="space-y-12">
+        <article className="max-w-none">
+          <header className="mb-10 space-y-4">
+            {heroImage ? (
+              <Image
+                src={heroImage.src}
+                alt={heroAlt}
+                width={heroImage.width ?? 1200}
+                height={heroImage.height ?? 675}
+                priority
+                sizes="(max-width: 768px) 100vw, 1200px"
+                className="h-auto w-full rounded-xl object-cover"
+              />
+            ) : null}
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
+              {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
+            </div>
+          </header>
+          <div className="prose-markdoc">{content}</div>
+        </article>
+
+        <ProductCategoriesSection locale={locale} />
+      </div>
     </SiteShell>
   );
 }

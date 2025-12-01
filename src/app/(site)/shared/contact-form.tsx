@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import { Button } from '@/app/(site)/shared/ui/button';
+import { Checkbox } from '@/app/(site)/shared/ui/checkbox';
+import { Field } from '@/app/(site)/shared/ui/field';
+import { Input } from '@/app/(site)/shared/ui/input';
+import { Textarea } from '@/app/(site)/shared/ui/textarea';
 import type { Locale } from '@/lib/i18n';
 
 type Copy = {
@@ -111,26 +117,13 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
           aria-hidden="true"
         />
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground" htmlFor="name">
-            {copy.name}
-          </label>
-          <input
-            id="name"
-            name="name"
-            required
-            minLength={2}
-            maxLength={100}
-            className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
-          />
-        </div>
+        <Field label={copy.name} htmlFor="name" required>
+          <Input id="name" name="name" required minLength={2} maxLength={100} />
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground" htmlFor="email">
-              {copy.email}
-            </label>
-            <input
+          <Field label={copy.email} htmlFor="email" error={contactError ? copy.contactRequired : undefined}>
+            <Input
               id="email"
               name="email"
               type="email"
@@ -141,15 +134,17 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+              error={contactError ? copy.contactRequired : undefined}
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground" htmlFor="phone">
-              {copy.phone}
-            </label>
-            <input
+          <Field
+            label={copy.phone}
+            htmlFor="phone"
+            description={copy.phoneHint}
+            error={contactError ? copy.contactRequired : undefined}
+          >
+            <Input
               id="phone"
               name="phone"
               type="tel"
@@ -162,49 +157,27 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+              error={contactError ? copy.contactRequired : undefined}
             />
-            <p className="text-sm text-muted-foreground">{copy.phoneHint}</p>
-            {contactError ? (
-              <p className="text-sm text-red-600" role="alert" aria-live="polite">
-                {copy.contactRequired}
-              </p>
-            ) : null}
-          </div>
+          </Field>
         </div>
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground" htmlFor="message">
-            {copy.message}
-          </label>
-          <textarea
+        <Field label={copy.message} htmlFor="message" required>
+          <Textarea
             id="message"
             name="message"
             required
             minLength={10}
             maxLength={2000}
             rows={6}
-            className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
           />
-        </div>
+        </Field>
 
-          <label className="inline-flex items-start gap-3 text-sm text-muted-foreground">
-          <input
-            type="checkbox"
-            name="agree"
-            required
-            className="mt-1 h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-600"
-          />
-          <span>{copy.agree}</span>
-        </label>
+        <Checkbox label={<span className="text-muted-foreground">{copy.agree}</span>} name="agree" required />
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:w-auto"
-        >
+        <Button type="submit" disabled={isSubmitting} fullWidth>
           {isSubmitting ? 'Отправка…' : copy.submit}
-        </button>
+        </Button>
       </form>
     </div>
   );

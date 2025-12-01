@@ -10,6 +10,8 @@ import {
   getCatalogTaxonomyOptions,
   resolveCatalogListingMetadata,
 } from '@/app/(site)/shared/catalog';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
+import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
@@ -56,6 +58,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const detailLabel = resolveDetailLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
   const groupLabels = resolveGroupLabels(catalogPage, locale);
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
   const initialFilterValues: CatalogFilterValues = {
     category: filters.category,
     process: filters.process.values,
@@ -75,10 +78,15 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       currentPath={currentPath}
     >
       <div className="space-y-12">
-        <header className="space-y-3">
-          <h1 className="text-3xl font-semibold text-foreground">{heading}</h1>
-          <p className="text-base text-muted-foreground">{description}</p>
-        </header>
+        <div className="space-y-4">
+          <Breadcrumbs
+            items={[
+              { label: homeLabel, href: buildPath(locale) },
+              { label: heading },
+            ]}
+          />
+          <SectionHeading title={heading} description={description} as="h1" />
+        </div>
         <section className="rounded-lg border border-border bg-card p-6">
           <CatalogFilters
             taxonomyOptions={taxonomyOptions}
@@ -97,6 +105,8 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
             detailLabel={detailLabel}
             locale={locale}
             taxonomy={taxonomyValues}
+            taxonomyOptions={taxonomyOptions}
+            groupLabels={groupLabels}
           />
         </section>
       </div>
