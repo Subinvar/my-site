@@ -11,6 +11,7 @@
     "knip": "knip",
     "depcheck": "depcheck --skip-missing=true --ignores=@types/*,eslint*,@keystatic/*,@markdoc/*,@tailwindcss/postcss,postcss,tailwindcss,sharp,lightningcss,lightningcss-wasm,lightningcss-win32-x64-msvc,unrs-resolver",
     "test": "tsx --test",
+    "check:content": "node scripts/check-fallback-collections.mjs",
     "fix:content-dirs": "node scripts/rename-content-directories.mjs",
     "pretest:e2e": "pnpm exec playwright install chromium",
     "test:e2e": "playwright test",
