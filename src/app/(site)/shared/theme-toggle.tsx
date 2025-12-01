@@ -4,37 +4,47 @@ import { useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 
-const getInitialTheme = (): Theme | null => {
-  if (typeof document === 'undefined') return null;
-
+const resolveStoredTheme = (): Theme | null => {
   const match = document.cookie.match(/(?:^|\s*)theme=(light|dark)/);
+
   if (match) {
-    const value = match[1] as Theme;
-    document.documentElement.dataset.theme = value;
-    return value;
+    return match[1] as Theme;
   }
 
-  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  const initial: Theme = prefersDark ? 'dark' : 'light';
-  document.documentElement.dataset.theme = initial;
-  return initial;
+  if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+
+  return null;
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>('light');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!theme) return;
+    const initial = resolveStoredTheme();
+
+    if (initial) {
+      // Синхронизируем состояние с темой из куков сразу после монтирования
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- подхватываем сохранённую тему, чтобы не терять выбор пользователя
+      setTheme(initial);
+      document.documentElement.dataset.theme = initial;
+      document.cookie = `theme=${initial}; path=/; max-age=31536000`;
+    }
+
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     document.documentElement.dataset.theme = theme;
     document.cookie = `theme=${theme}; path=/; max-age=31536000`;
-  }, [theme]);
+  }, [mounted, theme]);
 
   const toggle = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
-
-  // Пока не знаем текущую тему — ничего не рисуем, чтобы избежать мигания
-  if (!theme) return null;
 
   const isDark = theme === 'dark';
 
