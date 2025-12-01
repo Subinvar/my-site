@@ -216,6 +216,13 @@ html[data-theme='dark'] {
   }
 }
 
+@layer components {
+  .hero-bg-image {
+    @apply h-full w-full bg-cover bg-center;
+    background-image: url('/uploads/hero.jpg');
+  }
+}
+
 @layer utilities {
   .prose-markdoc {
     @apply space-y-4 text-base leading-relaxed text-pretty;
