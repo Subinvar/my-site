@@ -77,10 +77,10 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     >
       <article className="space-y-10">
         <header className="space-y-4">
-          <p className="text-sm uppercase tracking-wide text-zinc-500">{attributes.category}: {categoryValue}</p>
-          <h1 className="text-3xl font-semibold text-zinc-900">{item.title}</h1>
+          <p className="text-sm uppercase tracking-wide text-muted-foreground">{attributes.category}: {categoryValue}</p>
+          <h1 className="text-3xl font-semibold text-foreground">{item.title}</h1>
           {summary ? (
-            <p className="text-base text-zinc-600" aria-label={dictionary.catalog.summaryLabel}>
+            <p className="text-base text-muted-foreground" aria-label={dictionary.catalog.summaryLabel}>
               {summary}
             </p>
           ) : null}
@@ -121,7 +121,7 @@ function AttributeList({ label, values, emptyValue }: AttributeListProps) {
   const hasValues = Array.isArray(values) && values.length > 0;
   return (
     <div>
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{label}</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{label}</h3>
       <p className="mt-1 text-sm text-zinc-700">{hasValues ? values.join(', ') : emptyValue}</p>
     </div>
   );

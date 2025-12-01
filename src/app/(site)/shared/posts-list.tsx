@@ -85,7 +85,7 @@ export async function PostsList({ locale }: { locale: Locale }) {
 
   if (posts.length === 0) {
     return (
-      <p className="mt-12 rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-600">
+      <p className="mt-12 rounded-lg border border-dashed border-border bg-background p-6 text-sm text-muted-foreground">
         {EMPTY_STATE_LABEL[locale]}
       </p>
     );
@@ -100,17 +100,17 @@ export async function PostsList({ locale }: { locale: Locale }) {
             <li key={post.id}>
               <Link
                 href={post.href}
-                className="group block h-full rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
+                className="group block h-full rounded-lg border border-border bg-background p-6 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
               >
                 <div className="flex items-start justify-between gap-4 text-sm text-brand-700">
                   <span className="font-semibold transition group-hover:text-brand-600">{READ_MORE_LABEL[locale]}</span>
                   {formattedDate ? (
-                    <time dateTime={post.date ?? undefined} className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+                    <time dateTime={post.date ?? undefined} className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {formattedDate}
                     </time>
                   ) : null}
                 </div>
-                <h2 className="mt-3 text-xl font-semibold leading-tight text-zinc-900">{post.title}</h2>
+                <h2 className="mt-3 text-xl font-semibold leading-tight text-foreground">{post.title}</h2>
                 {post.description ? <p className="mt-2 text-sm text-zinc-700">{post.description}</p> : null}
               </Link>
             </li>

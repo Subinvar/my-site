@@ -99,7 +99,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
       <form
         action={onSubmitAction}
         onSubmit={handleSubmit}
-        className="space-y-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-xl border border-border bg-background p-6 shadow-sm"
       >
         <input type="hidden" name="locale" value={locale} />
         <input
@@ -112,7 +112,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
         />
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-900" htmlFor="name">
+          <label className="block text-sm font-medium text-foreground" htmlFor="name">
             {copy.name}
           </label>
           <input
@@ -121,13 +121,13 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             required
             minLength={2}
             maxLength={100}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+            className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
           />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-900" htmlFor="email">
+            <label className="block text-sm font-medium text-foreground" htmlFor="email">
               {copy.email}
             </label>
             <input
@@ -141,12 +141,12 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+              className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-zinc-900" htmlFor="phone">
+            <label className="block text-sm font-medium text-foreground" htmlFor="phone">
               {copy.phone}
             </label>
             <input
@@ -162,9 +162,9 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
                   setContactError(false);
                 }
               }}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+              className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
             />
-            <p className="text-sm text-zinc-500">{copy.phoneHint}</p>
+            <p className="text-sm text-muted-foreground">{copy.phoneHint}</p>
             {contactError ? (
               <p className="text-sm text-red-600" role="alert" aria-live="polite">
                 {copy.contactRequired}
@@ -174,7 +174,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-900" htmlFor="message">
+          <label className="block text-sm font-medium text-foreground" htmlFor="message">
             {copy.message}
           </label>
           <textarea
@@ -184,7 +184,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             minLength={10}
             maxLength={2000}
             rows={6}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-base text-zinc-900 shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
+            className="w-full rounded-lg border border-border px-3 py-2 text-base text-foreground shadow-sm focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30"
           />
         </div>
 
@@ -193,7 +193,7 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
             type="checkbox"
             name="agree"
             required
-            className="mt-1 h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-600"
+            className="mt-1 h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-600"
           />
           <span>{copy.agree}</span>
         </label>

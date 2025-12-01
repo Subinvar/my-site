@@ -56,15 +56,15 @@ export default async function PostPage({ params }: PostPageProps) {
     >
       <article className="max-w-none">
         <header className="mb-8 space-y-3">
-          <p className="text-sm uppercase tracking-wide text-zinc-500">{post.date}</p>
-          <h1 className="text-3xl font-semibold text-zinc-900">{post.title}</h1>
-          {summary ? <p className="text-base text-zinc-600">{summary}</p> : null}
+          <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.date}</p>
+          <h1 className="text-3xl font-semibold text-foreground">{post.title}</h1>
+          {summary ? <p className="text-base text-muted-foreground">{summary}</p> : null}
         </header>
         <div className="prose-markdoc">{content}</div>
         {hasTags ? (
-          <ul className="mt-10 flex flex-wrap gap-2 text-sm text-zinc-500">
+          <ul className="mt-10 flex flex-wrap gap-2 text-sm text-muted-foreground">
             {tags.map((tag) => (
-              <li key={tag} className="rounded-full border border-zinc-200 px-3 py-1">
+              <li key={tag} className="rounded-full border border-border px-3 py-1">
                 #{tag}
               </li>
             ))}

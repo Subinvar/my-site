@@ -49,8 +49,8 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
     >
       <article className="max-w-none">
         <header className="mb-10 space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900">{page.title}</h1>
-          {summary ? <p className="text-lg text-zinc-600">{summary}</p> : null}
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
+          {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
         </header>
         <div className="prose-markdoc">{content}</div>
       </article>

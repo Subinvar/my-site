@@ -202,13 +202,13 @@ export function createComponents(locale: Locale) {
         'aside',
         {
           className:
-            'rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-100',
+            'rounded-lg border border-border bg-card p-4 text-sm text-foreground dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-100',
         },
         React.createElement(
           'strong',
           {
             className:
-              'block text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400',
+              'block text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:text-zinc-400',
           },
           heading
         ),
@@ -245,7 +245,7 @@ export function createComponents(locale: Locale) {
         'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
       const variantClass =
         normalizedVariant === 'ghost'
-          ? 'border-transparent text-zinc-700 hover:text-zinc-900 focus-visible:ring-zinc-400'
+          ? 'border-transparent text-zinc-700 hover:text-foreground focus-visible:ring-zinc-400'
           : 'border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800 focus-visible:ring-zinc-900';
       return React.createElement(
         'a',
@@ -326,7 +326,7 @@ export function createComponents(locale: Locale) {
         captionContent || creditContent
           ? React.createElement(
               'figcaption',
-              { className: 'text-sm text-zinc-600 dark:text-zinc-400' },
+              { className: 'text-sm text-muted-foreground dark:text-zinc-400' },
               captionContent
                 ? React.createElement('span', { className: 'block' }, captionContent)
                 : null,

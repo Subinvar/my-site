@@ -126,8 +126,8 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
         <div className="space-y-6">
           <header className="space-y-3">
-            <h1 className="text-3xl font-semibold text-zinc-900">{copy.title}</h1>
-            <p className="text-base text-zinc-600">{copy.description}</p>
+            <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
+            <p className="text-base text-muted-foreground">{copy.description}</p>
           </header>
 
           <ContactForm
@@ -141,7 +141,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
         </div>
 
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-zinc-200 shadow-sm">
+          <div className="overflow-hidden rounded-xl border border-border shadow-sm">
             <iframe
               src="https://www.openstreetmap.org/export/embed.html?bbox=37.838%2C55.992%2C37.854%2C56&layer=mapnik&marker=55.996%2C37.845"
               loading="lazy"
@@ -151,8 +151,8 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             />
           </div>
 
-          <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-            {address ? <p className="text-base font-medium text-zinc-900">{address}</p> : null}
+          <div className="space-y-2 rounded-xl border border-border bg-background p-6 shadow-sm">
+            {address ? <p className="text-base font-medium text-foreground">{address}</p> : null}
             {phone ? (
               <a
                 className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
@@ -184,7 +184,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       </div>
 
       {pageContent ? (
-        <div className="mt-10 border-t border-zinc-200 pt-8">
+        <div className="mt-10 border-t border-border pt-8">
           <article className="prose-markdoc">
             {pageContent}
           </article>
