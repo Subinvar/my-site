@@ -27,8 +27,12 @@ export function CardHeader({ className, ...rest }: HTMLAttributes<HTMLDivElement
   return <div className={cn('flex flex-col gap-1 mb-3', className)} {...rest} />;
 }
 
-export function CardTitle({ className, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn('text-base sm:text-lg font-semibold', className)} {...rest} />;
+export function CardTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3 className={cn('text-base sm:text-lg font-semibold', className)} {...rest}>
+      {children}
+    </h3>
+  );
 }
 
 export function CardDescription({ className, ...rest }: HTMLAttributes<HTMLParagraphElement>) {

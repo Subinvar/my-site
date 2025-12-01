@@ -17,6 +17,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
 }
 
+type SlotChildProps = {
+  children?: ReactNode;
+  className?: string;
+} & Record<string, unknown>;
+
+function isSlotChild(element: ReactNode): element is ReactElement<SlotChildProps> {
+  return isValidElement(element);
+}
+
 const baseClasses =
   'inline-flex items-center justify-center rounded-lg font-medium transition-colors ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
@@ -70,22 +79,24 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
+  const slotChild = asChild && isSlotChild(children) ? children : null;
+
   const content = (
     <>
       {leftIcon ? <span className="inline-flex shrink-0">{leftIcon}</span> : null}
       <span className="truncate">
-        {isValidElement(children) && asChild ? children.props.children : children}
+        {slotChild ? slotChild.props.children : children}
       </span>
       {rightIcon ? <span className="inline-flex shrink-0">{rightIcon}</span> : null}
     </>
   );
 
-  if (asChild && isValidElement(children)) {
-    const child = children as ReactElement;
-    return cloneElement(child, {
+  if (slotChild) {
+    const childProps = slotChild.props;
+    return cloneElement(slotChild, {
       ...rest,
-      ...child.props,
-      className: cn(buttonClassNames({ variant, size, fullWidth, className }), child.props.className),
+      ...childProps,
+      className: cn(buttonClassNames({ variant, size, fullWidth, className }), childProps.className),
       children: content,
     });
   }
