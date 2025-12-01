@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { buttonClassNames } from '@/app/(site)/shared/ui/button';
+import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 
@@ -25,7 +25,11 @@ export function LanguageSwitcher({
   return (
     <Link
       href={targetHref}
-      className={buttonClassNames({ variant: 'ghost', size: 'sm', className: 'rounded-full border border-border shadow-sm uppercase tracking-[0.08em]' })}
+      className={buttonClassNames({
+        variant: 'ghost',
+        size: 'sm',
+        className: 'rounded-full border border-border shadow-sm uppercase tracking-[0.08em]',
+      })}
       aria-label={ariaLabel}
     >
       {label}
