@@ -104,10 +104,10 @@ export function SiteShell({
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
-      <header className="border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
         {hasContacts ? (
-          <div className="border-b border-brand-100 bg-brand-900 text-sm text-brand-50">
-            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-4 px-6 py-2">
+          <div className="border-b border-brand-100 bg-brand-900 text-xs text-brand-50 sm:text-sm">
+            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-2 sm:px-6">
               {contactLinks.map((link) => (
                 <a
                   key={link.id}
@@ -123,8 +123,8 @@ export function SiteShell({
             </div>
           </div>
         ) : null}
-        <div className="mx-auto w-full max-w-5xl px-6 py-6">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mx-auto w-full max-w-5xl px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <a
               href={buildPath(locale)}
               className="flex items-center gap-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
@@ -160,11 +160,16 @@ export function SiteShell({
           </div>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+      <main
+        id="main"
+        role="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-5xl flex-1 px-6 py-12"
+      >
         {children}
       </main>
-      <footer className="border-t border-border bg-muted">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
+      <footer className="border-t border-border bg-background">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-10 text-sm text-muted-foreground sm:px-6">
           <div className="h-px w-full bg-brand-50" aria-hidden="true" />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
             <div className="space-y-1">
@@ -176,7 +181,7 @@ export function SiteShell({
               ) : null}
             </div>
             {hasContacts ? (
-              <div className="flex flex-wrap items-center gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-3 text-sm sm:gap-4">
                 {contactLinks.map((link) => (
                   <a
                     key={`footer-${link.id}`}
@@ -186,7 +191,9 @@ export function SiteShell({
                     {link.label}
                   </a>
                 ))}
-                {site.contacts.address ? <span>{site.contacts.address}</span> : null}
+                {site.contacts.address ? (
+                  <span className="text-xs text-muted-foreground sm:text-sm">{site.contacts.address}</span>
+                ) : null}
               </div>
             ) : null}
           </div>
