@@ -1,5 +1,6 @@
 'use client';
 
+import { MoonIcon, SunIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
@@ -53,9 +54,17 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
-      className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-card/80 px-3 text-xs font-medium text-foreground/80 shadow-sm backdrop-blur transition hover:bg-card"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      {isDark ? 'Тёмная' : 'Светлая'}
+      <span className="sr-only">{isDark ? 'Светлая тема' : 'Тёмная тема'}</span>
+      <span className="relative inline-flex items-center justify-center">
+        <SunIcon
+          className={`h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0'}`}
+        />
+        <MoonIcon
+          className={`absolute h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'}`}
+        />
+      </span>
     </button>
   );
 }

@@ -115,20 +115,6 @@
       "order": 20
     },
     {
-      "id": "footer-products",
-      "label": {
-        "ru": "Продукция",
-        "en": "Products"
-      },
-      "path": {
-        "ru": "products",
-        "en": "products"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 30
-    },
-    {
       "id": "footer-news",
       "label": {
         "ru": "Новости",
@@ -141,48 +127,6 @@
       "externalUrl": "",
       "newTab": false,
       "order": 40
-    },
-    {
-      "id": "footer-about",
-      "label": {
-        "ru": "О компании",
-        "en": "About"
-      },
-      "path": {
-        "ru": "about",
-        "en": "about"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 50
-    },
-    {
-      "id": "footer-partners",
-      "label": {
-        "ru": "Партнёры",
-        "en": "Partners"
-      },
-      "path": {
-        "ru": "partners",
-        "en": "partners"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 60
-    },
-    {
-      "id": "footer-contacts",
-      "label": {
-        "ru": "Контакты",
-        "en": "Contacts"
-      },
-      "path": {
-        "ru": "contacts",
-        "en": "contacts"
-      },
-      "externalUrl": "",
-      "newTab": false,
-      "order": 70
     }
   ]
 }
