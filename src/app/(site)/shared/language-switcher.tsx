@@ -19,22 +19,15 @@ export function LanguageSwitcher({
   const targetHref = href ?? buildPath(targetLocale);
   const ariaLabelValue = switchToLabels[targetLocale];
   const ariaLabel = ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
+  const label = currentLocale === 'ru' ? 'EN' : 'RU';
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {currentLocale.toUpperCase()}
-      </span>
-      <span aria-hidden="true" className="text-muted-foreground">
-        /
-      </span>
-      <Link
-        href={targetHref}
-        className="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        aria-label={ariaLabel}
-      >
-        {targetLocale.toUpperCase()}
-      </Link>
-    </div>
+    <Link
+      href={targetHref}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-xs font-semibold uppercase tracking-[0.08em] text-foreground shadow-sm transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      aria-label={ariaLabel}
+    >
+      {label}
+    </Link>
   );
 }

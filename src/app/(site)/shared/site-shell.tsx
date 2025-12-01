@@ -103,48 +103,48 @@ export function SiteShell({
     <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
-      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur">
-        <div className="border-b border-border">
-          <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-            <a
-              href={buildPath(locale)}
-              className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <Image
-                src="/uploads/logo.svg"
-                alt={brandName || 'Интема Групп'}
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
-            </a>
-
-            <NavigationList
-              links={navigation.header}
-              ariaLabel={navigationLabels.headerLabel}
-              currentPath={currentPath}
-              className="hidden md:flex"
+      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
+          <a
+            href={buildPath(locale)}
+            className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <Image
+              src="/uploads/logo.svg"
+              alt={brandName || 'Интема Групп'}
+              width={56}
+              height={56}
+              className="h-12 w-auto"
             />
+          </a>
 
-            <div className="flex items-center gap-3">
-              {site.contacts.phone ? (
-                <a
-                  href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                  className="hidden text-sm font-medium text-foreground md:inline-flex"
-                >
-                  {site.contacts.phone}
-                </a>
-              ) : null}
+          <NavigationList
+            links={navigation.header}
+            ariaLabel={navigationLabels.headerLabel}
+            currentPath={currentPath}
+            className="hidden md:flex"
+          />
 
-              {site.contacts.email ? (
-                <a
-                  href={`mailto:${site.contacts.email}`}
-                  className="hidden text-sm text-muted-foreground hover:text-foreground md:inline-flex"
-                >
-                  {site.contacts.email}
-                </a>
-              ) : null}
+          <div className="flex items-center gap-2">
+            {site.contacts.phone ? (
+              <a
+                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                className="hidden text-sm font-medium text-foreground md:inline-flex"
+              >
+                {site.contacts.phone}
+              </a>
+            ) : null}
 
+            {site.contacts.email ? (
+              <a
+                href={`mailto:${site.contacts.email}`}
+                className="hidden text-sm text-muted-foreground hover:text-foreground md:inline-flex"
+              >
+                {site.contacts.email}
+              </a>
+            ) : null}
+
+            <div className="hidden items-center gap-2 sm:flex">
               <ThemeToggle />
               <LanguageSwitcher
                 currentLocale={locale}
@@ -155,32 +155,18 @@ export function SiteShell({
             </div>
           </div>
         </div>
-        <div className="h-[3px] w-full bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700" />
       </header>
       <main
         id="main"
         role="main"
         tabIndex={-1}
-        className="mx-auto w-full max-w-5xl flex-1 px-6 py-12"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
       >
         {children}
       </main>
       <footer className="border-t border-border bg-muted/60">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <a
-              href={buildPath(locale)}
-              className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
-            >
-              <Image
-                src="/uploads/logo.svg"
-                alt={brandName || 'Интема Групп'}
-                width={32}
-                height={32}
-                className="h-8 w-auto"
-              />
-            </a>
-
             {hasContacts ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 {site.contacts.phone ? (
@@ -192,18 +178,17 @@ export function SiteShell({
                 {site.contacts.address ? <span>{site.contacts.address}</span> : null}
               </div>
             ) : null}
-          </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <NavigationList
               links={navigation.footer}
               ariaLabel={navigationLabels.footerLabel}
               currentPath={currentPath}
             />
-            {hasCopyright ? (
-              <p className="text-[11px] sm:text-xs">{copyrightText}</p>
-            ) : null}
           </div>
+
+          {hasCopyright ? (
+            <p className="text-[11px] sm:text-xs">{copyrightText}</p>
+          ) : null}
         </div>
       </footer>
     </div>
