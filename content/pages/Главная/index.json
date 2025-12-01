@@ -1,7 +1,10 @@
 {
   "id": "home",
   "published": true,
-  "slug": {},
+  "slug": {
+    "ru": "",
+    "en": ""
+  },
   "title": {
     "ru": "Материалы и решения для литейного производства",
     "en": "Materials and solutions for foundry production"
