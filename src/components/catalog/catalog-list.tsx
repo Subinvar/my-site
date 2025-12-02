@@ -1,5 +1,5 @@
 import type { CatalogFiltersProps } from './catalog-filters';
-import { Card, CardFooter, CardTitle } from '@/app/(site)/shared/ui/card';
+import { Card, CardFooter, CardTitle, type CardProps } from '@/app/(site)/shared/ui/card';
 import { Badge } from '@/app/(site)/shared/ui/badge';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { buildPath } from '@/lib/paths';
@@ -39,6 +39,7 @@ export function CatalogList({
       {items.map((item) => (
         <CatalogItemCard
           key={item.slug}
+          data-testid="catalog-item"
           item={item}
           locale={locale}
           labelMaps={labelMaps}
@@ -56,18 +57,19 @@ function CatalogItemCard({
   labelMaps,
   detailLabel,
   requestLabel,
+  ...cardProps
 }: {
   item: CatalogListItem;
   locale: Locale;
   labelMaps: ReturnType<typeof createLabelMaps>;
   detailLabel: string;
   requestLabel: string;
-}) {
+} & CardProps) {
   const detailHref = buildPath(locale, ['catalog', item.slug]);
   const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.slug)}`;
 
   return (
-    <Card as="article" className="flex h-full flex-col">
+    <Card as="article" className="flex h-full flex-col" {...cardProps}>
       <div className="flex flex-1 flex-col gap-3">
         <header className="space-y-1">
           <CardTitle className="text-base">{item.title}</CardTitle>
