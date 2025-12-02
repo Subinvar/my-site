@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
+    "build": "next build --turbo && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "node scripts/cleanup-next-types.mjs && tsc -b --noEmit",
@@ -19,6 +19,8 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@fontsource-variable/montserrat": "^5.2.8",
+    "@fontsource-variable/open-sans": "^5.2.7",
     "@keystatic/core": "^0.5.48",
     "@keystatic/next": "^5.0.4",
     "@markdoc/markdoc": "^0.5.4",
