@@ -22,7 +22,11 @@ export function ProductCategoryCard({
   return (
     <Card as="article" className="h-full">
       <CardHeader>
-        {icon ? <div className="mb-2 text-2xl">{icon}</div> : null}
+        {icon ? (
+          <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 via-primary/5 to-transparent text-[var(--primary)]">
+            {icon}
+          </div>
+        ) : null}
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>

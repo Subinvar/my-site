@@ -9,27 +9,27 @@ import type { Locale } from '@/lib/i18n';
 
 const CATEGORY_DESCRIPTIONS: Record<CatalogCategory, { ru: string; en: string }> = {
   Связующие: {
-    ru: 'Связующие системы под ваши процессы: холодное/горячее затвердевание, самотвердеющие смеси.',
-    en: 'Binder systems tuned to your processes: cold/hot curing and self-setting mixes.',
+    ru: 'Связующие системы под ваши процессы: холодный/горячий ящик, самотвердеющие смеси и специальные решения.',
+    en: 'Binder systems tuned to your processes: cold/hot box, self-setting mixes, and special solutions.',
   },
   'Противопригарные покрытия': {
-    ru: 'Покрытия для стабильной поверхности отливок: окунание, облив, окраска, специальные решения.',
-    en: 'Release coatings for predictable cast surfaces: dipping, pouring, brushing, and specialty options.',
+    ru: 'Спиртовые и водные покрытия для стабильной поверхности отливок и снижения пригаров.',
+    en: 'Alcohol- and water-based coatings for predictable cast surfaces and reduced burn-on.',
   },
   'Вспомогательные материалы': {
-    ru: 'Добавки, пропитки и сервисные материалы, которые поддерживают чистый и предсказуемый процесс.',
-    en: 'Additives, impregnations, and service supplies that keep the process clean and predictable.',
+    ru: 'Клеи, модификаторы, разделительные и очищающие составы, экзотермические смеси и другие сервисные материалы.',
+    en: 'Adhesives, modifiers, release and cleaning compounds, exothermic mixes and other service supplies.',
   },
 };
 
 const SECTION_COPY = {
   heading: {
-    ru: 'Категории продукции',
-    en: 'Product categories',
+    ru: 'Направления продукции',
+    en: 'Product directions',
   },
   description: {
     ru: 'Выберите направление, чтобы сразу перейти к подходящим материалам в каталоге.',
-    en: 'Pick a category to jump straight to the matching materials in the catalogue.',
+    en: 'Pick a direction to jump straight to the matching materials in the catalogue.',
   },
 };
 
