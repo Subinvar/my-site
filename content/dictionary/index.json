@@ -140,5 +140,51 @@
         "en": "Updated"
       }
     }
+  },
+  "productDirections": {
+    "sectionHeading": {
+      "ru": "Направления продукции",
+      "en": "Product directions"
+    },
+    "sectionDescription": {
+      "ru": "Выберите направление, чтобы сразу перейти к подходящим материалам в каталоге.",
+      "en": "Pick a direction to jump straight to the matching materials in the catalogue."
+    },
+    "ctaLabel": {
+      "ru": "Смотреть каталог",
+      "en": "View catalogue"
+    },
+    "categories": {
+      "binders": {
+        "title": {
+          "ru": "Связующие",
+          "en": "Binders"
+        },
+        "description": {
+          "ru": "Связующие системы под ваши процессы: холодный/горячий ящик, самотвердеющие смеси и специальные решения.",
+          "en": "Binder systems tuned to your processes: cold/hot box, self-setting mixes, and special solutions."
+        }
+      },
+      "coatings": {
+        "title": {
+          "ru": "Противопригарные покрытия",
+          "en": "Foundry coatings"
+        },
+        "description": {
+          "ru": "Спиртовые и водные покрытия для стабильной поверхности отливок и снижения пригаров.",
+          "en": "Alcohol- and water-based coatings for predictable cast surfaces and reduced burn-on."
+        }
+      },
+      "auxiliaries": {
+        "title": {
+          "ru": "Вспомогательные материалы",
+          "en": "Auxiliary materials"
+        },
+        "description": {
+          "ru": "Клеи, модификаторы, разделительные и очищающие составы, экзотермические смеси и другие сервисные материалы.",
+          "en": "Adhesives, modifiers, release and cleaning compounds, exothermic mixes and other service supplies."
+        }
+      }
+    }
   }
 }

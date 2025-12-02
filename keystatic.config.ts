@@ -527,6 +527,31 @@ export default config({
           },
           { label: 'Карта сайта' }
         ),
+        productDirections: fields.object(
+          {
+            sectionHeading: localizedText('Заголовок секции «Продукция»'),
+            sectionDescription: localizedText('Описание секции «Продукция»'),
+            ctaLabel: localizedText('Текст кнопки витрины'),
+
+            categories: fields.object({
+              binders: fields.object({
+                title: localizedText('Название направления «Связующие»'),
+                description: localizedText('Описание направления «Связующие»'),
+              }),
+              coatings: fields.object({
+                title: localizedText('Название направления «Противопригарные покрытия»'),
+                description: localizedText('Описание направления «Противопригарные покрытия»'),
+              }),
+              auxiliaries: fields.object({
+                title: localizedText('Название направления «Вспомогательные материалы»'),
+                description: localizedText('Описание направления «Вспомогательные материалы»'),
+              }),
+            }),
+          },
+          {
+            label: 'Витрина направлений продукции',
+          }
+        ),
       },
     }),
     documentsPage: singleton({
