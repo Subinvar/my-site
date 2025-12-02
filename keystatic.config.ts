@@ -607,6 +607,7 @@ export default config({
         categoryAllLabel: localizedText('Подпись варианта «Все категории»'),
         detailLabel: localizedText('Подпись ссылки на карточку'),
         emptyStateMessage: localizedText('Сообщение о пустом результате', { multiline: true }),
+        requestLabel: localizedText('Подпись кнопки «Запросить КП» в карточке'),
         groupLabels: fields.object(
           {
             category: localizedText('Заголовок группы «Категория»', { isRequired: true }),
