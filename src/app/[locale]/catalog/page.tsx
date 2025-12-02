@@ -5,6 +5,7 @@ import {
   CatalogFilters,
   CatalogFiltersMobileTrigger,
 } from '@/components/catalog/catalog-filters';
+import type { CatalogFiltersProps } from '@/components/catalog/catalog-filters';
 import { ActiveFiltersChips } from '@/components/catalog/active-filters-chips';
 import { CatalogToolbar } from '@/components/catalog/catalog-toolbar';
 import { CatalogList } from '@/components/catalog/catalog-list';
@@ -70,6 +71,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const detailLabel = resolveDetailLabel(catalogPage, locale);
   const requestLabel = resolveRequestLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
+  const groupLabels = resolveGroupLabels(catalogPage, locale);
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
@@ -99,6 +101,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                 <CatalogFilters
                   locale={locale}
                   state={filters}
+                  groupLabels={groupLabels}
                   options={taxonomyOptions}
                   submitLabel={submitLabel}
                   resetLabel={resetLabel}
@@ -110,6 +113,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
               <CatalogFiltersMobileTrigger
                 locale={locale}
                 state={filters}
+                groupLabels={groupLabels}
                 options={taxonomyOptions}
                 submitLabel={submitLabel}
                 resetLabel={resetLabel}
@@ -193,6 +197,31 @@ function resolveRequestLabel(page: CatalogPageContent | null, locale: Locale): s
 
 function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
   return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
+}
+
+function resolveGroupLabels(
+  page: CatalogPageContent | null,
+  locale: Locale
+): CatalogFiltersProps['groupLabels'] {
+  const defaults: CatalogFiltersProps['groupLabels'] = {
+    category: 'Категория',
+    process: 'Процесс',
+    base: 'Основа',
+    filler: 'Наполнитель',
+    metal: 'Металл',
+    auxiliary: 'Вспомогательные',
+  };
+  const groupLabels = page?.groupLabels ?? null;
+
+  return {
+    category: resolveLocalizedValue(groupLabels?.category ?? null, locale) || defaults.category,
+    process: resolveLocalizedValue(groupLabels?.process ?? null, locale) || defaults.process,
+    base: resolveLocalizedValue(groupLabels?.base ?? null, locale) || defaults.base,
+    filler: resolveLocalizedValue(groupLabels?.filler ?? null, locale) || defaults.filler,
+    metal: resolveLocalizedValue(groupLabels?.metal ?? null, locale) || defaults.metal,
+    auxiliary:
+      resolveLocalizedValue(groupLabels?.auxiliary ?? null, locale) || defaults.auxiliary,
+  } satisfies CatalogFiltersProps['groupLabels'];
 }
 
 function resolvePagination(total: number, filters: FilterState) {
