@@ -614,6 +614,7 @@ export default config({
             process: localizedText('Заголовок группы «Процесс»', { isRequired: true }),
             base: localizedText('Заголовок группы «Основа»', { isRequired: true }),
             filler: localizedText('Заголовок группы «Наполнитель»', { isRequired: true }),
+            metal: localizedText('Заголовок группы «Металл»', { isRequired: true }),
             auxiliary: localizedText('Заголовок группы «Вспомогательные»', { isRequired: true }),
           },
           { label: 'Подписи групп фильтров' }

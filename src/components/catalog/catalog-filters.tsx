@@ -19,6 +19,14 @@ export type CatalogFiltersState = FilterState;
 export type CatalogFiltersProps = {
   locale: string;
   state: CatalogFiltersState;
+  groupLabels: {
+    category?: string;
+    process?: string;
+    base?: string;
+    filler?: string;
+    metal?: string;
+    auxiliary?: string;
+  };
   options: {
     categories: ReadonlyArray<{ value: CatalogCategory; label: string }>;
     processes: ReadonlyArray<{ value: CatalogProcess; label: string }>;
@@ -34,6 +42,7 @@ export type CatalogFiltersProps = {
 export function CatalogFiltersMobileTrigger({
   locale,
   state,
+  groupLabels,
   options,
   submitLabel,
   resetLabel,
@@ -76,6 +85,7 @@ export function CatalogFiltersMobileTrigger({
               <CatalogFilters
                 locale={locale}
                 state={state}
+                groupLabels={groupLabels}
                 options={options}
                 submitLabel={submitLabel}
                 resetLabel={resetLabel}
@@ -91,12 +101,21 @@ export function CatalogFiltersMobileTrigger({
 export function CatalogFilters({
   locale,
   state,
+  groupLabels,
   options,
   submitLabel,
   resetLabel,
 }: CatalogFiltersProps) {
   const submitText = submitLabel ?? (locale === 'ru' ? 'Показать' : 'Show');
   const resetText = resetLabel ?? (locale === 'ru' ? 'Сбросить' : 'Reset');
+  const labels = {
+    category: groupLabels.category ?? 'Категория',
+    process: groupLabels.process ?? 'Процесс',
+    base: groupLabels.base ?? 'Основа',
+    filler: groupLabels.filler ?? 'Наполнитель',
+    metal: groupLabels.metal ?? 'Металл',
+    auxiliary: groupLabels.auxiliary ?? 'Вспомогательные',
+  };
 
   return (
     <form className="space-y-4 text-sm" method="GET">
@@ -105,7 +124,7 @@ export function CatalogFilters({
         <input type="hidden" name="sort" value={state.sort} />
       ) : null}
 
-      <FiltersGroup title="Категория">
+      <FiltersGroup title={labels.category}>
         {options.categories.map((option) => (
           <CheckboxOption
             key={option.value}
@@ -117,7 +136,7 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title="Процесс">
+      <FiltersGroup title={labels.process}>
         {options.processes.map((option) => (
           <CheckboxOption
             key={option.value}
@@ -129,7 +148,7 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title="Основа">
+      <FiltersGroup title={labels.base}>
         {options.bases.map((option) => (
           <CheckboxOption
             key={option.value}
@@ -141,7 +160,7 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title="Наполнитель">
+      <FiltersGroup title={labels.filler}>
         {options.fillers.map((option) => (
           <CheckboxOption
             key={option.value}
@@ -153,7 +172,7 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title="Металл">
+      <FiltersGroup title={labels.metal}>
         {options.metals.map((option) => (
           <CheckboxOption
             key={option.value}
@@ -165,7 +184,7 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title="Вспомогательные">
+      <FiltersGroup title={labels.auxiliary}>
         {options.auxiliaries.map((option) => (
           <CheckboxOption
             key={option.value}
