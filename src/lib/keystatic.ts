@@ -570,6 +570,7 @@ export type CatalogPageContent = {
   resetLabel: Partial<Record<Locale, string>>;
   categoryAllLabel: Partial<Record<Locale, string>>;
   detailLabel: Partial<Record<Locale, string>>;
+  requestLabel: Partial<Record<Locale, string>>;
   emptyStateMessage: Partial<Record<Locale, string>>;
   groupLabels: {
     category: Partial<Record<Locale, string>>;
@@ -1689,6 +1690,7 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
   const resetLabel = mapLocalizedTextRecord(catalogPage.resetLabel);
   const categoryAllLabel = mapLocalizedTextRecord(catalogPage.categoryAllLabel);
   const detailLabel = mapLocalizedTextRecord(catalogPage.detailLabel);
+  const requestLabel = mapLocalizedTextRecord(catalogPage.requestLabel);
   const emptyStateMessage = mapLocalizedTextRecord(catalogPage.emptyStateMessage);
   const groupLabelsSource = catalogPage.groupLabels ?? {};
   const groupLabels: CatalogPageContent['groupLabels'] = {
@@ -1718,6 +1720,7 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
     resetLabel,
     categoryAllLabel,
     detailLabel,
+    requestLabel,
     emptyStateMessage,
     groupLabels,
     seo,

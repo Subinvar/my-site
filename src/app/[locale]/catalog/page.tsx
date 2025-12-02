@@ -68,6 +68,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const submitLabel = resolveSubmitLabel(catalogPage, locale);
   const resetLabel = resolveResetLabel(catalogPage, locale);
   const detailLabel = resolveDetailLabel(catalogPage, locale);
+  const requestLabel = resolveRequestLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
@@ -125,6 +126,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                   taxonomyOptions={taxonomyOptions}
                   emptyStateMessage={emptyStateMessage}
                   detailLabel={detailLabel}
+                  requestLabel={requestLabel}
                 />
 
                 {pagination.hasMore ? (
@@ -183,6 +185,10 @@ function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): str
 
 function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
   return resolveLocalizedValue(page?.detailLabel ?? null, locale);
+}
+
+function resolveRequestLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return resolveLocalizedValue(page?.requestLabel ?? null, locale);
 }
 
 function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
