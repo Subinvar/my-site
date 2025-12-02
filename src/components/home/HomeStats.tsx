@@ -1,5 +1,47 @@
+"use client";
+
+import { useEffect, useRef, useState } from 'react';
+
 import { Card } from '@/app/(site)/shared/ui/card';
 import type { Locale } from '@/lib/i18n';
+
+function useInView(threshold = 0.3) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) setInView(true);
+      },
+      { threshold },
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, inView } as const;
+}
+
+function AnimatedNumber({ target }: { target: number }) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    const duration = 700;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setValue(Math.round(target * progress));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }, [target]);
+
+  return <>{value}</>;
+}
 
 export type HomeStatsProps = {
   locale: Locale;
@@ -22,13 +64,17 @@ const STATS: Record<Locale, Array<{ label: string; value: string }>> = {
 
 export function HomeStats({ locale }: HomeStatsProps) {
   const items = STATS[locale];
+  const { ref, inView } = useInView(0.3);
 
   if (!items?.length) {
     return null;
   }
 
   return (
-    <section className="space-y-6 rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8">
+    <section
+      ref={ref}
+      className="space-y-6 rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8"
+    >
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold text-[var(--foreground)] sm:text-3xl">
           {locale === 'ru' ? 'Интема Групп в цифрах' : 'InteMa Group in numbers'}
@@ -41,17 +87,28 @@ export function HomeStats({ locale }: HomeStatsProps) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((item) => (
-          <Card
-            key={item.label}
-            className="flex flex-col gap-2 bg-[var(--background)]/80 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
-          >
-            <div className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl">
-              {item.value}
-            </div>
-            <div className="text-sm text-[var(--muted-foreground)]">{item.label}</div>
-          </Card>
-        ))}
+        {items.map((item) => {
+          const numeric = parseInt(item.value, 10);
+
+          return (
+            <Card
+              key={item.label}
+              className="flex flex-col gap-2 bg-[var(--background)]/80 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl">
+                {inView && !Number.isNaN(numeric) ? (
+                  <>
+                    <AnimatedNumber target={numeric} />
+                    {item.value.replace(String(numeric), '')}
+                  </>
+                ) : (
+                  item.value
+                )}
+              </div>
+              <div className="text-sm text-[var(--muted-foreground)]">{item.label}</div>
+            </Card>
+          );
+        })}
       </div>
     </section>
   );

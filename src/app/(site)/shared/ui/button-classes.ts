@@ -4,7 +4,7 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const baseClasses =
-  'inline-flex items-center justify-center rounded-lg font-medium transition-colors ' +
+  'inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200 ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
   'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)] ' +
   'disabled:opacity-60 disabled:cursor-not-allowed select-none';
@@ -18,10 +18,12 @@ const sizeClasses: Record<ButtonSize, string> = {
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
     'bg-[var(--color-brand-600)] text-white ' +
-    'hover:bg-[var(--color-brand-700)] active:bg-[var(--color-brand-700)]',
+    'hover:bg-[color-mix(in_srgb,var(--color-brand-600)_90%,white_10%)] ' +
+    'active:bg-[var(--color-brand-700)]',
   secondary:
     'border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] ' +
-    'hover:bg-[var(--muted)] active:bg-[var(--muted)]',
+    'hover:bg-[color-mix(in_srgb,var(--color-brand-600)_6%,var(--card))] ' +
+    'active:bg-[color-mix(in_srgb,var(--color-brand-600)_10%,var(--card))]',
   ghost:
     'bg-transparent text-[var(--foreground)] ' +
     'hover:bg-[color-mix(in_srgb,var(--color-brand-600)_8%,transparent)]',
