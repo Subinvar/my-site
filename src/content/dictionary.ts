@@ -5,6 +5,8 @@ type LocalizedRecord = Partial<Record<Locale, string | null | undefined>>;
 
 type SwitchToRecord = Partial<Record<Locale, LocalizedRecord | null | undefined>>;
 
+type ProductDirectionKey = 'binders' | 'coatings' | 'auxiliaries';
+
 type DictionarySource = {
   common?: {
     skipToContent?: LocalizedRecord;
@@ -60,6 +62,20 @@ type DictionarySource = {
       alternates?: LocalizedRecord;
       updated?: LocalizedRecord;
     };
+  };
+  productDirections?: {
+    sectionHeading?: LocalizedRecord;
+    sectionDescription?: LocalizedRecord;
+    ctaLabel?: LocalizedRecord;
+    categories?: Partial<
+      Record<
+        ProductDirectionKey,
+        {
+          title?: LocalizedRecord;
+          description?: LocalizedRecord;
+        }
+      >
+    >;
   };
 };
 
@@ -119,6 +135,12 @@ type InterfaceDictionary = {
       updated: string;
     };
   };
+  productDirections: {
+    sectionHeading: string;
+    sectionDescription: string;
+    ctaLabel: string;
+    categories: Record<ProductDirectionKey, { title: string; description: string }>;
+  };
 };
 
 const dictionaryData = dictionarySource as DictionarySource;
@@ -171,6 +193,8 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
   const feedColumns = feed.columns ?? {};
   const sitemap = dictionaryData.sitemap ?? {};
   const sitemapColumns = sitemap.columns ?? {};
+  const productDirections = dictionaryData.productDirections ?? {};
+  const productDirectionCategories = productDirections.categories ?? {};
 
   return {
     common: {
@@ -234,6 +258,57 @@ export function getInterfaceDictionary(locale: Locale): InterfaceDictionary {
         page: pickLocalized(sitemapColumns.page, locale, 'sitemap.columns.page'),
         alternates: pickLocalized(sitemapColumns.alternates, locale, 'sitemap.columns.alternates'),
         updated: pickLocalized(sitemapColumns.updated, locale, 'sitemap.columns.updated'),
+      },
+    },
+    productDirections: {
+      sectionHeading: pickLocalized(
+        productDirections.sectionHeading,
+        locale,
+        'productDirections.sectionHeading'
+      ),
+      sectionDescription: pickLocalized(
+        productDirections.sectionDescription,
+        locale,
+        'productDirections.sectionDescription'
+      ),
+      ctaLabel: pickLocalized(productDirections.ctaLabel, locale, 'productDirections.ctaLabel'),
+      categories: {
+        binders: {
+          title: pickLocalized(
+            productDirectionCategories.binders?.title,
+            locale,
+            'productDirections.categories.binders.title'
+          ),
+          description: pickLocalized(
+            productDirectionCategories.binders?.description,
+            locale,
+            'productDirections.categories.binders.description'
+          ),
+        },
+        coatings: {
+          title: pickLocalized(
+            productDirectionCategories.coatings?.title,
+            locale,
+            'productDirections.categories.coatings.title'
+          ),
+          description: pickLocalized(
+            productDirectionCategories.coatings?.description,
+            locale,
+            'productDirections.categories.coatings.description'
+          ),
+        },
+        auxiliaries: {
+          title: pickLocalized(
+            productDirectionCategories.auxiliaries?.title,
+            locale,
+            'productDirections.categories.auxiliaries.title'
+          ),
+          description: pickLocalized(
+            productDirectionCategories.auxiliaries?.description,
+            locale,
+            'productDirections.categories.auxiliaries.description'
+          ),
+        },
       },
     },
   } satisfies InterfaceDictionary;
