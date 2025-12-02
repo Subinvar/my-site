@@ -2,7 +2,6 @@ import Link from 'next/link';
 
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import type { Locale } from '@/lib/i18n';
-import { buildPath } from '@/lib/paths';
 
 type LanguageSwitcherProps = {
   currentLocale: Locale;
@@ -17,10 +16,30 @@ export function LanguageSwitcher({
   href,
   switchToLabels,
 }: LanguageSwitcherProps) {
-  const targetHref = href ?? buildPath(targetLocale);
+  const targetHref = href ?? null;
+  const isDisabled = targetHref === null;
   const ariaLabelValue = switchToLabels[targetLocale];
   const ariaLabel = ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
   const label = currentLocale === 'ru' ? 'EN' : 'RU';
+
+  if (isDisabled) {
+    return (
+      <span
+        className={
+          buttonClassNames({
+            variant: 'ghost',
+            size: 'sm',
+            className: 'rounded-full border border-border shadow-sm uppercase tracking-[0.08em] opacity-50',
+          })
+        }
+        aria-label={ariaLabel}
+        aria-disabled="true"
+        role="link"
+      >
+        {label}
+      </span>
+    );
+  }
 
   return (
     <Link

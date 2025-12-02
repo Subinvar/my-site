@@ -21,29 +21,48 @@ const resolveStoredTheme = (): Theme | null => {
   return null;
 };
 
+const resolveInitialTheme = (): Theme => {
+  if (typeof document === 'undefined') {
+    return 'light';
+  }
+
+  const attrTheme = document.documentElement.dataset.theme;
+  if (attrTheme === 'dark' || attrTheme === 'light') {
+    return attrTheme;
+  }
+
+  const stored = resolveStoredTheme();
+  if (stored) {
+    return stored;
+  }
+
+  if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+
+  return 'light';
+};
+
+const applyTheme = (value: Theme) => {
+  document.documentElement.dataset.theme = value;
+  document.cookie = `theme=${value}; path=/; max-age=31536000`;
+};
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>(resolveInitialTheme);
 
   useEffect(() => {
-    const initial = resolveStoredTheme();
+    const stored = resolveStoredTheme();
 
-    if (initial) {
-      // Синхронизируем состояние с темой из куков сразу после монтирования
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- подхватываем сохранённую тему, чтобы не терять выбор пользователя
-      setTheme(initial);
-      document.documentElement.dataset.theme = initial;
-      document.cookie = `theme=${initial}; path=/; max-age=31536000`;
+    if (stored && stored !== theme) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- синхронизируем с кукой, чтобы не мигал не тот значок
+      setTheme(stored);
+      applyTheme(stored);
+      return;
     }
 
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    document.documentElement.dataset.theme = theme;
-    document.cookie = `theme=${theme}; path=/; max-age=31536000`;
-  }, [mounted, theme]);
+    applyTheme(theme);
+  }, [theme]);
 
   const toggle = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));

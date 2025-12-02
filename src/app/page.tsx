@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import {
-  getHomePage,
-  resolveHomeMetadata,
-} from '@/app/(site)/shared/home-page';
 import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import {
-  switchLocalePath,
-  findTargetLocale,
-  buildPath,
-} from '@/lib/paths';
+import { getHomePage, resolveHomeMetadata } from '@/app/(site)/shared/home-page';
+import { switchLocalePath, findTargetLocale, buildPath } from '@/lib/paths';
 import { defaultLocale } from '@/lib/i18n';
 import { Hero } from '@/components/home/Hero';
 import { HomeAbout } from '@/components/home/HomeAbout';

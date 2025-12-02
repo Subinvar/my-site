@@ -35,3 +35,19 @@ export function normalizeBaseUrl(baseUrl: string | null | undefined): string | n
   }
 }
 
+export function resolvePublicBaseUrl(
+  baseUrl: string | null | undefined,
+  { fallbackHost }: { fallbackHost?: string | null } = {}
+): string {
+  const candidates = [baseUrl, fallbackHost ?? null, process.env.NEXT_PUBLIC_SITE_URL ?? null];
+
+  for (const candidate of candidates) {
+    const normalized = normalizeBaseUrl(candidate);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  throw new Error('Public base URL is required to build absolute URLs.');
+}
+

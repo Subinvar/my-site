@@ -81,11 +81,6 @@ const nextConfig: NextConfig = {
   },
   reactCompiler: false,
   allowedDevOrigins: ['127.0.0.1', 'localhost'],
-  env: {
-    KEYSTATIC_GITHUB_CLIENT_ID: process.env.KEYSTATIC_GITHUB_CLIENT_ID ?? "stub-client-id",
-    KEYSTATIC_GITHUB_CLIENT_SECRET: process.env.KEYSTATIC_GITHUB_CLIENT_SECRET ?? "stub-client-secret",
-    KEYSTATIC_SECRET: process.env.KEYSTATIC_SECRET ?? "stub-keystatic-secret",
-  },
 };
 
 export default nextConfig;

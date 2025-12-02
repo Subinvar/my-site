@@ -84,7 +84,6 @@ const unauthorizedResponse = (): NextResponse =>
 
 const logMiddlewareFailure = (request: NextRequest, error: unknown): void => {
   const { pathname, search } = request.nextUrl;
-  const maskedAuthHeader = request.headers.get('authorization')?.slice(0, 10) ?? null;
 
   console.error('[middleware] invocation failed', {
     url: request.url,
@@ -92,7 +91,6 @@ const logMiddlewareFailure = (request: NextRequest, error: unknown): void => {
     pathname,
     search,
     hasAuthorization: Boolean(request.headers.get('authorization')),
-    authorizationPreview: maskedAuthHeader,
   });
 
   console.error('[middleware] error details', error);
