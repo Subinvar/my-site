@@ -2,10 +2,14 @@ import type { MetadataRoute } from 'next';
 
 import { getSite } from '@/lib/keystatic';
 import { defaultLocale } from '@/lib/i18n';
-import { resolvePublicBaseUrl } from '@/lib/url';
+import { normalizeBaseUrl } from '@/lib/url';
 
 export function buildSitemapUrl(baseUrl: string | null): string {
-  const normalized = resolvePublicBaseUrl(baseUrl);
+  const normalized = normalizeBaseUrl(baseUrl) ?? normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL);
+
+  if (!normalized) {
+    return '/sitemap.xml';
+  }
 
   return `${normalized}/sitemap.xml`;
 }

@@ -52,15 +52,6 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(resolveInitialTheme);
 
   useEffect(() => {
-    const stored = resolveStoredTheme();
-
-    if (stored && stored !== theme) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- синхронизируем с кукой, чтобы не мигал не тот значок
-      setTheme(stored);
-      applyTheme(stored);
-      return;
-    }
-
     applyTheme(theme);
   }, [theme]);
 
