@@ -75,11 +75,9 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
         (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
 
       if (!existingIndexPath) {
-        await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
-        const files = await fs.readdir(dir).catch(() => null);
-        if (files && files.length === 0) {
-          await fs.rm(dir, { recursive: true, force: true }).catch(() => undefined);
-        }
+        console.warn(
+          `[keystatic] Skipping fallback entry "${entry.name}" in "${relativeDir}": missing index.json.`,
+        );
         continue;
       }
 
@@ -95,6 +93,9 @@ async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ k
 
     const data = await readJsonFile<T>(filePath);
     if (!data) {
+      console.warn(
+        `[keystatic] Skipping fallback entry "${key}" in "${relativeDir}": cannot read JSON data from ${filePath}.`,
+      );
       continue;
     }
 
