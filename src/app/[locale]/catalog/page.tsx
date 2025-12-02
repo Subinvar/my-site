@@ -1,9 +1,19 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { CatalogFilters, type CatalogFilterValues } from '@/app/(site)/shared/filter-controls';
-import { CatalogListing } from '@/app/(site)/shared/catalog-listing';
-import { parseFilters } from '@/app/(site)/shared/catalog-filtering';
+import {
+  CatalogFilters,
+  CatalogFiltersMobileTrigger,
+} from '@/components/catalog/catalog-filters';
+import { ActiveFiltersChips } from '@/components/catalog/active-filters-chips';
+import { CatalogToolbar } from '@/components/catalog/catalog-toolbar';
+import { CatalogList } from '@/components/catalog/catalog-list';
+import {
+  DEFAULT_PAGE_SIZE,
+  applyFilters,
+  parseFilters,
+  type FilterState,
+} from '@/app/(site)/shared/catalog-filtering';
 import {
   getCatalogListing,
   getCatalogListingPage,
@@ -47,6 +57,9 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
     getSiteShellData(locale),
     getCatalogListingPage(locale),
   ]);
+  const filteredItems = applyFilters(items, filters, taxonomyValues);
+  const pagination = resolvePagination(filteredItems.length, filters);
+  const visibleItems = filteredItems.slice(0, pagination.visibleCount);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['catalog']);
   const currentPath = buildPath(locale, ['catalog']);
@@ -54,19 +67,9 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const description = resolveDescription(catalogPage, locale);
   const submitLabel = resolveSubmitLabel(catalogPage, locale);
   const resetLabel = resolveResetLabel(catalogPage, locale);
-  const categoryAllLabel = resolveCategoryAllLabel(catalogPage, locale);
   const detailLabel = resolveDetailLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
-  const groupLabels = resolveGroupLabels(catalogPage, locale);
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
-  const initialFilterValues: CatalogFilterValues = {
-    category: filters.category,
-    process: filters.process.values,
-    base: filters.base.values,
-    filler: filters.filler.values,
-    metal: filters.metal.values,
-    auxiliary: filters.auxiliary.values,
-  };
 
   return (
     <SiteShell
@@ -77,39 +80,66 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <div className="space-y-12">
-        <div className="space-y-4">
-          <Breadcrumbs
-            items={[
-              { label: homeLabel, href: buildPath(locale) },
-              { label: heading },
-            ]}
-          />
-          <SectionHeading title={heading} description={description} as="h1" />
-        </div>
-        <section className="rounded-lg border border-border bg-card p-6">
-          <CatalogFilters
-            taxonomyOptions={taxonomyOptions}
-            groupLabels={groupLabels}
-            categoryAllLabel={categoryAllLabel}
-            submitLabel={submitLabel}
-            resetLabel={resetLabel}
-            initialValues={initialFilterValues}
-          />
+      <main className="page-shell">
+        <section className="container py-10 lg:py-12">
+          <header className="mb-6 space-y-4 lg:mb-8">
+            <Breadcrumbs
+              items={[
+                { label: homeLabel, href: buildPath(locale) },
+                { label: heading },
+              ]}
+            />
+            <SectionHeading title={heading} description={description} as="h1" />
+          </header>
+
+          <div className="flex gap-8 xl:gap-10">
+            <aside className="hidden w-[280px] shrink-0 lg:block">
+              <section className="rounded-lg border border-border bg-card p-6">
+                <CatalogFilters
+                  locale={locale}
+                  state={filters}
+                  options={taxonomyOptions}
+                  submitLabel={submitLabel}
+                  resetLabel={resetLabel}
+                />
+              </section>
+            </aside>
+
+            <div className="flex flex-1 flex-col gap-4 lg:gap-6">
+              <CatalogFiltersMobileTrigger
+                locale={locale}
+                state={filters}
+                options={taxonomyOptions}
+                submitLabel={submitLabel}
+                resetLabel={resetLabel}
+              />
+
+              <ActiveFiltersChips state={filters} options={taxonomyOptions} />
+
+              <CatalogToolbar state={filters} total={filteredItems.length} />
+
+              <section>
+                <CatalogList
+                  items={visibleItems}
+                  locale={locale}
+                  taxonomyOptions={taxonomyOptions}
+                  emptyStateMessage={emptyStateMessage}
+                  detailLabel={detailLabel}
+                />
+
+                {pagination.hasMore ? (
+                  <LoadMoreForm
+                    state={filters}
+                    limit={pagination.limit}
+                    nextOffset={pagination.nextOffset}
+                    label={locale === 'ru' ? 'Загрузить ещё' : 'Load more'}
+                  />
+                ) : null}
+              </section>
+            </div>
+          </div>
         </section>
-        <section>
-          <CatalogListing
-            items={items}
-            initialFilters={filters}
-            emptyStateMessage={emptyStateMessage}
-            detailLabel={detailLabel}
-            locale={locale}
-            taxonomy={taxonomyValues}
-            taxonomyOptions={taxonomyOptions}
-            groupLabels={groupLabels}
-          />
-        </section>
-      </div>
+      </main>
     </SiteShell>
   );
 }
@@ -151,10 +181,6 @@ function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): str
   return resolveLocalizedValue(page?.resetLabel ?? null, locale);
 }
 
-function resolveCategoryAllLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.categoryAllLabel ?? null, locale);
-}
-
 function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
   return resolveLocalizedValue(page?.detailLabel ?? null, locale);
 }
@@ -163,26 +189,82 @@ function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): str
   return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
 }
 
-function resolveGroupLabels(
-  page: CatalogPageContent | null,
-  locale: Locale
-): {
-  category: string;
-  process: string;
-  base: string;
-  filler: string;
-  metal: string;
-  auxiliary: string;
-} {
-  const source = page?.groupLabels;
-  return {
-    category: resolveLocalizedValue(source?.category ?? null, locale),
-    process: resolveLocalizedValue(source?.process ?? null, locale),
-    base: resolveLocalizedValue(source?.base ?? null, locale),
-    filler: resolveLocalizedValue(source?.filler ?? null, locale),
-    metal: resolveLocalizedValue(source?.metal ?? null, locale),
-    auxiliary: resolveLocalizedValue(source?.auxiliary ?? null, locale),
-  };
+function resolvePagination(total: number, filters: FilterState) {
+  const limit = Math.max(1, filters.limit || DEFAULT_PAGE_SIZE);
+  const normalizedOffset = Math.max(0, filters.offset || 0);
+  const clampedOffset = Math.min(normalizedOffset, Math.max(total - 1, 0));
+  const visibleCount = Math.min(total, clampedOffset + limit);
+  const hasMore = total > visibleCount;
+  const nextOffset = hasMore ? visibleCount : clampedOffset;
+
+  return { limit, visibleCount, hasMore, nextOffset };
+}
+
+function LoadMoreForm({
+  state,
+  limit,
+  nextOffset,
+  label,
+}: {
+  state: FilterState;
+  limit: number;
+  nextOffset: number;
+  label: string;
+}) {
+  return (
+    <div className="mt-6 flex justify-center">
+      <form method="GET" className="flex flex-col items-center gap-2">
+        <PersistedFiltersInputs state={state} />
+        <input type="hidden" name="limit" value={String(limit)} />
+        <input type="hidden" name="offset" value={String(nextOffset)} />
+        <button type="submit" className="btn-outline">
+          {label}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function PersistedFiltersInputs({ state }: { state: FilterState }) {
+  const inputs: Array<{ name: string; value: string }> = [];
+
+  for (const value of state.category.values) {
+    inputs.push({ name: 'category', value });
+  }
+
+  const multiFilters: Array<{
+    name: 'process' | 'base' | 'filler' | 'metal' | 'auxiliary';
+    values: string[];
+  }> = [
+    { name: 'process', values: state.process.values },
+    { name: 'base', values: state.base.values },
+    { name: 'filler', values: state.filler.values },
+    { name: 'metal', values: state.metal.values },
+    { name: 'auxiliary', values: state.auxiliary.values },
+  ];
+
+  for (const entry of multiFilters) {
+    for (const value of entry.values) {
+      inputs.push({ name: entry.name as string, value });
+    }
+  }
+
+  if (state.q) {
+    inputs.push({ name: 'q', value: state.q });
+  }
+
+  if (state.sort && state.sort !== 'name') {
+    inputs.push({ name: 'sort', value: state.sort });
+  }
+
+  return inputs.map((input, index) => (
+    <input
+      key={`${input.name}-${input.value}-${index}`}
+      type="hidden"
+      name={input.name}
+      value={input.value}
+    />
+  ));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -8,6 +8,9 @@ import type {
   CatalogProcess,
 } from '@/lib/catalog/constants';
 
+export const DEFAULT_PAGE_SIZE = 12;
+const MAX_PAGE_SIZE = 60;
+
 export type CatalogListItem = {
   id: string;
   slug: string;
@@ -30,12 +33,16 @@ export type MultiFilter<T extends string> = {
 };
 
 export type FilterState = {
-  category: CatalogCategory | null;
+  category: MultiFilter<CatalogCategory>;
   process: MultiFilter<CatalogProcess>;
   base: MultiFilter<CatalogBase>;
   filler: MultiFilter<CatalogFiller>;
   metal: MultiFilter<CatalogMetal>;
   auxiliary: MultiFilter<CatalogAuxiliary>;
+  q: string | null;
+  sort: 'name' | 'new';
+  limit: number;
+  offset: number;
 };
 
 export function parseFilters(
@@ -43,18 +50,24 @@ export function parseFilters(
   taxonomy: CatalogTaxonomyValues
 ): FilterState {
   const { categories, processes, bases, fillers, metals, auxiliaries } = taxonomy;
-  const categoryValue = toSingle(params.category);
-  const category = categoryValue && categories.includes(categoryValue as CatalogCategory)
-    ? (categoryValue as CatalogCategory)
-    : null;
+
+  const query = toOptionalQuery(params.q);
+  const sortValue = toSingle(params.sort);
+  const sort: FilterState['sort'] = sortValue === 'new' ? 'new' : 'name';
+  const limit = toLimit(params.limit);
+  const offset = toOffset(params.offset);
 
   return {
-    category,
+    category: toMulti<CatalogCategory>(params.category, categories),
     process: toMulti<CatalogProcess>(params.process, processes),
     base: toMulti<CatalogBase>(params.base, bases),
     filler: toMulti<CatalogFiller>(params.filler, fillers),
     metal: toMulti<CatalogMetal>(params.metal, metals),
     auxiliary: toMulti<CatalogAuxiliary>(params.auxiliary, auxiliaries),
+    q: query,
+    sort,
+    limit,
+    offset,
   } satisfies FilterState;
 }
 
@@ -64,9 +77,11 @@ export function applyFilters(
   taxonomy: CatalogTaxonomyValues
 ): CatalogListItem[] {
   const shouldFilterAuxiliary =
-    filters.auxiliary.values.length > 0 && filters.category === taxonomy.auxiliaryCategory;
-  return items.filter((item) => {
-    if (filters.category && item.category !== filters.category) {
+    filters.auxiliary.values.length > 0 && filters.category.lookup.has(taxonomy.auxiliaryCategory);
+  const normalizedQuery = filters.q?.toLowerCase() ?? null;
+
+  const filtered = items.filter((item) => {
+    if (filters.category.values.length > 0 && (!item.category || !filters.category.lookup.has(item.category))) {
       return false;
     }
     if (filters.process.values.length > 0 && !hasIntersection(item.process, filters.process.lookup)) {
@@ -89,8 +104,27 @@ export function applyFilters(
         return false;
       }
     }
+    if (normalizedQuery) {
+      const haystack = `${item.title} ${item.slug ?? ''}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) {
+        return false;
+      }
+    }
     return true;
   });
+
+  if (filters.sort === 'new') {
+    return [...filtered].sort((a, b) => {
+      const aDate = toTimestamp(a.updatedAt) ?? 0;
+      const bDate = toTimestamp(b.updatedAt) ?? 0;
+      if (aDate !== bDate) {
+        return bDate - aDate;
+      }
+      return a.title.localeCompare(b.title);
+    });
+  }
+
+  return [...filtered].sort((a, b) => a.title.localeCompare(b.title));
 }
 
 function toSingle(value: string | string[] | undefined): string | null {
@@ -102,6 +136,43 @@ function toSingle(value: string | string[] | undefined): string | null {
     return trimmed.length ? trimmed : null;
   }
   return null;
+}
+
+function toOptionalQuery(value: string | string[] | undefined): string | null {
+  const raw = toSingle(value);
+  return raw ? raw.trim() || null : null;
+}
+
+function toLimit(value: string | string[] | undefined): number {
+  const raw = toSingle(value);
+  if (!raw) {
+    return DEFAULT_PAGE_SIZE;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_PAGE_SIZE;
+  }
+  return Math.min(parsed, MAX_PAGE_SIZE);
+}
+
+function toOffset(value: string | string[] | undefined): number {
+  const raw = toSingle(value);
+  if (!raw) {
+    return 0;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+  return parsed;
+}
+
+function toTimestamp(value?: string | null): number | null {
+  if (!value) {
+    return null;
+  }
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
 }
 
 function toMulti<T extends string>(value: string | string[] | undefined, allowed: readonly T[]): MultiFilter<T> {
