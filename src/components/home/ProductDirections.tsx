@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import type { ReactElement } from 'react';
 
 import { Card, CardDescription } from '@/app/(site)/shared/ui/card';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { buildPath } from '@/lib/paths';
 import type { Locale } from '@/lib/i18n';
 
-const directionIcons: Record<string, JSX.Element> = {
+const directionIcons: Record<string, ReactElement> = {
   binders: <span className="inline-block text-2xl">🧪</span>,
   coatings: <span className="inline-block text-2xl">🎨</span>,
   aux: <span className="inline-block text-2xl">🧰</span>,
@@ -85,9 +86,12 @@ export function ProductDirections({ locale, items }: ProductDirectionsProps) {
   const fallbackByKey = new Map(fallbackItems.map((item) => [item.key, item]));
 
   const list = (items?.length ? items : fallbackItems).map((item, index) => {
-    const fallback = (item.key && fallbackByKey.get(item.key)) ?? fallbackItems[index];
+    const normalizedKey = item.key?.trim();
+    const fallback = normalizedKey
+      ? fallbackByKey.get(normalizedKey) ?? fallbackItems[index]
+      : fallbackItems[index];
     return {
-      key: item.key?.trim() || fallback?.key || `direction-${index}`,
+      key: normalizedKey || fallback?.key || `direction-${index}`,
       title: withFallback(item.title, fallback?.title ?? ''),
       description: withFallback(item.description, fallback?.description ?? ''),
       href: withFallback(item.href, fallback?.href ?? basePath),

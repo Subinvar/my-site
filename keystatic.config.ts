@@ -353,7 +353,11 @@ export default config({
           ),
           {
             label: 'Направления продукции',
-            itemLabel: ({ fields }) => fields.key.value || 'Направление',
+            itemLabel: ({
+              fields,
+            }: {
+              fields: { key: { value: string | null | undefined } };
+            }) => fields.key.value || 'Направление',
           }
         ),
 
@@ -378,8 +382,13 @@ export default config({
           ),
           {
             label: 'Интема Групп в цифрах',
-            itemLabel: ({ fields }) =>
-              fields.label.value?.ru || fields.label.value?.en || 'Показатель',
+            itemLabel: ({
+              fields,
+            }: {
+              fields: {
+                label: { value?: { ru?: string | null; en?: string | null } | null };
+              };
+            }) => fields.label.value?.ru || fields.label.value?.en || 'Показатель',
           }
         ),
 
