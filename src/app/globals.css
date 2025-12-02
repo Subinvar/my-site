@@ -171,6 +171,14 @@ html[data-theme='dark'] {
     font-family: var(--font-heading);
   }
 
+  button,
+  .card,
+  a {
+    transition: color 150ms ease-out, background-color 150ms ease-out,
+      border-color 150ms ease-out, box-shadow 150ms ease-out,
+      transform 150ms ease-out;
+  }
+
   h1 {
     font-size: clamp(2.5rem, 5vw, 3rem);
   }

@@ -114,17 +114,17 @@ export async function NewsPreview({ locale }: Props) {
             return (
               <article
                 key={post.id}
-                className="card flex flex-col gap-3 border border-border/70 bg-card/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+                className="card flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between hover:shadow-md transition-shadow duration-200"
               >
-                <div className="space-y-1">
+                <div>
                   {formattedDate ? (
-                    <div className="text-xs uppercase tracking-wide text-muted-foreground">{formattedDate}</div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{formattedDate}</div>
                   ) : null}
-                  <Link href={post.href} className="text-base font-semibold text-foreground hover:text-primary">
+                  <Link href={post.href} className="text-base font-medium hover:text-primary">
                     {post.title}
                   </Link>
                   {post.excerpt ? (
-                    <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.excerpt}</p>
                   ) : null}
                 </div>
                 <Link href={post.href} className="text-sm font-medium text-primary hover:underline">

@@ -32,15 +32,14 @@ export function PartnersStrip({ locale }: PartnersStripProps) {
           {PARTNERS.map((partner) => (
             <div
               key={partner.slug}
-              className="relative h-8 w-auto opacity-80 transition-opacity hover:opacity-100 md:h-10"
+              className="relative h-8 w-auto opacity-60 transition-opacity grayscale hover:opacity-100 hover:grayscale-0 md:h-10"
             >
               <Image
                 src={partner.logo}
                 alt={partner.name}
-                width={140}
+                width={120}
                 height={40}
                 className="h-full w-auto object-contain"
-                sizes="(min-width: 1024px) 140px, (min-width: 768px) 120px, 100px"
                 priority
               />
             </div>

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import type { Locale } from '@/lib/i18n';
@@ -12,12 +13,19 @@ export function Hero({ locale }: HeroProps) {
 
   return (
     <section className="relative isolate overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl">
-      <div className="absolute inset-0">
-        <div className="hero-bg-image" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/uploads/hero-foundry.jpg"
+          alt={isRu ? 'Литейное производство' : 'Foundry production'}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
       </div>
 
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-20 sm:px-6 lg:flex-row lg:items-center lg:py-28">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:py-28">
         <div className="max-w-2xl space-y-6">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
             {isRu ? 'Материалы для литейного производства' : 'Solutions for foundry industry'}
