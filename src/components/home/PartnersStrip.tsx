@@ -5,6 +5,10 @@ import type { Locale } from '@/lib/i18n';
 
 export type PartnersStripProps = {
   locale: Locale;
+  intro?: {
+    title?: string;
+    description?: string;
+  };
 };
 
 const PARTNERS = [
@@ -12,19 +16,28 @@ const PARTNERS = [
   { slug: 'cavenaghi', name: 'Cavenaghi S.p.A.', logo: '/uploads/partners/cavenaghi.svg' },
 ];
 
-export function PartnersStrip({ locale }: PartnersStripProps) {
+export function PartnersStrip({ locale, intro }: PartnersStripProps) {
   const isRu = locale === 'ru';
+
+  const withFallback = (value: string | undefined, fallback: string) => {
+    const normalized = value?.trim();
+    return normalized ? normalized : fallback;
+  };
+
+  const title = withFallback(intro?.title, isRu ? 'Нам доверяют' : 'Trusted by');
+  const description = withFallback(
+    intro?.description,
+    isRu
+      ? 'Интема Групп сотрудничает с международными производителями литейной химии и ведущими литейными заводами.'
+      : 'InteMa Group cooperates with international suppliers and leading foundries.'
+  );
 
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <SectionHeading
-          title={isRu ? 'Нам доверяют' : 'Trusted by'}
-          description={
-            isRu
-              ? 'Интема Групп сотрудничает с международными производителями литейной химии и ведущими литейными заводами.'
-              : 'InteMa Group cooperates with international suppliers and leading foundries.'
-          }
+          title={title}
+          description={description}
           className="max-w-2xl"
         />
 

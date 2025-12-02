@@ -4,7 +4,13 @@ import { getAllPosts, getPostBySlug } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 
-type Props = { locale: Locale };
+type Props = {
+  locale: Locale;
+  intro?: {
+    title?: string;
+    description?: string;
+  };
+};
 
 type PostPreview = {
   id: string;
@@ -88,8 +94,16 @@ async function getLatestPosts(locale: Locale, limit = 3): Promise<PostPreview[]>
     .slice(0, limit);
 }
 
-export async function NewsPreview({ locale }: Props) {
+export async function NewsPreview({ locale, intro }: Props) {
   const posts = await getLatestPosts(locale);
+
+  const withFallback = (value: string | undefined, fallback: string) => {
+    const normalized = value?.trim();
+    return normalized ? normalized : fallback;
+  };
+
+  const title = withFallback(intro?.title, SECTION_TITLE[locale]);
+  const description = withFallback(intro?.description, SECTION_DESCRIPTION[locale]);
 
   if (posts.length === 0) {
     return null;
@@ -100,8 +114,8 @@ export async function NewsPreview({ locale }: Props) {
       <div className="container mx-auto px-4">
         <header className="mb-8 flex items-end justify-between gap-4">
           <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">{SECTION_TITLE[locale]}</h2>
-            <p className="text-muted-foreground">{SECTION_DESCRIPTION[locale]}</p>
+            <h2 className="text-2xl font-semibold">{title}</h2>
+            <p className="text-muted-foreground">{description}</p>
           </div>
           <Link href={buildPath(locale, ['news'])} className="text-sm font-medium text-primary hover:underline">
             {VIEW_ALL_LABEL[locale]}

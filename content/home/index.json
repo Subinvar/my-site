@@ -1,0 +1,163 @@
+{
+  "hero": {
+    "title": {
+      "ru": "Связующие, покрытия и вспомогательные материалы для литейных цехов",
+      "en": "Binders, coatings and auxiliaries for foundries"
+    },
+    "subtitle": {
+      "ru": "Помогаем литейным производствам повышать выход годной отливки, снижать пригар и стабилизировать технологию.",
+      "en": "We help foundries improve yield, reduce defects and stabilize their processes."
+    },
+    "preheading": {
+      "ru": "Материалы для литейного производства",
+      "en": "Solutions for foundry industry"
+    },
+    "primaryCtaLabel": {
+      "ru": "Перейти в каталог",
+      "en": "Open catalog"
+    },
+    "primaryCtaHref": {
+      "ru": "/catalog",
+      "en": "/en/catalog"
+    },
+    "secondaryCtaLabel": {
+      "ru": "Связаться с нами",
+      "en": "Contact us"
+    },
+    "secondaryCtaHref": {
+      "ru": "/contacts",
+      "en": "/en/contacts"
+    }
+  },
+  "directions": [
+    {
+      "key": "binders",
+      "title": {
+        "ru": "Связующие системы",
+        "en": "Binder systems"
+      },
+      "description": {
+        "ru": "Холодно- и термотвердеющие связующие для форм и стержней.",
+        "en": "Cold- and heat-hardening binders for molds and cores."
+      },
+      "href": {
+        "ru": "/catalog?category=binders",
+        "en": "/en/catalog?category=binders"
+      }
+    },
+    {
+      "key": "coatings",
+      "title": {
+        "ru": "Противопригарные покрытия",
+        "en": "Anti-stick coatings"
+      },
+      "description": {
+        "ru": "Водные и спиртовые покрытия с цирконовым, графитовым и др. наполнителями.",
+        "en": "Water- and alcohol-based coatings with zircon, graphite, and other fillers."
+      },
+      "href": {
+        "ru": "/catalog?category=coatings",
+        "en": "/en/catalog?category=coatings"
+      }
+    },
+    {
+      "key": "aux",
+      "title": {
+        "ru": "Вспомогательные материалы",
+        "en": "Auxiliary materials"
+      },
+      "description": {
+        "ru": "Клеи, модификаторы, разделительные и очищающие составы.",
+        "en": "Adhesives, modifiers, release and cleaning compounds."
+      },
+      "href": {
+        "ru": "/catalog?category=aux",
+        "en": "/en/catalog?category=aux"
+      }
+    }
+  ],
+  "about": {
+    "title": {
+      "ru": "О компании Интема Групп",
+      "en": "About InteMa Group"
+    },
+    "paragraph1": {
+      "ru": "С 2006 года мы разрабатываем и поставляем материалы для литейных производств: связующие системы, противопригарные покрытия и вспомогательные материалы.",
+      "en": "Since 2006 we have been supplying foundries with binders, coatings and auxiliary materials."
+    },
+    "paragraph2": {
+      "ru": "Работаем с литейными цехами по всей России, помогаем запускать новые линии и улучшать существующие процессы.",
+      "en": "We support foundries across Russia, helping launch new lines and optimize existing ones."
+    },
+    "ctaLabel": {
+      "ru": "Подробнее о компании",
+      "en": "Learn more"
+    },
+    "ctaHref": {
+      "ru": "/o-kompanii",
+      "en": "/en/about"
+    }
+  },
+  "stats": [
+    {
+      "label": {
+        "ru": "Год основания",
+        "en": "Founded"
+      },
+      "value": {
+        "ru": "2006+",
+        "en": "2006+"
+      }
+    },
+    {
+      "label": {
+        "ru": "Клиентов по России",
+        "en": "Clients across Russia"
+      },
+      "value": {
+        "ru": "50+",
+        "en": "50+"
+      }
+    },
+    {
+      "label": {
+        "ru": "Наименований продукции",
+        "en": "Products in portfolio"
+      },
+      "value": {
+        "ru": "100+",
+        "en": "100+"
+      }
+    },
+    {
+      "label": {
+        "ru": "Лет в литейной отрасли",
+        "en": "Years in foundry industry"
+      },
+      "value": {
+        "ru": "15+",
+        "en": "15+"
+      }
+    }
+  ],
+  "newsIntro": {
+    "title": {
+      "ru": "Новости и материалы",
+      "en": "News & insights"
+    },
+    "description": {
+      "ru": "Свежие новости компании и практические заметки для литейных цехов.",
+      "en": "Recent company updates and practical notes for foundry engineers."
+    }
+  },
+  "partnersIntro": {
+    "title": {
+      "ru": "Нам доверяют",
+      "en": "Trusted by"
+    },
+    "description": {
+      "ru": "Интема Групп сотрудничает с международными производителями литейной химии и ведущими литейными заводами.",
+      "en": "InteMa Group cooperates with international suppliers and leading foundries."
+    }
+  }
+}

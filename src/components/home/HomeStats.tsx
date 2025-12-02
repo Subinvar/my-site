@@ -45,6 +45,7 @@ function AnimatedNumber({ target }: { target: number }) {
 
 export type HomeStatsProps = {
   locale: Locale;
+  items?: Array<{ label?: string; value?: string }>;
 };
 
 const STATS: Record<Locale, Array<{ label: string; value: string }>> = {
@@ -62,11 +63,23 @@ const STATS: Record<Locale, Array<{ label: string; value: string }>> = {
   ],
 };
 
-export function HomeStats({ locale }: HomeStatsProps) {
-  const items = STATS[locale];
+export function HomeStats({ locale, items }: HomeStatsProps) {
+  const fallback = STATS[locale];
+  const withFallback = (value: string | undefined, fallbackValue: string) => {
+    const normalized = value?.trim();
+    return normalized ? normalized : fallbackValue;
+  };
+  const list = (items?.length ? items : fallback).map((item, index) => {
+    const fallbackItem = fallback[index];
+    return {
+      label: withFallback(item.label, fallbackItem?.label ?? ''),
+      value: withFallback(item.value, fallbackItem?.value ?? ''),
+    };
+  });
+  const visibleItems = list.filter((item) => item.label || item.value);
   const { ref, inView } = useInView(0.3);
 
-  if (!items?.length) {
+  if (!visibleItems.length) {
     return null;
   }
 
@@ -87,19 +100,19 @@ export function HomeStats({ locale }: HomeStatsProps) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((item) => {
-          const numeric = parseInt(item.value, 10);
+        {visibleItems.map((item, index) => {
+          const numeric = parseInt(item.value ?? '', 10);
 
           return (
             <Card
-              key={item.label}
+              key={item.label ?? `stat-${index}`}
               className="flex flex-col gap-2 bg-[var(--background)]/80 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl">
                 {inView && !Number.isNaN(numeric) ? (
                   <>
                     <AnimatedNumber target={numeric} />
-                    {item.value.replace(String(numeric), '')}
+                    {item.value?.replace(String(numeric), '')}
                   </>
                 ) : (
                   item.value
