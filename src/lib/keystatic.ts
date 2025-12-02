@@ -378,6 +378,7 @@ type CatalogPageSingleton = {
   resetLabel?: Localized<string>;
   categoryAllLabel?: Localized<string>;
   detailLabel?: Localized<string>;
+  requestLabel?: Localized<string>;
   emptyStateMessage?: Localized<string>;
   groupLabels?: {
     category?: Localized<string>;
