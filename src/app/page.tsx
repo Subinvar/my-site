@@ -13,14 +13,16 @@ import { HomeStats } from '@/components/home/HomeStats';
 import { ProductDirections } from '@/components/home/ProductDirections';
 import { PartnersStrip } from '@/components/home/PartnersStrip';
 import { NewsPreview } from '@/components/home/NewsPreview';
+import { getHomeContent } from '@/lib/content/home';
 
 export const dynamic = 'force-static';
 
 export default async function RootHomePage() {
   const locale = defaultLocale;
-  const [data, shell] = await Promise.all([
+  const [data, shell, home] = await Promise.all([
     getHomePage(locale),
     getSiteShellData(locale),
+    getHomeContent(locale),
   ]);
 
   if (!data) {
@@ -45,17 +47,17 @@ export default async function RootHomePage() {
       currentPath={currentPath}
     >
       <div className="space-y-12">
-        <Hero locale={locale} />
+        <Hero locale={locale} data={home?.hero} />
 
-        <ProductDirections locale={locale} />
+        <ProductDirections locale={locale} items={home?.directions} />
 
-        <HomeAbout locale={locale} />
+        <HomeAbout locale={locale} data={home?.about} />
 
-        <HomeStats locale={locale} />
+        <HomeStats locale={locale} items={home?.stats} />
 
-        <NewsPreview locale={locale} />
+        <NewsPreview locale={locale} intro={home?.newsIntro} />
 
-        <PartnersStrip locale={locale} />
+        <PartnersStrip locale={locale} intro={home?.partnersIntro} />
 
         <article className="space-y-6 rounded-2xl border border-border/70 bg-card/80 p-6 shadow-sm sm:p-8">
           <header className="space-y-2">

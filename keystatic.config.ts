@@ -320,6 +320,86 @@ export default config({
         }),
       },
     }),
+    home: singleton({
+      label: 'Главная / Home',
+      path: 'content/home/',
+      format: { data: 'json' },
+      schema: {
+        hero: fields.object(
+          {
+            title: localizedText('Hero — заголовок'),
+            subtitle: localizedText('Hero — подзаголовок', { multiline: true }),
+            preheading: localizedText('Hero — маленькая подпись над заголовком'),
+            primaryCtaLabel: localizedText('Hero — текст основной кнопки'),
+            primaryCtaHref: localizedText('Hero — ссылка основной кнопки'),
+            secondaryCtaLabel: localizedText('Hero — текст второй кнопки'),
+            secondaryCtaHref: localizedText('Hero — ссылка второй кнопки'),
+          },
+          { label: 'Hero' }
+        ),
+
+        directions: fields.array(
+          fields.object(
+            {
+              key: fields.text({
+                label: 'Ключ (binders/coatings/aux)',
+                validation: { isRequired: true },
+              }),
+              title: localizedText('Название направления'),
+              description: localizedText('Краткое описание', { multiline: true }),
+              href: localizedText('Ссылка (href)'),
+            },
+            { label: 'Направление' }
+          ),
+          {
+            label: 'Направления продукции',
+            itemLabel: ({ fields }) => fields.key.value || 'Направление',
+          }
+        ),
+
+        about: fields.object(
+          {
+            title: localizedText('О компании — заголовок'),
+            paragraph1: localizedText('О компании — абзац 1', { multiline: true }),
+            paragraph2: localizedText('О компании — абзац 2', { multiline: true }),
+            ctaLabel: localizedText('О компании — текст кнопки'),
+            ctaHref: localizedText('О компании — ссылка кнопки'),
+          },
+          { label: 'Блок «О компании»' }
+        ),
+
+        stats: fields.array(
+          fields.object(
+            {
+              label: localizedText('Подпись'),
+              value: localizedText('Значение'),
+            },
+            { label: 'Показатель' }
+          ),
+          {
+            label: 'Интема Групп в цифрах',
+            itemLabel: ({ fields }) =>
+              fields.label.value?.ru || fields.label.value?.en || 'Показатель',
+          }
+        ),
+
+        newsIntro: fields.object(
+          {
+            title: localizedText('Новости — заголовок'),
+            description: localizedText('Новости — описание', { multiline: true }),
+          },
+          { label: 'Новости — вводный блок' }
+        ),
+
+        partnersIntro: fields.object(
+          {
+            title: localizedText('Партнёры — заголовок'),
+            description: localizedText('Партнёры — описание', { multiline: true }),
+          },
+          { label: 'Партнёры — вводный блок' }
+        ),
+      },
+    }),
     navigation: singleton({
       label: 'Навигация',
       path: 'content/navigation/',
@@ -717,11 +797,7 @@ export default config({
         'catalogAuxiliaries',
         'catalog',
       ],
-      'Контент': [
-        'pages',
-        'posts',
-        'documents',
-      ],
+      'Контент': ['home', 'pages', 'posts', 'documents'],
       'Настройки': [
         'site',
         'navigation',

@@ -6,10 +6,49 @@ import { Button } from '@/app/(site)/shared/ui/button';
 
 export type HeroProps = {
   locale: Locale;
+  data?: {
+    title?: string;
+    subtitle?: string;
+    preheading?: string;
+    primaryCtaLabel?: string;
+    primaryCtaHref?: string;
+    secondaryCtaLabel?: string;
+    secondaryCtaHref?: string;
+  };
 };
 
-export function Hero({ locale }: HeroProps) {
+export function Hero({ locale, data }: HeroProps) {
   const isRu = locale === 'ru';
+
+  const withFallback = (value: string | undefined, fallback: string) => {
+    const normalized = value?.trim();
+    return normalized ? normalized : fallback;
+  };
+
+  const title = withFallback(
+    data?.title,
+    isRu
+      ? 'Связующие, покрытия и вспомогательные материалы для литейных цехов'
+      : 'Binders, coatings and auxiliaries for foundries'
+  );
+
+  const subtitle = withFallback(
+    data?.subtitle,
+    isRu
+      ? 'Помогаем литейным производствам повышать выход годной отливки, снижать пригар и стабилизировать технологию.'
+      : 'We help foundries improve yield, reduce defects and stabilize their processes.'
+  );
+
+  const preheading = withFallback(
+    data?.preheading,
+    isRu ? 'Материалы для литейного производства' : 'Solutions for foundry industry'
+  );
+
+  const primaryCtaLabel = withFallback(data?.primaryCtaLabel, isRu ? 'Перейти в каталог' : 'Open catalog');
+  const primaryCtaHref = withFallback(data?.primaryCtaHref, isRu ? '/catalog' : '/en/catalog');
+
+  const secondaryCtaLabel = withFallback(data?.secondaryCtaLabel, isRu ? 'Связаться с нами' : 'Contact us');
+  const secondaryCtaHref = withFallback(data?.secondaryCtaHref, isRu ? '/contacts' : '/en/contacts');
 
   return (
     <section className="relative isolate overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl">
@@ -28,29 +67,21 @@ export function Hero({ locale }: HeroProps) {
       <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:py-28">
         <div className="max-w-2xl space-y-6">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
-            {isRu ? 'Материалы для литейного производства' : 'Solutions for foundry industry'}
+            {preheading}
           </p>
           <h1 className="text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            {isRu
-              ? 'Связующие, покрытия и вспомогательные материалы для литейных цехов'
-              : 'Binders, coatings and auxiliaries for foundries'}
+            {title}
           </h1>
           <p className="max-w-xl text-base text-white/80 sm:text-lg">
-            {isRu
-              ? 'Помогаем литейным производствам повышать выход годной отливки, снижать пригар и стабилизировать технологию.'
-              : 'We help foundries improve yield, reduce defects and stabilize their processes.'}
+            {subtitle}
           </p>
 
           <div className="flex flex-wrap gap-4">
             <Button asChild>
-              <Link href={isRu ? '/catalog' : '/en/catalog'}>
-                {isRu ? 'Перейти в каталог' : 'Open catalog'}
-              </Link>
+              <Link href={primaryCtaHref}>{primaryCtaLabel}</Link>
             </Button>
             <Button asChild variant="secondary">
-              <Link href={isRu ? '/contacts' : '/en/contacts'}>
-                {isRu ? 'Связаться с нами' : 'Contact us'}
-              </Link>
+              <Link href={secondaryCtaHref}>{secondaryCtaLabel}</Link>
             </Button>
           </div>
         </div>

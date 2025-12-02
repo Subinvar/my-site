@@ -12,29 +12,31 @@ const directionIcons: Record<string, JSX.Element> = {
 };
 
 type DirectionItem = {
-  slug: string;
-  title: string;
-  description: string;
-  category: string;
+  key?: string;
+  title?: string;
+  description?: string;
+  href?: string;
 };
 
-const DIRECTIONS = {
+type FallbackDirection = DirectionItem & { category: string; key: string };
+
+const DIRECTIONS: Record<Locale, Array<FallbackDirection>> = {
   ru: [
     {
-      slug: 'binders',
+      key: 'binders',
       title: 'Связующие системы',
       description: 'Холодно- и термотвердеющие связующие для форм и стержней.',
       category: 'binders',
     },
     {
-      slug: 'coatings',
+      key: 'coatings',
       title: 'Противопригарные покрытия',
       description:
         'Водные и спиртовые покрытия с цирконовым, графитовым и др. наполнителями.',
       category: 'coatings',
     },
     {
-      slug: 'aux',
+      key: 'aux',
       title: 'Вспомогательные материалы',
       description: 'Клеи, модификаторы, разделительные и очищающие составы.',
       category: 'aux',
@@ -42,39 +44,61 @@ const DIRECTIONS = {
   ],
   en: [
     {
-      slug: 'binders',
+      key: 'binders',
       title: 'Binder systems',
       description: 'Cold- and heat-hardening binders for molds and cores.',
       category: 'binders',
     },
     {
-      slug: 'coatings',
+      key: 'coatings',
       title: 'Anti-stick coatings',
       description:
         'Water- and alcohol-based coatings with zircon, graphite, and other fillers.',
       category: 'coatings',
     },
     {
-      slug: 'aux',
+      key: 'aux',
       title: 'Auxiliary materials',
       description: 'Adhesives, modifiers, release and cleaning compounds.',
       category: 'aux',
     },
   ],
-} satisfies Record<Locale, Array<DirectionItem>>;
+};
 
 type ProductDirectionsProps = {
   locale: Locale;
+  items?: DirectionItem[];
 };
 
-export function ProductDirections({ locale }: ProductDirectionsProps) {
-  const items = DIRECTIONS[locale];
+export function ProductDirections({ locale, items }: ProductDirectionsProps) {
+  const basePath = buildPath(locale, ['catalog']);
+  const withFallback = (value: string | undefined, fallback: string) => {
+    const normalized = value?.trim();
+    return normalized ? normalized : fallback;
+  };
+  const fallbackItems = DIRECTIONS[locale].map((item) => ({
+    key: item.key,
+    title: item.title,
+    description: item.description,
+    href: `${basePath}?category=${encodeURIComponent(item.category)}`,
+  }));
+  const fallbackByKey = new Map(fallbackItems.map((item) => [item.key, item]));
 
-  if (!items?.length) {
+  const list = (items?.length ? items : fallbackItems).map((item, index) => {
+    const fallback = (item.key && fallbackByKey.get(item.key)) ?? fallbackItems[index];
+    return {
+      key: item.key?.trim() || fallback?.key || `direction-${index}`,
+      title: withFallback(item.title, fallback?.title ?? ''),
+      description: withFallback(item.description, fallback?.description ?? ''),
+      href: withFallback(item.href, fallback?.href ?? basePath),
+    } satisfies Required<DirectionItem>;
+  });
+
+  const visibleItems = list.filter((item) => item.title || item.description || item.href);
+
+  if (!visibleItems.length) {
     return null;
   }
-
-  const basePath = buildPath(locale, ['catalog']);
 
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8">
@@ -89,17 +113,17 @@ export function ProductDirections({ locale }: ProductDirectionsProps) {
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => {
-          const href = `${basePath}?category=${encodeURIComponent(item.category)}`;
+        {visibleItems.map((item) => {
+          const href = item.href ?? basePath;
           return (
             <Card
-              key={item.slug}
+              key={item.key}
               as="article"
               className="group flex h-full flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="flex h-full flex-col gap-3">
                 <div className="text-3xl">
-                  {directionIcons[item.slug] ?? <span className="inline-block text-2xl">⚙️</span>}
+                  {directionIcons[item.key] ?? <span className="inline-block text-2xl">⚙️</span>}
                 </div>
                 <h3 className="text-lg font-semibold transition-colors group-hover:text-[var(--primary)]">
                   {item.title}
