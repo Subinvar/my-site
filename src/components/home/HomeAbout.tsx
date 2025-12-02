@@ -39,7 +39,7 @@ export function HomeAbout({ locale }: HomeAboutProps) {
         <div className="relative h-56 sm:h-72 lg:h-80">
           <div className="absolute inset-0 overflow-hidden rounded-2xl shadow-lg">
             <Image
-              src="/uploads/about-plant.jpg"
+              src="/uploads/hero.jpg"
               alt={isRu ? 'Производство Интема Групп' : 'InteMa production site'}
               fill
               className="object-cover"
