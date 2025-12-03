@@ -802,6 +802,7 @@ export default config({
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),
         excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
+        teaser: localizedText('Тизер', { multiline: true }),
         content: localizedMarkdocContent('Контент (Markdoc)', { isRequired: true }),
         category: fields.relationship({
           label: 'Категория',
@@ -814,10 +815,13 @@ export default config({
         metals: taxonomyMultiselect('Металл', 'metals'),
         auxiliary: taxonomyMultiselect('Вспомогательные', 'auxiliaries'),
         image: imageField('Изображение'),
-        docs: fields.relationship({
-          label: 'Документ',
-          collection: 'documents',
-        }),
+        documents: fields.array(
+          fields.relationship({
+            label: 'Документ',
+            collection: 'documents',
+          }),
+          { label: 'Документы' }
+        ),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),

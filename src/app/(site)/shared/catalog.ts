@@ -58,7 +58,7 @@ export async function getCatalogProductPage(locale: Locale, slug: string): Promi
   }
 
   const content = await render(item.content, locale);
-  const summary = item.excerpt;
+  const summary = item.teaser ?? item.excerpt;
 
   return { item, content, summary } satisfies CatalogProductPageData;
 }
@@ -169,7 +169,7 @@ export async function resolveCatalogProductMetadata(locale: Locale, slug: string
     site: site.seo,
     defaults: {
       title: item.title,
-      description: item.excerpt,
+      description: item.teaser ?? item.excerpt,
     },
   });
 
@@ -191,7 +191,7 @@ export async function resolveCatalogProductMetadata(locale: Locale, slug: string
       }
     : null;
   const ogImage = resolveOpenGraphImage(merged.ogImage ?? productImage, site.seo.canonicalBase);
-  const descriptionFallback = merged.description ?? item.excerpt ?? undefined;
+  const descriptionFallback = merged.description ?? item.teaser ?? item.excerpt ?? undefined;
   const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
   const ogTitleFallback = merged.ogTitle ?? merged.title ?? item.title;
 

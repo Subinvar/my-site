@@ -325,6 +325,7 @@ type RawCatalogEntry = {
   id?: string | null;
   slug?: Localized<string | { slug?: string | null } | null>;
   title?: Localized<string>;
+  teaser?: Localized<string>;
   excerpt?: Localized<string>;
   content?: Localized<RawMarkdocValue>;
   category?: string | null;
@@ -504,6 +505,7 @@ export type CatalogListItem = {
   slug: string;
   slugByLocale: Partial<Record<Locale, string>>;
   title: string;
+  teaser: string | null;
   excerpt: string | null;
   category: CatalogCategory | null;
   process: CatalogProcess[];
@@ -1400,6 +1402,8 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
   }
 
   const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
+  const teaser =
+    pickLocalized(entry.teaser, locale) ?? pickLocalized(entry.teaser, defaultLocale) ?? null;
   const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, defaultLocale) ?? null;
   const category = typeof entry.category === 'string' && CATALOG_CATEGORY_SET.has(entry.category)
     ? (entry.category as CatalogCategory)
@@ -1421,6 +1425,7 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
     slug,
     slugByLocale,
     title,
+    teaser,
     excerpt,
     category,
     process,
