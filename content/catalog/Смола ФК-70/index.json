@@ -10,8 +10,8 @@
     "en": "FK-70"
   },
   "excerpt": {
-    "ru": "Смола ФК-70 — продукт категории «Связующие» для литейного производства. процессы: Фуран",
-    "en": "FK-70 is part of the \"Связующие\" line for foundry workflows. processes: Фуран"
+    "ru": "Фурановая смола, отверждаемая ортофосфорной кислотой. Применяется при производстве отливок из чугуна.",
+    "en": "Furan resin cured with orthophosphoric acid. Designed for iron casting applications."
   },
   "content": {},
   "category": "Связующие",
@@ -22,5 +22,5 @@
   "filler": [],
   "metals": [],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:28"
+  "updatedAt": "2025-11-27T15:27"
 }
