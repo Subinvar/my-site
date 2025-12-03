@@ -106,6 +106,10 @@ export function CatalogFilters({
   submitLabel,
   resetLabel,
 }: CatalogFiltersProps) {
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const autoSubmit = React.useCallback(() => {
+    formRef.current?.requestSubmit();
+  }, []);
   const submitText = submitLabel ?? (locale === 'ru' ? 'Показать' : 'Show');
   const resetText = resetLabel ?? (locale === 'ru' ? 'Сбросить' : 'Reset');
   const labels = {
@@ -118,7 +122,7 @@ export function CatalogFilters({
   };
 
   return (
-    <form className="space-y-4 text-sm" method="GET">
+    <form ref={formRef} className="space-y-4 text-sm" method="GET">
       {state.q ? <input type="hidden" name="q" value={state.q} /> : null}
       {state.sort && state.sort !== 'name' ? (
         <input type="hidden" name="sort" value={state.sort} />
@@ -132,6 +136,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.category.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -144,6 +150,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.process.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -156,6 +164,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.base.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -168,6 +178,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.filler.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -180,6 +192,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.metal.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -192,6 +206,8 @@ export function CatalogFilters({
             value={option.value}
             label={option.label}
             checked={state.auxiliary.values.includes(option.value)}
+            onChange={autoSubmit}
+            testId="catalog-filter-checkbox"
           />
         ))}
       </FiltersGroup>
@@ -230,6 +246,8 @@ function CheckboxOption(props: {
   value: string;
   label: string;
   checked: boolean;
+  onChange?: () => void;
+  testId?: string;
 }) {
   return (
     <label className="flex items-center gap-2">
@@ -238,7 +256,9 @@ function CheckboxOption(props: {
         name={props.name}
         value={props.value}
         defaultChecked={props.checked}
+        data-testid={props.testId}
         className="checkbox h-4 w-4 rounded border border-border bg-background text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        onChange={props.onChange}
       />
       <span>{props.label}</span>
     </label>
