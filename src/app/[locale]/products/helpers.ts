@@ -1,7 +1,7 @@
 import type { FilterState } from '@/app/(site)/shared/catalog-filtering';
 
 export function toSlug(value: string): string {
-  return encodeURIComponent(value);
+  return value.trim();
 }
 
 export function matchOptionBySlug<T extends { value: string }>(
@@ -10,7 +10,7 @@ export function matchOptionBySlug<T extends { value: string }>(
 ): Readonly<T> | null {
   const decodedSlug = decodeURIComponent(slug);
   return (
-    options.find((option) => option.value === decodedSlug || toSlug(option.value) === slug) ?? null
+    options.find((option) => option.value === decodedSlug || option.value === slug) ?? null
   );
 }
 

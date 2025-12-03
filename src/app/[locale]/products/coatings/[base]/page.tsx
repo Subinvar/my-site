@@ -21,10 +21,10 @@ import { matchOptionBySlug, toFilter } from '../../helpers';
 
 type PageParams = { locale: Locale; base: string };
 
-type PageProps = { params: Promise<PageParams> };
+type PageProps = { params: PageParams };
 
 export default async function CoatingBaseCatalogPage({ params }: PageProps) {
-  const { locale: rawLocale, base } = await params;
+  const { locale: rawLocale, base } = params;
 
   if (!isLocale(rawLocale)) {
     notFound();

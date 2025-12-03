@@ -15,10 +15,10 @@ import { sortByOrderAndLabel, toSlug } from '../helpers';
 
 type PageParams = { locale: Locale };
 
-type PageProps = { params: Promise<PageParams> };
+type PageProps = { params: PageParams };
 
 export default async function AuxiliaryTypesPage({ params }: PageProps) {
-  const { locale: rawLocale } = await params;
+  const { locale: rawLocale } = params;
 
   if (!isLocale(rawLocale)) {
     notFound();
