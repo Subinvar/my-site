@@ -10,8 +10,8 @@ test('каталог реагирует на фильтры', async ({ page }) =
   }
 
   const cards = page.getByTestId('catalog-item');
+  await expect.poll(async () => cards.count(), { timeout: 15000 }).toBeGreaterThan(0);
   const initialCount = await cards.count();
-  expect(initialCount).toBeGreaterThan(0);
 
   const firstCheckbox = page.getByTestId('catalog-filter-checkbox').first();
   const applyFilters = page.getByRole('button', { name: 'Применить фильтры' });
@@ -38,8 +38,8 @@ test('фильтры применяются повторно после изме
   }
 
   const cards = page.getByTestId('catalog-item');
+  await expect.poll(async () => cards.count(), { timeout: 15000 }).toBeGreaterThan(0);
   const initialCount = await cards.count();
-  expect(initialCount).toBeGreaterThan(0);
 
   const firstCheckbox = page.getByTestId('catalog-filter-checkbox').first();
   const applyFilters = page.getByRole('button', { name: 'Применить фильтры' });
