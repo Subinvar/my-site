@@ -107,9 +107,28 @@ export function CatalogFilters({
   resetLabel,
 }: CatalogFiltersProps) {
   const formRef = React.useRef<HTMLFormElement>(null);
+  const pathname = usePathname();
+
   const autoSubmit = React.useCallback(() => {
-    formRef.current?.requestSubmit();
-  }, []);
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === 'string' && value.trim()) {
+        params.append(key, value);
+      }
+    }
+
+    const target = params.toString();
+    const action = form.getAttribute('action') || pathname || '/catalog';
+
+    window.location.href = target ? `${action}?${target}` : action;
+  }, [pathname]);
   const submitText = submitLabel ?? (locale === 'ru' ? 'Показать' : 'Show');
   const resetText = resetLabel ?? (locale === 'ru' ? 'Сбросить' : 'Reset');
   const labels = {
@@ -122,7 +141,15 @@ export function CatalogFilters({
   };
 
   return (
-    <form ref={formRef} className="space-y-4 text-sm" method="GET">
+    <form
+      ref={formRef}
+      className="space-y-4 text-sm"
+      method="GET"
+      onSubmit={(event) => {
+        event.preventDefault();
+        autoSubmit();
+      }}
+    >
       {state.q ? <input type="hidden" name="q" value={state.q} /> : null}
       {state.sort && state.sort !== 'name' ? (
         <input type="hidden" name="sort" value={state.sort} />
