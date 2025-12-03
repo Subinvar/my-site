@@ -17,7 +17,7 @@ export type CatalogListItem = {
   slug: string;
   title: string;
   shortDescription: string | null;
-  badge: CatalogBadge;
+  badge: CatalogBadge | null;
   teaser: string | null;
   excerpt: string | null;
   category: CatalogCategory | null;

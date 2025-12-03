@@ -4,6 +4,7 @@ import { Button } from '@/app/(site)/shared/ui/button';
 import { buildPath } from '@/lib/paths';
 import type { CatalogListItem } from '@/app/(site)/shared/catalog-filtering';
 import type { Locale } from '@/lib/i18n';
+import type { CatalogBadge } from '@/lib/keystatic';
 
 export type CatalogListProps = {
   items: CatalogListItem[];
@@ -65,8 +66,8 @@ function CatalogItemCard({
   requestLabel: string;
 } & CardProps) {
   const detailHref = buildPath(locale, ['catalog', item.slug]);
-  const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.slug)}`;
-  const summary = item.shortDescription ?? item.teaser ?? item.excerpt;
+  const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
+  const summary = item.shortDescription;
   const badge = resolveBadge(item.badge, locale);
   const processLabels = item.process.map((process) => resolveProcessLabel(process, labelMaps));
   const categoryLabel = item.category ? labelMaps.category.get(item.category) ?? item.category : null;
@@ -77,7 +78,7 @@ function CatalogItemCard({
         <header className="space-y-2">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base leading-snug">{item.title}</CardTitle>
-            <ProductBadge badge={item.badge} badgeData={badge} />
+            <ProductBadge badgeData={badge} />
           </div>
           {summary ? (
             <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{summary}</p>
@@ -148,18 +149,18 @@ function resolveBadge(
   badge: CatalogListItem['badge'],
   locale: Locale
 ): { label: string; className: string } | null {
-  if (badge === 'none') {
+  if (!badge) {
     return null;
   }
 
-  const labelMap: Record<Exclude<CatalogListItem['badge'], 'none'>, { ru: string; en: string }> = {
+  const labelMap: Record<CatalogBadge, { ru: string; en: string }> = {
     bestseller: { ru: 'Хит продаж', en: 'Bestseller' },
     premium: { ru: 'Премиум', en: 'Premium' },
     eco: { ru: 'Eco', en: 'Eco' },
     special: { ru: 'Спец.решение', en: 'Special' },
   };
 
-  const classMap: Record<Exclude<CatalogListItem['badge'], 'none'>, string> = {
+  const classMap: Record<CatalogBadge, string> = {
     bestseller: 'bg-amber-100 text-amber-800',
     premium: 'bg-purple-100 text-purple-800',
     eco: 'bg-emerald-100 text-emerald-800',
@@ -172,14 +173,8 @@ function resolveBadge(
   };
 }
 
-function ProductBadge({
-  badge,
-  badgeData,
-}: {
-  badge: CatalogListItem['badge'];
-  badgeData: ReturnType<typeof resolveBadge>;
-}) {
-  if (!badgeData || !badge || badge === 'none') {
+function ProductBadge({ badgeData }: { badgeData: ReturnType<typeof resolveBadge> }) {
+  if (!badgeData) {
     return null;
   }
 

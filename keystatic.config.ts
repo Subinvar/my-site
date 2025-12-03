@@ -815,20 +815,24 @@ export default config({
           multiline: true,
           validation: { length: { max: 300 } },
         }),
+        seriesDescription: localizedText('Описание серии', { multiline: true }),
         badge: fields.select({
           label: 'Бейдж',
           options: [
-            { label: 'Нет', value: 'none' },
             { label: 'Хит продаж', value: 'bestseller' },
             { label: 'Премиум', value: 'premium' },
             { label: 'Eco / сниженные выбросы', value: 'eco' },
             { label: 'Специальный продукт', value: 'special' },
           ],
-          defaultValue: 'none',
         }),
         teaser: localizedText('Тизер', { multiline: true }),
         content: localizedMarkdocContent('Основной текст (страница товара)', {
           isRequired: true,
+        }),
+        variantGroup: fields.relationship({
+          label: 'Другие марки в серии',
+          collection: 'catalog',
+          many: true,
         }),
         category: fields.relationship({
           label: 'Категория',
@@ -841,7 +845,7 @@ export default config({
         metals: taxonomyMultiselect('Металл', 'metals'),
         auxiliary: taxonomyMultiselect('Вспомогательные', 'auxiliaries'),
         image: imageField('Изображение'),
-        documents: fields.array(
+        documentLinks: fields.array(
           fields.relationship({
             label: 'Документ',
             collection: 'documents',

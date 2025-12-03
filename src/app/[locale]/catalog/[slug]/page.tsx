@@ -1,5 +1,8 @@
+import Markdoc, { type Node as MarkdocNode } from '@markdoc/markdoc';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import React from 'react';
 
 import {
   AUXILIARY_CATEGORY,
@@ -8,18 +11,17 @@ import {
   getLocalizedCatalogParams,
   resolveCatalogProductMetadata,
 } from '@/app/(site)/shared/catalog';
-import { PRODUCT_CATEGORIES } from '@/app/[locale]/products/constants';
-import { toSlug } from '@/app/[locale]/products/helpers';
-import Link from 'next/link';
-
-import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
-import { Button } from '@/app/(site)/shared/ui/button';
-import { getInterfaceDictionary } from '@/content/dictionary';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
+import { Button } from '@/app/(site)/shared/ui/button';
+import { PRODUCT_CATEGORIES } from '@/app/[locale]/products/constants';
+import { toSlug } from '@/app/[locale]/products/helpers';
+import { getInterfaceDictionary } from '@/content/dictionary';
 import { isLocale, type Locale } from '@/lib/i18n';
-import type { CatalogItem, CatalogBadge } from '@/lib/keystatic';
+import type { CatalogBadge, CatalogItem, CatalogVariant } from '@/lib/keystatic';
+import { config as markdocConfig, createComponents, toMarkdocAst } from '@/lib/markdoc';
+import { buildPath, findTargetLocale, switchLocalePath } from '@/lib/paths';
 
 const TAXONOMY_KEYS = {
   category: 'categories',
@@ -58,7 +60,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     notFound();
   }
 
-  const { item, content, summary } = data;
+  const { item, summary } = data;
   const targetLocale = findTargetLocale(locale);
   const switcherHref = switchLocalePath(locale, targetLocale, {
     collection: 'catalog',
@@ -93,6 +95,12 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     dictionary.productDirections.categories,
   );
   const typeBreadcrumb = resolveTypeBreadcrumb(item, locale);
+  const variantsLabel = locale === 'ru' ? 'Другие марки в серии' : 'Other grades in series';
+  const renderedContent = await renderCatalogContent({
+    item,
+    locale,
+    variantsLabel,
+  });
 
   return (
     <SiteShell
@@ -145,7 +153,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
 
           <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)]">
             <article className="prose prose-sm max-w-none lg:prose-base dark:prose-invert prose-headings:font-semibold prose-a:text-[var(--color-brand-700)] prose-strong:text-[var(--foreground)]">
-              {content}
+              {renderedContent}
             </article>
 
             <aside className="space-y-6">
@@ -165,29 +173,29 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
                 </div>
               </section>
 
-              {item.documents.length ? (
-                <section className="rounded-xl border bg-card p-4 shadow-sm">
-                  <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Документация</h2>
-                  <div className="mt-3 flex flex-col gap-2">
-                    {item.documents.map((doc) => (
-                      <a
-                        key={doc.slug}
-                        href={doc.file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-between rounded-lg border px-3 py-2 text-sm hover:bg-muted"
-                      >
-                        <span>
-                          {resolveDocumentTypeLabel(doc.type, locale)}
-                        </span>
-                        <span className="text-xs text-muted-foreground">PDF</span>
-                      </a>
-                    ))}
-                  </div>
-                </section>
-              ) : null}
             </aside>
           </div>
+
+          {item.documents.length ? (
+            <section className="rounded-2xl border bg-card/70 px-4 py-5 shadow-sm">
+              <h2 className="text-lg font-semibold">{locale === 'ru' ? 'Документация' : 'Documentation'}</h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {item.documents.map((doc) => (
+                  <li key={doc.slug}>
+                    <a
+                      href={doc.file}
+                      className="inline-flex items-center gap-2 text-[15px] font-medium text-[var(--color-brand-700)] hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span aria-hidden>📄</span>
+                      <span>{buildDocumentLinkText(doc, locale)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <footer className="border-t pt-6 mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <Button asChild size="lg">
@@ -212,6 +220,176 @@ function ParamRow({ label, value }: { label: string; value?: string | null }) {
       <span className="text-right font-medium">{value}</span>
     </div>
   );
+}
+
+async function renderCatalogContent({
+  item,
+  locale,
+  variantsLabel,
+}: {
+  item: CatalogItem;
+  locale: Locale;
+  variantsLabel: string;
+}) {
+  const ast = toMarkdocAst(item.content);
+
+  if (!ast) {
+    return null;
+  }
+
+  const withVariants = injectVariantBlock(ast, {
+    item,
+    locale,
+    label: variantsLabel,
+  });
+
+  const transformed = Markdoc.transform(withVariants, {
+    ...markdocConfig,
+    tags: {
+      ...markdocConfig.tags,
+      variantLineup: { render: 'VariantLineup' },
+    },
+  });
+
+  return Markdoc.renderers.react(transformed, React, {
+    components: {
+      ...createComponents(locale),
+      VariantLineup: ({
+        description,
+        variants,
+      }: {
+        description?: string | null;
+        variants: CatalogVariant[];
+      }) => {
+        if (!description && !variants.length) {
+          return null;
+        }
+
+        const alsoAvailableLabel = locale === 'ru' ? 'Также доступны:' : 'Also available:';
+
+        return (
+          <section className="not-prose my-6 rounded-xl border bg-card/60 p-4 shadow-sm">
+            <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{variantsLabel}</h2>
+            {description ? (
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{description}</p>
+            ) : null}
+
+            {variants.length ? (
+              <div className="mt-3 space-y-2 text-sm font-medium">
+                <p className="text-muted-foreground">{alsoAvailableLabel}</p>
+                <div className="flex flex-wrap gap-2">
+                  {variants.map((variant) => (
+                    <Link
+                      key={variant.id}
+                      href={buildPath(locale, ['catalog', variant.slug])}
+                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm text-foreground hover:border-brand-600 hover:text-brand-700"
+                    >
+                      <span>{variant.title}</span>
+                      <span aria-hidden className="text-xs text-muted-foreground">
+                        ↗
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </section>
+        );
+      },
+    },
+  });
+}
+
+function injectVariantBlock(ast: MarkdocNode, config: { item: CatalogItem; locale: Locale; label: string }) {
+  const { item, locale, label } = config;
+  if (!item.seriesDescription && !item.variants.length) {
+    return ast;
+  }
+
+  const children = Array.isArray(ast.children) ? [...ast.children] : [];
+  const preferredIndex = findVariantInsertionIndex(children, locale);
+  const variantTag = new Markdoc.Tag('variantLineup', {
+    description: item.seriesDescription,
+    variants: item.variants,
+    label,
+  });
+
+  const insertionIndex = Math.max(0, Math.min(preferredIndex ?? children.length, children.length));
+  children.splice(insertionIndex, 0, variantTag);
+
+  return { ...ast, children } satisfies MarkdocNode;
+}
+
+function findVariantInsertionIndex(children: Array<MarkdocNode | string>, locale: Locale) {
+  const sectionTargets = [
+    locale === 'ru' ? 'Назначение' : 'Purpose',
+    locale === 'ru' ? 'Преимущества' : 'Benefits',
+  ];
+
+  const headingIndexes = children
+    .map((child, index) => ({
+      index,
+      level: getHeadingLevel(child),
+      title: getHeadingTitle(child),
+    }))
+    .filter((entry) => entry.level && entry.title) as Array<{
+    index: number;
+    level: number;
+    title: string;
+  }>;
+
+  for (const target of sectionTargets) {
+    const section = headingIndexes.find(({ title }) => title.toLowerCase() === target.toLowerCase());
+    if (!section) continue;
+
+    const nextSiblingIndex = headingIndexes.find(
+      ({ index, level }) => index > section.index && level <= (section.level ?? 2),
+    )?.index;
+
+    return nextSiblingIndex ?? children.length;
+  }
+
+  return children.length;
+}
+
+function getHeadingLevel(node: MarkdocNode | string): number | null {
+  if (typeof node === 'string') {
+    return null;
+  }
+
+  if (node.type === 'heading' && typeof node.attributes?.level === 'number') {
+    return node.attributes.level;
+  }
+  return null;
+}
+
+function getHeadingTitle(node: MarkdocNode | string): string | null {
+  if (typeof node === 'string' || node.type !== 'heading' || !Array.isArray(node.children)) {
+    return null;
+  }
+
+  const text = node.children.map(extractTextContent).join('').trim();
+
+  return text || null;
+}
+
+function extractTextContent(node: unknown): string {
+  if (typeof node === 'string') {
+    return node;
+  }
+
+  if (typeof node === 'object' && node !== null) {
+    const tagNode = node as { attributes?: { content?: unknown }; children?: unknown[] };
+    if (typeof tagNode.attributes?.content === 'string') {
+      return tagNode.attributes.content;
+    }
+
+    if (Array.isArray(tagNode.children)) {
+      return tagNode.children.map(extractTextContent).join('');
+    }
+  }
+
+  return '';
 }
 
 function mapAttributeValues<T extends string>(
@@ -250,6 +428,15 @@ function formatValues(values: string[]): string | null {
   return values.join(', ');
 }
 
+function buildDocumentLinkText(
+  doc: CatalogItem['documents'][number],
+  locale: Locale,
+): string {
+  const label = doc.title || resolveDocumentTypeLabel(doc.type, locale) || doc.slug;
+  const prefix = locale === 'ru' ? 'Скачать ' : 'Download ';
+  return `${prefix}${label}`;
+}
+
 function resolveDocumentTypeLabel(type: CatalogItem['documents'][number]['type'], locale: Locale): string {
   const map: Record<CatalogItem['documents'][number]['type'], { ru: string; en: string }> = {
     certificate: { ru: 'Сертификат', en: 'Certificate' },
@@ -263,19 +450,19 @@ function resolveDocumentTypeLabel(type: CatalogItem['documents'][number]['type']
   return locale === 'ru' ? labels.ru : labels.en;
 }
 
-function resolveBadge(badge: CatalogBadge, locale: Locale) {
-  if (badge === 'none') {
+function resolveBadge(badge: CatalogBadge | null, locale: Locale) {
+  if (!badge) {
     return null;
   }
 
-  const labelMap: Record<Exclude<CatalogBadge, 'none'>, { ru: string; en: string }> = {
+  const labelMap: Record<CatalogBadge, { ru: string; en: string }> = {
     bestseller: { ru: 'Хит продаж', en: 'Bestseller' },
     premium: { ru: 'Премиум', en: 'Premium' },
     eco: { ru: 'Eco', en: 'Eco' },
     special: { ru: 'Спец.решение', en: 'Special' },
   };
 
-  const classMap: Record<Exclude<CatalogBadge, 'none'>, string> = {
+  const classMap: Record<CatalogBadge, string> = {
     bestseller: 'bg-amber-100 text-amber-800',
     premium: 'bg-purple-100 text-purple-800',
     eco: 'bg-emerald-100 text-emerald-800',
@@ -353,7 +540,7 @@ function resolveTypeBreadcrumb(
   return null;
 }
 
-function ProductBadge({ badge, locale }: { badge?: CatalogBadge; locale: Locale }) {
+function ProductBadge({ badge, locale }: { badge?: CatalogBadge | null; locale: Locale }) {
   const badgeData = badge ? resolveBadge(badge, locale) : null;
   if (!badgeData) {
     return null;

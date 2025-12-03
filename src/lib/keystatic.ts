@@ -34,7 +34,7 @@ const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
 const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
 const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
 const CATALOG_METAL_SET = new Set<string>(CATALOG_METALS);
-const CATALOG_BADGE_SET = new Set(['none', 'bestseller', 'premium', 'eco', 'special'] as const);
+const CATALOG_BADGE_SET = new Set(['bestseller', 'premium', 'eco', 'special'] as const);
 const DOCUMENT_TYPE_SET = new Set<DocumentType>(['certificate', 'tds', 'msds', 'brochure']);
 const DOCUMENT_LANGUAGE_SET = new Set<DocumentLanguage>(['ru', 'en']);
 const DOCUMENT_TYPE_ORDER: DocumentType[] = ['certificate', 'tds', 'msds', 'brochure'];
@@ -327,6 +327,7 @@ type RawCatalogEntry = {
   slug?: Localized<string | { slug?: string | null } | null>;
   title?: Localized<string>;
   shortDescription?: Localized<string>;
+  seriesDescription?: Localized<string>;
   teaser?: Localized<string>;
   excerpt?: Localized<string>;
   content?: Localized<RawMarkdocValue>;
@@ -336,9 +337,10 @@ type RawCatalogEntry = {
   filler?: string[] | null;
   metals?: string[] | null;
   auxiliary?: string[] | null;
+  variantGroup?: Array<{ value?: string | null } | string> | null;
   image?: RawMedia;
   docs?: string | { value?: string | null; slug?: string | null; name?: string | null } | null;
-  documents?: Array<{ value?: string | null } | string> | null;
+  documentLinks?: Array<{ value?: string | null } | string> | null;
   badge?: string | null;
   published?: boolean | null;
   status?: 'draft' | 'published';
@@ -503,7 +505,13 @@ export type CatalogImage = {
   height?: number | null;
 };
 
-export type CatalogBadge = 'none' | 'bestseller' | 'premium' | 'eco' | 'special';
+export type CatalogBadge = 'bestseller' | 'premium' | 'eco' | 'special';
+
+export type CatalogVariant = {
+  id: string;
+  slug: string;
+  title: string;
+};
 
 export type CatalogListItem = {
   id: string;
@@ -512,7 +520,7 @@ export type CatalogListItem = {
   slugByLocale: Partial<Record<Locale, string>>;
   title: string;
   shortDescription: string | null;
-  badge: CatalogBadge;
+  badge: CatalogBadge | null;
   teaser: string | null;
   excerpt: string | null;
   category: CatalogCategory | null;
@@ -529,6 +537,8 @@ export type CatalogListItem = {
 export type CatalogItem = CatalogListItem & {
   content: MarkdocContent;
   documents: CatalogDocument[];
+  seriesDescription: string | null;
+  variants: CatalogVariant[];
 };
 
 export type CatalogLookupItem = {
@@ -1473,8 +1483,8 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
   const docs = toOptionalString(entry.docs ?? undefined);
   const badge =
     typeof entry.badge === 'string' && CATALOG_BADGE_SET.has(entry.badge as CatalogBadge)
-      ? ((entry.badge as CatalogBadge) ?? 'none')
-      : 'none';
+      ? (entry.badge as CatalogBadge)
+      : null;
 
   return {
     id: computeEntryId(entry, key),
@@ -1496,6 +1506,40 @@ function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale)
     docs,
     updatedAt: normalizeDateTime(entry.updatedAt),
   } satisfies CatalogListItem;
+}
+
+function resolveCatalogVariants(
+  value: unknown,
+  entries: Awaited<ReturnType<typeof readCatalogCollection>>,
+  currentId: string,
+  locale: Locale,
+): CatalogVariant[] {
+  const linkedIds = mapRelationshipValues(value);
+  if (!linkedIds.length) {
+    return [];
+  }
+
+  const catalogById = new Map(
+    entries.map((record) => [computeEntryId(record.entry, record.key), record] as const),
+  );
+
+  const variants: CatalogVariant[] = [];
+  for (const id of linkedIds) {
+    if (id === currentId) {
+      continue;
+    }
+    const record = catalogById.get(id);
+    if (!record || !isPublished(record.entry)) {
+      continue;
+    }
+    const mapped = mapCatalogLookupItem(record.entry, record.key, locale);
+    if (!mapped) {
+      continue;
+    }
+    variants.push({ id, slug: mapped.slug, title: mapped.title });
+  }
+
+  return variants;
 }
 
 export async function getPostBySlug(slug: string, locale: Locale): Promise<PostContent | null> {
@@ -1593,10 +1637,20 @@ export async function getCatalogItemBySlug(slug: string, locale: Locale): Promis
   }
   const [content, documents] = await Promise.all([
     resolveLocalizedContent(record.entry.content, locale),
-    resolveCatalogDocuments(record.entry.documents, locale),
+    resolveCatalogDocuments(record.entry.documentLinks, locale),
   ]);
+  const seriesDescription =
+    pickLocalized(record.entry.seriesDescription, locale) ??
+    pickLocalized(record.entry.seriesDescription, defaultLocale) ??
+    null;
+  const variants = resolveCatalogVariants(
+    record.entry.variantGroup,
+    entries,
+    baseItem.id,
+    locale,
+  );
 
-  return { ...baseItem, content, documents } satisfies CatalogItem;
+  return { ...baseItem, content, documents, seriesDescription, variants } satisfies CatalogItem;
 }
 
 export async function getAllCatalogEntries(): Promise<CatalogSummary[]> {
