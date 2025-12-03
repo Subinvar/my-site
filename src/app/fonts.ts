@@ -3,26 +3,26 @@ import localFont from 'next/font/local';
 export const headingFont = localFont({
   src: [
     {
-      path: '../../node_modules/@fontsource-variable/montserrat/files/montserrat-cyrillic-ext-wght-normal.woff2',
+      path: '../../public/fonts/montserrat-cyrillic-ext-wght-normal.woff2',
       weight: '100 900',
       style: 'normal',
       unicodeRange: 'U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F',
     },
     {
-      path: '../../node_modules/@fontsource-variable/montserrat/files/montserrat-cyrillic-wght-normal.woff2',
+      path: '../../public/fonts/montserrat-cyrillic-wght-normal.woff2',
       weight: '100 900',
       style: 'normal',
       unicodeRange: 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116',
     },
     {
-      path: '../../node_modules/@fontsource-variable/montserrat/files/montserrat-latin-ext-wght-normal.woff2',
+      path: '../../public/fonts/montserrat-latin-ext-wght-normal.woff2',
       weight: '100 900',
       style: 'normal',
       unicodeRange:
         'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF',
     },
     {
-      path: '../../node_modules/@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2',
+      path: '../../public/fonts/montserrat-latin-wght-normal.woff2',
       weight: '100 900',
       style: 'normal',
       unicodeRange:
@@ -37,26 +37,26 @@ export const headingFont = localFont({
 export const bodyFont = localFont({
   src: [
     {
-      path: '../../node_modules/@fontsource-variable/open-sans/files/open-sans-cyrillic-ext-wght-normal.woff2',
+      path: '../../public/fonts/open-sans-cyrillic-ext-wght-normal.woff2',
       weight: '300 800',
       style: 'normal',
       unicodeRange: 'U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F',
     },
     {
-      path: '../../node_modules/@fontsource-variable/open-sans/files/open-sans-cyrillic-wght-normal.woff2',
+      path: '../../public/fonts/open-sans-cyrillic-wght-normal.woff2',
       weight: '300 800',
       style: 'normal',
       unicodeRange: 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116',
     },
     {
-      path: '../../node_modules/@fontsource-variable/open-sans/files/open-sans-latin-ext-wght-normal.woff2',
+      path: '../../public/fonts/open-sans-latin-ext-wght-normal.woff2',
       weight: '300 800',
       style: 'normal',
       unicodeRange:
         'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF',
     },
     {
-      path: '../../node_modules/@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2',
+      path: '../../public/fonts/open-sans-latin-wght-normal.woff2',
       weight: '300 800',
       style: 'normal',
       unicodeRange:
