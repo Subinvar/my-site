@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
-import localFont from 'next/font/local';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { NavigationList } from '@/app/[locale]/navigation-list';
@@ -12,23 +11,7 @@ import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
 
-const brandFont = localFont({
-  src: [
-    {
-      path: '../../../../public/fonts/geist/Geist-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../../../public/fonts/geist/Geist-SemiBold.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-  ],
-  preload: true,
-  display: 'swap',
-  variable: '--font-brand',
-});
+const brandFont = { variable: 'font-brand-var' };
 
 type SiteShellProps = {
   locale: Locale;

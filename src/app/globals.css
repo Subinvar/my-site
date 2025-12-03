@@ -1,4 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Open+Sans:wght@300..800&display=swap');
 @import "tailwindcss";
+
+.font-heading-var {
+  --font-heading: 'Montserrat', sans-serif;
+}
+
+.font-body-var {
+  --font-body: 'Open Sans', sans-serif;
+}
+
+.font-brand-var {
+  --font-brand: 'Montserrat', sans-serif;
+}
 
 /* 1. Базовые переменные для светлой/тёмной темы */
 
