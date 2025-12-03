@@ -3,6 +3,8 @@
 ## Основные разделы
 - http://localhost:3000/ — главная страница на русском языке. Содержимое управляется через коллекцию `pages/home`.
 - http://localhost:3000/en — главная страница на английском языке с тем же контентом в локали `en`.
+- http://localhost:3000/products и http://localhost:3000/en/products — обзорная страница категорий каталога (связующие, покрытия, вспомогательные материалы).
+- http://localhost:3000/partners и http://localhost:3000/en/partners — страница с материалами и контактами для партнёров.
 
 ## Страницы о компании
 - http://localhost:3000/o-kompanii — русская версия страницы «О компании».
@@ -20,19 +22,57 @@
 ## Каталог продукции
 - http://localhost:3000/catalog — русская версия каталога с фильтрами по категориям, процессам, основам и наполнителям.
 - http://localhost:3000/en/catalog — английская версия каталога с тем же набором фильтров.
-- http://localhost:3000/catalog/vspomogatelnij-kley-komplekt и http://localhost:3000/en/catalog/aux-adhesive-kit — продукт «Клей-комплект для стержней» / «Core adhesive kit».
-- http://localhost:3000/catalog/vspomogatelnij-ochistitel и http://localhost:3000/en/catalog/aux-cleaning-solution — продукт «Отмывающий состав для оснастки» / «Tooling cleaning solution».
-- http://localhost:3000/catalog/vspomogatelnaya-razdelitelnaya-smazka и http://localhost:3000/en/catalog/aux-release-agent — продукт «Вспомогательная разделительная смазка» / «Auxiliary release agent».
-- http://localhost:3000/catalog/svyazuyushchee-alpha-pep и http://localhost:3000/en/catalog/alpha-pep-binder — продукт «Связующее для альфа-сет и Пеп-сет» / «Binder for Alpha-set and Pep-set».
-- http://localhost:3000/catalog/svyazuyushchee-furan и http://localhost:3000/en/catalog/furan-resol-binder — продукт «Связующее для фурановых смол» / «Furan-resol binder».
-- http://localhost:3000/catalog/pokrytie-spirtovoe-grafit и http://localhost:3000/en/catalog/alcohol-graphite-coating — продукт «Спиртовое графитовое покрытие» / «Alcohol-based graphite coating».
-- http://localhost:3000/catalog/pokrytie-barernoe-magniy и http://localhost:3000/en/catalog/barrier-magnesium-coating — продукт «Барьерное магниевое покрытие» / «Barrier magnesium coating».
-- http://localhost:3000/catalog/pokrytie-vodnoe-zirkon и http://localhost:3000/en/catalog/water-zircon-coating — продукт «Водное циркониевое покрытие» / «Water zircon coating».
+- http://localhost:3000/catalog/aips и http://localhost:3000/en/catalog/aips — продукт «АИПС» / "AIPS".
+- http://localhost:3000/catalog/inoculant и http://localhost:3000/en/catalog/inoculant — продукт «Инокулант» / "Inoculant".
+- http://localhost:3000/catalog/catalyst-ok и http://localhost:3000/en/catalog/catalyst-ok — продукт «Катализатор серии ОК» / "Catalyst OK".
+- http://localhost:3000/catalog/kley-kfs-01 и http://localhost:3000/en/catalog/kley-kfs-01 — продукт «Клей КФС-01» / "Kley KFS-01".
+- http://localhost:3000/catalog/kley-kfs-02 и http://localhost:3000/en/catalog/kley-kfs-02 — продукт «Клей КФС-02» / "Kley KFS-02".
+- http://localhost:3000/catalog/nodulant и http://localhost:3000/en/catalog/nodulant — продукт «Нодулант» / "Nodulant".
+- http://localhost:3000/catalog/otverditel-a и http://localhost:3000/en/catalog/otverditel-a — продукт «Отвердитель серии А» / "Otverditel A".
+- http://localhost:3000/catalog/otverditel-am и http://localhost:3000/en/catalog/otverditel-am — продукт «Отвердитель серии АМ» / "Otverditel AM".
+- http://localhost:3000/catalog/cleaner-os-1 и http://localhost:3000/en/catalog/cleaner-os-1 — продукт «Отмывающий состав ОС-1» / "Cleaner OS-1".
+- http://localhost:3000/catalog/pr-v и http://localhost:3000/en/catalog/pr-v — продукт «Паста ПР-В» / "PR-V".
+- http://localhost:3000/catalog/vpk-01gc и http://localhost:3000/en/catalog/vpk-01gc — продукт «Покрытие ВПК-01ГЦ» / "VPK-01GC".
+- http://localhost:3000/catalog/vpk-60c и http://localhost:3000/en/catalog/vpk-60c — продукт «Покрытие ВПК-60Ц» / "VPK-60C".
+- http://localhost:3000/catalog/vpk-90m и http://localhost:3000/en/catalog/vpk-90m — продукт «Покрытие ВПК-90М» / "VPK-90M".
+- http://localhost:3000/catalog/vpk-gm01 и http://localhost:3000/en/catalog/vpk-gm01 — продукт «Покрытие ВПК-ГМ01» / "VPK-GM01".
+- http://localhost:3000/catalog/vpk-gm02 и http://localhost:3000/en/catalog/vpk-gm02 — продукт «Покрытие ВПК-ГМ02» / "VPK-GM02".
+- http://localhost:3000/catalog/vpk-gm03 и http://localhost:3000/en/catalog/vpk-gm03 — продукт «Покрытие ВПК-ГМ03» / "VPK-GM03".
+- http://localhost:3000/catalog/pk-10 и http://localhost:3000/en/catalog/pk-10 — продукт «Покрытие ПК-10» / "PK-10".
+- http://localhost:3000/catalog/pk-50a и http://localhost:3000/en/catalog/pk-50a — продукт «Покрытие ПК-50А» / "PK-50A".
+- http://localhost:3000/catalog/pk-55h и http://localhost:3000/en/catalog/pk-55h — продукт «Покрытие ПК-55Х» / "PK-55H".
+- http://localhost:3000/catalog/pk-57g и http://localhost:3000/en/catalog/pk-57g — продукт «Покрытие ПК-57Г» / "PK-57G".
+- http://localhost:3000/catalog/pk-60c и http://localhost:3000/en/catalog/pk-60c — продукт «Покрытие ПК-60Ц» / "PK-60C".
+- http://localhost:3000/catalog/pk-72gc и http://localhost:3000/en/catalog/pk-72gc — продукт «Покрытие ПК-72ГЦ» / "PK-72GC".
+- http://localhost:3000/catalog/pk-7c и http://localhost:3000/en/catalog/pk-7c — продукт «Покрытие ПК-7Ц» / "PK-7C".
+- http://localhost:3000/catalog/pk-90m и http://localhost:3000/en/catalog/pk-90m — продукт «Покрытие ПК-90М» / "PK-90M".
+- http://localhost:3000/catalog/rp-2 и http://localhost:3000/en/catalog/rp-2 — продукт «Разделительный состав РП-2» / "RP-2".
+- http://localhost:3000/catalog/rp-2-1 и http://localhost:3000/en/catalog/rp-2-1 — продукт «Разделительный состав РП-2.1» / "RP-2.1".
+- http://localhost:3000/catalog/rp-3 и http://localhost:3000/en/catalog/rp-3 — продукт «Разделительный состав РП-3» / "RP-3".
+- http://localhost:3000/catalog/kb-k и http://localhost:3000/en/catalog/kb-k — продукт «Связующее КБ-К» / "KB-K".
+- http://localhost:3000/catalog/kb-ae-be и http://localhost:3000/en/catalog/kb-ae-be — продукт «Связующие КБ-А (Э), КБ-Б (Э)» / "KB-AE-BE".
+- http://localhost:3000/catalog/kb-a-b и http://localhost:3000/en/catalog/kb-a-b — продукт «Связующие КБ-А, КБ-Б» / "KB-A-B".
+- http://localhost:3000/catalog/sfu и http://localhost:3000/en/catalog/sfu — продукт «Связующие СФУ-1, СФУ-2, СФУ-3К» / "SFU".
+- http://localhost:3000/catalog/sk-92 и http://localhost:3000/en/catalog/sk-92 — продукт «Смола СК-92» / "SK-92".
+- http://localhost:3000/catalog/fk-10 и http://localhost:3000/en/catalog/fk-10 — продукт «Смола ФК-10» / "FK-10".
+- http://localhost:3000/catalog/fk-30 и http://localhost:3000/en/catalog/fk-30 — продукт «Смола ФК-30» / "FK-30".
+- http://localhost:3000/catalog/fk-5 и http://localhost:3000/en/catalog/fk-5 — продукт «Смола ФК-5» / "FK-5".
+- http://localhost:3000/catalog/fk-70 и http://localhost:3000/en/catalog/fk-70 — продукт «Смола ФК-70» / "FK-70".
+- http://localhost:3000/catalog/fs-01 и http://localhost:3000/en/catalog/fs-01 — продукт «Смола ФС-01» / "FS-01".
+- http://localhost:3000/catalog/fs-02 и http://localhost:3000/en/catalog/fs-02 — продукт «Смола ФС-02» / "FS-02".
+- http://localhost:3000/catalog/fs-03 и http://localhost:3000/en/catalog/fs-03 — продукт «Смола ФС-03» / "FS-03".
+- http://localhost:3000/catalog/fs-04 и http://localhost:3000/en/catalog/fs-04 — продукт «Смола ФС-04» / "FS-04".
+- http://localhost:3000/catalog/fs-06co2 и http://localhost:3000/en/catalog/fs-06co2 — продукт «Смола ФС-06CO₂» / "FS-06CO₂".
+- http://localhost:3000/catalog/fsm-a и http://localhost:3000/en/catalog/fsm-a — продукт «Смола ФСМ-А» / "FSM-A".
+- http://localhost:3000/catalog/ush-02 и http://localhost:3000/en/catalog/ush-02 — продукт «Шнур УШ-02» / "USH-02".
+- http://localhost:3000/catalog/eps-10 и http://localhost:3000/en/catalog/eps-10 — продукт «ЭПС-10» / "EPS-10".
 - Добавляя новые продукты в Keystatic, фиксируйте их URL в этом разделе для обеих локалей.
 
 ## Новости и материалы
 - http://localhost:3000/news — русская страница со списком новостей и кейсов (контент из коллекции `pages/news`).
 - http://localhost:3000/en/news — английская версия страницы.
+- http://localhost:3000/news/snizhenie-prigara-case-40 — кейс о снижении пригара на 40% (русская локаль).
+- http://localhost:3000/en/news/burn-on-defects-40 — локализованная версия кейса о снижении пригара.
 - http://localhost:3000/news/modernizaciya-proizvodstva — опубликованный кейс на русском языке.
 - http://localhost:3000/en/news/modernising-operations — локализованный вариант кейса на английском.
 - http://localhost:3000/news/snizhenie-prigara — материал про снижение пригара в русской локали.
