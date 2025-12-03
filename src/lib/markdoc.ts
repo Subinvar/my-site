@@ -90,6 +90,18 @@ export const config: Config = {
     thead: {
       render: 'TableHead',
     },
+    tbody: {
+      render: 'TableBody',
+    },
+    tr: {
+      render: 'TableRow',
+    },
+    th: {
+      render: 'TableHeaderCell',
+    },
+    td: {
+      render: 'TableCell',
+    },
   },
   tags: {
     callout: {
@@ -281,12 +293,39 @@ export function createComponents(locale: Locale) {
     Table({ children }: { children?: ReactNode }) {
       return React.createElement(
         'table',
-        { className: 'w-full border-collapse text-sm text-muted-foreground' },
+        { className: 'w-full border-collapse text-sm text-muted-foreground shadow-sm' },
         children
       );
     },
     TableHead({ children }: { children?: ReactNode }) {
-      return React.createElement('thead', { className: 'bg-card text-foreground' }, children);
+      return React.createElement(
+        'thead',
+        { className: 'bg-card text-foreground [&_th]:px-3 [&_th]:py-2' },
+        children
+      );
+    },
+    TableBody({ children }: { children?: ReactNode }) {
+      return React.createElement('tbody', { className: 'divide-y divide-border' }, children);
+    },
+    TableRow({ children }: { children?: ReactNode }) {
+      return React.createElement('tr', { className: 'hover:bg-muted/40 transition-colors' }, children);
+    },
+    TableHeaderCell({ children }: { children?: ReactNode }) {
+      return React.createElement(
+        'th',
+        { className: 'text-left text-sm font-semibold text-foreground border border-border first:border-l-0 last:border-r-0' },
+        children
+      );
+    },
+    TableCell({ children }: { children?: ReactNode }) {
+      return React.createElement(
+        'td',
+        {
+          className:
+            'text-left text-sm text-muted-foreground border border-border first:border-l-0 last:border-r-0 px-3 py-2 align-top',
+        },
+        children
+      );
     },
     MarkdocImage({
       src,
