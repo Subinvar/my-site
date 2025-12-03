@@ -11,6 +11,7 @@ import type {
   CatalogMetal,
   CatalogProcess,
 } from '@/lib/catalog/constants';
+import { DEFAULT_PAGE_SIZE } from '@/app/(site)/shared/catalog-filtering';
 import type { FilterState } from '@/app/(site)/shared/catalog-filtering';
 import { Button } from '@/app/(site)/shared/ui/button';
 
@@ -123,6 +124,9 @@ export function CatalogFilters({
         params.append(key, value);
       }
     }
+
+    params.delete('offset');
+    params.set('limit', String(DEFAULT_PAGE_SIZE));
 
     const target = params.toString();
     const action = form.getAttribute('action') || pathname || '/catalog';
