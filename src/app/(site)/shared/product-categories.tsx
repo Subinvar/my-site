@@ -16,6 +16,12 @@ const CATEGORY_KEYS: Record<CatalogCategory, ProductDirectionKey> = {
   'Вспомогательные материалы': 'auxiliaries',
 };
 
+const CATEGORY_PATHS: Record<CatalogCategory, string[]> = {
+  Связующие: ['products', 'binders'],
+  'Противопригарные покрытия': ['products', 'coatings'],
+  'Вспомогательные материалы': ['products', 'auxiliaries'],
+};
+
 const CATEGORY_ICONS: Record<CatalogCategory, JSX.Element> = {
   Связующие: <Beaker className="h-6 w-6" aria-hidden />,
   'Противопригарные покрытия': <PaintRoller className="h-6 w-6" aria-hidden />,
@@ -61,7 +67,10 @@ export function ProductCategoriesSection({ locale }: { locale: Locale }) {
 }
 
 function buildCategoryHref(locale: Locale, category: CatalogCategory): string {
-  const basePath = buildPath(locale, ['catalog']);
-  const search = new URLSearchParams({ category }).toString();
-  return `${basePath}?${search}`;
+  const segments = CATEGORY_PATHS[category];
+  if (!segments) {
+    return buildPath(locale, ['catalog']);
+  }
+
+  return buildPath(locale, segments);
 }
