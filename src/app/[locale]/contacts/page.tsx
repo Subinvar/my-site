@@ -32,6 +32,9 @@ const COPY = {
     phone: 'Телефон',
     phoneHint: 'Можно оставить телефон или email — достаточно одного контакта.',
     contactRequired: 'Укажите хотя бы email или телефон.',
+    productLabel: 'Продукт',
+    productHint: 'Если нужно, уточните название продукта или оставьте поле пустым.',
+    productPlaceholder: 'Например: ФС-03',
     message: 'Сообщение',
     agree: 'Я согласен на обработку персональных данных',
     submit: 'Отправить',
@@ -47,6 +50,9 @@ const COPY = {
     phone: 'Phone',
     phoneHint: 'You can leave either a phone number or an email — one contact is enough.',
     contactRequired: 'Please provide at least an email or a phone number.',
+    productLabel: 'Product',
+    productHint: 'You can adjust the product name or leave this field empty.',
+    productPlaceholder: 'e.g. FS-03',
     message: 'Message',
     agree: 'I agree to the processing of personal data',
     submit: 'Send',
@@ -62,6 +68,9 @@ const COPY = {
   phone: string;
   phoneHint: string;
   contactRequired: string;
+  productLabel: string;
+  productHint: string;
+  productPlaceholder: string;
   message: string;
   agree: string;
   submit: string;
@@ -73,6 +82,7 @@ type PageParams = { locale: Locale };
 
 type ContactSearchParams = {
   ok?: string | string[] | undefined;
+  product?: string | string[] | undefined;
 };
 
 type PageProps = {
@@ -96,6 +106,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   }
 
   const locale = rawLocale;
+  const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
   const isDryRun = process.env.LEADS_DRY_RUN === '1';
   const status = isDryRun ? null : resolveStatus(rawSearchParams.ok);
   const [shell, page] = await Promise.all([
@@ -137,6 +148,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             status={status}
             onSubmitAction={sendContact}
             isDryRun={isDryRun}
+            initialProduct={product}
           />
         </div>
 

@@ -7,6 +7,7 @@ import type {
   CatalogMetal,
   CatalogProcess,
 } from '@/lib/catalog/constants';
+import type { CatalogBadge } from '@/lib/keystatic';
 
 export const DEFAULT_PAGE_SIZE = 12;
 const MAX_PAGE_SIZE = 60;
@@ -15,6 +16,8 @@ export type CatalogListItem = {
   id: string;
   slug: string;
   title: string;
+  shortDescription: string | null;
+  badge: CatalogBadge;
   teaser: string | null;
   excerpt: string | null;
   category: CatalogCategory | null;

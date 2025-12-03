@@ -1,6 +1,5 @@
 import type { CatalogFiltersProps } from './catalog-filters';
 import { Card, CardFooter, CardTitle, type CardProps } from '@/app/(site)/shared/ui/card';
-import { Badge } from '@/app/(site)/shared/ui/badge';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { buildPath } from '@/lib/paths';
 import type { CatalogListItem } from '@/app/(site)/shared/catalog-filtering';
@@ -67,36 +66,38 @@ function CatalogItemCard({
 } & CardProps) {
   const detailHref = buildPath(locale, ['catalog', item.slug]);
   const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.slug)}`;
-  const summary = item.teaser ?? item.excerpt;
+  const summary = item.shortDescription ?? item.teaser ?? item.excerpt;
+  const badge = resolveBadge(item.badge, locale);
+  const processLabels = item.process.map((process) => resolveProcessLabel(process, labelMaps));
+  const categoryLabel = item.category ? labelMaps.category.get(item.category) ?? item.category : null;
 
   return (
     <Card as="article" className="flex h-full flex-col" {...cardProps}>
       <div className="flex flex-1 flex-col gap-3">
-        <header className="space-y-1">
-          <CardTitle className="text-base">{item.title}</CardTitle>
+        <header className="space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <CardTitle className="text-base leading-snug">{item.title}</CardTitle>
+            <ProductBadge badge={item.badge} badgeData={badge} />
+          </div>
           {summary ? (
-            <p className="text-sm text-muted-foreground line-clamp-3">{summary}</p>
+            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{summary}</p>
           ) : null}
         </header>
 
-        <div className="flex flex-wrap gap-1.5 text-[11px]">
-          {item.category ? (
-            <Badge className="bg-[color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-[var(--color-brand-700)]">
-              {labelMaps.category.get(item.category) ?? item.category}
-            </Badge>
-          ) : null}
-          {item.process.map((process) => (
-            <Badge
-              key={process}
-              className="border border-border bg-background text-[var(--foreground)]"
-            >
-              {labelMaps.process.get(process) ?? process}
-            </Badge>
+        <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+          <ProcessChip processLabels={processLabels} />
+          <CategoryChip label={categoryLabel} />
+          {item.base.map((base) => (
+            <Chip key={base}>{labelMaps.base.get(base) ?? base}</Chip>
+          ))}
+          {item.filler.map((filler) => (
+            <Chip key={filler}>{labelMaps.filler.get(filler) ?? filler}</Chip>
           ))}
           {item.metals.map((metal) => (
-            <Badge key={metal} className="bg-[var(--muted)] text-[var(--foreground)]">
-              {labelMaps.metals.get(metal) ?? metal}
-            </Badge>
+            <Chip key={metal}>{labelMaps.metals.get(metal) ?? metal}</Chip>
+          ))}
+          {item.auxiliary.map((auxiliary) => (
+            <Chip key={auxiliary}>{labelMaps.auxiliary.get(auxiliary) ?? auxiliary}</Chip>
           ))}
         </div>
       </div>
@@ -122,4 +123,106 @@ function createLabelMaps(options: CatalogFiltersProps['options']) {
     metals: new Map(options.metals.map((option) => [option.value, option.label])),
     auxiliary: new Map(options.auxiliaries.map((option) => [option.value, option.label])),
   };
+}
+
+function resolveProcessLabel(
+  process: CatalogListItem['process'][number],
+  labelMaps: ReturnType<typeof createLabelMaps>
+) {
+  const mapped = labelMaps.process.get(process);
+  if (mapped) {
+    return mapped;
+  }
+
+  if (process === 'alpha-set') {
+    return 'Alpha-set';
+  }
+  if (process === 'furan') {
+    return 'Фуран';
+  }
+
+  return process;
+}
+
+function resolveBadge(
+  badge: CatalogListItem['badge'],
+  locale: Locale
+): { label: string; className: string } | null {
+  if (badge === 'none') {
+    return null;
+  }
+
+  const labelMap: Record<Exclude<CatalogListItem['badge'], 'none'>, { ru: string; en: string }> = {
+    bestseller: { ru: 'Хит продаж', en: 'Bestseller' },
+    premium: { ru: 'Премиум', en: 'Premium' },
+    eco: { ru: 'Eco', en: 'Eco' },
+    special: { ru: 'Спец.решение', en: 'Special' },
+  };
+
+  const classMap: Record<Exclude<CatalogListItem['badge'], 'none'>, string> = {
+    bestseller: 'bg-amber-100 text-amber-800',
+    premium: 'bg-purple-100 text-purple-800',
+    eco: 'bg-emerald-100 text-emerald-800',
+    special: 'bg-sky-100 text-sky-800',
+  };
+
+  return {
+    label: locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en,
+    className: classMap[badge],
+  };
+}
+
+function ProductBadge({
+  badge,
+  badgeData,
+}: {
+  badge: CatalogListItem['badge'];
+  badgeData: ReturnType<typeof resolveBadge>;
+}) {
+  if (!badgeData || !badge || badge === 'none') {
+    return null;
+  }
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeData.className}`}
+    >
+      {badgeData.label}
+    </span>
+  );
+}
+
+function ProcessChip({ processLabels }: { processLabels: string[] }) {
+  if (!processLabels.length) {
+    return null;
+  }
+
+  return processLabels.map((label, index) => (
+    <span
+      key={`${label}-${index}`}
+      className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground"
+    >
+      {label}
+    </span>
+  ));
+}
+
+function CategoryChip({ label }: { label: string | null }) {
+  if (!label) {
+    return null;
+  }
+
+  return (
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+      {label}
+    </span>
+  );
+}
+
+function Chip({ children }: { children: string }) {
+  return (
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+      {children}
+    </span>
+  );
 }

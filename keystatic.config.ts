@@ -24,6 +24,9 @@ const locales = ['ru', 'en'] as const;
 type LocalizedFieldOptions = {
   multiline?: boolean;
   isRequired?: boolean;
+  validation?: {
+    length?: { min?: number; max?: number };
+  };
 };
 
 const imageField = (label: string) =>
@@ -48,7 +51,13 @@ const localizedText = (label: string, options: LocalizedFieldOptions = {}) =>
         fields.text({
           label: `${label} (${locale.toUpperCase()})`,
           multiline: options.multiline,
-          validation: options.isRequired ? { isRequired: true } : undefined,
+          validation:
+            options.isRequired || options.validation
+              ? {
+                  ...(options.isRequired ? { isRequired: true } : {}),
+                  ...options.validation,
+                }
+              : undefined,
         }),
       ])
     ),
@@ -802,8 +811,25 @@ export default config({
         slug: localizedSlug('Slug', { isRequired: true }),
         title: localizedText('Название', { isRequired: true }),
         excerpt: localizedText('Краткое описание', { multiline: true, isRequired: true }),
+        shortDescription: localizedText('Краткое описание (тизер)', {
+          multiline: true,
+          validation: { length: { max: 300 } },
+        }),
+        badge: fields.select({
+          label: 'Бейдж',
+          options: [
+            { label: 'Нет', value: 'none' },
+            { label: 'Хит продаж', value: 'bestseller' },
+            { label: 'Премиум', value: 'premium' },
+            { label: 'Eco / сниженные выбросы', value: 'eco' },
+            { label: 'Специальный продукт', value: 'special' },
+          ],
+          defaultValue: 'none',
+        }),
         teaser: localizedText('Тизер', { multiline: true }),
-        content: localizedMarkdocContent('Контент (Markdoc)', { isRequired: true }),
+        content: localizedMarkdocContent('Основной текст (страница товара)', {
+          isRequired: true,
+        }),
         category: fields.relationship({
           label: 'Категория',
           collection: 'catalogCategories',
@@ -820,7 +846,20 @@ export default config({
             label: 'Документ',
             collection: 'documents',
           }),
-          { label: 'Документы' }
+          {
+            label: 'Документация',
+            itemLabel: ({
+              value,
+            }: {
+              value?: { slug?: string } | string | null;
+            }) => {
+              if (!value) return 'Документ';
+
+              if (typeof value === 'string') return value;
+
+              return value.slug ?? 'Документ';
+            },
+          }
         ),
         updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
