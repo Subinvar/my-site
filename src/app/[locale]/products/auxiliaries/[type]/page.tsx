@@ -21,10 +21,10 @@ import { matchOptionBySlug, toFilter } from '../../helpers';
 
 type PageParams = { locale: Locale; type: string };
 
-type PageProps = { params: PageParams };
+type PageProps = { params: Promise<PageParams> };
 
 export default async function AuxiliaryTypeCatalogPage({ params }: PageProps) {
-  const { locale: rawLocale, type } = params;
+  const { locale: rawLocale, type } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();

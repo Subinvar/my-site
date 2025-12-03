@@ -15,10 +15,10 @@ import { sortByOrderAndLabel, toSlug } from '../helpers';
 
 type PageParams = { locale: Locale };
 
-type PageProps = { params: PageParams };
+type PageProps = { params: Promise<PageParams> };
 
 export default async function CoatingTypesPage({ params }: PageProps) {
-  const { locale: rawLocale } = params;
+  const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();

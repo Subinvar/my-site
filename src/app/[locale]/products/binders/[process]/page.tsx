@@ -21,10 +21,10 @@ import { matchOptionBySlug, toFilter } from '../../helpers';
 
 type PageParams = { locale: Locale; process: string };
 
-type PageProps = { params: PageParams };
+type PageProps = { params: Promise<PageParams> };
 
 export default async function BinderProcessCatalogPage({ params }: PageProps) {
-  const { locale: rawLocale, process } = params;
+  const { locale: rawLocale, process } = await params;
 
   if (!isLocale(rawLocale)) {
     notFound();
