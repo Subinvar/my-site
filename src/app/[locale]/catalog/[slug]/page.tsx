@@ -8,6 +8,8 @@ import {
   getLocalizedCatalogParams,
   resolveCatalogProductMetadata,
 } from '@/app/(site)/shared/catalog';
+import { PRODUCT_CATEGORIES } from '@/app/[locale]/products/constants';
+import { toSlug } from '@/app/[locale]/products/helpers';
 import Link from 'next/link';
 
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
@@ -33,6 +35,11 @@ type CatalogProductParams = { locale: Locale; slug: string };
 type CatalogProductPageProps = {
   params: Promise<CatalogProductParams>;
 };
+
+type ProductDirectionCategories = Record<
+  keyof typeof PRODUCT_CATEGORIES,
+  { title: string }
+>;
 
 export default async function CatalogProductPage({ params }: CatalogProductPageProps) {
   const { locale: rawLocale, slug } = await params;
@@ -62,6 +69,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   const attributes = dictionary.catalog.attributes;
   const emptyValue = dictionary.common.emptyValue;
   const catalogLabel = locale === 'ru' ? 'Каталог' : 'Catalog';
+  const productsLabel = locale === 'ru' ? 'Продукция' : 'Products';
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
   const categoryLabel = resolveSingleValue(
     item.category,
@@ -79,6 +87,12 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   const showAuxiliary = item.category === AUXILIARY_CATEGORY && Boolean(auxiliaryValue);
   const contactHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
   const leadText = item.shortDescription ?? summary;
+  const sectionBreadcrumb = resolveSectionBreadcrumb(
+    item.category,
+    locale,
+    dictionary.productDirections.categories,
+  );
+  const typeBreadcrumb = resolveTypeBreadcrumb(item, locale);
 
   return (
     <SiteShell
@@ -89,14 +103,22 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <main className="page-shell">
+      <main id="main" className="page-shell">
         <div className="container py-8 lg:py-10 space-y-8">
           <nav className="text-xs text-muted-foreground">
             <Breadcrumbs
               items={[
                 { label: homeLabel, href: buildPath(locale) },
-                { label: catalogLabel, href: buildPath(locale, ['catalog']) },
-                categoryLabel && item.category
+                { label: productsLabel, href: buildPath(locale, ['products']) },
+                sectionBreadcrumb,
+                typeBreadcrumb,
+                !sectionBreadcrumb && item.category
+                  ? {
+                      label: catalogLabel,
+                      href: `${buildPath(locale, ['catalog'])}?category=${encodeURIComponent(item.category)}`,
+                    }
+                  : null,
+                !sectionBreadcrumb && categoryLabel && item.category
                   ? {
                       label: categoryLabel,
                       href: `${buildPath(locale, ['catalog'])}?category=${encodeURIComponent(item.category)}`,
@@ -262,6 +284,73 @@ function resolveBadge(badge: CatalogBadge, locale: Locale) {
 
   const label = locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en;
   return { label, className: classMap[badge] };
+}
+
+function resolveSectionBreadcrumb(
+  category: CatalogItem['category'],
+  locale: Locale,
+  dictionaryCategories: ProductDirectionCategories,
+): { label: string; href: string } | null {
+  if (!category) {
+    return null;
+  }
+
+  const matchedEntry = (Object.entries(PRODUCT_CATEGORIES) as Array<
+    [keyof typeof PRODUCT_CATEGORIES, string]
+  >).find(([, value]) => value === category);
+
+  if (!matchedEntry) {
+    return null;
+  }
+
+  const [categoryKey] = matchedEntry;
+  const label =
+    dictionaryCategories[categoryKey]?.title ??
+    getCatalogTaxonomyLabel(TAXONOMY_KEYS.category, category, locale) ??
+    category;
+
+  return {
+    label,
+    href: buildPath(locale, ['products', categoryKey]),
+  };
+}
+
+function resolveTypeBreadcrumb(
+  item: CatalogItem,
+  locale: Locale,
+): { label: string; href: string } | null {
+  if (item.category === PRODUCT_CATEGORIES.binders) {
+    const processValue = item.process?.[0];
+    if (!processValue) {
+      return null;
+    }
+
+    const label = getCatalogTaxonomyLabel(TAXONOMY_KEYS.process, processValue, locale) ?? processValue;
+    return { label, href: buildPath(locale, ['products', 'binders', toSlug(processValue)]) };
+  }
+
+  if (item.category === PRODUCT_CATEGORIES.coatings) {
+    const baseValue = item.base?.[0];
+    if (!baseValue) {
+      return null;
+    }
+
+    const label = getCatalogTaxonomyLabel(TAXONOMY_KEYS.base, baseValue, locale) ?? baseValue;
+    return { label, href: buildPath(locale, ['products', 'coatings', toSlug(baseValue)]) };
+  }
+
+  if (item.category === PRODUCT_CATEGORIES.auxiliaries) {
+    const auxiliaryValue = item.auxiliary?.[0];
+    if (!auxiliaryValue) {
+      return null;
+    }
+
+    const label =
+      getCatalogTaxonomyLabel(TAXONOMY_KEYS.auxiliary, auxiliaryValue, locale) ?? auxiliaryValue;
+    return { label, href: buildPath(locale, ['products', 'auxiliaries', toSlug(auxiliaryValue)]) };
+  }
+
+  return null;
 }
 
 function ProductBadge({ badge, locale }: { badge?: CatalogBadge; locale: Locale }) {
