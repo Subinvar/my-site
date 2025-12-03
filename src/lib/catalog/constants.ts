@@ -9,6 +9,7 @@ type CatalogTaxonomyEntry = {
   value: string;
   label?: LocalizedRecord;
   isAuxiliaryCategory?: boolean;
+  order?: number | null;
 };
 
 type LegacyTaxonomyValue =
@@ -24,6 +25,7 @@ type CatalogTaxonomyEntryInput = {
   value?: LegacyTaxonomyValue;
   label?: LocalizedRecord;
   isAuxiliaryCategory?: boolean;
+  order?: number | null;
 } | null;
 
 type CatalogTaxonomy = {
@@ -197,23 +199,54 @@ export function getCatalogTaxonomyLabel(
   return pickLabel(entry, locale);
 }
 
+type CatalogTaxonomyOption<T extends string> = Readonly<{
+  value: T;
+  label: string;
+  order?: number | null;
+  isAuxiliaryCategory?: boolean;
+}>;
+
 export function getCatalogTaxonomyOptions(
   locale: Locale
 ): {
-  categories: ReadonlyArray<{ value: CatalogCategory; label: string }>;
-  processes: ReadonlyArray<{ value: CatalogProcess; label: string }>;
-  bases: ReadonlyArray<{ value: CatalogBase; label: string }>;
-  fillers: ReadonlyArray<{ value: CatalogFiller; label: string }>;
-  auxiliaries: ReadonlyArray<{ value: CatalogAuxiliary; label: string }>;
-  metals: ReadonlyArray<{ value: CatalogMetal; label: string }>;
+  categories: ReadonlyArray<CatalogTaxonomyOption<CatalogCategory>>;
+  processes: ReadonlyArray<CatalogTaxonomyOption<CatalogProcess>>;
+  bases: ReadonlyArray<CatalogTaxonomyOption<CatalogBase>>;
+  fillers: ReadonlyArray<CatalogTaxonomyOption<CatalogFiller>>;
+  auxiliaries: ReadonlyArray<CatalogTaxonomyOption<CatalogAuxiliary>>;
+  metals: ReadonlyArray<CatalogTaxonomyOption<CatalogMetal>>;
 } {
   return {
-    categories: categories.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
-    processes: processes.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
-    bases: bases.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
-    fillers: fillers.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
-    auxiliaries: auxiliaries.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
-    metals: metals.map((entry) => ({ value: entry.value, label: pickLabel(entry, locale) })),
+    categories: categories.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogCategory>>,
+    processes: processes.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogProcess>>,
+    bases: bases.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogBase>>,
+    fillers: fillers.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogFiller>>,
+    auxiliaries: auxiliaries.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogAuxiliary>>,
+    metals: metals.map((entry) =>
+      toOption(entry, locale)
+    ) as ReadonlyArray<CatalogTaxonomyOption<CatalogMetal>>,
+  };
+}
+
+function toOption<T extends string>(
+  entry: CatalogTaxonomyEntry,
+  locale: Locale
+): CatalogTaxonomyOption<T> {
+  return {
+    value: entry.value as T,
+    label: pickLabel(entry, locale),
+    order: entry.order ?? null,
+    isAuxiliaryCategory: entry.isAuxiliaryCategory,
   };
 }
 

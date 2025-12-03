@@ -5,7 +5,6 @@ import {
   CatalogFilters,
   CatalogFiltersMobileTrigger,
 } from '@/components/catalog/catalog-filters';
-import type { CatalogFiltersProps } from '@/components/catalog/catalog-filters';
 import { ActiveFiltersChips } from '@/components/catalog/active-filters-chips';
 import { CatalogToolbar } from '@/components/catalog/catalog-toolbar';
 import { CatalogList } from '@/components/catalog/catalog-list';
@@ -21,13 +20,22 @@ import {
   getCatalogTaxonomyOptions,
   resolveCatalogListingMetadata,
 } from '@/app/(site)/shared/catalog';
+import {
+  resolveDescription,
+  resolveDetailLabel,
+  resolveEmptyState,
+  resolveGroupLabels,
+  resolveHeading,
+  resolveRequestLabel,
+  resolveResetLabel,
+  resolveSubmitLabel,
+} from '@/app/(site)/shared/catalog-page-messages';
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
-import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
-import type { CatalogPageContent } from '@/lib/keystatic';
+import { isLocale, type Locale } from '@/lib/i18n';
 import { getCatalogTaxonomyValues } from '@/lib/catalog/constants';
 
 export const dynamic = 'force-dynamic';
@@ -148,80 +156,6 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       </main>
     </SiteShell>
   );
-}
-
-function resolveLocalizedValue(
-  record: Partial<Record<Locale, string>> | null | undefined,
-  locale: Locale
-): string {
-  const localized = record?.[locale];
-  if (localized && localized.trim()) {
-    return localized;
-  }
-  const fallback = record?.[defaultLocale];
-  if (fallback && fallback.trim()) {
-    return fallback;
-  }
-  for (const candidate of locales) {
-    const value = record?.[candidate];
-    if (value && value.trim()) {
-      return value;
-    }
-  }
-  return '';
-}
-
-function resolveHeading(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.title ?? null, locale);
-}
-
-function resolveDescription(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.description ?? null, locale);
-}
-
-function resolveSubmitLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.submitLabel ?? null, locale);
-}
-
-function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.resetLabel ?? null, locale);
-}
-
-function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.detailLabel ?? null, locale);
-}
-
-function resolveRequestLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.requestLabel ?? null, locale);
-}
-
-function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
-}
-
-function resolveGroupLabels(
-  page: CatalogPageContent | null,
-  locale: Locale
-): CatalogFiltersProps['groupLabels'] {
-  const defaults: CatalogFiltersProps['groupLabels'] = {
-    category: 'Категория',
-    process: 'Процесс',
-    base: 'Основа',
-    filler: 'Наполнитель',
-    metal: 'Металл',
-    auxiliary: 'Вспомогательные',
-  };
-  const groupLabels = page?.groupLabels ?? null;
-
-  return {
-    category: resolveLocalizedValue(groupLabels?.category ?? null, locale) || defaults.category,
-    process: resolveLocalizedValue(groupLabels?.process ?? null, locale) || defaults.process,
-    base: resolveLocalizedValue(groupLabels?.base ?? null, locale) || defaults.base,
-    filler: resolveLocalizedValue(groupLabels?.filler ?? null, locale) || defaults.filler,
-    metal: resolveLocalizedValue(groupLabels?.metal ?? null, locale) || defaults.metal,
-    auxiliary:
-      resolveLocalizedValue(groupLabels?.auxiliary ?? null, locale) || defaults.auxiliary,
-  } satisfies CatalogFiltersProps['groupLabels'];
 }
 
 function resolvePagination(total: number, filters: FilterState) {
