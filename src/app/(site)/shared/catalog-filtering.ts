@@ -15,6 +15,7 @@ export type CatalogListItem = {
   id: string;
   slug: string;
   title: string;
+  teaser: string | null;
   excerpt: string | null;
   category: CatalogCategory | null;
   process: CatalogProcess[];

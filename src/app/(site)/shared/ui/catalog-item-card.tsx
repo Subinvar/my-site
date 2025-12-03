@@ -24,6 +24,7 @@ type CatalogItemCardProps = {
 
 export function CatalogItemCard({ item, detailHref, detailLabel, attributeLabels, valueLabels }: CatalogItemCardProps) {
   const tagLabels = buildTags(item, valueLabels);
+  const summary = item.teaser ?? item.excerpt;
 
   return (
     <Card as="article" className="flex h-full flex-col gap-4">
@@ -32,8 +33,8 @@ export function CatalogItemCard({ item, detailHref, detailLabel, attributeLabels
           <CardTitle data-testid="catalog-item" className="text-lg">
             {item.title}
           </CardTitle>
-          {item.excerpt ? (
-            <CardDescription className="mt-1 text-sm">{item.excerpt}</CardDescription>
+          {summary ? (
+            <CardDescription className="mt-1 text-sm">{summary}</CardDescription>
           ) : null}
           {tagLabels.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-2">

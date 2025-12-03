@@ -67,14 +67,15 @@ function CatalogItemCard({
 } & CardProps) {
   const detailHref = buildPath(locale, ['catalog', item.slug]);
   const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.slug)}`;
+  const summary = item.teaser ?? item.excerpt;
 
   return (
     <Card as="article" className="flex h-full flex-col" {...cardProps}>
       <div className="flex flex-1 flex-col gap-3">
         <header className="space-y-1">
           <CardTitle className="text-base">{item.title}</CardTitle>
-          {item.excerpt ? (
-            <p className="text-sm text-muted-foreground line-clamp-3">{item.excerpt}</p>
+          {summary ? (
+            <p className="text-sm text-muted-foreground line-clamp-3">{summary}</p>
           ) : null}
         </header>
 
