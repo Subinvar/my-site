@@ -8,15 +8,16 @@ import {
   getLocalizedCatalogParams,
   resolveCatalogProductMetadata,
 } from '@/app/(site)/shared/catalog';
+import Link from 'next/link';
+
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
-import { Card, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
-import { getDocuments, type Document } from '@/lib/keystatic';
+import type { CatalogItem, CatalogBadge } from '@/lib/keystatic';
 
 const TAXONOMY_KEYS = {
   category: 'categories',
@@ -41,10 +42,9 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   }
 
   const locale = rawLocale;
-  const [data, shell, documents] = await Promise.all([
+  const [data, shell] = await Promise.all([
     getCatalogProductPage(locale, slug),
     getSiteShellData(locale),
-    getDocuments(),
   ]);
 
   if (!data) {
@@ -69,18 +69,16 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     locale,
     emptyValue,
   );
-  const processValue = formatValues(mapAttributeValues(item.process, TAXONOMY_KEYS.process, locale));
+  const categoryChipLabel = categoryLabel === emptyValue ? null : categoryLabel;
+  const processLabels = mapAttributeValues(item.process, TAXONOMY_KEYS.process, locale);
+  const processValue = formatValues(processLabels);
   const baseValue = formatValues(mapAttributeValues(item.base, TAXONOMY_KEYS.base, locale));
-  const fillerValue = formatValues(
-    mapAttributeValues(item.filler, TAXONOMY_KEYS.filler, locale),
-  );
+  const fillerValue = formatValues(mapAttributeValues(item.filler, TAXONOMY_KEYS.filler, locale));
   const metalValue = formatValues(mapAttributeValues(item.metals, TAXONOMY_KEYS.metal, locale));
-  const auxiliaryValue = formatValues(
-    mapAttributeValues(item.auxiliary, TAXONOMY_KEYS.auxiliary, locale),
-  );
+  const auxiliaryValue = formatValues(mapAttributeValues(item.auxiliary, TAXONOMY_KEYS.auxiliary, locale));
   const showAuxiliary = item.category === AUXILIARY_CATEGORY && Boolean(auxiliaryValue);
-  const relatedDocuments = resolveRelatedDocuments(documents, item.id, locale);
-  const contactHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.slug)}`;
+  const contactHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
+  const leadText = item.shortDescription ?? summary;
 
   return (
     <SiteShell
@@ -92,8 +90,8 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
       currentPath={currentPath}
     >
       <main className="page-shell">
-        <section className="container py-10 lg:py-12">
-          <nav className="mb-4 text-xs text-muted-foreground">
+        <div className="container py-8 lg:py-10 space-y-8">
+          <nav className="text-xs text-muted-foreground">
             <Breadcrumbs
               items={[
                 { label: homeLabel, href: buildPath(locale) },
@@ -109,18 +107,31 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
             />
           </nav>
 
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <div className="space-y-6">
-              <header className="space-y-2">
-                <p className="text-sm uppercase tracking-wide text-muted-foreground">
-                  {attributes.category}: {categoryLabel}
-                </p>
-                <h1 className="page-title text-2xl">{item.title}</h1>
-                {summary ? <p className="page-subtitle">{summary}</p> : null}
-              </header>
+          <header className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{item.title}</h1>
 
-              <section className="card">
-                <div className="card-body space-y-3 text-sm">
+            {leadText ? (
+              <p className="max-w-3xl text-base text-muted-foreground">{leadText}</p>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <ProductBadge badge={item.badge} locale={locale} />
+              <ProcessChip process={processLabels[0]} />
+              <CategoryChip category={categoryChipLabel} />
+            </div>
+          </header>
+
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)]">
+            <article className="prose prose-sm max-w-none lg:prose-base dark:prose-invert prose-headings:font-semibold prose-a:text-[var(--color-brand-700)] prose-strong:text-[var(--foreground)]">
+              {content}
+            </article>
+
+            <aside className="space-y-6">
+              <section className="rounded-xl border bg-card p-4 shadow-sm">
+                <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                  {locale === 'ru' ? 'Характеристики' : 'Specifications'}
+                </h2>
+                <div className="mt-3 space-y-3 text-sm">
                   <ParamRow label={attributes.category} value={categoryLabel} />
                   <ParamRow label={attributes.process} value={processValue} />
                   <ParamRow label={attributes.base} value={baseValue} />
@@ -132,55 +143,40 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
                 </div>
               </section>
 
-              {content ? (
-                <section className="prose prose-sm max-w-none lg:prose-base prose-headings:font-semibold prose-a:text-[var(--color-brand-700)] prose-strong:text-[var(--foreground)]">
-                  {content}
-                </section>
-              ) : null}
-            </div>
-
-            <aside className="space-y-4">
-              <Card>
-                <CardHeader className="mb-2">
-                  <CardTitle className="text-sm font-semibold">Связаться по продукту</CardTitle>
-                </CardHeader>
-                <p className="text-xs text-muted-foreground">
-                  Оставьте заявку, и мы подберём оптимальный режим применения {item.title}.
-                </p>
-                <div className="mt-3 flex flex-col gap-2">
-                  <Button asChild className="w-full">
-                    <a href={contactHref}>Оставить заявку</a>
-                  </Button>
-                  <Button asChild variant="ghost" className="w-full text-sm">
-                    <a href="tel:+74953572550">Позвонить: +7 (495) 357-25-50</a>
-                  </Button>
-                </div>
-              </Card>
-
-              {relatedDocuments.length ? (
-                <Card>
-                  <CardHeader className="mb-1">
-                    <CardTitle className="text-sm font-semibold">Документы</CardTitle>
-                  </CardHeader>
-                  <div className="space-y-2 text-sm">
-                    <ul className="space-y-1">
-                      {relatedDocuments.map((doc) => (
-                        <li key={doc.id} className="flex flex-col">
-                          <a href={doc.href} className="link" target="_blank" rel="noreferrer">
-                            {doc.title}
-                          </a>
-                          {doc.meta ? (
-                            <span className="text-xs text-muted-foreground">{doc.meta}</span>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
+              {item.documents.length ? (
+                <section className="rounded-xl border bg-card p-4 shadow-sm">
+                  <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Документация</h2>
+                  <div className="mt-3 flex flex-col gap-2">
+                    {item.documents.map((doc) => (
+                      <a
+                        key={doc.slug}
+                        href={doc.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-between rounded-lg border px-3 py-2 text-sm hover:bg-muted"
+                      >
+                        <span>
+                          {resolveDocumentTypeLabel(doc.type, locale)}
+                        </span>
+                        <span className="text-xs text-muted-foreground">PDF</span>
+                      </a>
+                    ))}
                   </div>
-                </Card>
+                </section>
               ) : null}
             </aside>
           </div>
-        </section>
+
+          <footer className="border-t pt-6 mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <Button asChild size="lg">
+              <Link href={contactHref}>Запросить предложение</Link>
+            </Button>
+
+            <p className="text-sm text-muted-foreground">
+              Свяжитесь с нами, чтобы подобрать оптимальный режим применения {item.title}.
+            </p>
+          </footer>
+        </div>
       </main>
     </SiteShell>
   );
@@ -232,51 +228,86 @@ function formatValues(values: string[]): string | null {
   return values.join(', ');
 }
 
-function resolveRelatedDocuments(documents: Document[], productId: string, locale: Locale) {
-  return documents
-    .filter((doc) => Array.isArray(doc.relatedProductIds) && doc.relatedProductIds.includes(productId))
-    .map((doc) => {
-      const title = resolveDocumentTitle(doc, locale);
-      const metaParts: string[] = [];
-      if (doc.fileExtension) {
-        metaParts.push(doc.fileExtension.toUpperCase());
-      }
-      if (typeof doc.fileSize === 'number' && doc.fileSize > 0) {
-        metaParts.push(formatFileSize(doc.fileSize));
-      }
-      if (!doc.file) {
-        return null;
-      }
-      return {
-        id: doc.id,
-        title,
-        href: doc.file,
-        meta: metaParts.filter(Boolean).join(' • '),
-      };
-    })
-    .filter((doc): doc is { id: string; title: string; href: string; meta: string } => Boolean(doc && doc.href && doc.title));
+function resolveDocumentTypeLabel(type: CatalogItem['documents'][number]['type'], locale: Locale): string {
+  const map: Record<CatalogItem['documents'][number]['type'], { ru: string; en: string }> = {
+    certificate: { ru: 'Сертификат', en: 'Certificate' },
+    tds: { ru: 'ТДС', en: 'TDS' },
+    msds: { ru: 'МСДС', en: 'MSDS' },
+    brochure: { ru: 'Брошюра', en: 'Brochure' },
+  };
+
+  const labels = map[type];
+  if (!labels) return type;
+  return locale === 'ru' ? labels.ru : labels.en;
 }
 
-function resolveDocumentTitle(document: Document, locale: Locale): string {
-  const localized = document.title[locale];
-  if (localized && localized.trim()) {
-    return localized;
+function resolveBadge(badge: CatalogBadge, locale: Locale) {
+  if (badge === 'none') {
+    return null;
   }
-  const fallback = document.title[locale === 'ru' ? 'en' : 'ru'];
-  if (fallback && fallback.trim()) {
-    return fallback;
-  }
-  return document.fileName ?? document.id;
+
+  const labelMap: Record<Exclude<CatalogBadge, 'none'>, { ru: string; en: string }> = {
+    bestseller: { ru: 'Хит продаж', en: 'Bestseller' },
+    premium: { ru: 'Премиум', en: 'Premium' },
+    eco: { ru: 'Eco', en: 'Eco' },
+    special: { ru: 'Спец.решение', en: 'Special' },
+  };
+
+  const classMap: Record<Exclude<CatalogBadge, 'none'>, string> = {
+    bestseller: 'bg-amber-100 text-amber-800',
+    premium: 'bg-purple-100 text-purple-800',
+    eco: 'bg-emerald-100 text-emerald-800',
+    special: 'bg-sky-100 text-sky-800',
+  };
+
+  const label = locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en;
+  return { label, className: classMap[badge] };
 }
 
-function formatFileSize(size: number): string {
-  if (!Number.isFinite(size) || size <= 0) return '';
-  const kb = size / 1024;
-  if (kb < 1024) {
-    return `${kb.toFixed(0)} KB`;
+function ProductBadge({ badge, locale }: { badge?: CatalogBadge; locale: Locale }) {
+  const badgeData = badge ? resolveBadge(badge, locale) : null;
+  if (!badgeData) {
+    return null;
   }
-  const mb = kb / 1024;
-  return `${mb.toFixed(1)} MB`;
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeData.className}`}
+    >
+      {badgeData.label}
+    </span>
+  );
+}
+
+function ProcessChip({ process }: { process?: string }) {
+  if (!process) {
+    return null;
+  }
+
+  const label =
+    process === 'alpha-set'
+      ? 'Alpha-set'
+      : process === 'furan'
+        ? 'Фуран'
+        : process;
+
+  return (
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+      {label}
+    </span>
+  );
+}
+
+function CategoryChip({ category }: { category?: string | null }) {
+  if (!category) {
+    return null;
+  }
+
+  return (
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+      {category}
+    </span>
+  );
 }
 
 export async function generateStaticParams(): Promise<Array<{ locale: Locale; slug: string }>> {

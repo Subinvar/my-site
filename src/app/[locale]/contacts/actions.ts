@@ -10,8 +10,20 @@ export async function sendContact(formData: FormData) {
   const rawLocale = formData.get('locale')?.toString() ?? 'ru';
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
   const contactsPath = buildPath(locale, ['contacts']);
-  const successRedirect = `${contactsPath}?ok=1`;
-  const errorRedirect = `${contactsPath}?ok=0`;
+  const product = formData.get('product')?.toString().trim() ?? '';
+  const params = new URLSearchParams();
+  params.set('ok', '1');
+  if (product) {
+    params.set('product', product);
+  }
+  const successRedirect = `${contactsPath}?${params.toString()}`;
+
+  const errorParams = new URLSearchParams();
+  errorParams.set('ok', '0');
+  if (product) {
+    errorParams.set('product', product);
+  }
+  const errorRedirect = `${contactsPath}?${errorParams.toString()}`;
   const isDryRun = process.env.LEADS_DRY_RUN !== '0';
 
   const honeypot = formData.get('company')?.toString().trim();
@@ -81,11 +93,12 @@ export async function sendContact(formData: FormData) {
     await transporter.sendMail({
       from: smtpUser,
       to: leadsTo,
-      subject: `[${locale.toUpperCase()}] Contact form: ${name}`,
+      subject: `[${locale.toUpperCase()}] ${product ? `Запрос по продукту ${product}` : 'Запрос с сайта intema.ru'}`,
       text: [
         `Name: ${name}`,
         `Email: ${email || '-'}`,
         `Phone: ${phone || '-'}`,
+        product ? `Product: ${product}` : null,
         '',
         message,
       ].join('\n'),

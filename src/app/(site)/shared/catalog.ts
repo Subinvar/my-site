@@ -58,7 +58,7 @@ export async function getCatalogProductPage(locale: Locale, slug: string): Promi
   }
 
   const content = await render(item.content, locale);
-  const summary = item.teaser ?? item.excerpt;
+  const summary = item.shortDescription ?? item.teaser ?? item.excerpt;
 
   return { item, content, summary } satisfies CatalogProductPageData;
 }

@@ -20,6 +20,9 @@ type Copy = {
   phone: string;
   phoneHint: string;
   contactRequired: string;
+  productLabel: string;
+  productHint: string;
+  productPlaceholder: string;
   message: string;
   agree: string;
   submit: string;
@@ -34,16 +37,27 @@ type ContactFormProps = {
   status: 'success' | 'error' | null;
   onSubmitAction: (formData: FormData) => Promise<void>;
   isDryRun: boolean;
+  initialProduct?: string;
 };
 
-export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction, isDryRun }: ContactFormProps) {
+export function ContactForm({
+  copy,
+  locale,
+  contactsPath,
+  status,
+  onSubmitAction,
+  isDryRun,
+  initialProduct,
+}: ContactFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dryRunStatus, setDryRunStatus] = useState<'success' | 'error' | null>(null);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [product, setProduct] = useState(initialProduct ?? '');
   const [contactError, setContactError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
 
   const currentStatus = isDryRun ? dryRunStatus : status;
   const successVisible = currentStatus === 'success';
@@ -53,6 +67,11 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
     setDryRunStatus('success');
     const params = new URLSearchParams(searchParams?.toString() ?? '');
     params.set('ok', '1');
+    if (product.trim()) {
+      params.set('product', product.trim());
+    } else {
+      params.delete('product');
+    }
     router.replace(`${contactsPath}?${params.toString()}`, { scroll: false });
   };
 
@@ -111,6 +130,22 @@ export function ContactForm({ copy, locale, contactsPath, status, onSubmitAction
           className="hidden"
           aria-hidden="true"
         />
+
+        {initialProduct ? (
+          <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+            {productNotice}: <span className="font-medium">{initialProduct}</span>
+          </div>
+        ) : null}
+
+        <Field label={copy.productLabel} htmlFor="product" description={copy.productHint}>
+          <Input
+            id="product"
+            name="product"
+            value={product}
+            onChange={(event) => setProduct(event.target.value)}
+            placeholder={copy.productPlaceholder}
+          />
+        </Field>
 
         <Field label={copy.name} htmlFor="name" required>
           <Input id="name" name="name" required minLength={2} maxLength={100} />
