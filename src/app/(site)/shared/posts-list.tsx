@@ -9,6 +9,8 @@ type PostListItem = {
   description: string | null;
   date: string | null;
   href: string;
+  imageSrc: string | null;
+  imageAlt: string | null;
 };
 
 const READ_MORE_LABEL: Record<Locale, string> = {
@@ -64,12 +66,17 @@ async function getLocalizedPosts(locale: Locale): Promise<PostListItem[]> {
       }
       const description = post.description ?? post.excerpt ?? null;
       const date = post.date ?? summary.updatedAt ?? post.updatedAt ?? null;
+      const cover = post.cover ?? null;
+      const imageSrc = cover?.src ?? null;
+      const imageAlt = cover?.alt ?? post.title ?? null;
       return {
         id: post.id,
         title: post.title,
         description,
         date,
         href: buildPath(locale, ['news', slug]),
+        imageSrc,
+        imageAlt,
       } satisfies PostListItem;
     })
   );
@@ -104,6 +111,8 @@ export async function PostsList({ locale }: { locale: Locale }) {
                 dateTime={post.date}
                 href={post.href}
                 readMoreLabel={READ_MORE_LABEL[locale]}
+                imageSrc={post.imageSrc}
+                imageAlt={post.imageAlt}
               />
             </li>
           );
