@@ -45,11 +45,13 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
+  const [theme, setTheme] = useState<Theme | null>(() => {
+    if (typeof document === 'undefined') {
+      return null;
+    }
 
-  useEffect(() => {
-    setTheme(resolveInitialClientTheme());
-  }, []);
+    return resolveInitialClientTheme();
+  });
 
   useEffect(() => {
     if (theme) {
