@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title id="title">ЛЗ ПЗМ</title>
+  <desc id="desc">Минималистичный логотип ЛЗ ПЗМ с геометрическим значком</desc>
+  <rect width="200" height="80" rx="12" fill="#1f2937"/>
+  <path d="M46 24l18 16-18 16-18-16z" fill="#f59e0b"/>
+  <path d="M46 30l12 10-12 10-12-10z" fill="#fde68a"/>
+  <text x="80" y="50" fill="#ffffff" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="20" font-weight="700">ЛЗ ПЗМ</text>
+</svg>

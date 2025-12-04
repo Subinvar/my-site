@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title id="title">УАЗ</title>
+  <desc id="desc">Лаконичный логотип УАЗ с крыльями и буквой U</desc>
+  <rect width="200" height="80" rx="12" fill="#0f7a3d"/>
+  <path d="M30 40h140" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M50 42l-12 14h20z" fill="#ffffff" opacity="0.9"/>
+  <path d="M150 42l12 14h-20z" fill="#ffffff" opacity="0.9"/>
+  <circle cx="100" cy="40" r="18" fill="#ffffff" opacity="0.95"/>
+  <path d="M90 30h6v12c0 4 2 6 4 6s4-2 4-6V30h6v13c0 8-4 13-10 13s-10-5-10-13z" fill="#0f7a3d"/>
+  <text x="70" y="67" fill="#ffffff" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700">UAZ</text>
+</svg>
