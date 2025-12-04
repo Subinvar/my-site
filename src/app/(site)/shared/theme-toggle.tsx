@@ -21,11 +21,7 @@ const resolveStoredTheme = (): Theme | null => {
   return null;
 };
 
-const resolveInitialTheme = (): Theme => {
-  if (typeof document === 'undefined') {
-    return 'light';
-  }
-
+const resolveInitialClientTheme = (): Theme => {
   const attrTheme = document.documentElement.dataset.theme;
   if (attrTheme === 'dark' || attrTheme === 'light') {
     return attrTheme;
@@ -49,10 +45,16 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(resolveInitialTheme);
+  const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
-    applyTheme(theme);
+    setTheme(resolveInitialClientTheme());
+  }, []);
+
+  useEffect(() => {
+    if (theme) {
+      applyTheme(theme);
+    }
   }, [theme]);
 
   const toggle = () => {
@@ -69,15 +71,24 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       className="rounded-full border border-border shadow-sm hover:bg-muted"
+      disabled={!theme}
     >
-      <span className="sr-only">{isDark ? 'Светлая тема' : 'Тёмная тема'}</span>
+      <span className="sr-only">
+        {!theme ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
+      </span>
       <span className="relative inline-flex items-center justify-center">
-        <SunIcon
-          className={`h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0'}`}
-        />
-        <MoonIcon
-          className={`absolute h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'}`}
-        />
+        {!theme ? (
+          <span className="h-4 w-4 animate-pulse rounded-full bg-muted" aria-hidden />
+        ) : (
+          <>
+            <SunIcon
+              className={`h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0'}`}
+            />
+            <MoonIcon
+              className={`absolute h-4 w-4 transition-transform duration-200 ${isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'}`}
+            />
+          </>
+        )}
       </span>
     </Button>
   );
