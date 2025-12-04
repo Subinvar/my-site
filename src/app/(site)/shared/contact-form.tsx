@@ -106,7 +106,9 @@ export function ContactForm({
   return (
     <div className="space-y-6">
       {successVisible ? (
-        <Alert variant="success">{copy.success}</Alert>
+        <Alert variant="success" className="animate-[fade-in-up_0.25s_ease-out_forwards]">
+          {copy.success}
+        </Alert>
       ) : null}
       {errorVisible ? (
         <Alert variant="destructive">{copy.error}</Alert>
