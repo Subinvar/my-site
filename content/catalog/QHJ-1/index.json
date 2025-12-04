@@ -1,0 +1,26 @@
+{
+  "slugKey": "qhj-1",
+  "published": true,
+  "slug": {
+    "ru": "qhj-1",
+    "en": "qhj-1"
+  },
+  "title": {
+    "ru": "QHJ-1",
+    "en": "QHJ-1"
+  },
+  "excerpt": {
+    "ru": "Магниевый сфероидизирующий модификатор для производства высокопрочного чугуна. Обеспечивает высокую степень шаровидности графита и стабильные механические свойства при ковшевой обработке.",
+    "en": "Magnesium-based nodulariser for ductile iron. Provides high nodularity and consistent mechanical properties in ladle treatment."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Модификатор"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}

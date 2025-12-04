@@ -1,0 +1,26 @@
+{
+  "slugKey": "yyj-1",
+  "published": true,
+  "slug": {
+    "ru": "yyj-1",
+    "en": "yyj-1"
+  },
+  "title": {
+    "ru": "YYJ-1",
+    "en": "YYJ-1"
+  },
+  "excerpt": {
+    "ru": "Бариесодержащий графитизирующий модификатор на основе ферросилиция. Снижает отбел и усадочную пористость, улучшает структуру графита и обрабатываемость чугунных отливок.",
+    "en": "Barium-bearing ferrosilicon inoculant. Reduces chill and shrinkage porosity, refines graphite structure and improves machinability of iron castings."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Модификатор"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}

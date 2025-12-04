@@ -1,0 +1,26 @@
+{
+  "slugKey": "eps-50",
+  "published": true,
+  "slug": {
+    "ru": "eps-50",
+    "en": "eps-50"
+  },
+  "title": {
+    "ru": "ЭПС-50",
+    "en": "EPS-50"
+  },
+  "excerpt": {
+    "ru": "Экзотермическая покровная смесь повышенной эффективности для стальных прибылей. Предназначена для массивных отливок и сложных узлов, где требуется максимально длительное питание.",
+    "en": "High-performance exothermic cover mix for steel feeders. Recommended for heavy-section castings and critical steel parts requiring extended feeding."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Экзотермическая смесь"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}
