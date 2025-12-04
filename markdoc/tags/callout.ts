@@ -1,7 +1,7 @@
 import type { Schema } from "@markdoc/markdoc";
 
 const callout = {
-  render: "Callout",
+  render: "callout",
   description: "Визуальный блок для вынесенных примечаний или подсказок.",
   attributes: {
     type: {

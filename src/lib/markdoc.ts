@@ -6,7 +6,7 @@ import { defaultLocale, locales, type Locale } from './i18n';
 import alertTag from '../../markdoc/tags/alert';
 import figureTag from '../../markdoc/tags/figure';
 
-export type CalloutKind = 'note' | 'info' | 'warning';
+export type CalloutKind = 'note' | 'info' | 'warning' | 'success';
 
 export const ALERT_TONES = ['info', 'success', 'warning', 'error'] as const;
 
@@ -19,6 +19,7 @@ export type MarkdocContent = ResolvedMarkdocContent | null | undefined;
 export const CALLOUT_LABELS: Record<CalloutKind, Record<Locale, string>> = {
   note: { ru: 'Заметка', en: 'Note' },
   info: { ru: 'Важно', en: 'Info' },
+  success: { ru: 'Успех', en: 'Success' },
   warning: { ru: 'Предупреждение', en: 'Warning' },
 };
 
@@ -105,9 +106,9 @@ export const config: Config = {
   },
   tags: {
     callout: {
-      render: 'Callout',
+      render: 'callout',
       attributes: {
-        type: { type: String, default: 'note' },
+        type: { type: String, default: 'info' },
         title: { type: String },
       },
     },
@@ -212,9 +213,9 @@ export function createComponents(locale: Locale) {
       title?: string;
       children?: ReactNode;
     }) => {
-      const kind: CalloutKind = ['note', 'info', 'warning'].includes(type ?? '')
+      const kind: CalloutKind = ['note', 'info', 'warning', 'success'].includes(type ?? '')
         ? (type as CalloutKind)
-        : 'note';
+        : 'info';
       const heading = title?.trim() || calloutTitleFallback[kind];
       return React.createElement(
         'aside',
