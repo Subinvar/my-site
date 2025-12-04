@@ -28,6 +28,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const themeCookie = cookieStore.get('theme')?.value;
   const theme = themeCookie === 'dark' || themeCookie === 'light' ? themeCookie : undefined;
 
+  const setInitialTheme = `(() => {
+    const match = document.cookie.match(/(?:^|\\s*)theme=(light|dark)/);
+    const stored = match?.[1];
+    const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    const theme = stored ?? (systemDark ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+
+    if (!stored) {
+      document.cookie = \`theme=\${theme}; path=/; max-age=31536000\`;
+    }
+  })();`;
+
   return (
     <html
       lang={locale}
@@ -37,6 +49,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       data-theme={theme}
     >
       <body className="antialiased">
+        <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
         <HtmlLangSync />
         {children}
       </body>
