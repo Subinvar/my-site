@@ -7,7 +7,11 @@ import { Button } from '@/app/(site)/shared/ui/button';
 
 type Theme = 'light' | 'dark';
 
+const isClient = typeof document !== 'undefined';
+
 const resolveStoredTheme = (): Theme | null => {
+  if (!isClient) return null;
+
   const match = document.cookie.match(/(?:^|\s*)theme=(light|dark)/);
 
   if (match) {
@@ -22,6 +26,8 @@ const resolveStoredTheme = (): Theme | null => {
 };
 
 const resolveInitialClientTheme = (): Theme => {
+  if (!isClient) return 'light';
+
   const attrTheme = document.documentElement.dataset.theme;
   if (attrTheme === 'dark' || attrTheme === 'light') {
     return attrTheme;
@@ -45,13 +51,8 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setTheme(resolveInitialClientTheme());
-    setIsMounted(true);
-  }, []);
+  const [theme, setTheme] = useState<Theme>(() => resolveInitialClientTheme());
+  const isMounted = isClient;
 
   useEffect(() => {
     if (!theme) return;
@@ -73,13 +74,13 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       className="rounded-full border border-border shadow-sm hover:bg-muted"
-      disabled={!theme || !isMounted}
+      disabled={!isMounted}
     >
       <span className="sr-only">
-        {!isMounted || !theme ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
+        {!isMounted ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
       </span>
       <span className="relative inline-flex items-center justify-center">
-        {!theme ? (
+        {!isMounted ? (
           <span className="h-4 w-4 animate-pulse rounded-full bg-muted" aria-hidden />
         ) : (
           <>
