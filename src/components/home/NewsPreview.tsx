@@ -1,8 +1,7 @@
-import Link from 'next/link';
-
 import { getAllPosts, getPostBySlug } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
+import { NewsPreviewContent } from './NewsPreviewContent';
 
 type Props = {
   locale: Locale;
@@ -12,7 +11,7 @@ type Props = {
   };
 };
 
-type PostPreview = {
+export type PostPreview = {
   id: string;
   title: string;
   excerpt: string | null;
@@ -110,45 +109,14 @@ export async function NewsPreview({ locale, intro }: Props) {
   }
 
   return (
-    <section className="py-16 lg:py-20">
-      <div className="container mx-auto px-4">
-        <header className="mb-8 flex items-end justify-between gap-4">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">{title}</h2>
-            <p className="text-muted-foreground">{description}</p>
-          </div>
-          <Link href={buildPath(locale, ['news'])} className="text-sm font-medium text-primary hover:underline">
-            {VIEW_ALL_LABEL[locale]}
-          </Link>
-        </header>
-
-        <div className="space-y-4">
-          {posts.map((post) => {
-            const formattedDate = formatDisplayDate(post.date, locale);
-            return (
-              <article
-                key={post.id}
-                className="card flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between hover:shadow-md transition-shadow duration-200"
-              >
-                <div>
-                  {formattedDate ? (
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{formattedDate}</div>
-                  ) : null}
-                  <Link href={post.href} className="text-base font-medium hover:text-primary">
-                    {post.title}
-                  </Link>
-                  {post.excerpt ? (
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.excerpt}</p>
-                  ) : null}
-                </div>
-                <Link href={post.href} className="text-sm font-medium text-primary hover:underline">
-                  {VIEW_POST_LABEL[locale]}
-                </Link>
-              </article>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+    <NewsPreviewContent
+      locale={locale}
+      title={title}
+      description={description}
+      viewAllLabel={VIEW_ALL_LABEL[locale]}
+      viewPostLabel={VIEW_POST_LABEL[locale]}
+      posts={posts}
+      viewAllHref={buildPath(locale, ['news'])}
+    />
   );
 }

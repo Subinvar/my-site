@@ -1,28 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Card } from '@/app/(site)/shared/ui/card';
 import type { Locale } from '@/lib/i18n';
-
-function useInView(threshold = 0.3) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) setInView(true);
-      },
-      { threshold },
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, inView } as const;
-}
+import { useInView } from '@/lib/use-in-view';
+import { cn } from '@/lib/cn';
 
 function AnimatedNumber({ target }: { target: number }) {
   const [value, setValue] = useState(0);
@@ -77,7 +60,7 @@ export function HomeStats({ locale, items }: HomeStatsProps) {
     };
   });
   const visibleItems = list.filter((item) => item.label || item.value);
-  const { ref, inView } = useInView(0.3);
+  const { ref, inView } = useInView({ rootMargin: '-20% 0px' });
 
   if (!visibleItems.length) {
     return null;
@@ -86,7 +69,11 @@ export function HomeStats({ locale, items }: HomeStatsProps) {
   return (
     <section
       ref={ref}
-      className="space-y-6 rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8"
+      className={cn(
+        'space-y-6 rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8',
+        'motion-fade-in-up',
+      )}
+      data-in-view={inView ? 'true' : 'false'}
     >
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold text-[var(--foreground)] sm:text-3xl">

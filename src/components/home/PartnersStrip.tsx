@@ -1,7 +1,11 @@
+"use client";
+
 import Image from 'next/image';
 
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import type { Locale } from '@/lib/i18n';
+import { useInView } from '@/lib/use-in-view';
+import { cn } from '@/lib/cn';
 
 export type PartnersStripProps = {
   locale: Locale;
@@ -18,6 +22,7 @@ const PARTNERS = [
 
 export function PartnersStrip({ locale, intro }: PartnersStripProps) {
   const isRu = locale === 'ru';
+  const { ref, inView } = useInView({ rootMargin: '-20% 0px' });
 
   const withFallback = (value: string | undefined, fallback: string) => {
     const normalized = value?.trim();
@@ -33,7 +38,11 @@ export function PartnersStrip({ locale, intro }: PartnersStripProps) {
   );
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8">
+    <section
+      ref={ref}
+      className={cn('rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8', 'motion-fade-in-up')}
+      data-in-view={inView ? 'true' : 'false'}
+    >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <SectionHeading
           title={title}

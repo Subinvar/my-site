@@ -1,8 +1,12 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 
 import type { Locale } from '@/lib/i18n';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { useInView } from '@/lib/use-in-view';
+import { cn } from '@/lib/cn';
 
 export type HeroProps = {
   locale: Locale;
@@ -19,6 +23,7 @@ export type HeroProps = {
 
 export function Hero({ locale, data }: HeroProps) {
   const isRu = locale === 'ru';
+  const { ref, inView } = useInView({ rootMargin: '0px' });
 
   const withFallback = (value: string | undefined, fallback: string) => {
     const normalized = value?.trim();
@@ -63,9 +68,12 @@ export function Hero({ locale, data }: HeroProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
       </div>
-
       <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:py-28">
-        <div className="max-w-2xl space-y-6">
+        <div
+          ref={ref}
+          className={cn('max-w-2xl space-y-6 motion-fade-in-up')}
+          data-in-view={inView ? 'true' : 'false'}
+        >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
             {preheading}
           </p>
