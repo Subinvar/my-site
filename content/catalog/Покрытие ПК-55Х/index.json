@@ -10,8 +10,8 @@
     "en": "PK-55H"
   },
   "excerpt": {
-    "ru": "Покрытие ПК-55Х — продукт категории «Противопригарные покрытия» для литейного производства. процессы: Альфа-cет, Фуран, Резол-CO₂, ЖСС, Пеп-сет и Кронинг; основа: Спиртовое",
-    "en": "PK-55H is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: Альфа-cет, Фуран, Резол-CO₂, ЖСС, Пеп-сет and Кронинг; base: Спиртовое"
+    "ru": "Спиртовое хромитовое противопригарное покрытие с «захолаживающим» эффектом: для горячих узлов стальных и чугунных отливок или как альтернатива хромитовому песку.",
+    "en": "Alcohol-based chromite coating with a local “chilling” effect: for hot spots in steel and cast iron castings or as an alternative to chromite sand."
   },
   "content": {},
   "category": "Противопригарные покрытия",
@@ -29,5 +29,5 @@
   "filler": [],
   "metals": [],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:19"
+  "updatedAt": "2025-12-04T09:19"
 }
