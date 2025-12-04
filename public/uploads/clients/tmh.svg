@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title id="title">Трансмашхолдинг</title>
+  <desc id="desc">Логотип ТМХ в виде абстрактного колеса</desc>
+  <rect width="200" height="80" rx="12" fill="#0f172a"/>
+  <circle cx="50" cy="40" r="24" fill="#2563eb"/>
+  <circle cx="50" cy="40" r="14" fill="#0f172a"/>
+  <path d="M50 22a18 18 0 0 1 18 18h-8a10 10 0 0 0-10-10z" fill="#93c5fd"/>
+  <text x="90" y="50" fill="#e2e8f0" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700">TMH</text>
+</svg>

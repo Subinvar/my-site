@@ -8,6 +8,9 @@ import {
   getLocalizedPageParams,
   resolveContentPageMetadata,
 } from '@/app/(site)/shared/content-page';
+import { PartnersSuppliersSection } from '@/app/(site)/shared/partners-suppliers-section';
+import { KeyClientsStrip } from '@/app/(site)/shared/key-clients-strip';
+import { PartnersCta } from '@/app/(site)/shared/partners-cta';
 import { PostsList } from '@/app/(site)/shared/posts-list';
 import { defaultLocale } from '@/lib/i18n';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
@@ -31,6 +34,7 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
 
   const { page, content, summary } = data;
   const isNewsPage = page.id === 'news';
+  const isPartnersPage = page.id === 'partners';
   const targetLocale = findTargetLocale(locale);
   const switcherHref = switchLocalePath(locale, targetLocale, {
     collection: 'pages',
@@ -47,14 +51,24 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <article className="max-w-none">
-        <header className="mb-10 space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
-          {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
-        </header>
-        <div className="prose-markdoc">{content}</div>
-      </article>
-      {isNewsPage ? <PostsList locale={locale} /> : null}
+      <div className="space-y-12">
+        <article className="max-w-none space-y-6">
+          <header className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">{page.title}</h1>
+            {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
+          </header>
+          <div className="prose-markdoc">{content}</div>
+        </article>
+
+        {isPartnersPage ? (
+          <>
+            <PartnersSuppliersSection locale={locale} />
+            <KeyClientsStrip locale={locale} variant="full" />
+            <PartnersCta locale={locale} />
+          </>
+        ) : null}
+        {isNewsPage ? <PostsList locale={locale} /> : null}
+      </div>
     </SiteShell>
   );
 }

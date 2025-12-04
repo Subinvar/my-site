@@ -14,6 +14,7 @@ import { ProductDirections } from '@/components/home/ProductDirections';
 import { PartnersStrip } from '@/components/home/PartnersStrip';
 import { NewsPreview } from '@/components/home/NewsPreview';
 import { getHomeContent } from '@/lib/content/home';
+import { KeyClientsStrip } from '@/app/(site)/shared/key-clients-strip';
 
 export const dynamic = 'force-static';
 
@@ -58,6 +59,8 @@ export default async function RootHomePage() {
         <NewsPreview locale={locale} intro={home?.newsIntro} />
 
         <PartnersStrip locale={locale} intro={home?.partnersIntro} />
+
+        <KeyClientsStrip locale={locale} variant="compact" />
 
         <article className="space-y-6 rounded-2xl border border-border/70 bg-card/80 p-6 shadow-sm sm:p-8">
           <header className="space-y-2">

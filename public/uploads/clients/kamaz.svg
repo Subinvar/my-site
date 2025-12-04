@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title id="title">КамАЗ</title>
+  <desc id="desc">Логотип КамАЗ в упрощённом виде с буквой K в круге</desc>
+  <rect width="200" height="80" rx="12" fill="#0b4ea2"/>
+  <circle cx="46" cy="40" r="22" fill="#ffffff" opacity="0.96"/>
+  <path d="M44 24h6v32h-6z" fill="#0b4ea2"/>
+  <path d="M32 40c7-4 11-8 12-16h6c-1 9-6 15-13 18 7 3 12 9 13 18h-6c-1-8-5-12-12-16z" fill="#0b4ea2"/>
+  <text x="80" y="50" fill="#ffffff" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="1.5">KAMAZ</text>
+</svg>

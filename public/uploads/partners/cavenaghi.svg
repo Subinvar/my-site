@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 96" role="img" aria-labelledby="title desc">
+  <title id="title">Cavenaghi logo</title>
+  <desc id="desc">Modern wordmark with geometric badge</desc>
+  <rect x="4" y="10" width="84" height="76" rx="12" fill="#0f172a"/>
+  <path d="M30 34h36v10H30z" fill="#2563eb"/>
+  <path d="M30 48h36v8H30z" fill="#38bdf8"/>
+  <path d="M30 60h36v10H30z" fill="#2563eb"/>
+  <path d="M66 30 78 18v60L66 66Z" fill="#38bdf8"/>
+  <text x="104" y="50" fill="#0f172a" font-family="Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" font-weight="700">Cavenaghi</text>
+  <text x="104" y="72" fill="#0f172a" font-family="Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="600">S.p.A.</text>
+</svg>

@@ -10,6 +10,9 @@ import {
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
+import { PartnersSuppliersSection } from '@/app/(site)/shared/partners-suppliers-section';
+import { KeyClientsStrip } from '@/app/(site)/shared/key-clients-strip';
+import { PartnersCta } from '@/app/(site)/shared/partners-cta';
 import { PostsList } from '@/app/(site)/shared/posts-list';
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -41,6 +44,7 @@ export default async function Page({ params }: PageProps) {
   const { page, content, summary } = data;
   const isNewsPage = page.id === 'news';
   const isProductsPage = page.id === 'products';
+  const isPartnersPage = page.id === 'partners';
   const targetLocale = findTargetLocale(locale);
   const switcherHref = switchLocalePath(locale, targetLocale, {
     collection: 'pages',
@@ -72,6 +76,13 @@ export default async function Page({ params }: PageProps) {
           <div className="prose-markdoc">{content}</div>
         </article>
 
+        {isPartnersPage ? (
+          <>
+            <PartnersSuppliersSection locale={locale} />
+            <KeyClientsStrip locale={locale} variant="full" />
+            <PartnersCta locale={locale} />
+          </>
+        ) : null}
         {isProductsPage ? <ProductCategoriesSection locale={locale} /> : null}
         {isNewsPage ? <PostsList locale={locale} /> : null}
       </div>

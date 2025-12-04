@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-labelledby="title desc">
+  <title id="title">Норникель</title>
+  <desc id="desc">Стиллизованный логотип Норникеля с буквами N</desc>
+  <rect width="200" height="80" rx="12" fill="#0ea5e9"/>
+  <path d="M48 24l24 16-24 16-24-16z" fill="#e0f2fe"/>
+  <path d="M48 32l12 8-12 8-12-8z" fill="#0ea5e9"/>
+  <rect x="80" y="24" width="6" height="32" fill="#e0f2fe"/>
+  <rect x="110" y="24" width="6" height="32" fill="#e0f2fe"/>
+  <rect x="86" y="24" width="24" height="8" fill="#e0f2fe"/>
+  <rect x="86" y="48" width="24" height="8" fill="#e0f2fe"/>
+  <text x="130" y="50" fill="#e0f2fe" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700">NN</text>
+</svg>
