@@ -45,18 +45,6 @@ function toTimestamp(value: string | null): number {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
-function formatDisplayDate(value: string | null, locale: Locale): string | null {
-  if (!value) return null;
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return value;
-  }
-  const formatter = new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
-    dateStyle: 'medium',
-  });
-  return formatter.format(parsed);
-}
-
 async function getLatestPosts(locale: Locale, limit = 3): Promise<PostPreview[]> {
   const summaries = await getAllPosts();
   const candidates = summaries
