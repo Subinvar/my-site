@@ -6,23 +6,31 @@
     "en": "vpk-gm03"
   },
   "title": {
-    "ru": "Покрытие ВПК-ГМ03",
-    "en": "VPK-GM03"
+    "ru": "Покрытие ВПК-ГМ 03",
+    "en": "VPK-GM 03"
   },
   "excerpt": {
-    "ru": "Покрытие ВПК-ГМ03 — продукт категории «Противопригарные покрытия» для литейного производства. процессы: ЛГМ; основа: Водное",
-    "en": "VPK-GM03 is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: ЛГМ; base: Водное"
+    "ru": "Водное цирконовое противопригарное покрытие для стального и чугунного литья с повышенной огнеупорностью и минимальным пригаром в термически нагруженных зонах.",
+    "en": "Water-based zircon anti-penetration coating for steel and iron castings, providing high refractoriness and minimal burn-on in thermally loaded areas."
   },
   "content": {},
   "category": "Противопригарные покрытия",
   "process": [
+    "Колд-Бокс",
+    "ЖСС",
+    "ПГС",
     "ЛГМ"
   ],
   "base": [
     "Водное"
   ],
-  "filler": [],
-  "metals": [],
+  "filler": [
+    "Циркон"
+  ],
+  "metals": [
+    "Сталь",
+    "Чугун"
+  ],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:25"
+  "updatedAt": "2025-02-14T00:00"
 }

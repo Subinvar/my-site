@@ -10,19 +10,25 @@
     "en": "VPK-60C"
   },
   "excerpt": {
-    "ru": "Покрытие ВПК-60Ц — продукт категории «Противопригарные покрытия» для литейного производства. процессы: ПГС; основа: Водное",
-    "en": "VPK-60C is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: ПГС; base: Водное"
+    "ru": "Водное цирконовое противопригарное покрытие для отливок из углеродистой стали, обеспечивающее высокую огнеупорность слоя и чистую поверхность сложных форм и стержней.",
+    "en": "Water-based zircon anti-penetration coating for carbon-steel castings, ensuring high layer refractoriness and clean surfaces on complex moulds and cores."
   },
   "content": {},
   "category": "Противопригарные покрытия",
   "process": [
+    "Колд-Бокс",
+    "ЖСС",
     "ПГС"
   ],
   "base": [
     "Водное"
   ],
-  "filler": [],
-  "metals": [],
+  "filler": [
+    "Циркон"
+  ],
+  "metals": [
+    "Сталь"
+  ],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:22"
+  "updatedAt": "2025-02-14T00:00"
 }
