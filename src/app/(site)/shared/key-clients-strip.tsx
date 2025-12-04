@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { JSX } from 'react';
 
 type Locale = 'ru' | 'en';
@@ -64,10 +65,11 @@ export function KeyClientsStrip({
             key={client.id}
             className="flex items-center justify-center rounded-xl bg-background border border-border/60 px-4 py-3 shadow-sm"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- Logos are served as static <img> assets for predictable sizing */}
-            <img
+            <Image
               src={client.logoSrc}
               alt={client.name}
+              width={200}
+              height={80}
               className={
                 variant === 'full'
                   ? 'max-h-10 max-w-full object-contain'
