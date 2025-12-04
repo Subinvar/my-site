@@ -31,6 +31,7 @@ export const ALLOWED_BINDER_PROCESSES: CatalogProcess[] = [
   'ЖСС',
   'Колд-Бокс',
   'Кронинг',
+  'Пеп-сет',
   'Резол-CO₂',
   'Фуран',
 ];
