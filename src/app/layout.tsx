@@ -29,6 +29,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const theme = themeCookie === 'dark' || themeCookie === 'light' ? themeCookie : undefined;
 
   const setInitialTheme = `(() => {
+    const preset = document.documentElement.dataset.theme;
+    if (preset === 'light' || preset === 'dark') return;
+
     const match = document.cookie.match(/(?:^|\\s*)theme=(light|dark)/);
     const stored = match?.[1];
     const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
@@ -42,6 +45,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html
+      suppressHydrationWarning
       lang={locale}
       className={`${bodyFont.variable} ${headingFont.variable}`}
       data-locales={locales.join(',')}
