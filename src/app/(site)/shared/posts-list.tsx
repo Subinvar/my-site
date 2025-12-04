@@ -10,7 +10,7 @@ type PostListItem = {
   date: string | null;
   href: string;
   imageSrc: string | null;
-  imageAlt: string | null;
+  imageAlt: string;
 };
 
 const READ_MORE_LABEL: Record<Locale, string> = {
@@ -68,7 +68,7 @@ async function getLocalizedPosts(locale: Locale): Promise<PostListItem[]> {
       const date = post.date ?? summary.updatedAt ?? post.updatedAt ?? null;
       const cover = post.cover ?? null;
       const imageSrc = cover?.src ?? null;
-      const imageAlt = cover?.alt ?? post.title ?? null;
+      const imageAlt = cover?.alt ?? post.title ?? '';
       return {
         id: post.id,
         title: post.title,
@@ -81,7 +81,7 @@ async function getLocalizedPosts(locale: Locale): Promise<PostListItem[]> {
     })
   );
 
-  const filteredPosts = posts.filter((post): post is PostListItem => Boolean(post));
+  const filteredPosts = posts.filter((post): post is PostListItem => post !== null);
 
   return filteredPosts.sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date));
 }
