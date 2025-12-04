@@ -1,0 +1,26 @@
+{
+  "slugKey": "rp-2-repair-paste",
+  "published": true,
+  "slug": {
+    "ru": "rp-2-repair-paste",
+    "en": "rp-2-repair-paste"
+  },
+  "title": {
+    "ru": "Ремонтная паста РП-2",
+    "en": "RP-2 Repair Paste"
+  },
+  "excerpt": {
+    "ru": "Ремонтная паста красно-коричневого цвета для устранения трещин, сколов и раковин на формах и стержнях. Повышает чистоту поверхности и точность отливок.",
+    "en": "Red-brown repair paste for eliminating cracks, chips and surface defects on molds and cores. Improves casting surface finish and dimensional accuracy."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Ремонтная паста"
+  ],
+  "updatedAt": "2024-07-09T00:00"
+}

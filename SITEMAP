@@ -27,6 +27,7 @@
 - http://localhost:3000/catalog/catalyst-ok и http://localhost:3000/en/catalog/catalyst-ok — продукт «Катализатор серии ОК» / "Catalyst OK".
 - http://localhost:3000/catalog/kley-kfs-01 и http://localhost:3000/en/catalog/kley-kfs-01 — продукт «Клей КФС-01» / "Kley KFS-01".
 - http://localhost:3000/catalog/kley-kfs-02 и http://localhost:3000/en/catalog/kley-kfs-02 — продукт «Клей КФС-02» / "Kley KFS-02".
+- http://localhost:3000/catalog/rp-2-repair-paste и http://localhost:3000/en/catalog/rp-2-repair-paste — продукт «Ремонтная паста РП-2» / "RP-2 Repair Paste".
 - http://localhost:3000/catalog/nodulant и http://localhost:3000/en/catalog/nodulant — продукт «Нодулант» / "Nodulant".
 - http://localhost:3000/catalog/otverditel-a и http://localhost:3000/en/catalog/otverditel-a — продукт «Отвердитель серии А» / "Otverditel A".
 - http://localhost:3000/catalog/otverditel-am и http://localhost:3000/en/catalog/otverditel-am — продукт «Отвердитель серии АМ» / "Otverditel AM".
