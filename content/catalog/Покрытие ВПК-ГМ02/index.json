@@ -6,23 +6,30 @@
     "en": "vpk-gm02"
   },
   "title": {
-    "ru": "Покрытие ВПК-ГМ02",
-    "en": "VPK-GM02"
+    "ru": "Покрытие ВПК-ГМ 02",
+    "en": "VPK-GM 02"
   },
   "excerpt": {
-    "ru": "Покрытие ВПК-ГМ02 — продукт категории «Противопригарные покрытия» для литейного производства. процессы: ЛГМ; основа: Водное",
-    "en": "VPK-GM02 is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: ЛГМ; base: Водное"
+    "ru": "Водное графитовое противопригарное покрытие для чугунного литья, снижает пригар и объём зачистки, стабильно работает на ХТС- и жидкостекольных смесях.",
+    "en": "Water-based graphite anti-penetration coating for iron castings, minimizing burn-on and fettling time, stable on no-bake and sodium-silicate sands."
   },
   "content": {},
   "category": "Противопригарные покрытия",
   "process": [
+    "Колд-Бокс",
+    "ЖСС",
+    "ПГС",
     "ЛГМ"
   ],
   "base": [
     "Водное"
   ],
-  "filler": [],
-  "metals": [],
+  "filler": [
+    "Графит"
+  ],
+  "metals": [
+    "Чугун"
+  ],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:24"
+  "updatedAt": "2025-02-14T00:00"
 }

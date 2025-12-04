@@ -1,0 +1,36 @@
+{
+  "slugKey": "vpk-gm215",
+  "published": true,
+  "slug": {
+    "ru": "vpk-gm215",
+    "en": "vpk-gm215"
+  },
+  "title": {
+    "ru": "Покрытие ВПК-ГМ 215",
+    "en": "VPK-GM 215"
+  },
+  "excerpt": {
+    "ru": "Водное цирконовое противопригарное покрытие для стального и чугунного литья, рассчитанное на особо нагруженные участки форм и стержней и повышенные требования к поверхности.",
+    "en": "Water-based zircon anti-penetration coating for steel and iron castings, designed for highly loaded areas of moulds and cores where maximum layer stability and surface quality are required."
+  },
+  "content": {},
+  "category": "Противопригарные покрытия",
+  "process": [
+    "Колд-Бокс",
+    "ЖСС",
+    "ПГС",
+    "ЛГМ"
+  ],
+  "base": [
+    "Водное"
+  ],
+  "filler": [
+    "Циркон"
+  ],
+  "metals": [
+    "Сталь",
+    "Чугун"
+  ],
+  "auxiliary": [],
+  "updatedAt": "2025-02-14T00:00"
+}

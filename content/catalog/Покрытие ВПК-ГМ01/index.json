@@ -6,23 +6,31 @@
     "en": "vpk-gm01"
   },
   "title": {
-    "ru": "Покрытие ВПК-ГМ01",
-    "en": "VPK-GM01"
+    "ru": "Покрытие ВПК-ГМ 01",
+    "en": "VPK-GM 01"
   },
   "excerpt": {
-    "ru": "Покрытие ВПК-ГМ01 — продукт категории «Противопригарные покрытия» для литейного производства. процессы: ЛГМ; основа: Водное",
-    "en": "VPK-GM01 is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: ЛГМ; base: Водное"
+    "ru": "Водоразбавимое алюмосиликатное противопригарное покрытие для стальных и цветных отливок, снижает пригар и улучшает чистоту поверхности форм и стержней.",
+    "en": "Water-dilutable aluminosilicate anti-penetration coating for steel and non-ferrous castings, reducing burn-on and improving mould and core surface quality."
   },
   "content": {},
   "category": "Противопригарные покрытия",
   "process": [
+    "Колд-Бокс",
+    "ЖСС",
+    "ПГС",
     "ЛГМ"
   ],
   "base": [
     "Водное"
   ],
-  "filler": [],
-  "metals": [],
+  "filler": [
+    "Алюмосиликат"
+  ],
+  "metals": [
+    "Сталь",
+    "Цветные сплавы"
+  ],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:23"
+  "updatedAt": "2025-02-14T00:00"
 }

@@ -10,19 +10,26 @@
     "en": "VPK-01GC"
   },
   "excerpt": {
-    "ru": "Покрытие ВПК-01ГЦ — продукт категории «Противопригарные покрытия» для литейного производства. процессы: ПГС; основа: Водное",
-    "en": "VPK-01GC is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: ПГС; base: Водное"
+    "ru": "Водное графит-цирконовое противопригарное покрытие для чугунного литья, сочетает чистую поверхность с лёгкой зачисткой и устойчиво работает в ПГС, ЖСС и ХТС.",
+    "en": "Water-based graphite–zircon anti-penetration coating for iron castings, combining clean surface finish with easy fettling, suitable for green-sand, sodium-silicate and no-bake processes."
   },
   "content": {},
   "category": "Противопригарные покрытия",
   "process": [
+    "Колд-Бокс",
+    "ЖСС",
     "ПГС"
   ],
   "base": [
     "Водное"
   ],
-  "filler": [],
-  "metals": [],
+  "filler": [
+    "Графит",
+    "Циркон"
+  ],
+  "metals": [
+    "Чугун"
+  ],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:22"
+  "updatedAt": "2025-02-14T00:00"
 }
