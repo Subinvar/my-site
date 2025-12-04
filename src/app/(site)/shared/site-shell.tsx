@@ -83,7 +83,7 @@ export function SiteShell({
   const hasCopyright = copyrightText.length > 0;
 
   return (
-    <div className={`${brandFont.variable} flex min-h-screen flex-col bg-background text-foreground`}>
+    <div className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
