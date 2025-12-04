@@ -496,7 +496,13 @@ export type PostSummary = {
 export type PostContent = PageContent & {
   date?: string | null;
   tags: string[];
-  cover?: { src: string; alt?: string | null } | null;
+  cover?: {
+    src: string;
+    alt?: string | null;
+    width?: number | null;
+    height?: number | null;
+    image?: CatalogImage | null;
+  } | null;
 };
 
 export type CatalogImage = {
@@ -1562,7 +1568,17 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<PostC
   const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
   const coverAsset = normalizeImageAsset(record.entry.cover?.image);
   const cover = coverAsset
-    ? { src: coverAsset.src, alt: pickLocalized(record.entry.cover?.alt, locale) ?? null }
+    ? {
+        src: coverAsset.src,
+        alt: pickLocalized(record.entry.cover?.alt, locale) ?? null,
+        width: coverAsset.width ?? null,
+        height: coverAsset.height ?? null,
+        image: {
+          src: coverAsset.src,
+          width: coverAsset.width ?? null,
+          height: coverAsset.height ?? null,
+        },
+      }
     : null;
   const hero = mapPageHero(record.entry.hero ?? null, locale);
   return {
