@@ -51,6 +51,8 @@ type CatalogFiltersProps = {
   submitLabel: string;
   resetLabel: string;
   initialValues: CatalogFilterValues;
+  filtersLabel?: string;
+  closeFiltersLabel?: string;
 };
 
 export function CatalogFilters({
@@ -60,11 +62,16 @@ export function CatalogFilters({
   submitLabel,
   resetLabel,
   initialValues,
+  filtersLabel,
+  closeFiltersLabel,
 }: CatalogFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [state, setState] = useState(initialValues);
   const [isPending, setIsPending] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const triggerLabel = filtersLabel ?? 'Фильтры';
+  const closeLabel = closeFiltersLabel ?? 'Закрыть фильтры';
 
   useEffect(() => {
     setState(initialValues);
@@ -167,8 +174,8 @@ export function CatalogFilters({
     });
   };
 
-  return (
-    <form className="space-y-6" onSubmit={handleSubmit} aria-busy={isPending}>
+  const FiltersForm = ({ className }: { className?: string }) => (
+    <form className={`space-y-6 ${className ?? ''}`} onSubmit={handleSubmit} aria-busy={isPending}>
       <fieldset>
         <legend className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {groupLabels.category}
@@ -227,6 +234,50 @@ export function CatalogFilters({
         </Button>
       </div>
     </form>
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between lg:hidden">
+        <Button
+          type="button"
+          variant="secondary"
+          className="inline-flex items-center gap-2"
+          onClick={() => setMobileOpen(true)}
+        >
+          <span>{triggerLabel}</span>
+        </Button>
+      </div>
+
+      <div className="hidden lg:block lg:w-72">
+        <FiltersForm />
+      </div>
+
+      {mobileOpen ? (
+        <div className="fixed inset-0 z-40 flex lg:hidden">
+          <button
+            type="button"
+            className="flex-1 bg-black/40"
+            onClick={() => setMobileOpen(false)}
+            aria-label={closeLabel}
+          />
+          <div
+            className="w-80 max-w-full bg-[var(--background)] shadow-xl border-l border-[var(--border)] transform-gpu transition-transform duration-200 translate-x-0"
+          >
+            <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+              <h2 className="text-sm font-semibold">{triggerLabel}</h2>
+              <Button variant="ghost" size="sm" onClick={() => setMobileOpen(false)}>
+                {closeLabel}
+              </Button>
+            </div>
+
+            <div className="max-h-[calc(100vh-64px)] overflow-y-auto p-4">
+              <FiltersForm />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
