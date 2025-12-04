@@ -164,7 +164,9 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           </div>
 
           <div className="space-y-2 rounded-xl border border-border bg-background p-6 shadow-sm">
-            {address ? <p className="text-base font-medium text-foreground">{address}</p> : null}
+            {address ? (
+              <p className="whitespace-pre-line text-base font-medium text-foreground">{address}</p>
+            ) : null}
             {phone ? (
               <a
                 className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
