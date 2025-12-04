@@ -64,7 +64,7 @@ export function KeyClientsStrip({
             key={client.id}
             className="flex items-center justify-center rounded-xl bg-background border border-border/60 px-4 py-3 shadow-sm"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- Logos are served as static <img> assets for predictable sizing */}
             <img
               src={client.logoSrc}
               alt={client.name}
