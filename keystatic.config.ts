@@ -824,6 +824,7 @@ export default config({
             { label: 'Eco / сниженные выбросы', value: 'eco' },
             { label: 'Специальный продукт', value: 'special' },
           ],
+          defaultValue: 'bestseller',
         }),
         teaser: localizedText('Тизер', { multiline: true }),
         content: localizedMarkdocContent('Основной текст (страница товара)', {
