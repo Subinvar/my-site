@@ -10,9 +10,10 @@
     "en": "KB-AE-BE"
   },
   "excerpt": {
-    "ru": "Связующие КБ-А (Э), КБ-Б (Э) — продукт категории «Связующие» для литейного производства. процессы: Колд-Бокс",
-    "en": "KB-AE-BE is part of the \"Связующие\" line for foundry workflows. processes: Колд-Бокс"
+    "ru": "Двухкомпонентная Cold-Box-система КБ-А(Э) / КБ-Б(Э) на алифатическом растворителе. Обеспечивает повышенную прочность стержней при снижённом запахе и выбросах ЛОС, позволяя либо усилить прочность, либо снизить расход связующего по сравнению с базовой системой КБ-А / КБ-Б.",
+    "en": "KB-A(E) / KB-B(E) is an eco-optimised two-component Cold-Box binder system with an aliphatic solvent. It delivers higher core strength with noticeably lower odour and VOC emissions, allowing either increased performance or reduced binder consumption compared to the standard KB-A / KB-B system."
   },
+  "badge": "eco",
   "content": {},
   "category": "Связующие",
   "process": [

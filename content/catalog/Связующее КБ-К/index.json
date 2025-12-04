@@ -10,11 +10,12 @@
     "en": "KB-K"
   },
   "excerpt": {
-    "ru": "Связующее КБ-К — продукт категории «Связующие» для литейного производства. процессы: Колд-Бокс",
-    "en": "KB-K is part of the \"Связующие\" line for foundry workflows. processes: Колд-Бокс"
+    "ru": "Катализатор КБ-К — триэтиламиновый газовый отвердитель для Cold-Box-amin процесса. Обеспечивает быстрое и равномерное отверждение систем КБ-А / КБ-Б и КБ-А(Э) / КБ-Б(Э), с типичным расходом 0,5–1,5 кг на тонну песка и сроком хранения не менее 12 месяцев.",
+    "en": "KB-K is a triethylamine-based gaseous catalyst for the Cold-Box-amin process. It ensures fast and uniform curing of KB-A / KB-B and KB-A(E) / KB-B(E) binder systems, with a typical consumption of 0.5–1.5 kg per tonne of sand and a shelf life of at least 12 months."
   },
+  "badge": "special",
   "content": {},
-  "category": "Связующие",
+  "category": "Катализатор",
   "process": [
     "Колд-Бокс"
   ],
@@ -22,5 +23,5 @@
   "filler": [],
   "metals": [],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:30"
+  "updatedAt": "2025-02-26T00:00"
 }
