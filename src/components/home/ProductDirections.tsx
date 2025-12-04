@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import type { ReactElement } from 'react';
 
@@ -5,6 +7,8 @@ import { Card, CardDescription } from '@/app/(site)/shared/ui/card';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { buildPath } from '@/lib/paths';
 import type { Locale } from '@/lib/i18n';
+import { useInView } from '@/lib/use-in-view';
+import { cn } from '@/lib/cn';
 
 const directionIcons: Record<string, ReactElement> = {
   binders: <span className="inline-block text-2xl">🧪</span>,
@@ -73,6 +77,7 @@ type ProductDirectionsProps = {
 
 export function ProductDirections({ locale, items }: ProductDirectionsProps) {
   const basePath = buildPath(locale, ['catalog']);
+  const { ref, inView } = useInView({ rootMargin: '-20% 0px' });
   const withFallback = (value: string | undefined, fallback: string) => {
     const normalized = value?.trim();
     return normalized ? normalized : fallback;
@@ -105,7 +110,11 @@ export function ProductDirections({ locale, items }: ProductDirectionsProps) {
   }
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8">
+    <section
+      ref={ref}
+      className={cn('rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-6 shadow-sm sm:p-8', 'motion-fade-in-up')}
+      data-in-view={inView ? 'true' : 'false'}
+    >
       <SectionHeading
         title={locale === 'ru' ? 'Направления продукции' : 'Product directions'}
         description={
