@@ -48,6 +48,15 @@ export function CardDescription({ className, ...rest }: HTMLAttributes<HTMLParag
   );
 }
 
+export function CardContent({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('flex flex-col gap-3 text-[var(--card-foreground)]', className)}
+      {...rest}
+    />
+  );
+}
+
 export function CardFooter({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn('mt-4 flex items-center justify-between gap-2', className)} {...rest} />;
 }

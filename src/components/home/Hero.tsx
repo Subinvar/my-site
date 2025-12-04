@@ -54,7 +54,7 @@ export function Hero({ locale, data }: HeroProps) {
     <section className="relative isolate overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl">
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/uploads/hero-foundry.jpg"
+          src="/uploads/hero.jpg"
           alt={isRu ? 'Литейное производство' : 'Foundry production'}
           fill
           priority
