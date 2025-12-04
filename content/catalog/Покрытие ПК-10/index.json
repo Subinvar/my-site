@@ -10,8 +10,8 @@
     "en": "PK-10"
   },
   "excerpt": {
-    "ru": "Покрытие ПК-10 — продукт категории «Противопригарные покрытия» для литейного производства. процессы: Альфа-cет, Фуран, Резол-CO₂, ЖСС, Пеп-сет и Кронинг; основа: Спиртовое",
-    "en": "PK-10 is part of the \"Противопригарные покрытия\" line for foundry workflows. processes: Альфа-cет, Фуран, Резол-CO₂, ЖСС, Пеп-сет and Кронинг; base: Спиртовое"
+    "ru": "Спиртовое графит-форстеритовое противопригарное покрытие для мелкого и среднего чугунного и цветного литья; даёт ровную поверхность и экономичный расход.",
+    "en": "Alcohol-based graphite–forsterite foundry coating for small and medium cast iron and non-ferrous castings; provides a smooth surface with economical consumption."
   },
   "content": {},
   "category": "Противопригарные покрытия",
@@ -29,5 +29,5 @@
   "filler": [],
   "metals": [],
   "auxiliary": [],
-  "updatedAt": "2025-11-27T15:18"
+  "updatedAt": "2025-12-04T09:23"
 }
