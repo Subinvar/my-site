@@ -279,6 +279,7 @@ html[data-theme='dark'] {
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 4px;
+    text-decoration-color: currentColor;
     transition: color var(--transition-fast),
       text-decoration-color var(--transition-fast);
   }

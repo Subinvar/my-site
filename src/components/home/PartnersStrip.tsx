@@ -50,11 +50,14 @@ export function PartnersStrip({ locale, intro }: PartnersStripProps) {
           className="max-w-2xl"
         />
 
-        <div className="flex flex-wrap items-center gap-6 lg:gap-10">
+        <div
+          className="flex flex-wrap items-center gap-6 motion-fade-in-up lg:gap-10"
+          data-in-view={inView ? 'true' : 'false'}
+        >
           {PARTNERS.map((partner) => (
             <div
               key={partner.slug}
-              className="relative h-8 w-auto opacity-60 transition-opacity grayscale hover:opacity-100 hover:grayscale-0 md:h-10"
+              className="relative h-8 w-auto transform-gpu opacity-60 transition duration-200 grayscale hover:scale-[1.02] hover:opacity-100 hover:grayscale-0 md:h-10"
             >
               <Image
                 src={partner.logo}

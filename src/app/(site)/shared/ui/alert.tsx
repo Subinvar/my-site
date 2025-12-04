@@ -23,8 +23,7 @@ export function Alert({ variant = 'brand', className, children }: AlertProps) {
   return (
     <div
       className={cn(
-        'rounded-lg border px-4 py-3 text-sm motion-fade-in-up',
-        'data-[in-view=true]:motion-fade-in-up',
+        'rounded-lg border px-4 py-3 text-sm animate-fade-in-up',
         variantClasses[variant],
         className,
       )}

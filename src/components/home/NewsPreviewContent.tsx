@@ -63,7 +63,7 @@ export function NewsPreviewContent({
             return (
               <article
                 key={post.id}
-                className="card flex flex-col gap-2 transition-shadow duration-200 motion-fade-in-up sm:flex-row sm:items-center sm:justify-between hover:shadow-md"
+                className="card flex flex-col gap-2 transform-gpu transition-shadow transition-transform duration-200 motion-fade-in-up sm:flex-row sm:items-center sm:justify-between hover:-translate-y-0.5 hover:shadow-md"
                 data-in-view={inView ? 'true' : 'false'}
               >
                 <div>
