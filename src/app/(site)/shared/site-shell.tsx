@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import Image from 'next/image';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
@@ -7,6 +7,7 @@ import { formatTelegramHandle } from '@/lib/contacts';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
+import { cn } from '@/lib/cn';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
@@ -81,6 +82,9 @@ export function SiteShell({
     ? copyrightTemplate.replaceAll('{year}', String(currentYear)).replaceAll('{siteName}', brandName)
     : '';
   const hasCopyright = copyrightText.length > 0;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
+  const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
   return (
     <div className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}>
@@ -88,25 +92,77 @@ export function SiteShell({
       <SkipToContentLink label={skipLinkLabel} />
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
-          <a
-            href={buildPath(locale)}
-            className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          >
-            <Image
-              src="/uploads/logo.svg"
-              alt={brandName || 'Интема Групп'}
-              width={56}
-              height={56}
-              className="h-12 w-auto"
-            />
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-transparent lg:hidden transition-colors duration-150 hover:border-[var(--border)]"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+              aria-expanded={isMenuOpen}
+            >
+              <span className="relative block h-4 w-5">
+                <span
+                  className={cn(
+                    'absolute inset-x-0 top-0 h-[2px] rounded-full bg-current transition-transform duration-200',
+                    isMenuOpen ? 'translate-y-2 rotate-45' : ''
+                  )}
+                />
+                <span
+                  className={cn(
+                    'absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-opacity duration-200',
+                    isMenuOpen ? 'opacity-0' : 'opacity-100'
+                  )}
+                />
+                <span
+                  className={cn(
+                    'absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-current transition-transform duration-200',
+                    isMenuOpen ? '-translate-y-2 -rotate-45' : ''
+                  )}
+                />
+              </span>
+            </button>
 
-          <NavigationList
-            links={navigation.header}
-            ariaLabel={navigationLabels.headerLabel}
-            currentPath={currentPath}
-            className="hidden md:flex"
-          />
+            <a
+              href={buildPath(locale)}
+              className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <Image
+                src="/uploads/logo.svg"
+                alt={brandName || 'Интема Групп'}
+                width={56}
+                height={56}
+                className="h-12 w-auto"
+              />
+            </a>
+          </div>
+
+          <nav
+            className={cn(
+              'fixed inset-y-0 right-0 z-40 w-72 bg-[var(--background)] shadow-lg border-l border-[var(--border)]',
+              'transform-gpu transition-transform duration-200 ease-out',
+              'lg:static lg:w-auto lg:transform-none lg:shadow-none lg:border-none',
+              isMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+            )}
+          >
+            <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:p-0">
+              <NavigationList
+                links={navigation.header}
+                ariaLabel={navigationLabels.headerLabel}
+                currentPath={currentPath}
+                className="lg:flex"
+              />
+
+              <div className="flex items-center gap-3 lg:hidden">
+                <ThemeToggle />
+                <LanguageSwitcher
+                  currentLocale={locale}
+                  targetLocale={targetLocale}
+                  href={switcherHref}
+                  switchToLabels={switchToLabels}
+                />
+              </div>
+            </div>
+          </nav>
 
           <div className="flex items-center gap-2">
             {site.contacts.phone ? (
@@ -139,6 +195,15 @@ export function SiteShell({
           </div>
         </div>
       </header>
+
+      {isMenuOpen ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          aria-hidden="true"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      ) : null}
       <main
         id="main"
         role="main"
