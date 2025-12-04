@@ -10,19 +10,17 @@
     "en": "AIPS"
   },
   "excerpt": {
-    "ru": "АИПС — продукт категории «Противопригарные покрытия» для литейного производства. основа: Спиртовое",
-    "en": "AIPS is part of the \"Противопригарные покрытия\" line for foundry workflows. base: Спиртовое"
+    "ru": "Высокочистый абсолютированный изопропиловый спирт по ГОСТ — растворитель и разбавитель для спиртовых противопригарных покрытий и универсальное средство для обезжиривания форм и оснастки.",
+    "en": "High-purity absolute isopropyl alcohol according to GOST. Used as a diluent for alcohol-based foundry coatings and as a universal cleaner and degreaser for moulds and equipment."
   },
   "content": {},
-  "category": "Противопригарные покрытия",
+  "category": "Вспомогательные материалы",
   "process": [],
-  "base": [
-    "Спиртовое"
-  ],
+  "base": [],
   "filler": [],
   "metals": [],
   "auxiliary": [
     "Вспомогательный материал"
   ],
-  "updatedAt": "2025-11-26T16:11"
+  "updatedAt": "2025-03-14T00:00"
 }

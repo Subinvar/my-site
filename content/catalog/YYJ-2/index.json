@@ -1,0 +1,26 @@
+{
+  "slugKey": "yyj-2",
+  "published": true,
+  "slug": {
+    "ru": "yyj-2",
+    "en": "yyj-2"
+  },
+  "title": {
+    "ru": "YYJ-2",
+    "en": "YYJ-2"
+  },
+  "excerpt": {
+    "ru": "Интенсивный графитизирующий инокулянт с повышенным содержанием бария. Обеспечивает устойчивый антиотбеливающий эффект и надёжное модифицирование сложных и тонкостенных чугунных отливок.",
+    "en": "High-intensity barium ferrosilicon inoculant. Provides strong anti-chill effect and reliable inoculation of complex and thin-wall iron castings."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Модификатор"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "slugKey": "qhj-3",
+  "published": true,
+  "slug": {
+    "ru": "qhj-3",
+    "en": "qhj-3"
+  },
+  "title": {
+    "ru": "QHJ-3",
+    "en": "QHJ-3"
+  },
+  "excerpt": {
+    "ru": "Высокомагниевый нодулант для сложных условий: повышенное содержание серы, крупные сечения, пониженные температуры. Обеспечивает высокий уровень шаровидности графита и прочности отливок.",
+    "en": "High-magnesium nodulariser for demanding conditions: higher sulphur, heavy sections and lower metal temperatures. Ensures high nodularity and strength of ductile iron castings."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Модификатор"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}

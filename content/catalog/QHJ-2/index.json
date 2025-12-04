@@ -1,0 +1,26 @@
+{
+  "slugKey": "qhj-2",
+  "published": true,
+  "slug": {
+    "ru": "qhj-2",
+    "en": "qhj-2"
+  },
+  "title": {
+    "ru": "QHJ-2",
+    "en": "QHJ-2"
+  },
+  "excerpt": {
+    "ru": "Сфероидизирующий модификатор с пониженным содержанием магния. Обеспечивает мягкую, контролируемую реакцию при обработке низкосернистых чугунов и больших ковшей.",
+    "en": "Low-magnesium nodulariser for gentle treatment of low-sulphur irons and large ladles, providing controlled reaction and stable nodularity."
+  },
+  "content": {},
+  "category": "Вспомогательные материалы",
+  "process": [],
+  "base": [],
+  "filler": [],
+  "metals": [],
+  "auxiliary": [
+    "Модификатор"
+  ],
+  "updatedAt": "2025-03-14T00:00"
+}

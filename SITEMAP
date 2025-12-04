@@ -67,6 +67,12 @@
 - http://localhost:3000/catalog/fsm-a и http://localhost:3000/en/catalog/fsm-a — продукт «Смола ФСМ-А» / "FSM-A".
 - http://localhost:3000/catalog/ush-02 и http://localhost:3000/en/catalog/ush-02 — продукт «Шнур УШ-02» / "USH-02".
 - http://localhost:3000/catalog/eps-10 и http://localhost:3000/en/catalog/eps-10 — продукт «ЭПС-10» / "EPS-10".
+- http://localhost:3000/catalog/eps-50 и http://localhost:3000/en/catalog/eps-50 — продукт «ЭПС-50» / "EPS-50".
+- http://localhost:3000/catalog/yyj-1 и http://localhost:3000/en/catalog/yyj-1 — продукт «YYJ-1» / "YYJ-1".
+- http://localhost:3000/catalog/yyj-2 и http://localhost:3000/en/catalog/yyj-2 — продукт «YYJ-2» / "YYJ-2".
+- http://localhost:3000/catalog/qhj-1 и http://localhost:3000/en/catalog/qhj-1 — продукт «QHJ-1» / "QHJ-1".
+- http://localhost:3000/catalog/qhj-2 и http://localhost:3000/en/catalog/qhj-2 — продукт «QHJ-2» / "QHJ-2".
+- http://localhost:3000/catalog/qhj-3 и http://localhost:3000/en/catalog/qhj-3 — продукт «QHJ-3» / "QHJ-3".
 - Добавляя новые продукты в Keystatic, фиксируйте их URL в этом разделе для обеих локалей.
 
 ## Новости и материалы
