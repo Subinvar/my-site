@@ -45,18 +45,18 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(() => {
-    if (typeof document === 'undefined') {
-      return null;
-    }
-
-    return resolveInitialClientTheme();
-  });
+  const [theme, setTheme] = useState<Theme | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (theme) {
-      applyTheme(theme);
-    }
+    setTheme(resolveInitialClientTheme());
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!theme) return;
+
+    applyTheme(theme);
   }, [theme]);
 
   const toggle = () => {
@@ -73,10 +73,10 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       className="rounded-full border border-border shadow-sm hover:bg-muted"
-      disabled={!theme}
+      disabled={!theme || !isMounted}
     >
       <span className="sr-only">
-        {!theme ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
+        {!isMounted || !theme ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
       </span>
       <span className="relative inline-flex items-center justify-center">
         {!theme ? (
