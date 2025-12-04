@@ -13,10 +13,10 @@ test('каталог реагирует на фильтры', async ({ page }) =
   await expect.poll(async () => cards.count(), { timeout: 15000 }).toBeGreaterThan(0);
   const initialCount = await cards.count();
 
-  const firstCheckbox = page.getByTestId('catalog-filter-checkbox').first();
+  const catalystCheckbox = page.getByLabel('Катализатор');
   const applyFilters = page.getByRole('button', { name: 'Применить фильтры' });
 
-  await firstCheckbox.check();
+  await catalystCheckbox.check();
   await applyFilters.click();
 
   await expect(page).toHaveURL(/\?/);
@@ -41,17 +41,17 @@ test('фильтры применяются повторно после изме
   await expect.poll(async () => cards.count(), { timeout: 15000 }).toBeGreaterThan(0);
   const initialCount = await cards.count();
 
-  const firstCheckbox = page.getByTestId('catalog-filter-checkbox').first();
+  const catalystCheckbox = page.getByLabel('Катализатор');
   const applyFilters = page.getByRole('button', { name: 'Применить фильтры' });
 
-  await firstCheckbox.check();
+  await catalystCheckbox.check();
   await applyFilters.click();
 
   await expect.poll(async () => cards.count(), { timeout: 15000 }).not.toBe(initialCount);
 
   const filteredCount = await cards.count();
 
-  await firstCheckbox.uncheck();
+  await catalystCheckbox.uncheck();
   await applyFilters.click();
 
   await expect.poll(async () => cards.count(), { timeout: 15000 }).toBe(initialCount);
