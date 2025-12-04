@@ -13,6 +13,7 @@ import type {
   DocumentLanguage,
   DocumentType,
 } from '@/lib/keystatic';
+import { cn } from '@/lib/cn';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import { Radio } from './ui/radio';
@@ -253,30 +254,37 @@ export function CatalogFilters({
         <FiltersForm />
       </div>
 
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-40 flex lg:hidden">
-          <button
-            type="button"
-            className="flex-1 bg-black/40"
-            onClick={() => setMobileOpen(false)}
-            aria-label={closeLabel}
-          />
-          <div
-            className="w-80 max-w-full bg-[var(--background)] shadow-xl border-l border-[var(--border)] transform-gpu transition-transform duration-200 translate-x-0"
-          >
-            <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
-              <h2 className="text-sm font-semibold">{triggerLabel}</h2>
-              <Button variant="ghost" size="sm" onClick={() => setMobileOpen(false)}>
-                {closeLabel}
-              </Button>
-            </div>
+      <div
+        className={cn(
+          'fixed inset-0 z-40 flex lg:hidden transition-opacity duration-200',
+          mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        )}
+        aria-hidden={!mobileOpen}
+      >
+        <button
+          type="button"
+          className="flex-1 bg-black/40 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          aria-label={closeLabel}
+        />
+        <div
+          className={cn(
+            'w-80 max-w-full bg-[var(--background)] shadow-xl border-l border-[var(--border)] transform-gpu transition-transform duration-200',
+            mobileOpen ? 'translate-x-0' : 'translate-x-full'
+          )}
+        >
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+            <h2 className="text-sm font-semibold">{triggerLabel}</h2>
+            <Button variant="ghost" size="sm" onClick={() => setMobileOpen(false)}>
+              {closeLabel}
+            </Button>
+          </div>
 
-            <div className="max-h-[calc(100vh-64px)] overflow-y-auto p-4">
-              <FiltersForm />
-            </div>
+          <div className="max-h-[calc(100vh-64px)] overflow-y-auto p-4">
+            <FiltersForm />
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

@@ -132,7 +132,8 @@ export function ProductDirections({ locale, items }: ProductDirectionsProps) {
             <Card
               key={item.key}
               as="article"
-              className="group flex h-full flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
+              className="group flex h-full flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg motion-fade-in-up"
+              data-in-view={inView ? 'true' : 'false'}
             >
               <div className="flex h-full flex-col gap-3">
                 <div className="text-3xl">
