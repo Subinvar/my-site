@@ -1,4 +1,4 @@
-import Markdoc, { type Node as MarkdocNode } from '@markdoc/markdoc';
+import Markdoc, { Node as MarkdocAstNode } from '@markdoc/markdoc';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -300,7 +300,7 @@ async function renderCatalogContent({
   });
 }
 
-function injectVariantBlock(ast: MarkdocNode, config: { item: CatalogItem; locale: Locale; label: string }) {
+function injectVariantBlock(ast: MarkdocAstNode, config: { item: CatalogItem; locale: Locale; label: string }) {
   const { item, locale, label } = config;
   if (!item.seriesDescription && !item.variants.length) {
     return ast;
@@ -308,19 +308,25 @@ function injectVariantBlock(ast: MarkdocNode, config: { item: CatalogItem; local
 
   const children = Array.isArray(ast.children) ? [...ast.children] : [];
   const preferredIndex = findVariantInsertionIndex(children, locale);
-  const variantTag = new Markdoc.Tag('variantLineup', {
-    description: item.seriesDescription,
-    variants: item.variants,
-    label,
-  });
+  const variantTag = new MarkdocAstNode(
+    'tag',
+    {
+      description: item.seriesDescription,
+      variants: item.variants,
+      label,
+    },
+    [],
+    'variantLineup',
+  );
 
   const insertionIndex = Math.max(0, Math.min(preferredIndex ?? children.length, children.length));
   children.splice(insertionIndex, 0, variantTag);
 
-  return { ...ast, children } satisfies MarkdocNode;
+  ast.children = children;
+  return ast;
 }
 
-function findVariantInsertionIndex(children: Array<MarkdocNode | string>, locale: Locale) {
+function findVariantInsertionIndex(children: Array<MarkdocAstNode | string>, locale: Locale) {
   const sectionTargets = [
     locale === 'ru' ? 'Назначение' : 'Purpose',
     locale === 'ru' ? 'Преимущества' : 'Benefits',
@@ -352,7 +358,7 @@ function findVariantInsertionIndex(children: Array<MarkdocNode | string>, locale
   return children.length;
 }
 
-function getHeadingLevel(node: MarkdocNode | string): number | null {
+function getHeadingLevel(node: MarkdocAstNode | string): number | null {
   if (typeof node === 'string') {
     return null;
   }
@@ -363,7 +369,7 @@ function getHeadingLevel(node: MarkdocNode | string): number | null {
   return null;
 }
 
-function getHeadingTitle(node: MarkdocNode | string): string | null {
+function getHeadingTitle(node: MarkdocAstNode | string): string | null {
   if (typeof node === 'string' || node.type !== 'heading' || !Array.isArray(node.children)) {
     return null;
   }
