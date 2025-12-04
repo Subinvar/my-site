@@ -11,9 +11,10 @@ export function Card({ as = 'div', className, children, ...rest }: CardProps) {
   return (
     <Component
       className={cn(
-        'rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]',
-        'shadow-sm hover:shadow-md transition-shadow duration-200',
-        'transform-gpu hover:-translate-y-0.5 focus-within:-translate-y-0.5',
+        'group rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]',
+        'shadow-sm transition-transform transition-shadow duration-200 ease-out transform-gpu',
+        'hover:-translate-y-0.5 hover:shadow-lg/10',
+        'focus-within:-translate-y-0.5 focus-within:shadow-lg/10',
         'p-4 sm:p-5',
         className,
       )}
