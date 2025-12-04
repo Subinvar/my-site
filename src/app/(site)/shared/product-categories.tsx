@@ -34,17 +34,24 @@ export function ProductCategoriesSection({ locale }: { locale: Locale }) {
   const categories = getCatalogTaxonomyOptions(locale).categories
     .map((entry) => {
       const key = CATEGORY_KEYS[entry.value];
-      const dictionaryCategory = productDirections.categories[key];
+      const dictionaryCategory = key
+        ? productDirections.categories?.[key]
+        : undefined;
+      const icon = CATEGORY_ICONS[entry.value];
+
+      if (!dictionaryCategory || !icon) {
+        return null;
+      }
 
       return {
         title: dictionaryCategory.title,
         description: dictionaryCategory.description,
         href: buildCategoryHref(locale, entry.value),
-        icon: CATEGORY_ICONS[entry.value],
+        icon,
         ctaLabel: productDirections.ctaLabel,
       };
     })
-    .filter(Boolean);
+    .filter((category): category is NonNullable<typeof category> => Boolean(category));
 
   if (!categories.length) {
     return null;
