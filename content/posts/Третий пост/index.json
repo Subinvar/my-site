@@ -25,6 +25,11 @@
     "foundry"
   ],
   "cover": {
+    "image": {
+      "src": "/uploads/news-coating-check.svg",
+      "width": 1200,
+      "height": 630
+    },
     "alt": {
       "ru": "Контроль толщины противопригарного покрытия на форме",
       "en": "Checking the release coating thickness on the mould"

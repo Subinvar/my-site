@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -44,6 +45,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const tags = Array.isArray(post.tags) ? post.tags : [];
   const hasTags = tags.length > 0;
+  const hero = post.hero ?? post.cover ?? null;
 
   return (
     <SiteShell
@@ -54,13 +56,32 @@ export default async function PostPage({ params }: PostPageProps) {
       switcherHref={switcherHref}
       currentPath={currentPath}
     >
-      <article className="max-w-none">
-        <header className="mb-8 space-y-3">
-          <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.date}</p>
+      <article className="mx-auto max-w-3xl">
+        {hero?.image?.src ? (
+          <div className="mb-8 overflow-hidden rounded-2xl border border-border bg-muted">
+            <Image
+              src={hero.image.src}
+              alt={hero.alt ?? post.title}
+              width={hero.image.width ?? 1200}
+              height={hero.image.height ?? 630}
+              className="h-auto w-full object-cover"
+              sizes="(min-width: 1024px) 768px, 100vw"
+            />
+          </div>
+        ) : null}
+
+        <header className="mb-6 space-y-2">
+          {post.date ? (
+            <p className="text-sm uppercase tracking-wide text-muted-foreground">{post.date}</p>
+          ) : null}
           <h1 className="text-3xl font-semibold text-foreground">{post.title}</h1>
-          {summary ? <p className="text-base text-muted-foreground">{summary}</p> : null}
+          {summary ? (
+            <p className="text-base text-muted-foreground">{summary}</p>
+          ) : null}
         </header>
+
         <div className="prose-markdoc">{content}</div>
+
         {hasTags ? (
           <ul className="mt-10 flex flex-wrap gap-2 text-sm text-muted-foreground">
             {tags.map((tag) => (

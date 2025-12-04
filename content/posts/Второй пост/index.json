@@ -25,6 +25,11 @@
     "modernisation"
   ],
   "cover": {
+    "image": {
+      "src": "/uploads/news-modernisation.svg",
+      "width": 1200,
+      "height": 630
+    },
     "alt": {
       "ru": "Инженеры настраивают дозирование связующего на линии",
       "en": "Engineers tuning binder dosing on the moulding line"

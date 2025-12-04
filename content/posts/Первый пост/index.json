@@ -25,6 +25,11 @@
     "foundry"
   ],
   "cover": {
+    "image": {
+      "src": "/uploads/news-burn-on-quality.svg",
+      "width": 1200,
+      "height": 630
+    },
     "alt": {
       "ru": "Контроль качества отливок после нанесения нового покрытия",
       "en": "Inspecting castings after applying a new release coating"
