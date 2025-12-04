@@ -203,8 +203,7 @@ export function createComponents(locale: Locale) {
     );
   };
 
-  return {
-    Callout({
+  const CalloutComponent = ({
       type = 'note',
       title,
       children,
@@ -212,7 +211,7 @@ export function createComponents(locale: Locale) {
       type?: CalloutKind;
       title?: string;
       children?: ReactNode;
-    }) {
+    }) => {
       const kind: CalloutKind = ['note', 'info', 'warning'].includes(type ?? '')
         ? (type as CalloutKind)
         : 'note';
@@ -235,7 +234,12 @@ export function createComponents(locale: Locale) {
           children
         )
       );
-    },
+    };
+
+  return {
+    Callout: CalloutComponent,
+    // Lowercase alias to satisfy both Markdoc render names and Keystatic preview expectations
+    callout: CalloutComponent,
     CodeBlock({
       children,
       language,

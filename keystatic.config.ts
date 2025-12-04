@@ -2,6 +2,7 @@ import { collection, config, fields, singleton } from '@keystatic/core';
 import type { Dirent } from 'fs';
 
 import taxonomyOptionsFallback from './taxonomy-options.json';
+import { keystaticMarkdocConfig } from './src/lib/markdoc';
 
 type NodeFsModule = typeof import('fs');
 type NodePathModule = typeof import('path');
@@ -84,6 +85,7 @@ const localizedMarkdocContent = (label: string, options: LocalizedFieldOptions =
       ...acc,
       [locale]: fields.markdoc({
         label: `${label} (${locale.toUpperCase()})`,
+        config: keystaticMarkdocConfig,
         options: {
           image: {
             directory: 'public/uploads',
