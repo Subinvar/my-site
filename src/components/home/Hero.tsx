@@ -23,7 +23,7 @@ export type HeroProps = {
 
 export function Hero({ locale, data }: HeroProps) {
   const isRu = locale === 'ru';
-  const { ref, inView } = useInView({ rootMargin: '0px' });
+  const { ref, inView } = useInView<HTMLDivElement>({ rootMargin: '0px' });
 
   const withFallback = (value: string | undefined, fallback: string) => {
     const normalized = value?.trim();
