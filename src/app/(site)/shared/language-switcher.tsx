@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import type { Locale } from '@/lib/i18n';
@@ -34,13 +34,43 @@ export function LanguageSwitcher({
   const baseClasses =
     'relative overflow-hidden rounded-full border border-border shadow-sm uppercase tracking-[0.08em] no-underline w-12 bg-transparent';
 
+  const getInitialFromSwitch = () => {
+    if (typeof window === 'undefined') return false;
+
+    try {
+      return window.sessionStorage.getItem(LANG_SWITCH_FLAG) === '1';
+    } catch {
+      // если sessionStorage недоступен, просто живём без спец-логики
+      return false;
+    }
+  };
+
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const transitionsRestoredRef = useRef(false);
+
   // Управляем заливкой сами
-  const [isFilled, setIsFilled] = useState(false);
-  // На самый первый кадр после перехода с переключателя гасим transition,
-  // чтобы заливка появилась сразу, без "подъёма"
-  const [initialFromSwitch, setInitialFromSwitch] = useState(false);
+  const [isFilled, setIsFilled] = useState(() => getInitialFromSwitch());
+  // На самый первый кадр после перехода с переключателя или при загрузке с наведённым курсором
+  // гасим transition, чтобы заливка появилась сразу, без "подъёма"
+  const [initialFromSwitch, setInitialFromSwitch] = useState(() => getInitialFromSwitch());
 
   // При маунте проверяем, не пришли ли мы только что после клика по переключателю
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const node = linkRef.current;
+    if (!node || transitionsRestoredRef.current) return;
+
+    try {
+      if (node.matches(':hover')) {
+        setIsFilled(true);
+        setInitialFromSwitch(true);
+      }
+    } catch {
+      // если match не сработает, просто продолжаем как есть
+    }
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -53,17 +83,27 @@ export function LanguageSwitcher({
       // Сразу включаем заливку (но без анимации)
       setIsFilled(true);
       setInitialFromSwitch(true);
-
-      const t = window.setTimeout(() => {
-        // После этого hover/leave снова будут анимироваться
-        setInitialFromSwitch(false);
-      }, 50);
-
-      return () => window.clearTimeout(t);
     } catch {
       // если sessionStorage недоступен, просто живём без спец-логики
     }
   }, []);
+
+  useEffect(() => {
+    if (!initialFromSwitch) return;
+
+    const t = window.setTimeout(() => {
+      // После этого hover/leave снова будут анимироваться
+      setInitialFromSwitch(false);
+    }, 50);
+
+    return () => window.clearTimeout(t);
+  }, [initialFromSwitch]);
+
+  useEffect(() => {
+    if (!initialFromSwitch) {
+      transitionsRestoredRef.current = true;
+    }
+  }, [initialFromSwitch]);
 
   const markSwitchInSession = () => {
     if (typeof window === 'undefined') return;
@@ -102,6 +142,7 @@ export function LanguageSwitcher({
   return (
     <Link
       href={targetHref}
+      ref={linkRef}
       onClick={markSwitchInSession}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -126,6 +167,7 @@ export function LanguageSwitcher({
           'pointer-events-none absolute inset-0 bg-brand-50',
           // Если пришли сразу после переключения — убираем transition, чтобы не было повторной анимации
           !initialFromSwitch && 'transition-transform duration-300 ease-out',
+          'group-hover:translate-y-0 group-focus-visible:translate-y-0',
           isFilled ? 'translate-y-0' : 'translate-y-full',
         )}
       />
