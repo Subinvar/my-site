@@ -84,8 +84,8 @@ export function LanguageSwitcher({
       clearSwitchFlag();
     }
 
-    setIsFilled(hoveredOnMount);
-    setInitialFromSwitch(hoveredOnMount);
+    setIsFilled(fromSwitch || hoveredOnMount);
+    setInitialFromSwitch(fromSwitch || hoveredOnMount);
     setTransitionsReady(true);
   }, []);
 

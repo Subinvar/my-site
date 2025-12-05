@@ -52,19 +52,17 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
+  const [isMounted, setIsMounted] = useState(isClient);
+  const [theme, setTheme] = useState<Theme>(() => resolveInitialClientTheme());
   const [isFilled, setIsFilled] = useState(false);
   const [transitionsReady, setTransitionsReady] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!isClient) return;
+
     setIsMounted(true);
     setTheme(resolveInitialClientTheme());
-  }, []);
-
-  useLayoutEffect(() => {
-    if (typeof window === 'undefined') return;
 
     const node = buttonRef.current;
     if (!node) return;
