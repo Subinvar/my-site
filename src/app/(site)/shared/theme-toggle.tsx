@@ -1,9 +1,10 @@
 'use client';
 
 import { MoonIcon, SunIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { Button } from '@/app/(site)/shared/ui/button';
+import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
+import { cn } from '@/lib/cn';
 
 type Theme = 'light' | 'dark';
 
@@ -53,10 +54,29 @@ const applyTheme = (value: Theme) => {
 export function ThemeToggle() {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
+  const [isFilled, setIsFilled] = useState(false);
+  const [transitionsReady, setTransitionsReady] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
     setTheme(resolveInitialClientTheme());
+  }, []);
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const node = buttonRef.current;
+    if (!node) return;
+
+    try {
+      const hoveredOnMount = node.matches(':hover');
+      setIsFilled(hoveredOnMount);
+    } catch {
+      // просто продолжаем без предзаполнения
+    }
+
+    setTransitionsReady(true);
   }, []);
 
   useEffect(() => {
@@ -70,21 +90,37 @@ export function ThemeToggle() {
   };
 
   const isDark = theme === 'dark';
+  const baseClasses =
+    'relative flex items-center justify-center overflow-hidden rounded-full border border-border shadow-sm w-12 bg-transparent group';
 
   return (
-    <Button
+    <button
       type="button"
       onClick={toggle}
+      ref={buttonRef}
+      onMouseEnter={() => setIsFilled(true)}
+      onMouseLeave={() => setIsFilled(false)}
+      onFocus={() => setIsFilled(true)}
+      onBlur={() => setIsFilled(false)}
       aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
-      variant="ghost"
-      size="sm"
-      className="rounded-full border border-border shadow-sm hover:bg-muted"
+      className={buttonClassNames({
+        variant: 'ghost',
+        size: 'sm',
+        className: cn(baseClasses, 'hover:bg-transparent focus-visible:bg-transparent'),
+      })}
       disabled={!isMounted}
     >
-      <span className="sr-only">
-        {!isMounted ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
-      </span>
-      <span className="relative inline-flex items-center justify-center">
+      <span
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute inset-0 bg-brand-50',
+          transitionsReady && 'transition-transform duration-300 ease-out',
+          'group-hover:translate-y-0 group-focus-visible:translate-y-0',
+          isFilled ? 'translate-y-0' : 'translate-y-full',
+        )}
+      />
+
+      <span className="relative z-10 inline-flex items-center justify-center">
         {!isMounted ? (
           <span className="h-4 w-4 animate-pulse rounded-full bg-muted" aria-hidden />
         ) : (
@@ -98,6 +134,10 @@ export function ThemeToggle() {
           </>
         )}
       </span>
-    </Button>
+
+      <span className="sr-only">
+        {!isMounted ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
+      </span>
+    </button>
   );
 }
