@@ -51,14 +51,19 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(() => resolveInitialClientTheme());
-  const isMounted = isClient;
+  const [isMounted, setIsMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    if (!theme) return;
+    setIsMounted(true);
+    setTheme(resolveInitialClientTheme());
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
 
     applyTheme(theme);
-  }, [theme]);
+  }, [theme, isMounted]);
 
   const toggle = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
