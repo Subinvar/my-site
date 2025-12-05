@@ -142,8 +142,8 @@ export function SiteShell({
             className={cn(
               'fixed inset-y-0 right-0 z-40 w-72 bg-[var(--background)] shadow-lg border-l border-[var(--border)]',
               'transform-gpu transition-transform duration-200 ease-out',
-              'lg:static lg:w-auto lg:transform-none lg:shadow-none lg:border-none',
-              isMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+              'lg:static lg:w-auto lg:transform-none lg:shadow-none lg:border-none lg:bg-transparent',
+              isMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0',
             )}
           >
             <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:p-0">
