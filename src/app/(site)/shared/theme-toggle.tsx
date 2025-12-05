@@ -52,8 +52,8 @@ const applyTheme = (value: Theme) => {
 };
 
 export function ThemeToggle() {
-  const [isMounted, setIsMounted] = useState(isClient);
-  const [theme, setTheme] = useState<Theme>(() => resolveInitialClientTheme());
+  const [isMounted, setIsMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>('light');
   const [isFilled, setIsFilled] = useState(false);
   const [transitionsReady, setTransitionsReady] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
