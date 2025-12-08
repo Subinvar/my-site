@@ -88,51 +88,51 @@ export function SiteShell({
     : '';
   const hasCopyright = copyrightText.length > 0;
 
-const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-// Состояния для иконки
-const [areLinesConverged, setAreLinesConverged] = useState(false);
-const [isBurgerRotated, setIsBurgerRotated] = useState(false);
+  // Состояния для иконки бургера
+  const [areLinesConverged, setAreLinesConverged] = useState(false);
+  const [isBurgerRotated, setIsBurgerRotated] = useState(false);
 
-// Запоминаем предыдущее значение флага меню
-const prevIsMenuOpenRef = useRef(isMenuOpen);
+  // Запоминаем предыдущее значение флага меню
+  const prevIsMenuOpenRef = useRef(isMenuOpen);
 
-useEffect(() => {
-  const prevIsMenuOpen = prevIsMenuOpenRef.current;
-  prevIsMenuOpenRef.current = isMenuOpen;
+  useEffect(() => {
+    const prevIsMenuOpen = prevIsMenuOpenRef.current;
+    prevIsMenuOpenRef.current = isMenuOpen;
 
-  // Если значение не изменилось (в том числе на самом первом вызове эффекта) —
-  // ничего не анимируем.
-  if (prevIsMenuOpen === isMenuOpen) {
-    return;
-  }
-
-  let timer: number | undefined;
-
-  if (isMenuOpen) {
-    // ОТКРЫТИЕ: две параллельные линии → одна → крест
-    setAreLinesConverged(true);
-    setIsBurgerRotated(false);
-
-    timer = window.setTimeout(() => {
-      setIsBurgerRotated(true);
-    }, 120);
-  } else {
-    // ЗАКРЫТИЕ: крест → одна линия → две параллельные
-    setIsBurgerRotated(false);
-    setAreLinesConverged(true);
-
-    timer = window.setTimeout(() => {
-      setAreLinesConverged(false);
-    }, 120);
-  }
-
-  return () => {
-    if (timer) {
-      window.clearTimeout(timer);
+    // Если значение не изменилось (в том числе на самом первом вызове эффекта) —
+    // ничего не анимируем.
+    if (prevIsMenuOpen === isMenuOpen) {
+      return;
     }
-  };
-}, [isMenuOpen]);
+
+    let timer: number | undefined;
+
+    if (isMenuOpen) {
+      // ОТКРЫТИЕ: две параллельные линии → одна → крест
+      setAreLinesConverged(true);
+      setIsBurgerRotated(false);
+
+      timer = window.setTimeout(() => {
+        setIsBurgerRotated(true);
+      }, 120);
+    } else {
+      // ЗАКРЫТИЕ: крест → одна линия → две параллельные
+      setIsBurgerRotated(false);
+      setAreLinesConverged(true);
+
+      timer = window.setTimeout(() => {
+        setAreLinesConverged(false);
+      }, 120);
+    }
+
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [isMenuOpen]);
 
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
@@ -152,37 +152,9 @@ useEffect(() => {
       <SkipToContentLink label={skipLinkLabel} />
 
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className={cn(
-                'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70',
-                'text-muted-foreground hover:text-foreground',
-                'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
-                'lg:hidden',
-              )}
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
-              aria-expanded={isMenuOpen}
-            >
-              <span className="relative block h-4 w-5">
-                {/* Верхняя линия */}
-                <span
-                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                  style={{ transform: topLineTransform }}
-                />
-
-                {/* Нижняя линия */}
-                <span
-                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                  style={{ transform: bottomLineTransform }}
-                />
-              </span>
-            </button>
-
+        <div className="flex w-full items-center justify-between gap-4 px-4 py-1 sm:px-6 sm:py-1.5">
+          {/* Левый край: логотип */}
+          <div className="flex items-center">
             <a
               href={buildPath(locale)}
               className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -190,61 +162,61 @@ useEffect(() => {
               <Image
                 src="/uploads/logo.svg"
                 alt={brandName || 'Интема Групп'}
-                width={56}
-                height={56}
-                className="h-12 w-auto"
+                width={64}
+                height={64}
+                className="h-12 w-auto sm:h-14"
               />
             </a>
           </div>
 
-          <nav
-            className={cn(
-              'fixed inset-y-0 right-0 z-40 w-72 bg-[var(--background)] shadow-lg border-l border-[var(--border)]',
-              'transform-gpu transition-transform duration-200 ease-out',
-              'lg:static lg:w-auto lg:transform-none lg:shadow-none lg:border-none lg:bg-transparent',
-              isMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0',
-            )}
-          >
-            <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:p-0">
-              <NavigationList
-                links={navigation.header}
-                ariaLabel={navigationLabels.headerLabel}
-                currentPath={currentPath}
-                className="lg:flex"
-              />
+          {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
+          <div className="flex flex-1 items-center justify-end gap-4">
+            {/* DESKTOP (>= lg): две строки справа */}
+            <div className="hidden flex-col items-end gap-1 lg:flex">
+              {/* СТРОКА 1: телефон, почта, переключатели */}
+              <div className="flex items-center gap-1.5">
+                {site.contacts.phone ? (
+                  <a
+                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                    className="hidden text-sm font-medium leading-tight text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                  >
+                    {site.contacts.phone}
+                  </a>
+                ) : null}
 
-              <div className="flex items-center gap-3 lg:hidden">
-                <ThemeToggle />
-                <LanguageSwitcher
-                  currentLocale={locale}
-                  targetLocale={targetLocale}
-                  href={switcherHref}
-                  switchToLabels={switchToLabels}
-                />
+                {site.contacts.email ? (
+                  <a
+                    href={`mailto:${site.contacts.email}`}
+                    className="hidden text-sm font-medium leading-tight text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                  >
+                    {site.contacts.email}
+                  </a>
+                ) : null}
+
+                <div className="hidden items-center gap-2 sm:flex">
+                  <ThemeToggle />
+                  <LanguageSwitcher
+                    currentLocale={locale}
+                    targetLocale={targetLocale}
+                    href={switcherHref}
+                    switchToLabels={switchToLabels}
+                  />
+                </div>
               </div>
+
+              {/* СТРОКА 2: разделы сайта */}
+              <nav aria-label={navigationLabels.headerLabel}>
+                <NavigationList
+                  links={navigation.header}
+                  ariaLabel={navigationLabels.headerLabel}
+                  currentPath={currentPath}
+                  className="flex"
+                />
+              </nav>
             </div>
-          </nav>
 
-          <div className="flex items-center gap-2">
-            {site.contacts.phone ? (
-              <a
-                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-              >
-                {site.contacts.phone}
-              </a>
-            ) : null}
-
-            {site.contacts.email ? (
-              <a
-                href={`mailto:${site.contacts.email}`}
-                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-              >
-                {site.contacts.email}
-              </a>
-            ) : null}
-
-            <div className="hidden items-center gap-2 sm:flex">
+            {/* MOBILE (< lg): всё справа в одну линию + бургер */}
+            <div className="flex items-center gap-2 lg:hidden">
               <ThemeToggle />
               <LanguageSwitcher
                 currentLocale={locale}
@@ -252,9 +224,51 @@ useEffect(() => {
                 href={switcherHref}
                 switchToLabels={switchToLabels}
               />
+              <button
+                type="button"
+                className={cn(
+                  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70 text-muted-foreground',
+                  'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                  'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+                )}
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+                aria-expanded={isMenuOpen}
+              >
+                <span className="relative block h-4 w-5">
+                  {/* Верхняя линия */}
+                  <span
+                    className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
+                    style={{ transform: topLineTransform }}
+                  />
+                  {/* Нижняя линия */}
+                  <span
+                    className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
+                    style={{ transform: bottomLineTransform }}
+                  />
+                </span>
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Мобильное выезжающее меню справа */}
+        <nav
+          className={cn(
+            'fixed inset-y-0 right-0 z-40 w-72 bg-[var(--background)] shadow-lg border-l border-[var(--border)] lg:hidden',
+            'transform-gpu transition-transform duration-200 ease-out',
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full',
+          )}
+        >
+          <div className="flex h-full flex-col gap-6 p-6">
+            <NavigationList
+              links={navigation.header}
+              ariaLabel={navigationLabels.headerLabel}
+              currentPath={currentPath}
+            />
+          </div>
+        </nav>
       </header>
 
       {isMenuOpen ? (
@@ -283,7 +297,9 @@ useEffect(() => {
                 {site.contacts.phone ? (
                   <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>{site.contacts.phone}</a>
                 ) : null}
-                {site.contacts.email ? <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> : null}
+                {site.contacts.email ? (
+                  <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
+                ) : null}
                 {site.contacts.address ? <span>{site.contacts.address}</span> : null}
               </div>
             ) : null}
