@@ -152,7 +152,7 @@ export function SiteShell({
       <SkipToContentLink label={skipLinkLabel} />
 
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-1 sm:px-6 sm:py-1.5">
+        <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
           {/* Левый край: логотип */}
           <div className="flex items-center">
             <a
@@ -164,7 +164,7 @@ export function SiteShell({
                 alt={brandName || 'Интема Групп'}
                 width={64}
                 height={64}
-                className="h-12 w-auto sm:h-14"
+                className="h-8 w-auto sm:h-10"
               />
             </a>
           </div>
@@ -172,13 +172,13 @@ export function SiteShell({
           {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
           <div className="flex flex-1 items-center justify-end gap-4">
             {/* DESKTOP (>= lg): две строки справа */}
-            <div className="hidden flex-col items-end gap-1 lg:flex">
+            <div className="hidden flex-col items-end gap-0.5 lg:flex">
               {/* СТРОКА 1: телефон, почта, переключатели */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 text-[13px] leading-tight">
                 {site.contacts.phone ? (
                   <a
                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                    className="hidden text-sm font-medium leading-tight text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                    className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
                   >
                     {site.contacts.phone}
                   </a>
@@ -187,7 +187,7 @@ export function SiteShell({
                 {site.contacts.email ? (
                   <a
                     href={`mailto:${site.contacts.email}`}
-                    className="hidden text-sm font-medium leading-tight text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                    className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
                   >
                     {site.contacts.email}
                   </a>
@@ -211,6 +211,7 @@ export function SiteShell({
                   ariaLabel={navigationLabels.headerLabel}
                   currentPath={currentPath}
                   className="flex"
+                  density="compact"
                 />
               </nav>
             </div>
@@ -266,6 +267,7 @@ export function SiteShell({
               links={navigation.header}
               ariaLabel={navigationLabels.headerLabel}
               currentPath={currentPath}
+              density="compact"
             />
           </div>
         </nav>
