@@ -135,11 +135,11 @@ export function SiteShell({
 
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
-    areLinesConverged ? 0 : -3
+    areLinesConverged ? 0 : -4
   }px) rotate(${isBurgerRotated ? 45 : 0}deg)`;
 
   const bottomLineTransform = `translate(-50%, -50%) translateY(${
-    areLinesConverged ? 0 : 3
+    areLinesConverged ? 0 : 4
   }px) rotate(${isBurgerRotated ? -45 : 0}deg)`;
 
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
@@ -155,7 +155,13 @@ export function SiteShell({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent lg:hidden transition-colors duration-150 hover:border-[var(--border)]"
+              className={cn(
+                'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70',
+                'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+                'lg:hidden',
+              )}
               onClick={() => setIsMenuOpen((prev) => !prev)}
               aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
               aria-expanded={isMenuOpen}
@@ -163,13 +169,13 @@ export function SiteShell({
               <span className="relative block h-4 w-5">
                 {/* Верхняя линия */}
                 <span
-                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-150"
+                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
                   style={{ transform: topLineTransform }}
                 />
 
                 {/* Нижняя линия */}
                 <span
-                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-150"
+                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
                   style={{ transform: bottomLineTransform }}
                 />
               </span>

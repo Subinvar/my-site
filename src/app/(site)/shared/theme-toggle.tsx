@@ -78,9 +78,8 @@ export function ThemeToggle() {
   // - бордер только на hover
   // - никаких translate/scale → кнопка не "прыгает"
   const containerClasses = cn(
-    'inline-flex h-10 w-10 items-center justify-center',
-    'rounded-xl border border-transparent bg-background/70',
-    'transition-colors duration-150',
+    'inline-flex h-10 w-10 items-center justify-center rounded-xl',
+    'border border-transparent bg-background/70 transition-colors duration-150',
     'hover:border-[var(--border)] hover:bg-background/80',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
@@ -95,7 +94,7 @@ export function ThemeToggle() {
       className={containerClasses}
       disabled={!isMounted}
     >
-      <span className="relative inline-flex items-center justify-center">
+      <span className="relative inline-flex h-4 w-4 items-center justify-center">
         {!isMounted ? (
           <span
             className="h-4 w-4 animate-pulse rounded-full bg-muted"
@@ -105,13 +104,13 @@ export function ThemeToggle() {
           <>
             <SunIcon
               className={cn(
-                'h-4 w-4 transition-transform duration-200',
+                'absolute inset-0 h-4 w-4 transition-transform duration-200 ease-out',
                 isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0',
               )}
             />
             <MoonIcon
               className={cn(
-                'absolute h-4 w-4 transition-transform duration-200',
+                'absolute inset-0 h-4 w-4 transition-transform duration-200 ease-out',
                 isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90',
               )}
             />
