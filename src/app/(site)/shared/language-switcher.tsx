@@ -48,13 +48,12 @@ export function LanguageSwitcher({
 
   // Контейнер:
   // - высота как у бургера/темы (h-10)
-  // - чуть шире (w-12), чтобы RU/EN комфортно жили
   // - border только на hover
   const baseContainerClasses =
-    'relative inline-flex h-10 w-12 items-center justify-center ' +
+    'relative inline-flex h-10 w-10 items-center justify-center ' +
     'rounded-xl border border-transparent ' +
-    'bg-background/70 text-[11px] font-medium uppercase tracking-[0.08em] no-underline select-none ' +
-    'hover:border-[var(--border)] hover:bg-background/80 ' +
+    'bg-background/70 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
+    'hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground ' +
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
     'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]';
 
@@ -68,7 +67,7 @@ export function LanguageSwitcher({
   // Вагончики RU / EN
   const wagonBaseClasses =
     'absolute inset-0 flex items-center justify-center px-2 ' +
-    'text-[11px] font-medium uppercase tracking-[0.08em] text-foreground ' +
+    'text-[11px] font-medium uppercase tracking-[0.08em] ' +
     'transition-transform duration-200 ease-out';
 
   const ruClassName = cn(

@@ -39,6 +39,7 @@ export function NavigationList({ links, ariaLabel, currentPath = '/', className 
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
           const className = `
             inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm
+            no-underline
             transition-colors
             hover:bg-brand-50 hover:text-brand-700
             focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600

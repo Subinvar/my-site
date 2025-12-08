@@ -88,50 +88,51 @@ export function SiteShell({
     : '';
   const hasCopyright = copyrightText.length > 0;
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Состояния именно для анимации иконки бургера
-  const [areLinesConverged, setAreLinesConverged] = useState(false); // true — линии сведены в одну
-  const [isBurgerRotated, setIsBurgerRotated] = useState(false); // true — крест, false — параллельные
-  const isFirstBurgerEffect = useRef(true);
+// Состояния для иконки
+const [areLinesConverged, setAreLinesConverged] = useState(false);
+const [isBurgerRotated, setIsBurgerRotated] = useState(false);
 
-  useEffect(() => {
-    // Первый рендер пропускаем, чтобы не было лишней анимации при загрузке страницы
-    if (isFirstBurgerEffect.current) {
-      isFirstBurgerEffect.current = false;
-      return;
+// Запоминаем предыдущее значение флага меню
+const prevIsMenuOpenRef = useRef(isMenuOpen);
+
+useEffect(() => {
+  const prevIsMenuOpen = prevIsMenuOpenRef.current;
+  prevIsMenuOpenRef.current = isMenuOpen;
+
+  // Если значение не изменилось (в том числе на самом первом вызове эффекта) —
+  // ничего не анимируем.
+  if (prevIsMenuOpen === isMenuOpen) {
+    return;
+  }
+
+  let timer: number | undefined;
+
+  if (isMenuOpen) {
+    // ОТКРЫТИЕ: две параллельные линии → одна → крест
+    setAreLinesConverged(true);
+    setIsBurgerRotated(false);
+
+    timer = window.setTimeout(() => {
+      setIsBurgerRotated(true);
+    }, 120);
+  } else {
+    // ЗАКРЫТИЕ: крест → одна линия → две параллельные
+    setIsBurgerRotated(false);
+    setAreLinesConverged(true);
+
+    timer = window.setTimeout(() => {
+      setAreLinesConverged(false);
+    }, 120);
+  }
+
+  return () => {
+    if (timer) {
+      window.clearTimeout(timer);
     }
-
-    let timer: number | undefined;
-
-    if (isMenuOpen) {
-      // ОТКРЫТИЕ
-      // 1) полосы съезжаются в центр (одна линия)
-      setAreLinesConverged(true);
-      setIsBurgerRotated(false);
-
-      // 2) потом эта линия превращается в крест
-      timer = window.setTimeout(() => {
-        setIsBurgerRotated(true);
-      }, 120);
-    } else {
-      // ЗАКРЫТИЕ
-      // 1) крест выпрямляется в одну линию
-      setIsBurgerRotated(false);
-      setAreLinesConverged(true);
-
-      // 2) после этого линия расходится в две параллельные
-      timer = window.setTimeout(() => {
-        setAreLinesConverged(false);
-      }, 120);
-    }
-
-    return () => {
-      if (timer) {
-        window.clearTimeout(timer);
-      }
-    };
-  }, [isMenuOpen]);
+  };
+}, [isMenuOpen]);
 
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
@@ -157,6 +158,7 @@ export function SiteShell({
               type="button"
               className={cn(
                 'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70',
+                'text-muted-foreground hover:text-foreground',
                 'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                 'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
@@ -227,7 +229,7 @@ export function SiteShell({
             {site.contacts.phone ? (
               <a
                 href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                className="hidden text-sm font-medium text-foreground md:inline-flex"
+                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
               >
                 {site.contacts.phone}
               </a>
@@ -236,7 +238,7 @@ export function SiteShell({
             {site.contacts.email ? (
               <a
                 href={`mailto:${site.contacts.email}`}
-                className="hidden text-sm text-muted-foreground hover:text-foreground md:inline-flex"
+                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
               >
                 {site.contacts.email}
               </a>
