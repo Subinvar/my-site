@@ -7,6 +7,8 @@ type NavigationListProps = {
   ariaLabel?: string | null;
   currentPath?: string;
   className?: string;
+  density?: 'default' | 'compact';
+  wrap?: boolean;
 };
 
 const normalizePathname = (value: string): string => {
@@ -21,7 +23,14 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : '/';
 };
 
-export function NavigationList({ links, ariaLabel, currentPath = '/', className }: NavigationListProps) {
+export function NavigationList({
+  links,
+  ariaLabel,
+  currentPath = '/',
+  className,
+  density = 'default',
+  wrap = true,
+}: NavigationListProps) {
   if (!links.length) {
     return null;
   }
@@ -30,15 +39,25 @@ export function NavigationList({ links, ariaLabel, currentPath = '/', className 
   const label = ariaLabel?.trim() ?? '';
   const resolvedLabel = label.length > 0 ? label : undefined;
 
+  const wrappingClass = wrap ? 'flex-wrap' : 'flex-nowrap whitespace-nowrap overflow-x-auto';
+  const listClassName =
+    density === 'compact'
+      ? `flex ${wrappingClass} items-center gap-3 text-[13px] font-medium leading-tight`
+      : `flex ${wrappingClass} items-center gap-4 text-sm font-medium`;
+
   return (
     <nav aria-label={resolvedLabel} className={className}>
-      <ul className="flex flex-wrap items-center gap-4 text-sm font-medium">
+      <ul className={listClassName}>
         {links.map((link) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
+          const densityClass =
+            density === 'compact'
+              ? 'px-2.5 py-0.5 text-[13px] leading-tight'
+              : 'px-3 py-0.5 text-sm';
           const className = `
-            inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-sm
+            inline-flex items-center gap-1 rounded-full ${densityClass}
             no-underline
             transition-colors
             hover:bg-brand-50 hover:text-brand-700
