@@ -1,10 +1,11 @@
-// src/app/(site)/shared/ui/use-pill-fill-animation.ts
+// src/app/(site)/shared/ui/use-pill-fill.ts
 'use client';
 
 import { useState } from 'react';
+
 import { cn } from '@/lib/cn';
 
-type UsePillFillAnimationOptions = {
+type UsePillFillOptions = {
   /**
    * Стартовое состояние заливки до первой интеракции.
    * Для кейсов типа "пришли с другой страницы с уже наведённым курсором"
@@ -13,7 +14,7 @@ type UsePillFillAnimationOptions = {
   initialFilled?: boolean;
 };
 
-export function usePillFillAnimation(options: UsePillFillAnimationOptions = {}) {
+export function usePillFill(options: UsePillFillOptions = {}) {
   const { initialFilled = false } = options;
 
   const [isFilled, setIsFilled] = useState<boolean>(initialFilled);
@@ -47,6 +48,8 @@ export function usePillFillAnimation(options: UsePillFillAnimationOptions = {}) 
 
   const fillClassName = cn(
     'pointer-events-none absolute inset-0 bg-brand-50',
+    // Анимацию включаем только после первой реальной интеракции,
+    // чтобы программные установки состояния были "без рывков".
     hasInteracted && 'transition-transform duration-300 ease-out',
     isFilled ? 'translate-y-0' : 'translate-y-full',
   );

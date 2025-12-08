@@ -4,6 +4,7 @@ import { MoonIcon, SunIcon } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
+import { usePillFill } from '@/app/(site)/shared/ui/use-pill-fill';
 import { cn } from '@/lib/cn';
 
 type Theme = 'light' | 'dark';
@@ -54,9 +55,9 @@ export function ThemeToggle() {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
-  // Заливка и анимация — по той же концепции, что и у переключателя языка
-  const [isFilled, setIsFilled] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const { fillClassName, setIsFilled, handlers } = usePillFill({
+    initialFilled: true,
+  });
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -75,12 +76,11 @@ export function ThemeToggle() {
         // Стартуем без заливки, если курсор не над кнопкой
         setIsFilled(false);
       }
-      // Если hoveredOnMount === true — оставляем isFilled = true без анимации,
-      // hasInteracted остаётся false.
+      // Если hoveredOnMount === true — оставляем isFilled = true без анимации.
     } catch {
       // просто продолжаем без предзаполнения
     }
-  }, []);
+  }, [setIsFilled]);
 
   useEffect(() => {
     if (!isMounted) return;
@@ -96,41 +96,12 @@ export function ThemeToggle() {
   const baseClasses =
     'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-10 bg-transparent';
 
-  const noteInteraction = () => {
-    if (!hasInteracted) {
-      setHasInteracted(true);
-    }
-  };
-
-  const handleMouseEnter = () => {
-    noteInteraction();
-    setIsFilled(true);
-  };
-
-  const handleMouseLeave = () => {
-    noteInteraction();
-    setIsFilled(false);
-  };
-
-  const handleFocus = () => {
-    noteInteraction();
-    setIsFilled(true);
-  };
-
-  const handleBlur = () => {
-    noteInteraction();
-    setIsFilled(false);
-  };
-
-  return (
+    return (
     <button
       type="button"
       onClick={toggle}
       ref={buttonRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
+      {...handlers}
       aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
       className={buttonClassNames({
         variant: 'ghost',
@@ -143,15 +114,7 @@ export function ThemeToggle() {
       })}
       disabled={!isMounted}
     >
-      {/* Заливка, как у переключателя языка */}
-      <span
-        aria-hidden
-        className={cn(
-          'pointer-events-none absolute inset-0 bg-brand-50',
-          hasInteracted && 'transition-transform duration-300 ease-out',
-          isFilled ? 'translate-y-0' : 'translate-y-full',
-        )}
-      />
+      <span aria-hidden className={fillClassName} />
 
       <span className="relative z-10 inline-flex items-center justify-center">
         {!isMounted ? (
