@@ -27,41 +27,40 @@ export function LanguageSwitcher({
   const ariaLabel =
     ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
 
-  // Локальное состояние для анимации «поезда» с вагонами
-  const [activeLocale, setActiveLocale] = useState<Locale>(currentLocale);
+  // Локальное состояние для анимации «вагончиков» на текущей странице
+  const [animLocale, setAnimLocale] = useState<Locale>(currentLocale);
 
-  // Синхронизация на случай внешней смены currentLocale
   useEffect(() => {
-    setActiveLocale(currentLocale);
+    setAnimLocale(currentLocale);
   }, [currentLocale]);
 
-  const isRuActive = activeLocale === 'ru';
+  const isRuActive = animLocale === 'ru';
 
-  // Капсула — те же габариты, что у ThemeToggle (w-10)
+  // Капсула — чуть шире (w-11), чтобы буквы не упирались в радиус
   const baseClasses =
-    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-10 bg-transparent';
+    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-11 bg-background/70';
 
-  // Пояс с двумя вагонами: ширина 200% от окна (каждый вагон = 50%)
-  // Фокус: чуть сдвигаем пояс внутрь (на 1px), чтобы буквы не упирались в радиусы.
-  const trackClassName = cn(
-    'flex h-full w-[200%]',
-    'transition-transform duration-200 ease-out',
-    isRuActive
-      ? 'translate-x-[1px]'
-      : 'translate-x-[calc(-50%+1px)]',
+  // Базовый класс для каждого вагона:
+  // - absolute, чтобы занимать всё окно;
+  // - px-2 даёт воздух слева/справа;
+  // - текст мелкий, но читаемый.
+  const wagonBase =
+    'absolute inset-0 flex items-center justify-center px-2 text-[11px] font-medium uppercase tracking-[0.08em] text-foreground transition-transform duration-200 ease-out';
+
+  const ruClassName = cn(
+    wagonBase,
+    isRuActive ? 'translate-x-0' : '-translate-x-full',
   );
 
-  // Один вагон (RU или EN)
-  const wagonClassName =
-    'flex w-1/2 items-center justify-center text-[11px] font-medium uppercase tracking-[0.08em] text-foreground';
+  const enClassName = cn(
+    wagonBase,
+    isRuActive ? 'translate-x-full' : 'translate-x-0',
+  );
 
-  // Внутреннее содержимое: окно полностью повторяет размеры кнопки
   const innerContent = (
     <span className="relative block h-full w-full overflow-hidden">
-      <span className={trackClassName}>
-        <span className={wagonClassName}>RU</span>
-        <span className={wagonClassName}>EN</span>
-      </span>
+      <span className={ruClassName}>RU</span>
+      <span className={enClassName}>EN</span>
     </span>
   );
 
@@ -87,8 +86,9 @@ export function LanguageSwitcher({
   }
 
   const handleClick = () => {
-    // Локальная анимация поезда перед навигацией
-    setActiveLocale(targetLocale);
+    // Локально переключаемся, чтобы показать анимацию,
+    // параллельно Link уводит на другую локаль.
+    setAnimLocale(targetLocale);
   };
 
   return (

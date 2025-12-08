@@ -4,7 +4,6 @@ import { MoonIcon, SunIcon } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
-import { usePillFill } from '@/app/(site)/shared/ui/use-pill-fill';
 import { cn } from '@/lib/cn';
 
 type Theme = 'light' | 'dark';
@@ -55,10 +54,6 @@ export function ThemeToggle() {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
-  const { fillClassName, setIsFilled, handlers } = usePillFill({
-    initialFilled: true,
-  });
-
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   useLayoutEffect(() => {
@@ -66,21 +61,7 @@ export function ThemeToggle() {
 
     setTheme(resolveInitialClientTheme());
     setIsMounted(true);
-
-    const node = buttonRef.current;
-    if (!node) return;
-
-    try {
-      const hoveredOnMount = node.matches(':hover');
-      if (!hoveredOnMount) {
-        // Стартуем без заливки, если курсор не над кнопкой
-        setIsFilled(false);
-      }
-      // Если hoveredOnMount === true — оставляем isFilled = true без анимации.
-    } catch {
-      // просто продолжаем без предзаполнения
-    }
-  }, [setIsFilled]);
+  }, []);
 
   useEffect(() => {
     if (!isMounted) return;
@@ -93,30 +74,30 @@ export function ThemeToggle() {
 
   const isDark = theme === 'dark';
 
+  // Капсула — та же геометрия и стиль, что у переключателя языка
   const baseClasses =
-    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-10 bg-transparent';
+    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-11 bg-background/70';
 
-    return (
+  return (
     <button
       type="button"
       onClick={toggle}
       ref={buttonRef}
-      {...handlers}
       aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
       className={buttonClassNames({
         variant: 'ghost',
         size: 'sm',
         className: cn(
           baseClasses,
-          'group',
-          'hover:bg-transparent focus-visible:bg-transparent',
+          'inline-flex items-center justify-center px-0 py-0',
+          'transition-transform duration-150',
+          'hover:-translate-y-[1px] active:translate-y-[1px]',
+          'hover:bg-background/80 focus-visible:bg-background/80',
         ),
       })}
       disabled={!isMounted}
     >
-      <span aria-hidden className={fillClassName} />
-
-      <span className="relative z-10 inline-flex items-center justify-center">
+      <span className="relative inline-flex items-center justify-center">
         {!isMounted ? (
           <span
             className="h-4 w-4 animate-pulse rounded-full bg-muted"
