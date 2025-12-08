@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
@@ -51,8 +51,10 @@ export function SiteShell({
   const skipLinkLabel = dictionary.common.skipToContent;
   const navigationLabels = dictionary.navigation;
   const switchToLabels = dictionary.languageSwitcher.switchTo;
+
   const telegramUrl = site.contacts.telegramUrl?.trim() ?? '';
   const telegramLabel = formatTelegramHandle(telegramUrl) ?? (telegramUrl ? 'Telegram' : '');
+
   const contactLinks = [
     site.contacts.phone
       ? {
@@ -78,13 +80,68 @@ export function SiteShell({
   ].filter((item): item is { id: string; label: string; href: string } => Boolean(item));
 
   const hasContacts = contactLinks.length > 0 || Boolean(site.contacts.address);
+
   const currentYear = new Date().getFullYear();
   const copyrightTemplate = site.footer?.copyright?.trim() ?? '';
   const copyrightText = copyrightTemplate.length
     ? copyrightTemplate.replaceAll('{year}', String(currentYear)).replaceAll('{siteName}', brandName)
     : '';
   const hasCopyright = copyrightText.length > 0;
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Состояния именно для анимации иконки бургера
+  const [areLinesConverged, setAreLinesConverged] = useState(false); // true — линии сведены в одну
+  const [isBurgerRotated, setIsBurgerRotated] = useState(false); // true — крест, false — параллельные
+  const isFirstBurgerEffect = useRef(true);
+
+  useEffect(() => {
+    // Первый рендер пропускаем, чтобы не было лишней анимации при загрузке страницы
+    if (isFirstBurgerEffect.current) {
+      isFirstBurgerEffect.current = false;
+      return;
+    }
+
+    let timer: number | undefined;
+
+    if (isMenuOpen) {
+      // ОТКРЫТИЕ
+      // 1) полосы съезжаются в центр (одна линия)
+      setAreLinesConverged(true);
+      setIsBurgerRotated(false);
+
+      // 2) потом эта линия превращается в крест
+      timer = window.setTimeout(() => {
+        setIsBurgerRotated(true);
+      }, 120);
+    } else {
+      // ЗАКРЫТИЕ
+      // 1) крест выпрямляется в одну линию
+      setIsBurgerRotated(false);
+      setAreLinesConverged(true);
+
+      // 2) после этого линия расходится в две параллельные
+      timer = window.setTimeout(() => {
+        setAreLinesConverged(false);
+      }, 120);
+    }
+
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [isMenuOpen]);
+
+  // Геометрия линий относительно центра контейнера
+  const topLineTransform = `translate(-50%, -50%) translateY(${
+    areLinesConverged ? 0 : -3
+  }px) rotate(${isBurgerRotated ? 45 : 0}deg)`;
+
+  const bottomLineTransform = `translate(-50%, -50%) translateY(${
+    areLinesConverged ? 0 : 3
+  }px) rotate(${isBurgerRotated ? -45 : 0}deg)`;
+
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
@@ -92,34 +149,28 @@ export function SiteShell({
     <div className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}>
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
+
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-transparent lg:hidden transition-colors duration-150 hover:border-[var(--border)]"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent lg:hidden transition-colors duration-150 hover:border-[var(--border)]"
               onClick={() => setIsMenuOpen((prev) => !prev)}
               aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
               aria-expanded={isMenuOpen}
             >
               <span className="relative block h-4 w-5">
+                {/* Верхняя линия */}
                 <span
-                  className={cn(
-                    'absolute inset-x-0 top-0 h-[2px] rounded-full bg-current transition-transform duration-200',
-                    isMenuOpen ? 'translate-y-2 rotate-45' : ''
-                  )}
+                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-150"
+                  style={{ transform: topLineTransform }}
                 />
+
+                {/* Нижняя линия */}
                 <span
-                  className={cn(
-                    'absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-opacity duration-200',
-                    isMenuOpen ? 'opacity-0' : 'opacity-100'
-                  )}
-                />
-                <span
-                  className={cn(
-                    'absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-current transition-transform duration-200',
-                    isMenuOpen ? '-translate-y-2 -rotate-45' : ''
-                  )}
+                  className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-150"
+                  style={{ transform: bottomLineTransform }}
                 />
               </span>
             </button>
@@ -206,6 +257,7 @@ export function SiteShell({
           onClick={() => setIsMenuOpen(false)}
         />
       ) : null}
+
       <main
         id="main"
         role="main"
@@ -214,15 +266,14 @@ export function SiteShell({
       >
         {children}
       </main>
+
       <footer className="border-t border-border bg-muted/60">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {hasContacts ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 {site.contacts.phone ? (
-                  <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>
-                    {site.contacts.phone}
-                  </a>
+                  <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>{site.contacts.phone}</a>
                 ) : null}
                 {site.contacts.email ? <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> : null}
                 {site.contacts.address ? <span>{site.contacts.address}</span> : null}

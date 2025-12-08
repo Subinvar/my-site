@@ -1,9 +1,8 @@
 'use client';
 
 import { MoonIcon, SunIcon } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
-import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import { cn } from '@/lib/cn';
 
 type Theme = 'light' | 'dark';
@@ -54,8 +53,6 @@ export function ThemeToggle() {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-
   useLayoutEffect(() => {
     if (!isClient) return;
 
@@ -69,32 +66,33 @@ export function ThemeToggle() {
   }, [theme, isMounted]);
 
   const toggle = () => {
+    if (!isMounted) return;
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const isDark = theme === 'dark';
 
-  // Капсула — та же геометрия и стиль, что у переключателя языка
-  const baseClasses =
-    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-11 bg-background/70';
+  // Капсула — по геометрии и поведению как у бургера / языка:
+  // - квадрат 40×40
+  // - rounded-xl
+  // - бордер только на hover
+  // - никаких translate/scale → кнопка не "прыгает"
+  const containerClasses = cn(
+    'inline-flex h-10 w-10 items-center justify-center',
+    'rounded-xl border border-transparent bg-background/70',
+    'transition-colors duration-150',
+    'hover:border-[var(--border)] hover:bg-background/80',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+    !isMounted && 'cursor-default opacity-60 hover:border-transparent hover:bg-background/70',
+  );
 
   return (
     <button
       type="button"
       onClick={toggle}
-      ref={buttonRef}
       aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
-      className={buttonClassNames({
-        variant: 'ghost',
-        size: 'sm',
-        className: cn(
-          baseClasses,
-          'inline-flex items-center justify-center px-0 py-0',
-          'transition-transform duration-150',
-          'hover:-translate-y-[1px] active:translate-y-[1px]',
-          'hover:bg-background/80 focus-visible:bg-background/80',
-        ),
-      })}
+      className={containerClasses}
       disabled={!isMounted}
     >
       <span className="relative inline-flex items-center justify-center">
@@ -106,14 +104,16 @@ export function ThemeToggle() {
         ) : (
           <>
             <SunIcon
-              className={`h-4 w-4 transition-transform duration-200 ${
-                isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0'
-              }`}
+              className={cn(
+                'h-4 w-4 transition-transform duration-200',
+                isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0',
+              )}
             />
             <MoonIcon
-              className={`absolute h-4 w-4 transition-transform duration-200 ${
-                isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'
-              }`}
+              className={cn(
+                'absolute h-4 w-4 transition-transform duration-200',
+                isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90',
+              )}
             />
           </>
         )}

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import type { Locale } from '@/lib/i18n';
 import { cn } from '@/lib/cn';
 
@@ -27,7 +26,7 @@ export function LanguageSwitcher({
   const ariaLabel =
     ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
 
-  // Локальное состояние для анимации «вагончиков» на текущей странице
+  // Локальное состояние для "вагончиков" RU/EN
   const [animLocale, setAnimLocale] = useState<Locale>(currentLocale);
 
   useEffect(() => {
@@ -36,24 +35,49 @@ export function LanguageSwitcher({
 
   const isRuActive = animLocale === 'ru';
 
-  // Капсула — чуть шире (w-11), чтобы буквы не упирались в радиус
-  const baseClasses =
-    'relative overflow-hidden rounded-full border border-border shadow-sm no-underline w-11 bg-background/70';
+  // Управляем анимацией hover-бордера:
+  // пока isHoverAnimated === false → НЕТ transition-colors,
+  // включаем его только после первого real pointerenter.
+  const [isHoverAnimated, setIsHoverAnimated] = useState(false);
 
-  // Базовый класс для каждого вагона:
-  // - absolute, чтобы занимать всё окно;
-  // - px-2 даёт воздух слева/справа;
-  // - текст мелкий, но читаемый.
-  const wagonBase =
-    'absolute inset-0 flex items-center justify-center px-2 text-[11px] font-medium uppercase tracking-[0.08em] text-foreground transition-transform duration-200 ease-out';
+  const handlePointerEnter = () => {
+    if (!isHoverAnimated) {
+      setIsHoverAnimated(true);
+    }
+  };
+
+  // Контейнер:
+  // - высота как у бургера/темы (h-10)
+  // - чуть шире (w-12), чтобы RU/EN комфортно жили
+  // - border только на hover
+  const baseContainerClasses =
+    'relative inline-flex h-10 w-12 items-center justify-center ' +
+    'rounded-xl border border-transparent ' +
+    'bg-background/70 text-[11px] font-medium uppercase tracking-[0.08em] no-underline select-none ' +
+    'hover:border-[var(--border)] hover:bg-background/80 ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
+    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]';
+
+  const containerClasses = cn(
+    baseContainerClasses,
+    // До первого pointerenter не анимируем цвет → нет "мигания" на смене страницы
+    isHoverAnimated ? 'transition-colors duration-150' : 'transition-none',
+    isDisabled && 'cursor-default opacity-50 hover:border-transparent hover:bg-background/70',
+  );
+
+  // Вагончики RU / EN
+  const wagonBaseClasses =
+    'absolute inset-0 flex items-center justify-center px-2 ' +
+    'text-[11px] font-medium uppercase tracking-[0.08em] text-foreground ' +
+    'transition-transform duration-200 ease-out';
 
   const ruClassName = cn(
-    wagonBase,
+    wagonBaseClasses,
     isRuActive ? 'translate-x-0' : '-translate-x-full',
   );
 
   const enClassName = cn(
-    wagonBase,
+    wagonBaseClasses,
     isRuActive ? 'translate-x-full' : 'translate-x-0',
   );
 
@@ -67,18 +91,11 @@ export function LanguageSwitcher({
   if (isDisabled) {
     return (
       <span
-        className={buttonClassNames({
-          variant: 'ghost',
-          size: 'sm',
-          className: cn(
-            baseClasses,
-            'inline-flex items-center justify-center px-0 py-0 cursor-default opacity-50',
-            'bg-background/50 shadow-none',
-          ),
-        })}
+        className={containerClasses}
         aria-label={ariaLabel}
         aria-disabled="true"
         role="link"
+        onPointerEnter={handlePointerEnter}
       >
         {innerContent}
       </span>
@@ -86,8 +103,7 @@ export function LanguageSwitcher({
   }
 
   const handleClick = () => {
-    // Локально переключаемся, чтобы показать анимацию,
-    // параллельно Link уводит на другую локаль.
+    // Даём локальную анимацию "вагончиков"
     setAnimLocale(targetLocale);
   };
 
@@ -96,17 +112,8 @@ export function LanguageSwitcher({
       href={targetHref}
       aria-label={ariaLabel}
       onClick={handleClick}
-      className={buttonClassNames({
-        variant: 'ghost',
-        size: 'sm',
-        className: cn(
-          baseClasses,
-          'inline-flex items-center justify-center px-0 py-0',
-          'transition-transform duration-150',
-          'hover:-translate-y-[1px] active:translate-y-[1px]',
-          'hover:bg-background/80 focus-visible:bg-background/80',
-        ),
-      })}
+      onPointerEnter={handlePointerEnter}
+      className={containerClasses}
     >
       {innerContent}
     </Link>
