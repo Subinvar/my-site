@@ -46,6 +46,46 @@
   --transition-fast: 150ms ease-out;
   --transition-normal: 220ms ease-out;
   --transition-slow: 320ms ease-out;
+
+  /* Параметры анимации переноса строк */
+  --line-wrap-distance: 4px;
+  --line-wrap-distance-subtle: 2px;
+  --line-wrap-distance-strong: 6px;
+  --line-wrap-duration: 170ms;
+  --line-wrap-easing: cubic-bezier(0.3, 0.1, 0.2, 1);
+}
+
+.line-wrap-animated {
+  --line-wrap-shift: var(--line-wrap-distance);
+  --line-wrap-duration-current: var(--line-wrap-duration);
+  will-change: transform, opacity;
+}
+
+.line-wrap-animated[data-line-wrap-variant='subtle'] {
+  --line-wrap-shift: var(--line-wrap-distance-subtle);
+  --line-wrap-duration-current: 140ms;
+}
+
+.line-wrap-animated[data-line-wrap-variant='emphasized'] {
+  --line-wrap-shift: var(--line-wrap-distance-strong);
+  --line-wrap-duration-current: 200ms;
+}
+
+.line-wrap-animated[data-line-wrap-animating='true'] {
+  animation: line-wrap-reveal var(--line-wrap-duration-current) var(--line-wrap-easing);
+  transform-origin: left top;
+}
+
+@keyframes line-wrap-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--line-wrap-shift));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .font-heading-var {

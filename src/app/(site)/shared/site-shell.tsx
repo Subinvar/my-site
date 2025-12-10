@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
+import { LineWrapText } from './ui/line-wrap-text';
 
 const brandFont = { variable: 'font-brand-var' };
 
@@ -199,12 +200,14 @@ export function SiteShell({
                   height={64}
                   className="h-8 w-auto sm:h-10"
                 />
-                <span
+                <LineWrapText
+                  as="span"
+                  variant="subtle"
                   className="text-sm font-semibold leading-tight text-brand-600 sm:text-base dark:text-brand-600"
                   style={{ fontFamily: 'var(--font-brand)' }}
                 >
                   {brandLabel}
-                </span>
+                </LineWrapText>
               </a>
             </div>
 
