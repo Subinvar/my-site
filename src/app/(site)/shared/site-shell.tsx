@@ -134,6 +134,20 @@ export function SiteShell({
     };
   }, [isMenuOpen]);
 
+ // Высота шапки, чтобы мобильное меню начиналось под ней
+  const headerRef = useRef<HTMLElement | null>(null);
+  const [navTopOffset, setNavTopOffset] = useState(56); // дефолт под мобильную шапку
+
+  useEffect(() => {
+    const updateOffset = () => {
+      if (!headerRef.current) return;
+      setNavTopOffset(headerRef.current.getBoundingClientRect().height);
+    };
+
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+    return () => window.removeEventListener('resize', updateOffset);
+  }, []);
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
     areLinesConverged ? 0 : -4
@@ -151,7 +165,10 @@ export function SiteShell({
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
 
-      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]">
+      <header 
+        ref={headerRef}
+        className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]"
+      >
         <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
           {/* Левый край: логотип */}
           <div className="flex items-center">
@@ -257,16 +274,20 @@ export function SiteShell({
         {/* Мобильное выезжающее меню справа */}
         <nav
           className={cn(
-            'fixed inset-y-0 right-0 z-40 w-72 bg-[var(--background)] shadow-lg border-l border-[var(--border)] lg:hidden',
-            'transform-gpu transition-transform duration-200 ease-out',
+            'fixed inset-y-0 right-0 z-40 w-full max-w-xs bg-background/95 shadow-lg border-l border-border lg:hidden',
+            'backdrop-blur-sm',
+            // Более плавная анимация
+            'transform-gpu transition-transform duration-300 ease-out',
             isMenuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
+          style={{ top: navTopOffset, bottom: 0 }}
         >
-          <div className="flex h-full flex-col gap-6 p-6">
+          <div className="flex h-full flex-col gap-8 p-6">
             <NavigationList
               links={navigation.header}
               ariaLabel={navigationLabels.headerLabel}
               currentPath={currentPath}
+              className="mobile-nav-list"
               density="compact"
             />
           </div>
@@ -276,7 +297,7 @@ export function SiteShell({
       {isMenuOpen ? (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-md lg:hidden"
           aria-hidden="true"
           onClick={() => setIsMenuOpen(false)}
         />

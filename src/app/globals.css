@@ -206,6 +206,8 @@ html[data-theme='dark'] {
     font-family: var(--font-sans);
     background-color: var(--background);
     color: var(--foreground);
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .theme-transition {
@@ -218,6 +220,8 @@ html[data-theme='dark'] {
 
   body {
     font-family: var(--font-sans);
+    max-width: 100%;
+    overflow-x: hidden;
     background-color: var(--color-background);
     color: var(--color-foreground);
     text-rendering: optimizeLegibility;
@@ -298,6 +302,11 @@ html[data-theme='dark'] {
   .hero-bg-image {
     @apply h-full w-full bg-cover bg-center;
     background-image: url('/uploads/hero.jpg');
+  }
+
+  /* Мобильное выезжающее меню: список пунктов в колонку */
+  .mobile-nav-list ul {
+    @apply flex flex-col items-start gap-4 text-base font-medium;
   }
 }
 
