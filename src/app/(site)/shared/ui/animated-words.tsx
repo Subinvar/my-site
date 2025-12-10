@@ -1,19 +1,21 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, type ElementType, type Ref } from 'react';
 
 import { cn } from '@/lib/cn';
 import { useInView } from '@/lib/use-in-view';
 
-type AnimatedWordsProps = {
+type WrapperTag = 'span' | 'div' | 'p' | 'strong' | 'em';
+
+type AnimatedWordsProps<T extends WrapperTag = 'span'> = {
   text: string;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: T;
 };
 
-function useWordFlipAnimation<T extends HTMLElement = HTMLElement>(deps: unknown[] = []) {
+function useWordFlipAnimation<T extends HTMLElement = HTMLElement>(text: string) {
   const ref = useRef<T | null>(null);
-  const animationFrameId = useRef<number>();
+  const animationFrameId = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     const container = ref.current;
@@ -79,26 +81,33 @@ function useWordFlipAnimation<T extends HTMLElement = HTMLElement>(deps: unknown
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, deps);
+  }, [text]);
 
   return ref;
 }
 
-export function AnimatedWords({ text, className, as = 'span' }: AnimatedWordsProps) {
+export function AnimatedWords<T extends WrapperTag = 'span'>({ text, className, as = 'span' as T }: AnimatedWordsProps<T>) {
   const { ref: inViewRef, inView } = useInView<HTMLElement>({ rootMargin: '-10% 0px', once: true });
-  const flipRef = useWordFlipAnimation<HTMLElement>([text]);
+  const flipRef = useWordFlipAnimation<HTMLElement>(text);
+  const mergedRef = useRef<HTMLElementTagNameMap[T] | null>(null);
 
-  const setRefs = (node: HTMLElement | null) => {
-    inViewRef.current = node;
-    flipRef.current = node;
-  };
+  useLayoutEffect(() => {
+    inViewRef.current = mergedRef.current;
+    flipRef.current = mergedRef.current;
+  }, [inViewRef, flipRef]);
 
   const tokens = text.split(/(\s+)/);
 
-  const Wrapper = as as keyof JSX.IntrinsicElements;
+  const Wrapper = as ?? 'span';
+
+  const WrapperComponent = Wrapper as ElementType;
 
   return (
-    <Wrapper ref={setRefs} className={cn('motion-words', className)} data-in-view={inView ? 'true' : 'false'}>
+    <WrapperComponent
+      ref={mergedRef as Ref<HTMLElementTagNameMap[T]>}
+      className={cn('motion-words', className)}
+      data-in-view={inView ? 'true' : 'false'}
+    >
       {tokens.map((token, index) => {
         if (/^\s+$/.test(token)) {
           return token;
@@ -115,6 +124,6 @@ export function AnimatedWords({ text, className, as = 'span' }: AnimatedWordsPro
           </span>
         );
       })}
-    </Wrapper>
+    </WrapperComponent>
   );
 }
