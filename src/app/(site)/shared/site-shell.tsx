@@ -137,19 +137,28 @@ export function SiteShell({
     };
   }, [isMenuOpen]);
 
- // Высота шапки, чтобы мобильное меню начиналось под ней
+  // Высота шапки нужна и для отступа контента, и для точки начала мобильного меню
   const headerRef = useRef<HTMLElement | null>(null);
-  const [navTopOffset, setNavTopOffset] = useState(56); // дефолт под мобильную шапку
+  const [headerHeight, setHeaderHeight] = useState(56); // дефолт под мобильную шапку
 
   useEffect(() => {
-    const updateOffset = () => {
+    const updateHeight = () => {
       if (!headerRef.current) return;
-      setNavTopOffset(headerRef.current.getBoundingClientRect().height);
+      setHeaderHeight(headerRef.current.getBoundingClientRect().height);
     };
 
-    updateOffset();
-    window.addEventListener('resize', updateOffset);
-    return () => window.removeEventListener('resize', updateOffset);
+    const observer = new ResizeObserver(updateHeight);
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
   }, []);
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
@@ -164,13 +173,16 @@ export function SiteShell({
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
   return (
-    <div className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}>
+    <div
+      className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}
+      style={{ paddingTop: headerHeight }}
+    >
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
 
       <header
         ref={headerRef}
-        className="sticky top-0 z-40 bg-background/90 backdrop-blur"
+        className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur"
       >
         <div className="relative before:pointer-events-none before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-screen before:-translate-x-1/2 before:transform before:bg-[rgba(148,27,32,0.12)] before:content-['']">
           <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
@@ -291,7 +303,7 @@ export function SiteShell({
             'transform-gpu transition-transform duration-300 ease-out',
             isMenuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
-          style={{ top: navTopOffset, bottom: 0 }}
+          style={{ top: headerHeight, bottom: 0 }}
         >
           <div className="flex h-full flex-col gap-8 p-6">
             <NavigationList
