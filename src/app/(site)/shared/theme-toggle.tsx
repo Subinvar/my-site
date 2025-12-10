@@ -1,6 +1,6 @@
 'use client';
 
-import { MoonIcon, SunIcon } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
@@ -106,13 +106,13 @@ export function ThemeToggle() {
           />
         ) : (
           <>
-            <SunIcon
+            <Sun
               className={cn(
                 'absolute inset-0 h-4 w-4 transition-transform duration-200 ease-out',
                 isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0',
               )}
             />
-            <MoonIcon
+            <Moon
               className={cn(
                 'absolute inset-0 h-4 w-4 transition-transform duration-200 ease-out',
                 isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90',
