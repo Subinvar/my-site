@@ -54,6 +54,7 @@ export function SiteShell({
 
   const telegramUrl = site.contacts.telegramUrl?.trim() ?? '';
   const telegramLabel = formatTelegramHandle(telegramUrl) ?? (telegramUrl ? 'Telegram' : '');
+  const brandLabel = brandName || 'Интема Групп';
 
   const contactLinks = [
     site.contacts.phone
@@ -165,9 +166,9 @@ export function SiteShell({
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
 
-      <header 
+      <header
         ref={headerRef}
-        className="sticky top-0 z-40 bg-background/90 backdrop-blur shadow-[0_1px_0_rgba(148,27,32,0.12)]"
+                className="sticky top-0 z-40 bg-background/90 backdrop-blur relative before:pointer-events-none before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-screen before:-translate-x-1/2 before:transform before:bg-[rgba(148,27,32,0.12)] before:content-['']"
       >
         <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
           {/* Левый край: логотип */}
@@ -178,11 +179,17 @@ export function SiteShell({
             >
               <Image
                 src="/uploads/logo.svg"
-                alt={brandName || 'Интема Групп'}
+                alt={brandLabel}
                 width={64}
                 height={64}
                 className="h-8 w-auto sm:h-10"
               />
+              <span
+                className="text-sm font-semibold leading-tight text-brand-700 sm:text-base dark:text-brand-50"
+                style={{ fontFamily: 'var(--font-brand)' }}
+              >
+                {brandLabel}
+              </span>
             </a>
           </div>
 
@@ -234,7 +241,7 @@ export function SiteShell({
             </div>
 
             {/* MOBILE (< lg): всё справа в одну линию + бургер */}
-            <div className="flex items-center gap-2 lg:hidden">
+            <div className="flex items-center gap-1.5 lg:hidden">
               <ThemeToggle />
               <LanguageSwitcher
                 currentLocale={locale}
@@ -287,7 +294,6 @@ export function SiteShell({
               links={navigation.header}
               ariaLabel={navigationLabels.headerLabel}
               currentPath={currentPath}
-              
               density="compact"
             />
           </div>
