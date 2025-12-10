@@ -1,7 +1,6 @@
 import type { HTMLAttributes } from 'react';
 
 import { cn } from '@/lib/cn';
-import { LineWrapText } from './line-wrap-text';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div' | 'article' | 'section';
@@ -32,14 +31,9 @@ export function CardHeader({ className, ...rest }: HTMLAttributes<HTMLDivElement
 
 export function CardTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <LineWrapText
-      as="h3"
-      variant="default"
-      className={cn('text-base sm:text-lg font-semibold', className)}
-      {...rest}
-    >
+    <h3 className={cn('text-base font-semibold sm:text-lg', className)} {...rest}>
       {children}
-    </LineWrapText>
+    </h3>
   );
 }
 
