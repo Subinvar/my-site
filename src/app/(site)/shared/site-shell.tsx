@@ -287,7 +287,7 @@ export function SiteShell({
               links={navigation.header}
               ariaLabel={navigationLabels.headerLabel}
               currentPath={currentPath}
-              className="mobile-nav-list"
+              
               density="compact"
             />
           </div>
