@@ -168,112 +168,114 @@ export function SiteShell({
 
       <header
         ref={headerRef}
-                className="sticky top-0 z-40 bg-background/90 backdrop-blur relative before:pointer-events-none before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-screen before:-translate-x-1/2 before:transform before:bg-[rgba(148,27,32,0.12)] before:content-['']"
+        className="sticky top-0 z-40 bg-background/90 backdrop-blur"
       >
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
-          {/* Левый край: логотип */}
-          <div className="flex items-center">
-            <a
-              href={buildPath(locale)}
-              className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <Image
-                src="/uploads/logo.svg"
-                alt={brandLabel}
-                width={64}
-                height={64}
-                className="h-8 w-auto sm:h-10"
-              />
-              <span
-                className="text-sm font-semibold leading-tight text-brand-600 sm:text-base dark:text-brand-600"
-                style={{ fontFamily: 'var(--font-brand)' }}
+        <div className="relative before:pointer-events-none before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-screen before:-translate-x-1/2 before:transform before:bg-[rgba(148,27,32,0.12)] before:content-['']">
+          <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
+            {/* Левый край: логотип */}
+            <div className="flex items-center">
+              <a
+                href={buildPath(locale)}
+                className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                {brandLabel}
-              </span>
-            </a>
-          </div>
-
-          {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
-          <div className="flex flex-1 items-center justify-end gap-4">
-            {/* DESKTOP (>= lg): две строки справа */}
-            <div className="hidden flex-col items-end gap-0.5 lg:flex">
-              {/* СТРОКА 1: телефон, почта, переключатели */}
-              <div className="flex items-center gap-1 text-[13px] leading-tight">
-                {site.contacts.phone ? (
-                  <a
-                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                    className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-                  >
-                    {site.contacts.phone}
-                  </a>
-                ) : null}
-
-                {site.contacts.email ? (
-                  <a
-                    href={`mailto:${site.contacts.email}`}
-                    className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-                  >
-                    {site.contacts.email}
-                  </a>
-                ) : null}
-
-                <div className="hidden items-center gap-2 sm:flex">
-                  <ThemeToggle />
-                  <LanguageSwitcher
-                    currentLocale={locale}
-                    targetLocale={targetLocale}
-                    href={switcherHref}
-                    switchToLabels={switchToLabels}
-                  />
-                </div>
-              </div>
-
-              {/* СТРОКА 2: разделы сайта */}
-              <nav aria-label={navigationLabels.headerLabel}>
-                <NavigationList
-                  links={navigation.header}
-                  ariaLabel={navigationLabels.headerLabel}
-                  currentPath={currentPath}
-                  className="flex"
-                  density="compact"
+                <Image
+                  src="/uploads/logo.svg"
+                  alt={brandLabel}
+                  width={64}
+                  height={64}
+                  className="h-8 w-auto sm:h-10"
                 />
-              </nav>
+                <span
+                  className="text-sm font-semibold leading-tight text-brand-600 sm:text-base dark:text-brand-600"
+                  style={{ fontFamily: 'var(--font-brand)' }}
+                >
+                  {brandLabel}
+                </span>
+              </a>
             </div>
 
-            {/* MOBILE (< lg): всё справа в одну линию + бургер */}
-            <div className="flex items-center gap-1.5 lg:hidden">
-              <ThemeToggle />
-              <LanguageSwitcher
-                currentLocale={locale}
-                targetLocale={targetLocale}
-                href={switcherHref}
-                switchToLabels={switchToLabels}
-              />
-              <button
-                type="button"
-                className={cn(
-                  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70 text-muted-foreground',
-                  'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                  'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
-                )}
-                onClick={() => setIsMenuOpen((prev) => !prev)}
-                aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
-                aria-expanded={isMenuOpen}
-              >
-                <span className="relative block h-4 w-5">
-                  {/* Верхняя линия */}
-                  <span
-                    className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                    style={{ transform: topLineTransform }}
+            {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
+            <div className="flex flex-1 items-center justify-end gap-4">
+              {/* DESKTOP (>= lg): две строки справа */}
+              <div className="hidden flex-col items-end gap-0.5 lg:flex">
+                {/* СТРОКА 1: телефон, почта, переключатели */}
+                <div className="flex items-center gap-1 text-[13px] leading-tight">
+                  {site.contacts.phone ? (
+                    <a
+                      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                    >
+                      {site.contacts.phone}
+                    </a>
+                  ) : null}
+
+                  {site.contacts.email ? (
+                    <a
+                      href={`mailto:${site.contacts.email}`}
+                      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+                    >
+                      {site.contacts.email}
+                    </a>
+                  ) : null}
+
+                  <div className="hidden items-center gap-2 sm:flex">
+                    <ThemeToggle />
+                    <LanguageSwitcher
+                      currentLocale={locale}
+                      targetLocale={targetLocale}
+                      href={switcherHref}
+                      switchToLabels={switchToLabels}
+                    />
+                  </div>
+                </div>
+
+                {/* СТРОКА 2: разделы сайта */}
+                <nav aria-label={navigationLabels.headerLabel}>
+                  <NavigationList
+                    links={navigation.header}
+                    ariaLabel={navigationLabels.headerLabel}
+                    currentPath={currentPath}
+                    className="flex"
+                    density="compact"
                   />
-                  {/* Нижняя линия */}
-                  <span
-                    className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                    style={{ transform: bottomLineTransform }}
-                  />
-                </span>
-              </button>
+                </nav>
+              </div>
+
+              {/* MOBILE (< lg): всё справа в одну линию + бургер */}
+              <div className="flex items-center gap-1.5 lg:hidden">
+                <ThemeToggle />
+                <LanguageSwitcher
+                  currentLocale={locale}
+                  targetLocale={targetLocale}
+                  href={switcherHref}
+                  switchToLabels={switchToLabels}
+                />
+                <button
+                  type="button"
+                  className={cn(
+                    'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70 text-muted-foreground',
+                    'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+                  )}
+                  onClick={() => setIsMenuOpen((prev) => !prev)}
+                  aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+                  aria-expanded={isMenuOpen}
+                >
+                  <span className="relative block h-4 w-5">
+                    {/* Верхняя линия */}
+                    <span
+                      className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
+                      style={{ transform: topLineTransform }}
+                    />
+                    {/* Нижняя линия */}
+                    <span
+                      className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
+                      style={{ transform: bottomLineTransform }}
+                    />
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
