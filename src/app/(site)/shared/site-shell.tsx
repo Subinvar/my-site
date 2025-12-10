@@ -182,9 +182,9 @@ export function SiteShell({
 
       <header
         ref={headerRef}
-        className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur"
+        className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
       >
-        <div className="relative before:pointer-events-none before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-screen before:-translate-x-1/2 before:transform before:bg-[rgba(148,27,32,0.12)] before:content-['']">
+        <div className="relative">
           <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
             {/* Левый край: логотип */}
             <div className="flex items-center">
