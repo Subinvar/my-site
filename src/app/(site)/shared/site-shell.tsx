@@ -13,7 +13,6 @@ import { cn } from '@/lib/cn';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
-import { BrandName } from './brand-name';
 
 const brandFont = { variable: 'font-brand-var' };
 
@@ -200,10 +199,9 @@ export function SiteShell({
                   height={64}
                   className="h-8 w-auto sm:h-10"
                 />
-                <BrandName
-                  label={brandLabel}
-                  className="text-brand-600 dark:text-brand-600"
-                />
+                <span className="font-bold text-brand-600 dark:text-brand-600 text-[15px] sm:text-lg leading-tight">
+                  {brandLabel}
+                </span>
               </a>
             </div>
 
