@@ -49,12 +49,11 @@ export function BrandName({ label, className }: BrandNameProps) {
 
       const totalLineWidth = items.reduce((sum, item) => sum + item.getBoundingClientRect().width, 0);
       const totalGapWidth = gapValue * Math.max(items.length - 1, 0);
-      const availableWidth = container.getBoundingClientRect().width;
+      const availableWidth = (container.parentElement ?? container).getBoundingClientRect().width;
       const requiredWidth = totalLineWidth + totalGapWidth;
 
-      const shouldStack = isStackedRef.current
-        ? requiredWidth > availableWidth - UNSTACK_MARGIN_IN_PX
-        : requiredWidth > availableWidth - STACK_MARGIN_IN_PX;
+      const margin = isStackedRef.current ? UNSTACK_MARGIN_IN_PX : STACK_MARGIN_IN_PX;
+      const shouldStack = requiredWidth - margin > availableWidth;
 
       if (shouldStack !== isStackedRef.current) {
         isStackedRef.current = shouldStack;

@@ -50,9 +50,9 @@
 }
 
 .brand-name {
-  --brand-gap: 0.38rem;
+  --brand-gap: 0.28rem;
   --brand-transition: 200ms ease;
-  --brand-shift: 8px;
+  --brand-shift: 5px;
   display: inline-flex;
   align-items: center;
   gap: var(--brand-gap);
@@ -90,16 +90,16 @@
 .brand-name[data-stacked='true'] {
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.16rem;
-  line-height: 1.08;
+  gap: 0.02rem;
+  line-height: 0.98;
 }
 
 .brand-name[data-stacked='true'] .brand-line--top {
-  transform: translateY(-2px);
+  transform: translateY(-0.5px);
 }
 
 .brand-name[data-stacked='true'] .brand-line--bottom {
-  transform: translateY(var(--brand-shift));
+  transform: translateY(calc(var(--brand-shift) * 0.6));
 }
 
 .brand-name[data-transition='stacking'] .brand-line--bottom {
