@@ -175,7 +175,7 @@ export function SiteShell({
           <div className="flex items-center">
             <a
               href={buildPath(locale)}
-              className="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Image
                 src="/uploads/logo.svg"
@@ -185,7 +185,7 @@ export function SiteShell({
                 className="h-8 w-auto sm:h-10"
               />
               <span
-                className="text-sm font-semibold leading-tight text-brand-700 sm:text-base dark:text-brand-50"
+                className="text-sm font-semibold leading-tight text-brand-600 sm:text-base dark:text-brand-600"
                 style={{ fontFamily: 'var(--font-brand)' }}
               >
                 {brandLabel}
