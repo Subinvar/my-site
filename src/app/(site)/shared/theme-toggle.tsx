@@ -56,8 +56,12 @@ export function ThemeToggle() {
   useLayoutEffect(() => {
     if (!isClient) return;
 
-    setTheme(resolveInitialClientTheme());
-    setIsMounted(true);
+    const frameId = window.requestAnimationFrame(() => {
+      setTheme(resolveInitialClientTheme());
+      setIsMounted(true);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
   }, []);
 
   useEffect(() => {

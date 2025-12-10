@@ -109,26 +109,28 @@ export function SiteShell({
     }
 
     let timer: number | undefined;
+    const frameId = window.requestAnimationFrame(() => {
+      if (isMenuOpen) {
+        // ОТКРЫТИЕ: две параллельные линии → одна → крест
+        setAreLinesConverged(true);
+        setIsBurgerRotated(false);
 
-    if (isMenuOpen) {
-      // ОТКРЫТИЕ: две параллельные линии → одна → крест
-      setAreLinesConverged(true);
-      setIsBurgerRotated(false);
+        timer = window.setTimeout(() => {
+          setIsBurgerRotated(true);
+        }, 120);
+      } else {
+        // ЗАКРЫТИЕ: крест → одна линия → две параллельные
+        setIsBurgerRotated(false);
+        setAreLinesConverged(true);
 
-      timer = window.setTimeout(() => {
-        setIsBurgerRotated(true);
-      }, 120);
-    } else {
-      // ЗАКРЫТИЕ: крест → одна линия → две параллельные
-      setIsBurgerRotated(false);
-      setAreLinesConverged(true);
-
-      timer = window.setTimeout(() => {
-        setAreLinesConverged(false);
-      }, 120);
-    }
+        timer = window.setTimeout(() => {
+          setAreLinesConverged(false);
+        }, 120);
+      }
+    });
 
     return () => {
+      window.cancelAnimationFrame(frameId);
       if (timer) {
         window.clearTimeout(timer);
       }
