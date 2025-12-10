@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
+import { LineWrapText } from './line-wrap-text';
 
 interface SectionHeadingProps extends HTMLAttributes<HTMLDivElement> {
   eyebrow?: string;
@@ -15,9 +16,21 @@ export function SectionHeading({ eyebrow, title, description, as = 'h2', classNa
       {eyebrow ? (
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted-foreground)]">{eyebrow}</p>
       ) : null}
-      <HeadingTag className="text-xl font-semibold sm:text-2xl text-[var(--foreground)]">{title}</HeadingTag>
+      <LineWrapText
+        as={HeadingTag}
+        variant="emphasized"
+        className="text-xl font-semibold sm:text-2xl text-[var(--foreground)]"
+      >
+        {title}
+      </LineWrapText>
       {description ? (
-        <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">{description}</p>
+        <LineWrapText
+          as="p"
+          variant="subtle"
+          className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base"
+        >
+          {description}
+        </LineWrapText>
       ) : null}
     </div>
   );
