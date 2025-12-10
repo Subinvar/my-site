@@ -109,7 +109,7 @@ export function AnimatedWords({ text, className, as = 'span' }: AnimatedWordsPro
             key={index}
             data-word-id={index}
             className="motion-word inline-block"
-            style={{ transitionDelay: `${index * 30}ms` }}
+            style={{ transitionDelay: `${index * 80}ms` }}
           >
             {token}
           </span>
