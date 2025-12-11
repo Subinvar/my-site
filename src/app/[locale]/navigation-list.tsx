@@ -51,8 +51,8 @@ export function NavigationList({
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
           const densityClass =
             density === 'compact'
-              ? 'px-2.5 py-0.5 text-[13px] leading-tight'
-              : 'px-3 py-0.5 text-sm';
+              ? 'flex flex-wrap items-center gap-3 text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight'
+              : 'flex flex-wrap items-center gap-4 text-[clamp(0.9rem,0.85rem+0.3vw,1.1rem)] font-medium';
           const className = `
             inline-flex items-center gap-1 rounded-full ${densityClass}
             no-underline

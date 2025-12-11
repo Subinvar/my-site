@@ -186,7 +186,7 @@ export function SiteShell({
         className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
       >
         <div className="relative">
-          <div className="flex w-full items-center justify-between gap-4 px-4 py-0 sm:px-6 sm:py-0.5">
+          <div className="flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6">
             {/* Левый край: логотип */}
             <div className="flex items-center">
               <a
@@ -198,11 +198,11 @@ export function SiteShell({
                   alt={brandName || 'Интема Групп'}
                   width={64}
                   height={64}
-                  className="h-8 w-auto sm:h-10"
+                  className="h-[clamp(2.4rem,1.8rem+0.7vw,3.6rem)] w-auto"
                 />
                 <HeaderBrandFlipText
                   text={brandName}
-                  className="font-bold text-brand-600 dark:text-brand-600 text-[15px] sm:text-lg leading-tight"
+                  className="font-bold text-brand-600 dark:text-brand-600 text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] leading-tight"
                   />
               </a>
             </div>
@@ -212,7 +212,7 @@ export function SiteShell({
               {/* DESKTOP (>= lg): две строки справа */}
               <div className="hidden flex-col items-end gap-0.5 lg:flex">
                 {/* СТРОКА 1: телефон, почта, переключатели */}
-                <div className="flex items-center gap-1 text-[13px] leading-tight">
+                <div className="flex items-center gap-1 text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight">
                   {site.contacts.phone ? (
                     <a
                       href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
