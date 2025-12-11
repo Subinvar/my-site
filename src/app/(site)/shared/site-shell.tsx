@@ -196,34 +196,39 @@ export function SiteShell({
         style={{ '--header-height': `${headerHeight}px` } as CSSProperties }
       >
         <div className="relative">
-          <div className="flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6">
+          <div
+            className={cn(
+              'flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6',
+              'lg:grid lg:grid-cols-[auto,1fr] lg:grid-rows-2 lg:items-stretch lg:justify-between lg:gap-6',
+            )}
+          >
             {/* Левый край: логотип */}
-            <div className="flex items-center">
+            <div className="flex items-center lg:row-span-2 lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30">
               <a
                 href={buildPath(locale)}
                 className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <Image
                   src="/uploads/logo.svg"
-                  alt={brandName || 'Интема Групп'}
+                  alt={brandLabel}
                   width={64}
                   height={64}
                   className="w-auto object-contain"
                   style={{ height: `${logoHeight}px`, maxHeight: `${logoHeight}px` }}
                 />
                 <HeaderBrandFlipText
-                  text={brandName}
+                  text={brandLabel}
                   className="font-bold text-brand-600 dark:text-brand-600 text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] leading-tight"
                 />
               </a>
             </div>
 
             {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
-            <div className="flex flex-1 items-center justify-end gap-4">
-              {/* DESKTOP (>= lg): две строки справа */}
-              <div className="hidden flex-col items-end gap-0.5 lg:flex">
-                {/* СТРОКА 1: телефон, почта, переключатели */}
-                <div className="flex items-center gap-1 text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight">
+            <div className="flex flex-1 items-center justify-end gap-4 lg:col-start-2 lg:row-span-2 lg:grid lg:grid-rows-2 lg:items-stretch lg:gap-2">
+              {/* DESKTOP (>= lg): два равных блока справа */}
+              <div className="hidden w-full grid-rows-2 gap-2 lg:grid">
+                {/* БЛОК 2: телефон, почта, переключатели */}
+                <div className="flex w-full items-center justify-end gap-1 rounded-lg text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight lg:h-full lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30">
                   {site.contacts.phone ? (
                     <a
                       href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
@@ -253,8 +258,11 @@ export function SiteShell({
                   </div>
                 </div>
 
-                {/* СТРОКА 2: разделы сайта */}
-                <nav aria-label={navigationLabels.headerLabel}>
+                {/* БЛОК 3: разделы сайта */}
+                <nav
+                  aria-label={navigationLabels.headerLabel}
+                  className="flex w-full items-center justify-end rounded-lg lg:h-full lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
+                >
                   <NavigationList
                     links={navigation.header}
                     ariaLabel={navigationLabels.headerLabel}
