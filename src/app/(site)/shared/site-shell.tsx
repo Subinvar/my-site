@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
+import { HeaderBrandFlipText } from '@/app/(site)/shared/ui/header-brand-flip-text';
 
 const brandFont = { variable: 'font-brand-var' };
 
@@ -194,14 +195,15 @@ export function SiteShell({
               >
                 <Image
                   src="/uploads/logo.svg"
-                  alt={brandLabel}
+                  alt={brandName || 'Интема Групп'}
                   width={64}
                   height={64}
                   className="h-8 w-auto sm:h-10"
                 />
-                <span className="font-bold text-brand-600 dark:text-brand-600 text-[15px] sm:text-lg leading-tight">
-                  {brandLabel}
-                </span>
+                <HeaderBrandFlipText
+                  text={brandName}
+                  className="font-bold text-brand-600 dark:text-brand-600 text-[15px] sm:text-lg leading-tight"
+                  />
               </a>
             </div>
 
