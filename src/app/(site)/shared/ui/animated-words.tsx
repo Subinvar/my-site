@@ -1,129 +1,107 @@
 'use client';
 
-import { useLayoutEffect, useRef, type ElementType, type Ref } from 'react';
+import { useLayoutEffect, useRef, type ElementType } from 'react';
 
 import { cn } from '@/lib/cn';
-import { useInView } from '@/lib/use-in-view';
 
-type WrapperTag = 'span' | 'div' | 'p' | 'strong' | 'em';
-
-type AnimatedWordsProps<T extends WrapperTag = 'span'> = {
+type AnimatedWordsProps = {
   text: string;
   className?: string;
-  as?: T;
+  as?: ElementType;      // 'span', 'p', 'h1', кастомный компонент и т.д.
+  enableFlip?: boolean;  // включить/выключить FLIP для этого блока
+  flipKey?: unknown;     // ключ макета: меняется -> запускаем FLIP
 };
 
-function useWordFlipAnimation<T extends HTMLElement = HTMLElement>(text: string) {
-  const ref = useRef<T | null>(null);
-  const animationFrameId = useRef<number | null>(null);
+/**
+ * Чистый FLIP для слов.
+ * Не слушает resize окна сам по себе, а реагирует только на deps (text, flipKey).
+ */
+function useWordFlipAnimation(enable: boolean, deps: unknown[]) {
+  const ref = useRef<HTMLElement | null>(null);
+  const previousRectsRef = useRef<Map<string, DOMRect> | null>(null);
 
   useLayoutEffect(() => {
+    if (!enable) return;
+
     const container = ref.current;
     if (!container) return;
 
-    const getSpans = () => container.querySelectorAll<HTMLSpanElement>('[data-word-id]');
+    const spans = container.querySelectorAll<HTMLSpanElement>('[data-word-id]');
+    if (!spans.length) return;
 
-    const measureRects = () => {
-      const rects = new Map<string, DOMRect>();
-      getSpans().forEach((span) => {
-        const id = span.dataset.wordId;
-        if (!id) return;
-        rects.set(id, span.getBoundingClientRect());
+    const nextRects = new Map<string, DOMRect>();
+    spans.forEach((span) => {
+      const id = span.dataset.wordId;
+      if (!id) return;
+      nextRects.set(id, span.getBoundingClientRect());
+    });
+
+    const previousRects = previousRectsRef.current;
+
+    // Первый прогон (монтаж) – только запоминаем, без анимации
+    if (!previousRects) {
+      previousRectsRef.current = nextRects;
+      return;
+    }
+
+    spans.forEach((span) => {
+      const id = span.dataset.wordId;
+      if (!id) return;
+
+      const prev = previousRects.get(id);
+      const next = nextRects.get(id);
+      if (!prev || !next) return;
+
+      const dx = prev.left - next.left;
+      const dy = prev.top - next.top;
+      if (!dx && !dy) return;
+
+      // Ставим "старую" позицию без анимации
+      span.style.transition = 'none';
+      span.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      // В следующем кадре — плавно к новой позиции
+      requestAnimationFrame(() => {
+        span.style.transition =
+          'transform 240ms cubic-bezier(0.16, 1, 0.3, 1)';
+        span.style.transform = '';
       });
-      return rects;
-    };
+    });
 
-    let previousRects = measureRects();
-
-    const animate = () => {
-      const nextRects = measureRects();
-
-      getSpans().forEach((span) => {
-        const id = span.dataset.wordId;
-        if (!id) return;
-
-        const prev = previousRects.get(id);
-        const next = nextRects.get(id);
-        if (!prev || !next) return;
-
-        const dx = prev.left - next.left;
-        const dy = prev.top - next.top;
-
-        if (!dx && !dy) return;
-
-        span.style.transition = 'none';
-        span.style.transform = `translate(${dx}px, ${dy}px)`;
-
-        requestAnimationFrame(() => {
-          span.style.transition = '';
-          span.style.transform = '';
-        });
-      });
-
-      previousRects = nextRects;
-    };
-
-    const queueAnimation = () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-      animationFrameId.current = requestAnimationFrame(animate);
-    };
-
-    const resizeObserver = new ResizeObserver(queueAnimation);
-    resizeObserver.observe(container);
-    window.addEventListener('resize', queueAnimation);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', queueAnimation);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, [text]);
+    // Запоминаем актуальные координаты как "предыдущие"
+    previousRectsRef.current = nextRects;
+  }, [enable, ...deps]);
 
   return ref;
 }
 
-export function AnimatedWords<T extends WrapperTag = 'span'>({ text, className, as = 'span' as T }: AnimatedWordsProps<T>) {
-  const { ref: inViewRef, inView } = useInView<HTMLElement>({ rootMargin: '-10% 0px', once: true });
-  const flipRef = useWordFlipAnimation<HTMLElement>(text);
-  const mergedRef = useRef<HTMLElementTagNameMap[T] | null>(null);
+export function AnimatedWords({
+  text,
+  className,
+  as,
+  enableFlip = false,
+  flipKey,
+}: AnimatedWordsProps) {
+  const Wrapper: ElementType = as ?? 'span';
 
-  useLayoutEffect(() => {
-    inViewRef.current = mergedRef.current;
-    flipRef.current = mergedRef.current;
-  }, [inViewRef, flipRef]);
+  // FLIP включится только если enableFlip === true
+  const containerRef = useWordFlipAnimation(enableFlip, [text, flipKey]);
 
   const tokens = text.split(/(\s+)/);
 
-  const Wrapper = as ?? 'span';
-
-  const WrapperComponent = Wrapper as ElementType;
-
   return (
-    <WrapperComponent
-      ref={mergedRef as Ref<HTMLElementTagNameMap[T]>}
-      className={cn('motion-words', className)}
-      data-in-view={inView ? 'true' : 'false'}
-    >
+    <Wrapper ref={containerRef} className={cn(className)}>
       {tokens.map((token, index) => {
         if (/^\s+$/.test(token)) {
           return token;
         }
 
         return (
-          <span
-            key={index}
-            data-word-id={index}
-            className="motion-word inline-block"
-            style={{ transitionDelay: `${index * 80}ms` }}
-          >
+          <span key={index} data-word-id={String(index)} className="motion-word inline-block">
             {token}
           </span>
         );
       })}
-    </WrapperComponent>
+    </Wrapper>
   );
 }
