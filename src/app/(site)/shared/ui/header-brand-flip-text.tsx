@@ -29,24 +29,10 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
       return rects;
     };
 
-    // Общая длительность перемещения слова «от старта до новой точки».
-    // Меняем этот параметр, чтобы растягивать или ускорять весь перелёт целиком.
-    const travelDuration = 760;
-
-    // Доля времени на фазу ухода (fade/slide out), остальное — на фазу появления.
-    // Если хотите ещё больше времени на перелёт, увеличьте travelDuration выше.
-    const exitDuration = Math.round(travelDuration * 0.35);
-    const enterDuration = Math.round(travelDuration * 0.65);
-
-    // Небольшая задержка между фазами, чтобы выход был заметен.
-    const phaseDelay = 100;
-
-    let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
-
     // Стартовая раскладка: просто запоминаем, без анимации
     previousRef.current = measure();
 
-    const playFlip = () => {
+    const observer = new ResizeObserver(() => {
       const container = containerRef.current;
       if (!container) return;
 
@@ -57,66 +43,48 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
         return;
       }
 
-      // Лёгкий уход, чтобы смена строк была видимой
+      // Сбрасываем transform, чтобы замерить новую раскладку «как есть»
       spans.forEach((span) => {
-        span.style.transition = `opacity ${exitDuration}ms ease-in-out, transform ${exitDuration}ms ease-in-out`;
-        span.style.opacity = '0';
-        span.style.transform = 'translateY(-6px)';
+        span.style.transition = 'none';
+        span.style.transform = '';
       });
 
-      setTimeout(() => {
-        // Сбрасываем transform, чтобы замерить новую раскладку «как есть»
+      const next = measure();
+      if (!next) return;
+
+      // FLIP: ставим старые координаты
+      spans.forEach((span) => {
+        const id = span.dataset.wordId;
+        if (!id) return;
+
+        const prevRect = previous.get(id);
+        const nextRect = next.get(id);
+        if (!prevRect || !nextRect) return;
+
+        const dx = prevRect.left - nextRect.left;
+        const dy = prevRect.top - nextRect.top;
+
+        if (!dx && !dy) return;
+
+        span.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+
+      // И плавно едем к новым
+      requestAnimationFrame(() => {
         spans.forEach((span) => {
-          span.style.transition = 'none';
+          span.style.transition =
+            'transform 220ms cubic-bezier(0.16, 1, 0.3, 1)';
           span.style.transform = '';
         });
+      });
 
-        const next = measure();
-        if (!next) return;
-
-        // FLIP: ставим старые координаты и легкое появление
-        spans.forEach((span) => {
-          const id = span.dataset.wordId;
-          if (!id) return;
-
-          const prevRect = previous.get(id);
-          const nextRect = next.get(id);
-          if (!prevRect || !nextRect) return;
-
-          const dx = prevRect.left - nextRect.left;
-          const dy = prevRect.top - nextRect.top;
-
-          span.style.transform = `translate(${dx}px, ${dy + 6}px)`;
-          span.style.opacity = '0';
-        });
-
-        requestAnimationFrame(() => {
-          spans.forEach((span) => {
-            span.style.transition = `transform ${enterDuration}ms ease-in-out ${phaseDelay}ms, opacity ${enterDuration}ms ease-in-out ${phaseDelay}ms`;
-            span.style.transform = '';
-            span.style.opacity = '1';
-          });
-        });
-
-        previousRef.current = next;
-      }, exitDuration + phaseDelay);
-    };
-
-    const observer = new ResizeObserver(() => {
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
-
-      debounceTimeout = setTimeout(playFlip, 120);
+      previousRef.current = next;
     });
 
     observer.observe(container);
 
     return () => {
       observer.disconnect();
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
     };
   }, []);
 
