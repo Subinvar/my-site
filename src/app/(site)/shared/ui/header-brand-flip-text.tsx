@@ -9,13 +9,14 @@ type HeaderBrandFlipTextProps = {
 
 export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProps) {
   const containerRef = useRef<HTMLSpanElement | null>(null);
-  const previousRef = useRef<{ rects: Map<string, DOMRect>; width: number } | null>(null);
+  const previousRef = useRef<Map<string, DOMRect> | null>(null);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container || typeof ResizeObserver === 'undefined') return;
 
-    const getSpans = () => container.querySelectorAll<HTMLSpanElement>('[data-word-id]');
+    const getSpans = () =>
+      container.querySelectorAll<HTMLSpanElement>('[data-word-id]');
 
     const measure = () => {
       const spans = getSpans();
@@ -25,13 +26,10 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
         if (!id) return;
         rects.set(id, span.getBoundingClientRect());
       });
-
-      const width = container.getBoundingClientRect().width;
-
-      return { rects, width };
+      return rects;
     };
 
-    // Начальное измерение, без анимации
+    // Стартовая раскладка: просто запоминаем, без анимации
     previousRef.current = measure();
 
     const observer = new ResizeObserver(() => {
@@ -39,15 +37,13 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
       if (!container) return;
 
       const previous = previousRef.current;
-      if (!previous) {
+      const spans = getSpans();
+      if (!previous || !spans.length) {
         previousRef.current = measure();
         return;
       }
 
-      const spans = getSpans();
-      if (!spans.length) return;
-
-      // Сброс transform/transition, чтобы замерить чистую новую раскладку
+      // Сбрасываем transform, чтобы замерить новую раскладку «как есть»
       spans.forEach((span) => {
         span.style.transition = 'none';
         span.style.transform = '';
@@ -56,25 +52,13 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
       const next = measure();
       if (!next) return;
 
-      const prevWidth = previous.width;
-      const nextWidth = next.width;
-      const widthDelta = Math.abs(nextWidth - prevWidth);
-
-      // Защита от гигантских скачков (например, резкая смена десктоп/мобилка):
-      // просто обновляем состояние без анимации
-      const BREAKPOINT_JUMP_THRESHOLD = 120; // пикселей
-      if (widthDelta > BREAKPOINT_JUMP_THRESHOLD) {
-        previousRef.current = next;
-        return;
-      }
-
-      // FLIP: анимируем только реальные изменения позиций
+      // FLIP: ставим старые координаты
       spans.forEach((span) => {
         const id = span.dataset.wordId;
         if (!id) return;
 
-        const prevRect = previous.rects.get(id);
-        const nextRect = next.rects.get(id);
+        const prevRect = previous.get(id);
+        const nextRect = next.get(id);
         if (!prevRect || !nextRect) return;
 
         const dx = prevRect.left - nextRect.left;
@@ -82,11 +66,10 @@ export function HeaderBrandFlipText({ text, className }: HeaderBrandFlipTextProp
 
         if (!dx && !dy) return;
 
-        // Ставим "старую" позицию без анимации
         span.style.transform = `translate(${dx}px, ${dy}px)`;
       });
 
-      // В следующем кадре плавно возвращаем в норму
+      // И плавно едем к новым
       requestAnimationFrame(() => {
         spans.forEach((span) => {
           span.style.transition =

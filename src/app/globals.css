@@ -23,13 +23,6 @@
     opacity: 1;
     transition: opacity var(--transition-normal);
   }
-
-  .motion-words {
-  }
-
-  .motion-word {
-    display: inline-block;
-  }
 }
 
 @keyframes fade-in-up {

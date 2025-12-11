@@ -7,7 +7,6 @@ import type { Locale } from '@/lib/i18n';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { useInView } from '@/lib/use-in-view';
 import { cn } from '@/lib/cn';
-import { AnimatedWords } from '@/app/(site)/shared/ui/animated-words';
 
 export type HeroProps = {
   locale: Locale;
@@ -79,10 +78,10 @@ export function Hero({ locale, data }: HeroProps) {
             {preheading}
           </p>
           <h1 className="text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            <AnimatedWords text={title} />
+            {title}
           </h1>
           <p className="max-w-xl text-base text-white/80 sm:text-lg">
-            <AnimatedWords text={subtitle} />
+            {subtitle}
           </p>
 
           <div className="flex flex-wrap gap-4">
