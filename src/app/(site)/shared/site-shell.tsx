@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import Image from 'next/image';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
@@ -145,7 +145,14 @@ export function SiteShell({
   useEffect(() => {
     const updateHeight = () => {
       if (!headerRef.current) return;
-      setHeaderHeight(headerRef.current.getBoundingClientRect().height);
+      const nextHeight = Math.round(headerRef.current.getBoundingClientRect().height);
+
+      setHeaderHeight((prev) => {
+        if (Math.abs(prev - nextHeight) < 1) {
+          return prev;
+        }
+        return nextHeight;
+      });
     };
 
     const observer = new ResizeObserver(updateHeight);
@@ -173,6 +180,8 @@ export function SiteShell({
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
+  const logoHeight = Math.max(40, Math.min(96, headerHeight - 10));
+
   return (
     <div
       className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}
@@ -184,6 +193,7 @@ export function SiteShell({
       <header
         ref={headerRef}
         className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
+        style={{ '--header-height': `${headerHeight}px` } as CSSProperties }
       >
         <div className="relative">
           <div className="flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6">
@@ -198,12 +208,13 @@ export function SiteShell({
                   alt={brandName || 'Интема Групп'}
                   width={64}
                   height={64}
-                  className="h-[clamp(2.4rem,1.8rem+0.7vw,3.6rem)] w-auto"
+                  className="w-auto object-contain"
+                  style={{ height: `${logoHeight}px`, maxHeight: `${logoHeight}px` }}
                 />
                 <HeaderBrandFlipText
                   text={brandName}
                   className="font-bold text-brand-600 dark:text-brand-600 text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] leading-tight"
-                  />
+                />
               </a>
             </div>
 
