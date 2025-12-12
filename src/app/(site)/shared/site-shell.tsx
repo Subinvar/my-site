@@ -222,11 +222,11 @@ export function SiteShell({
             {/* RIGHT (DESKTOP): внутренняя сетка из 2 строк */}
             <div className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0">
               {/* БЛОК 2 */}
-              <div className="flex h-full w-full items-center justify-end gap-1 rounded-lg text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight">
+              <div className="flex h-full w-full items-center justify-end gap-3 rounded-lg text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
                   <a
                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                    className="hidden font-medium text-muted-foreground no-underline hover:text-foreground md:inline-flex"
+                    className="hidden text-muted-foreground no-underline hover:text-foreground md:inline-flex"
                   >
                     {site.contacts.phone}
                   </a>
@@ -235,7 +235,7 @@ export function SiteShell({
                 {site.contacts.email ? (
                   <a
                     href={`mailto:${site.contacts.email}`}
-                    className="hidden font-medium text-muted-foreground no-underline hover:text-foreground md:inline-flex"
+                    className="hidden text-muted-foreground no-underline hover:text-foreground md:inline-flex"
                   >
                     {site.contacts.email}
                   </a>
@@ -282,7 +282,6 @@ export function SiteShell({
                   'hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                   'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
-                  'active:translate-y-[1px]',
                   'lg:hidden',
                 )}
                 onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -292,11 +291,11 @@ export function SiteShell({
                 {/* наш двухлинейный бургер */}
                 <span className="relative block h-4 w-5">
                   <span
-                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200"
                     style={{ transform: topLineTransform }}
                   />
                   <span
-                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200"
                     style={{ transform: bottomLineTransform }}
                   />
                 </span>
