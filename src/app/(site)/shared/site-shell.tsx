@@ -13,7 +13,6 @@ import { cn } from '@/lib/cn';
 import { LanguageSwitcher } from './language-switcher';
 import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
-import { HeaderBrandFlipText } from '@/app/(site)/shared/ui/header-brand-flip-text';
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
   products: 80,
@@ -220,10 +219,9 @@ export function SiteShell({
                   height={96}
                   className="w-auto h-[clamp(48px,3.2vw,72px)] object-contain"
                 />
-                <HeaderBrandFlipText
-                  text={brandLabel}
-                  className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600"
-                />
+                <span className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600">
+                  {brandLabel}
+                </span>
               </a>
             </div>
 
