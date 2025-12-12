@@ -15,11 +15,11 @@ import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
-  products: 100,
-  news: 100,
-  about: 100,
-  partners: 100,
-  contacts: 100,
+  products: 112,
+  news: 94,
+  about: 124,
+  partners: 104,
+  contacts: 104,
 };
 
 const brandFont = { variable: 'font-brand-var' };
