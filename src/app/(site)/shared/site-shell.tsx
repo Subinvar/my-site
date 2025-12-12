@@ -140,9 +140,6 @@ export function SiteShell({
   const headerRef = useRef<HTMLElement | null>(null);
   const [headerHeight, setHeaderHeight] = useState(56); // дефолт под мобильную шапку
 
-  const rightStackRef = useRef<HTMLDivElement | null>(null);
-  const [rightStackHeight, setRightStackHeight] = useState<number | null>(null);
-
   useEffect(() => {
     const updateHeight = () => {
       if (!headerRef.current) return;
@@ -170,28 +167,6 @@ export function SiteShell({
     };
   }, []);
 
-  useEffect(() => {
-    const updateRightStackHeight = () => {
-      if (!rightStackRef.current) return;
-
-      const { height } = rightStackRef.current.getBoundingClientRect();
-      setRightStackHeight(height > 0 ? Math.round(height) : null);
-    };
-
-    const observer = new ResizeObserver(updateRightStackHeight);
-    if (rightStackRef.current) {
-      observer.observe(rightStackRef.current);
-    }
-
-    updateRightStackHeight();
-    window.addEventListener('resize', updateRightStackHeight);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateRightStackHeight);
-    };
-  }, []);
-
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : -4}px) rotate(${
     isBurgerRotated ? 45 : 0
@@ -203,8 +178,6 @@ export function SiteShell({
 
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
-
-  const logoHeight = rightStackHeight ?? Math.max(40, Math.min(96, headerHeight - 10));
 
   return (
     <div
@@ -235,10 +208,9 @@ export function SiteShell({
                 <Image
                   src="/uploads/logo.svg"
                   alt={brandLabel}
-                  width={64}
-                  height={64}
-                  className="w-auto object-contain"
-                  style={{ height: `${logoHeight}px`, maxHeight: `${logoHeight}px` }}
+                  width={96}
+                  height={96}
+                  className="w-auto h-[clamp(48px,3.2vw,72px)] object-contain"
                 />
                 <HeaderBrandFlipText
                   text={brandLabel}
@@ -248,10 +220,7 @@ export function SiteShell({
             </div>
 
             {/* RIGHT (DESKTOP): внутренняя сетка из 2 строк */}
-            <div
-              ref={rightStackRef}
-              className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0"
-            >
+            <div className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0">
               {/* БЛОК 2 */}
               <div className="flex h-full w-full items-center justify-end gap-1 rounded-lg text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight">
                 {site.contacts.phone ? (
@@ -306,7 +275,16 @@ export function SiteShell({
               />
               <button
                 type="button"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-foreground transition-colors duration-150 hover:border-[var(--border)] lg:hidden"
+                className={cn(
+                  'inline-flex h-10 w-10 items-center justify-center rounded-xl',
+                  'border border-transparent bg-background/70 text-foreground',
+                  'transition-colors duration-200 ease-out',
+                  'hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                  'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+                  'active:translate-y-[1px]',
+                  'lg:hidden',
+                )}
                 onClick={() => setIsMenuOpen((prev) => !prev)}
                 aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
                 aria-expanded={isMenuOpen}
@@ -314,11 +292,11 @@ export function SiteShell({
                 {/* наш двухлинейный бургер */}
                 <span className="relative block h-4 w-5">
                   <span
-                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
                     style={{ transform: topLineTransform }}
                   />
                   <span
-                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
                     style={{ transform: bottomLineTransform }}
                   />
                 </span>
