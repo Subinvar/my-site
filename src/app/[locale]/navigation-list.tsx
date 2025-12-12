@@ -1,6 +1,9 @@
 import Link from 'next/link';
 
+import type React from 'react';
+
 import type { NavigationLink } from '@/lib/keystatic';
+import { cn } from '@/lib/cn';
 
 type NavigationListProps = {
   links: NavigationLink[];
@@ -8,6 +11,7 @@ type NavigationListProps = {
   currentPath?: string;
   className?: string;
   density?: 'default' | 'compact';
+  stableSlots?: Record<string, number>;
 };
 
 const normalizePathname = (value: string): string => {
@@ -28,6 +32,7 @@ export function NavigationList({
   currentPath = '/',
   className,
   density = 'default',
+  stableSlots,
 }: NavigationListProps) {
   if (!links.length) {
     return null;
@@ -39,8 +44,13 @@ export function NavigationList({
 
   const listClassName =
     density === 'compact'
-      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-3 text-[13px] font-medium leading-tight'
+      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-4 text-[13px] font-medium leading-tight'
       : 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-4 text-sm font-medium';
+
+  const densityClass =
+    density === 'compact'
+      ? 'text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight'
+      : 'text-[clamp(0.9rem,0.85rem+0.3vw,1.1rem)] font-medium';
 
   return (
     <nav aria-label={resolvedLabel} className={className}>
@@ -50,22 +60,25 @@ export function NavigationList({
           const normalizedHref = normalizePathname(href);
           const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
 
-          const densityClass =
-            density === 'compact'
-              ? 'text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight'
-              : 'text-[clamp(0.9rem,0.85rem+0.3vw,1.1rem)] font-medium';
+          const slotWidth = stableSlots?.[link.id];
+          const isStableSlot = typeof slotWidth === 'number';
 
-          const linkClassName = `
-            inline-flex items-center gap-1 ${densityClass}
-            no-underline
-            transition-colors
-            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600
-            ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}
-          `;
+          const liClassName = cn(isStableSlot && 'flex flex-none');
+          const liStyle = isStableSlot ? ({ width: `${slotWidth}px` } as React.CSSProperties) : undefined;
+
+          const linkClassName = cn(
+            // если есть слот — ссылка занимает всю ширину слота и центрирует текст
+            isStableSlot ? 'flex w-full justify-center' : 'inline-flex',
+            'items-center gap-1',
+            densityClass,
+            'no-underline transition-colors',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+            isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+          );
 
           if (link.isExternal) {
             return (
-              <li key={link.id}>
+              <li key={link.id} className={liClassName} style={liStyle}>
                 <a
                   href={href}
                   target={link.newTab ? '_blank' : undefined}
@@ -79,7 +92,7 @@ export function NavigationList({
           }
 
           return (
-            <li key={link.id}>
+            <li key={link.id} className={liClassName} style={liStyle}>
               <Link href={href} className={linkClassName} aria-current={isActive ? 'page' : undefined}>
                 {link.label}
               </Link>
