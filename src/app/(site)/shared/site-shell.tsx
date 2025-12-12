@@ -15,11 +15,11 @@ import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
-  products: 112,
-  news: 94,
-  about: 124,
-  partners: 104,
-  contacts: 104,
+  products: 96,
+  news: 80,
+  about: 104,
+  partners: 96,
+  contacts: 96,
 };
 
 const brandFont = { variable: 'font-brand-var' };
@@ -224,7 +224,7 @@ export function SiteShell({
             {/* RIGHT (DESKTOP): внутренняя сетка из 2 строк */}
             <div className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0">
               {/* БЛОК 2 */}
-              <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+              <div className="flex h-full w-full items-center justify-end gap-8 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
                   <a
                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
@@ -243,7 +243,7 @@ export function SiteShell({
                   </a>
                 ) : null}
 
-                <div className="hidden items-center gap-2 sm:flex">
+                <div className="hidden items-center gap-5 sm:flex">
                   <ThemeToggle />
                   <LanguageSwitcher
                     currentLocale={locale}
@@ -268,7 +268,7 @@ export function SiteShell({
             </div>
 
             {/* MOBILE: всё справа в одну линию + бургер */}
-            <div className="flex flex-1 items-center justify-end gap-1.5 lg:hidden">
+            <div className="flex flex-1 items-center justify-end gap-3 lg:hidden">
               <ThemeToggle />
               <LanguageSwitcher
                 currentLocale={locale}
