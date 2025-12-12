@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import Image from 'next/image';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
@@ -99,7 +99,7 @@ export function SiteShell({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Состояния для иконки бургера
+  // Состояния для иконки бургера (оставляем как есть)
   const [areLinesConverged, setAreLinesConverged] = useState(false);
   const [isBurgerRotated, setIsBurgerRotated] = useState(false);
 
@@ -143,35 +143,26 @@ export function SiteShell({
     };
   }, [isMenuOpen]);
 
-  // Высота шапки нужна и для отступа контента, и для точки начала мобильного меню
+  // Высота шапки: пишем в CSS-переменную напрямую (без React state)
+  const shellRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
-  const [headerHeight, setHeaderHeight] = useState(56); // дефолт под мобильную шапку
 
-  useEffect(() => {
-    const updateHeight = () => {
-      if (!headerRef.current) return;
-      const nextHeight = Math.round(headerRef.current.getBoundingClientRect().height);
+  useLayoutEffect(() => {
+    const headerEl = headerRef.current;
+    const shellEl = shellRef.current;
+    if (!headerEl || !shellEl || typeof ResizeObserver === 'undefined') return;
 
-      setHeaderHeight((prev) => {
-        if (Math.abs(prev - nextHeight) < 1) {
-          return prev;
-        }
-        return nextHeight;
-      });
+    const update = () => {
+      const h = Math.round(headerEl.getBoundingClientRect().height);
+      shellEl.style.setProperty('--header-height', `${h}px`);
     };
 
-    const observer = new ResizeObserver(updateHeight);
-    if (headerRef.current) {
-      observer.observe(headerRef.current);
-    }
+    const observer = new ResizeObserver(update);
+    observer.observe(headerEl);
 
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
+    update();
 
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateHeight);
-    };
+    return () => observer.disconnect();
   }, []);
 
   // Геометрия линий относительно центра контейнера
@@ -188,8 +179,14 @@ export function SiteShell({
 
   return (
     <div
+      ref={shellRef}
       className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}
-      style={{ paddingTop: headerHeight }}
+      style={
+        {
+          '--header-height': '56px',
+          paddingTop: 'var(--header-height)',
+        } as CSSProperties
+      }
     >
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
@@ -197,7 +194,6 @@ export function SiteShell({
       <header
         ref={headerRef}
         className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
-        style={{ '--header-height': `${headerHeight}px` } as CSSProperties}
       >
         <div className="relative">
           <div
@@ -319,7 +315,7 @@ export function SiteShell({
             'transform-gpu transition-transform duration-300 ease-out',
             isMenuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
-          style={{ top: headerHeight, bottom: 0 }}
+          style={{ top: 'var(--header-height)', bottom: 0 } as CSSProperties}
         >
           <div className="flex h-full flex-col gap-8 p-6">
             <NavigationList
