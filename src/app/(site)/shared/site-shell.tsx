@@ -103,8 +103,6 @@ export function SiteShell({
     const prevIsMenuOpen = prevIsMenuOpenRef.current;
     prevIsMenuOpenRef.current = isMenuOpen;
 
-    // Если значение не изменилось (в том числе на самом первом вызове эффекта) —
-    // ничего не анимируем.
     if (prevIsMenuOpen === isMenuOpen) {
       return;
     }
@@ -141,6 +139,7 @@ export function SiteShell({
   // Высота шапки нужна и для отступа контента, и для точки начала мобильного меню
   const headerRef = useRef<HTMLElement | null>(null);
   const [headerHeight, setHeaderHeight] = useState(56); // дефолт под мобильную шапку
+
   const rightStackRef = useRef<HTMLDivElement | null>(null);
   const [rightStackHeight, setRightStackHeight] = useState<number | null>(null);
 
@@ -192,14 +191,15 @@ export function SiteShell({
       window.removeEventListener('resize', updateRightStackHeight);
     };
   }, []);
-  // Геометрия линий относительно центра контейнера
-  const topLineTransform = `translate(-50%, -50%) translateY(${
-    areLinesConverged ? 0 : -4
-  }px) rotate(${isBurgerRotated ? 45 : 0}deg)`;
 
-  const bottomLineTransform = `translate(-50%, -50%) translateY(${
-    areLinesConverged ? 0 : 4
-  }px) rotate(${isBurgerRotated ? -45 : 0}deg)`;
+  // Геометрия линий относительно центра контейнера
+  const topLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : -4}px) rotate(${
+    isBurgerRotated ? 45 : 0
+  }deg)`;
+
+  const bottomLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : 4}px) rotate(${
+    isBurgerRotated ? -45 : 0
+  }deg)`;
 
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
@@ -217,17 +217,17 @@ export function SiteShell({
       <header
         ref={headerRef}
         className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
-        style={{ '--header-height': `${headerHeight}px` } as CSSProperties }
+        style={{ '--header-height': `${headerHeight}px` } as CSSProperties}
       >
         <div className="relative">
           <div
             className={cn(
               'flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6',
-              'lg:grid lg:grid-cols-[auto,1fr] lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:items-stretch lg:justify-between lg:gap-x-6 lg:gap-y-0'
+              'lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-stretch lg:gap-x-6',
             )}
           >
             {/* Левый край: логотип */}
-            <div className="flex items-center lg:row-span-2 lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30">
+            <div className="flex items-center lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg">
               <a
                 href={buildPath(locale)}
                 className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -242,103 +242,96 @@ export function SiteShell({
                 />
                 <HeaderBrandFlipText
                   text={brandLabel}
-                  className="font-bold text-brand-600 dark:text-brand-600 text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] leading-tight"
+                  className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600"
                 />
               </a>
             </div>
 
-{/* Правый край: две строки на десктопе + компактный блок на мобилке */}
+            {/* RIGHT (DESKTOP): внутренняя сетка из 2 строк */}
+            <div
+              ref={rightStackRef}
+              className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0"
+            >
+              {/* БЛОК 2 */}
+              <div className="flex h-full w-full items-center justify-end gap-1 rounded-lg text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight">
+                {site.contacts.phone ? (
+                  <a
+                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                    className="hidden font-medium text-muted-foreground no-underline hover:text-foreground md:inline-flex"
+                  >
+                    {site.contacts.phone}
+                  </a>
+                ) : null}
 
-{/* БЛОК 2: телефон, почта, переключатели (DESKTOP) */}
-<div
-  className="hidden w-full items-center justify-end gap-1 rounded-lg
-             text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight
-             lg:flex lg:col-start-2 lg:row-start-1 lg:row-end-2
-             lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
->
-  {site.contacts.phone ? (
-    <a
-      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-    >
-      {site.contacts.phone}
-    </a>
-  ) : null}
+                {site.contacts.email ? (
+                  <a
+                    href={`mailto:${site.contacts.email}`}
+                    className="hidden font-medium text-muted-foreground no-underline hover:text-foreground md:inline-flex"
+                  >
+                    {site.contacts.email}
+                  </a>
+                ) : null}
 
-  {site.contacts.email ? (
-    <a
-      href={`mailto:${site.contacts.email}`}
-      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-    >
-      {site.contacts.email}
-    </a>
-  ) : null}
+                <div className="hidden items-center gap-2 sm:flex">
+                  <ThemeToggle />
+                  <LanguageSwitcher
+                    currentLocale={locale}
+                    targetLocale={targetLocale}
+                    href={switcherHref}
+                    switchToLabels={switchToLabels}
+                  />
+                </div>
+              </div>
 
-  <div className="hidden items-center gap-2 sm:flex">
-    <ThemeToggle />
-    <LanguageSwitcher
-      currentLocale={locale}
-      targetLocale={targetLocale}
-      href={switcherHref}
-      switchToLabels={switchToLabels}
-    />
-  </div>
-</div>
+              {/* БЛОК 3 */}
+              <div className="flex h-full w-full items-center justify-end rounded-lg">
+                <NavigationList
+                  links={navigation.header}
+                  ariaLabel={navigationLabels.headerLabel}
+                  currentPath={currentPath}
+                  className="flex h-full items-center"
+                  density="compact"
+                />
+              </div>
+            </div>
 
-{/* БЛОК 3: меню (DESKTOP) */}
-<nav
-  aria-label={navigationLabels.headerLabel}
-  className="hidden w-full items-center justify-end rounded-lg
-             lg:flex lg:col-start-2 lg:row-start-2 lg:row-end-3
-             lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
->
-  <NavigationList
-    links={navigation.header}
-    ariaLabel={navigationLabels.headerLabel}
-    currentPath={currentPath}
-    className="flex"
-    density="compact"
-  />
-</nav>
-
-{/* MOBILE: всё справа в одну линию + бургер */}
-<div className="flex flex-1 items-center justify-end gap-1.5 lg:hidden">
-  <ThemeToggle />
-  <LanguageSwitcher
-    currentLocale={locale}
-    targetLocale={targetLocale}
-    href={switcherHref}
-    switchToLabels={switchToLabels}
-  />
-  <button
-    type="button"
-    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-foreground transition-colors duration-150 hover:border-[var(--border)] lg:hidden"
-    onClick={() => setIsMenuOpen((prev) => !prev)}
-    aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
-    aria-expanded={isMenuOpen}
-  >
-    {/* наш двухлинейный бургер */}
-    <span className="relative block h-4 w-5">
-      <span
-        className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
-        style={{ transform: topLineTransform }}
-      />
-      <span
-        className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
-        style={{ transform: bottomLineTransform }}
-      />
-    </span>
-  </button>
-</div>
+            {/* MOBILE: всё справа в одну линию + бургер */}
+            <div className="flex flex-1 items-center justify-end gap-1.5 lg:hidden">
+              <ThemeToggle />
+              <LanguageSwitcher
+                currentLocale={locale}
+                targetLocale={targetLocale}
+                href={switcherHref}
+                switchToLabels={switchToLabels}
+              />
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-foreground transition-colors duration-150 hover:border-[var(--border)] lg:hidden"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+                aria-expanded={isMenuOpen}
+              >
+                {/* наш двухлинейный бургер */}
+                <span className="relative block h-4 w-5">
+                  <span
+                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    style={{ transform: topLineTransform }}
+                  />
+                  <span
+                    className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+                    style={{ transform: bottomLineTransform }}
+                  />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Мобильное выезжающее меню справа */}
         <nav
           className={cn(
-            'fixed inset-y-0 right-0 z-40 w-full max-w-xs bg-background/95 shadow-lg border-l border-border lg:hidden',
+            'fixed inset-y-0 right-0 z-40 w-full max-w-xs border-l border-border bg-background/95 shadow-lg lg:hidden',
             'backdrop-blur-sm',
-            // Более плавная анимация
             'transform-gpu transition-transform duration-300 ease-out',
             isMenuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
@@ -381,23 +374,15 @@ export function SiteShell({
                 {site.contacts.phone ? (
                   <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>{site.contacts.phone}</a>
                 ) : null}
-                {site.contacts.email ? (
-                  <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
-                ) : null}
+                {site.contacts.email ? <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> : null}
                 {site.contacts.address ? <span>{site.contacts.address}</span> : null}
               </div>
             ) : null}
 
-            <NavigationList
-              links={navigation.footer}
-              ariaLabel={navigationLabels.footerLabel}
-              currentPath={currentPath}
-            />
+            <NavigationList links={navigation.footer} ariaLabel={navigationLabels.footerLabel} currentPath={currentPath} />
           </div>
 
-          {hasCopyright ? (
-            <p className="text-[11px] sm:text-xs">{copyrightText}</p>
-          ) : null}
+          {hasCopyright ? <p className="text-[11px] sm:text-xs">{copyrightText}</p> : null}
         </div>
       </footer>
     </div>
