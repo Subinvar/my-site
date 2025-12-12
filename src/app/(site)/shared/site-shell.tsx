@@ -15,11 +15,11 @@ import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
-  products: 80,
-  news: 62,
-  about: 90,
-  partners: 74,
-  contacts: 70,
+  products: 100,
+  news: 100,
+  about: 100,
+  partners: 100,
+  contacts: 100,
 };
 
 const brandFont = { variable: 'font-brand-var' };
@@ -224,7 +224,7 @@ export function SiteShell({
             {/* RIGHT (DESKTOP): внутренняя сетка из 2 строк */}
             <div className="hidden w-full lg:grid lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0">
               {/* БЛОК 2 */}
-              <div className="flex h-full w-full items-center justify-end gap-4 rounded-lg text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight">
+              <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
                   <a
                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}

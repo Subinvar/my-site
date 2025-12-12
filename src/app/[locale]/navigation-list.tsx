@@ -44,13 +44,13 @@ export function NavigationList({
 
   const listClassName =
     density === 'compact'
-      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-4 text-[13px] font-medium leading-tight'
-      : 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-4 text-sm font-medium';
+      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-6 text-[13px] font-medium leading-tight'
+      : 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-6 text-sm font-medium';
 
   const densityClass =
     density === 'compact'
-      ? 'text-[clamp(0.85rem,0.78rem+0.25vw,0.98rem)] font-medium leading-tight'
-      : 'text-[clamp(0.9rem,0.85rem+0.3vw,1.1rem)] font-medium';
+      ? 'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight'
+      : 'text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium';
 
   return (
     <nav aria-label={resolvedLabel} className={className}>
