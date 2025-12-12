@@ -141,6 +141,8 @@ export function SiteShell({
   // Высота шапки нужна и для отступа контента, и для точки начала мобильного меню
   const headerRef = useRef<HTMLElement | null>(null);
   const [headerHeight, setHeaderHeight] = useState(56); // дефолт под мобильную шапку
+  const rightStackRef = useRef<HTMLDivElement | null>(null);
+  const [rightStackHeight, setRightStackHeight] = useState<number | null>(null);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -168,6 +170,28 @@ export function SiteShell({
       window.removeEventListener('resize', updateHeight);
     };
   }, []);
+
+  useEffect(() => {
+    const updateRightStackHeight = () => {
+      if (!rightStackRef.current) return;
+
+      const { height } = rightStackRef.current.getBoundingClientRect();
+      setRightStackHeight(height > 0 ? Math.round(height) : null);
+    };
+
+    const observer = new ResizeObserver(updateRightStackHeight);
+    if (rightStackRef.current) {
+      observer.observe(rightStackRef.current);
+    }
+
+    updateRightStackHeight();
+    window.addEventListener('resize', updateRightStackHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateRightStackHeight);
+    };
+  }, []);
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${
     areLinesConverged ? 0 : -4
@@ -180,7 +204,7 @@ export function SiteShell({
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
-  const logoHeight = Math.max(40, Math.min(96, headerHeight - 10));
+  const logoHeight = rightStackHeight ?? Math.max(40, Math.min(96, headerHeight - 10));
 
   return (
     <div
@@ -199,7 +223,7 @@ export function SiteShell({
           <div
             className={cn(
               'flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6',
-              'lg:grid lg:grid-cols-[auto,1fr] lg:grid-rows-2 lg:items-stretch lg:justify-between lg:gap-6',
+              'lg:grid lg:grid-cols-[auto,1fr] lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:items-stretch lg:justify-between lg:gap-x-6 lg:gap-y-0'
             )}
           >
             {/* Левый край: логотип */}
@@ -223,92 +247,89 @@ export function SiteShell({
               </a>
             </div>
 
-            {/* Правый край: две строки на десктопе + компактный блок на мобилке */}
-            <div className="flex flex-1 items-center justify-end gap-4 lg:col-start-2 lg:row-span-2 lg:grid lg:grid-rows-2 lg:items-stretch lg:gap-2">
-              {/* DESKTOP (>= lg): два равных блока справа */}
-              <div className="hidden w-full grid-rows-2 gap-2 lg:grid">
-                {/* БЛОК 2: телефон, почта, переключатели */}
-                <div className="flex w-full items-center justify-end gap-1 rounded-lg text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight lg:h-full lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30">
-                  {site.contacts.phone ? (
-                    <a
-                      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-                    >
-                      {site.contacts.phone}
-                    </a>
-                  ) : null}
+{/* Правый край: две строки на десктопе + компактный блок на мобилке */}
 
-                  {site.contacts.email ? (
-                    <a
-                      href={`mailto:${site.contacts.email}`}
-                      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
-                    >
-                      {site.contacts.email}
-                    </a>
-                  ) : null}
+{/* БЛОК 2: телефон, почта, переключатели (DESKTOP) */}
+<div
+  className="hidden w-full items-center justify-end gap-1 rounded-lg
+             text-[clamp(0.8rem,0.75rem+0.2vw,0.95rem)] leading-tight
+             lg:flex lg:col-start-2 lg:row-start-1 lg:row-end-2
+             lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
+>
+  {site.contacts.phone ? (
+    <a
+      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+    >
+      {site.contacts.phone}
+    </a>
+  ) : null}
 
-                  <div className="hidden items-center gap-2 sm:flex">
-                    <ThemeToggle />
-                    <LanguageSwitcher
-                      currentLocale={locale}
-                      targetLocale={targetLocale}
-                      href={switcherHref}
-                      switchToLabels={switchToLabels}
-                    />
-                  </div>
-                </div>
+  {site.contacts.email ? (
+    <a
+      href={`mailto:${site.contacts.email}`}
+      className="hidden font-medium text-muted-foreground hover:text-foreground no-underline md:inline-flex"
+    >
+      {site.contacts.email}
+    </a>
+  ) : null}
 
-                {/* БЛОК 3: разделы сайта */}
-                <nav
-                  aria-label={navigationLabels.headerLabel}
-                  className="flex w-full items-center justify-end rounded-lg lg:h-full lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
-                >
-                  <NavigationList
-                    links={navigation.header}
-                    ariaLabel={navigationLabels.headerLabel}
-                    currentPath={currentPath}
-                    className="flex"
-                    density="compact"
-                  />
-                </nav>
-              </div>
+  <div className="hidden items-center gap-2 sm:flex">
+    <ThemeToggle />
+    <LanguageSwitcher
+      currentLocale={locale}
+      targetLocale={targetLocale}
+      href={switcherHref}
+      switchToLabels={switchToLabels}
+    />
+  </div>
+</div>
 
-              {/* MOBILE (< lg): всё справа в одну линию + бургер */}
-              <div className="flex items-center gap-1.5 lg:hidden">
-                <ThemeToggle />
-                <LanguageSwitcher
-                  currentLocale={locale}
-                  targetLocale={targetLocale}
-                  href={switcherHref}
-                  switchToLabels={switchToLabels}
-                />
-                <button
-                  type="button"
-                  className={cn(
-                    'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70 text-muted-foreground',
-                    'transition-colors duration-150 hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
-                  )}
-                  onClick={() => setIsMenuOpen((prev) => !prev)}
-                  aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
-                  aria-expanded={isMenuOpen}
-                >
-                  <span className="relative block h-4 w-5">
-                    {/* Верхняя линия */}
-                    <span
-                      className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                      style={{ transform: topLineTransform }}
-                    />
-                    {/* Нижняя линия */}
-                    <span
-                      className="pointer-events-none absolute left-1/2 top-1/2 block h-[2px] w-full rounded-full bg-current transition-transform duration-200 ease-in-out"
-                      style={{ transform: bottomLineTransform }}
-                    />
-                  </span>
-                </button>
-              </div>
-            </div>
+{/* БЛОК 3: меню (DESKTOP) */}
+<nav
+  aria-label={navigationLabels.headerLabel}
+  className="hidden w-full items-center justify-end rounded-lg
+             lg:flex lg:col-start-2 lg:row-start-2 lg:row-end-3
+             lg:outline lg:outline-1 lg:outline-dashed lg:outline-black/30"
+>
+  <NavigationList
+    links={navigation.header}
+    ariaLabel={navigationLabels.headerLabel}
+    currentPath={currentPath}
+    className="flex"
+    density="compact"
+  />
+</nav>
+
+{/* MOBILE: всё справа в одну линию + бургер */}
+<div className="flex flex-1 items-center justify-end gap-1.5 lg:hidden">
+  <ThemeToggle />
+  <LanguageSwitcher
+    currentLocale={locale}
+    targetLocale={targetLocale}
+    href={switcherHref}
+    switchToLabels={switchToLabels}
+  />
+  <button
+    type="button"
+    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-foreground transition-colors duration-150 hover:border-[var(--border)] lg:hidden"
+    onClick={() => setIsMenuOpen((prev) => !prev)}
+    aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+    aria-expanded={isMenuOpen}
+  >
+    {/* наш двухлинейный бургер */}
+    <span className="relative block h-4 w-5">
+      <span
+        className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+        style={{ transform: topLineTransform }}
+      />
+      <span
+        className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-current transition-transform duration-200"
+        style={{ transform: bottomLineTransform }}
+      />
+    </span>
+  </button>
+</div>
           </div>
         </div>
 
