@@ -262,10 +262,10 @@ export function SiteShell({
       <header
         ref={headerRef}
         className={cn(
-          'fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-[\'\']',
+          'fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-[\'\']',
           'transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out',
           isHeaderElevated
-            ? 'bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md'
+            ? 'bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md before:opacity-100'
             : 'bg-background/90 backdrop-blur',
         )}
       >
