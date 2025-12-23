@@ -4,11 +4,9 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/cn';
 import { useInView } from '@/lib/use-in-view';
-import type { Locale } from '@/lib/i18n';
 import type { PostPreview } from './NewsPreview';
 
 export type NewsPreviewContentProps = {
-  locale: Locale;
   title: string;
   description: string;
   viewAllLabel: string;
@@ -18,7 +16,6 @@ export type NewsPreviewContentProps = {
 };
 
 export function NewsPreviewContent({
-  locale,
   title,
   description,
   viewAllLabel,
@@ -51,14 +48,7 @@ export function NewsPreviewContent({
 
         <div className="space-y-4">
           {posts.map((post) => {
-            const formattedDate = (() => {
-              if (!post.date) return null;
-              const parsed = new Date(post.date);
-              if (Number.isNaN(parsed.getTime())) return post.date;
-              return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
-                dateStyle: 'medium',
-              }).format(parsed);
-            })();
+            const displayDate = post.formattedDate ?? post.date;
 
             return (
               <article
@@ -67,9 +57,9 @@ export function NewsPreviewContent({
                 data-in-view={inView ? 'true' : 'false'}
               >
                 <div>
-                  {formattedDate ? (
+                  {displayDate ? (
                     <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
-                      {formattedDate}
+                      {displayDate}
                     </div>
                   ) : null}
                   <Link href={post.href} className="text-base font-medium hover:text-primary">
