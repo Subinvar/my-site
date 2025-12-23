@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import Image from 'next/image';
 
@@ -42,6 +43,46 @@ function SkipToContentLink({ label }: { label: string }) {
     >
       {label}
     </a>
+  );
+}
+
+function HeaderCta({
+  href,
+  label,
+  className,
+}: {
+  href: string;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className={cn(
+        'inline-flex h-10 items-center justify-center rounded-full px-4',
+        // спокойный “чип”
+        'border border-border bg-background/70 text-foreground',
+        'no-underline hover:no-underline',
+        'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
+        'hover:bg-background/80 hover:border-brand-600/25',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]',
+        'text-[clamp(0.9rem,0.85rem+0.2vw,1.0rem)] font-medium leading-none',
+        className,
+      )}
+    >
+      {/* маленькая “точка-акцент” */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          'mr-2 inline-block h-2 w-2 rounded-full',
+          'bg-brand-600',
+          'shadow-[0_0_0_3px_rgba(148,27,32,0.12)]',
+        )}
+      />
+      {label}
+    </Link>
   );
 }
 
@@ -108,7 +149,6 @@ export function SiteShell({
   const prevIsMenuOpenRef = useRef(isMenuOpen);
 
   // 1) На гидрации: фиксируем “мы уже в браузере” + включаем transitions только через 2 кадра
-  // (первый кадр даём на ResizeObserver/измерения, чтобы не было стартовой анимации)
   useLayoutEffect(() => {
     setHasHydrated(true);
     let raf1 = 0;
@@ -276,25 +316,22 @@ export function SiteShell({
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
-  // ====== Классы, которые убирают “бургер первым” и “мигание” ======
-  const shellTransitionClass = transitionsOn
-    ? 'transition-[padding-top] duration-200 ease-out'
-    : 'transition-none';
+  // CTA (пока ведёт на контакты; потом заменим на открытие формы)
+  const basePathRaw = buildPath(locale);
+  const basePath =
+    basePathRaw !== '/' && basePathRaw.endsWith('/') ? basePathRaw.slice(0, -1) : basePathRaw;
+  const contactsHref = basePath === '/' ? '/contacts' : `${basePath}/contacts`;
 
-  const wagonTransitionClass = transitionsOn
-    ? 'transition-transform duration-300 ease-out'
-    : 'transition-none';
+  const ctaLabel = locale === 'ru' ? 'Оставить заявку' : 'Send inquiry';
 
-  const slideTransitionClass = transitionsOn
-    ? 'transition-[opacity,transform] duration-200 ease-out'
-    : 'transition-none';
-
+  // ====== Классы, которые убирают “мигание” ======
+  const shellTransitionClass = transitionsOn ? 'transition-[padding-top] duration-200 ease-out' : 'transition-none';
+  const wagonTransitionClass = transitionsOn ? 'transition-transform duration-300 ease-out' : 'transition-none';
+  const slideTransitionClass = transitionsOn ? 'transition-[opacity,transform] duration-200 ease-out' : 'transition-none';
   const burgerDelayClass = transitionsOn ? 'delay-75' : 'delay-0';
 
   // Пока НЕ гидрировались: используем CSS-правду (на lg показываем меню сразу)
-  const wagonTransformClass = hasHydrated
-    ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0')
-    : '-translate-y-1/2 lg:translate-y-0';
+  const wagonTransformClass = hasHydrated ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0') : '-translate-y-1/2 lg:translate-y-0';
 
   const menuSlideClass = hasHydrated
     ? (isBurgerMode ? 'opacity-0 pointer-events-none -translate-y-1' : 'opacity-100 pointer-events-auto translate-y-0')
@@ -406,16 +443,15 @@ export function SiteShell({
                   href={switcherHref}
                   switchToLabels={switchToLabels}
                 />
+
+                {/* CTA (Ghost) — показываем с md+, чтобы не забивать узкую шапку */}
+                <HeaderCta href={contactsHref} label={ctaLabel} className="hidden md:inline-flex" />
               </div>
 
               {/* Нижняя строка: “вагончик” меню↔бургер */}
               <div
                 ref={navHostRef}
-                className={cn(
-                  'relative w-full overflow-hidden rounded-lg',
-                  'h-10',
-                  'lg:h-full lg:min-h-[44px]',
-                )}
+                className={cn('relative w-full overflow-hidden rounded-lg', 'h-10', 'lg:h-full lg:min-h-[44px]')}
               >
                 <div
                   className={cn(
@@ -517,7 +553,10 @@ export function SiteShell({
             )}
             style={{ top: 'var(--header-height)', bottom: 0 } as CSSProperties}
           >
-            <div className="flex h-full flex-col gap-8 p-6">
+            <div className="flex h-full flex-col gap-4 p-6">
+              {/* CTA дубль в боковой панели — чтобы на мобилке не терялся */}
+              <HeaderCta href={contactsHref} label={ctaLabel} className="w-full justify-center" />
+
               <NavigationList
                 links={navigation.header}
                 ariaLabel={navigationLabels.headerLabel}
