@@ -99,6 +99,9 @@ export function SiteShell({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
+  const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
+
   // Состояния для иконки бургера (оставляем как есть)
   const [areLinesConverged, setAreLinesConverged] = useState(false);
   const [isBurgerRotated, setIsBurgerRotated] = useState(false);
@@ -165,6 +168,26 @@ export function SiteShell({
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const sentinel = scrollSentinelRef.current;
+    if (!sentinel || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const next = !entry.isIntersecting;
+        setIsHeaderElevated((prev) => (prev === next ? prev : next));
+      },
+      {
+        threshold: 0,
+        rootMargin: '-1px 0px 0px 0px',
+      },
+    );
+
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, []);
+
   // Геометрия линий относительно центра контейнера
   const topLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : -4}px) rotate(${
     isBurgerRotated ? 45 : 0
@@ -180,7 +203,7 @@ export function SiteShell({
   return (
     <div
       ref={shellRef}
-      className={`${brandFont.variable} theme-transition flex min-h-screen flex-col bg-background text-foreground`}
+      className={`${brandFont.variable} theme-transition relative flex min-h-screen flex-col bg-background text-foreground`}
       style={
         {
           '--header-height': '56px',
@@ -191,9 +214,17 @@ export function SiteShell({
       <HtmlLangSync initialLocale={locale} />
       <SkipToContentLink label={skipLinkLabel} />
 
+      <div ref={scrollSentinelRef} className="absolute inset-x-0 top-0 h-1 w-px" aria-hidden />
+
       <header
         ref={headerRef}
-        className="fixed inset-x-0 top-0 z-50 bg-background/90 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-['']"
+        className={cn(
+          'fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[rgba(148,27,32,0.12)] before:content-[\'\']',
+          'transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out',
+          isHeaderElevated
+            ? 'bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md'
+            : 'bg-background/90 backdrop-blur',
+        )}
       >
         <div className="relative">
           <div

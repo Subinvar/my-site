@@ -60,6 +60,9 @@ importers:
       '@playwright/test':
         specifier: ^1.57.0
         version: 1.57.0
+      '@poupe/eslint-plugin-tailwindcss':
+        specifier: ^0.2.4
+        version: 0.2.4(@eslint/css@0.14.1)(eslint@9.39.2(jiti@2.6.1))
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -566,6 +569,10 @@ packages:
     resolution: {integrity: sha512-gBrxN88gOIf3R7ja5K9slwNayVcZgK6SOUORm2uBzTeIEfeVaIhOpCtTox3P6R7o2jLFwLFTLnC7kU/RGcYEgw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@eslint/core@0.15.2':
+    resolution: {integrity: sha512-78Md3/Rrxh83gCxoUc0EiciuOHsIITzLy53m3d9UyiW8y9Dj2D29FeETqyKA+BRK76tnTp6RXWb3pCay8Oyomg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
   '@eslint/core@0.17.0':
     resolution: {integrity: sha512-yL/sLrpmtDaFEiUj1osRP4TI2MDz1AddJL+jZ7KSqvBuliN4xqYY54IfdN8qD8Toa6g1iloph1fxQNkjOxrrpQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -1064,6 +1071,13 @@ packages:
     resolution: {integrity: sha512-6TyEnHgd6SArQO8UO2OMTxshln3QMWBtPGrOCgs3wVEmQmwyuNtB10IZMfmYDE0riwNR1cu4q+pPcxMVtaG3TA==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@poupe/eslint-plugin-tailwindcss@0.2.4':
+    resolution: {integrity: sha512-PkFJm1krxEzHxvGqnwXIDLWxtI7XypN3WLfpwoyRhwCroxByDP4UdKNTahiy0MNtLPNrJ/LIwOPJ4mE1cVFOpQ==}
+    engines: {node: '>=18.20.8', pnpm: '>=10.0.0'}
+    peerDependencies:
+      '@eslint/css': ^0.9.0
+      eslint: ^9.30.0
 
   '@react-aria/actiongroup@3.7.22':
     resolution: {integrity: sha512-w5GsMAsgLKJcSmWawPEDEQRhDgVsJj+6ygIcfOF2IFVIPFsD50BogJ9jrY4S6aNKXdFSn9sixgzhUfIl5Asc+w==}
@@ -4893,6 +4907,10 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
 
+  '@eslint/core@0.15.2':
+    dependencies:
+      '@types/json-schema': 7.0.15
+
   '@eslint/core@0.17.0':
     dependencies:
       '@types/json-schema': 7.0.15
@@ -5466,6 +5484,13 @@ snapshots:
   '@playwright/test@1.57.0':
     dependencies:
       playwright: 1.57.0
+
+  '@poupe/eslint-plugin-tailwindcss@0.2.4(@eslint/css@0.14.1)(eslint@9.39.2(jiti@2.6.1))':
+    dependencies:
+      '@eslint/core': 0.15.2
+      '@eslint/css': 0.14.1
+      '@eslint/css-tree': 3.6.8
+      eslint: 9.39.2(jiti@2.6.1)
 
   '@react-aria/actiongroup@3.7.22(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:

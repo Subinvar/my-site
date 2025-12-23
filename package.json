@@ -37,6 +37,7 @@
   "devDependencies": {
     "@eslint/css": "^0.14.1",
     "@playwright/test": "^1.57.0",
+    "@poupe/eslint-plugin-tailwindcss": "^0.2.4",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^24.10.4",
     "@types/nodemailer": "^7.0.4",
