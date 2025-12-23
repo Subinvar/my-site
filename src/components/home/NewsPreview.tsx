@@ -46,16 +46,55 @@ function toTimestamp(value: string | null): number {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+const MONTH_LABELS: Record<Locale, string[]> = {
+  ru: [
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
+  ],
+  en: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+};
+
 function formatPostDate(date: string | null, locale: Locale): string | null {
   if (!date) return null;
 
   const parsed = new Date(date);
   if (Number.isNaN(parsed.getTime())) return date;
 
-  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
-    dateStyle: 'medium',
-    timeZone: 'UTC',
-  }).format(parsed);
+  const monthNames = MONTH_LABELS[locale] ?? MONTH_LABELS.ru;
+  const monthIndex = parsed.getUTCMonth();
+  const monthLabel = monthNames[monthIndex];
+
+  if (!monthLabel) {
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  const day = parsed.getUTCDate();
+  const year = parsed.getUTCFullYear();
+
+  return `${day} ${monthLabel} ${year}`;
 }
 
 async function getLatestPosts(locale: Locale, limit = 3): Promise<PostPreview[]> {

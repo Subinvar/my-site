@@ -123,6 +123,11 @@ export function SiteShell({
     };
   }, []);
 
+  /*
+   * Управляем анимацией бургера по шагам, поэтому обновляем локальный стейт внутри эффекта.
+   * Это осознанное отклонение от правила линтера: состояния нигде больше не изменяются без пользовательского действия.
+   */
+  /* eslint-disable react-hooks/set-state-in-effect -- пошаговая анимация бургера требует обновления стейта из эффекта */
   useEffect(() => {
     const prevIsMenuOpen = prevIsMenuOpenRef.current;
     prevIsMenuOpenRef.current = isMenuOpen;
@@ -165,6 +170,7 @@ export function SiteShell({
       }
     };
   }, [isMenuOpen, prefersReducedMotion]);
+  /* eslint-enable react-hooks/set-state-in-effect -- возвращаем стандартные правила после блока анимации */
 
   useEffect(() => {
     if (!isMenuOpen) return;

@@ -52,13 +52,37 @@ export function NavigationList({
       ? 'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight'
       : 'text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium';
 
+  const labelInnerClassName = cn(
+    'relative inline-block',
+    // линия: 1px, позиция, скругление концов
+    'after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full',
+    // старт: линии нет
+    'after:bg-transparent after:origin-left after:scale-x-0',
+    // анимация: "рисуем" + плавно меняем цвет
+    'after:transition-[transform,background-color] after:duration-200 after:ease-out',
+    // hover/focus: линия появляется и по цвету = border (как у Theme/Language toggle)
+    'group-hover:after:bg-[var(--border)] group-focus-visible:after:bg-[var(--border)]',
+    'group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100',
+  );
+
+  const activeLabelInnerClassName = cn(
+    labelInnerClassName,
+    // активная страница: линия всегда видна и тёмная (в цвет текста пункта)
+    'after:scale-x-100 after:bg-current',
+    // и не перекрашиваем её в серую на hover/focus
+    'group-hover:after:bg-current group-focus-visible:after:bg-current',
+  );
+
   return (
     <nav aria-label={resolvedLabel} className={className}>
       <ul className={listClassName}>
         {links.map((link) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
-          const isActive = !link.isExternal && normalizedHref === normalizedCurrent;
+          const isActive =
+            !link.isExternal &&
+            (normalizedHref === normalizedCurrent ||
+              (normalizedHref !== '/' && normalizedCurrent.startsWith(`${normalizedHref}/`)));
 
           const slotWidth = stableSlots?.[link.id];
           const isStableSlot = typeof slotWidth === 'number';
@@ -67,8 +91,8 @@ export function NavigationList({
           const liStyle = isStableSlot ? ({ width: `${slotWidth}px` } as React.CSSProperties) : undefined;
 
           const linkClassName = cn(
-            // если есть слот — ссылка занимает всю ширину слота и центрирует текст
             isStableSlot ? 'flex w-full justify-center' : 'inline-flex',
+            'group',
             'items-center gap-1',
             densityClass,
             'no-underline transition-colors',
@@ -85,7 +109,9 @@ export function NavigationList({
                   rel={link.newTab ? 'noopener noreferrer' : undefined}
                   className={linkClassName}
                 >
-                  {link.label}
+                  <span className={isActive ? activeLabelInnerClassName : labelInnerClassName}>
+                    {link.label}
+                  </span>
                 </a>
               </li>
             );
@@ -94,7 +120,9 @@ export function NavigationList({
           return (
             <li key={link.id} className={liClassName} style={liStyle}>
               <Link href={href} className={linkClassName} aria-current={isActive ? 'page' : undefined}>
-                {link.label}
+                <span className={isActive ? activeLabelInnerClassName : labelInnerClassName}>
+                  {link.label}
+                </span>
               </Link>
             </li>
           );
