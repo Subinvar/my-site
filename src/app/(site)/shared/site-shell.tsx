@@ -60,27 +60,45 @@ function HeaderCta({
       href={href}
       aria-label={label}
       className={cn(
-        'inline-flex h-10 items-center justify-center rounded-full px-4',
-        // спокойный “чип”
-        'border border-border bg-background/70 text-foreground',
+        'group inline-flex h-10 items-center justify-center rounded-xl px-4',
+        // рамка/фон как у остальных кнопок шапки
+        'border border-[var(--border)] bg-background/70',
+        // текст как у меню: muted → foreground
+        'text-muted-foreground hover:text-foreground',
         'no-underline hover:no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
-        'hover:bg-background/80 hover:border-brand-600/25',
+        'hover:bg-background/80',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]',
         'text-[clamp(0.9rem,0.85rem+0.2vw,1.0rem)] font-medium leading-none',
         className,
       )}
     >
-      {/* маленькая “точка-акцент” */}
-      <span
-        aria-hidden="true"
-        className={cn(
-          'mr-2 inline-block h-2 w-2 rounded-full',
-          'bg-brand-600',
-          'shadow-[0_0_0_3px_rgba(148,27,32,0.12)]',
-        )}
-      />
+<span aria-hidden="true" className="relative mr-2.5 inline-flex h-3 w-3 items-center justify-center">
+  {/* статичный ореол (градиентное кольцо, совпадает по радиусу с рябью) */}
+  <span
+    className={cn(
+      'absolute inset-0 rounded-full',
+      // до 58% пусто, на 62% пик, дальше плавно в ноль
+      'bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.22)_62%,rgba(148,27,32,0)_100%)]',
+    )}
+  />
+
+  {/* пульсирующее кольцо (тоже градиент, тот же inner-cut 58%) */}
+  <span
+    className={cn(
+      'absolute inset-0 rounded-full',
+      'will-change-transform',
+      'bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.60)_64%,rgba(148,27,32,0)_78%)]',
+      'animate-cta-ripple motion-reduce:animate-none',
+      // на hover чуть смелее
+      'group-hover:bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.72)_64%,rgba(148,27,32,0)_78%)]',
+    )}
+  />
+
+  {/* ядро */}
+  <span className="relative h-3 w-3 rounded-full bg-brand-600" />
+</span>
       {label}
     </Link>
   );
