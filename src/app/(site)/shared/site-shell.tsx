@@ -65,12 +65,8 @@ export function SiteShell({
   const brandLabel = brandName || 'Интема Групп';
 
   const contactLinks = [
-    site.contacts.phone
-      ? { id: 'phone', label: site.contacts.phone, href: `tel:${site.contacts.phone}` }
-      : null,
-    site.contacts.email
-      ? { id: 'email', label: site.contacts.email, href: `mailto:${site.contacts.email}` }
-      : null,
+    site.contacts.phone ? { id: 'phone', label: site.contacts.phone, href: `tel:${site.contacts.phone}` } : null,
+    site.contacts.email ? { id: 'email', label: site.contacts.email, href: `mailto:${site.contacts.email}` } : null,
     telegramUrl ? { id: 'telegram', label: telegramLabel || telegramUrl, href: telegramUrl } : null,
   ].filter((item): item is { id: string; label: string; href: string } => Boolean(item));
 
@@ -84,18 +80,23 @@ export function SiteShell({
   const hasCopyright = copyrightText.length > 0;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // ====== Шаг 3: “меню уезжает вверх → снизу приезжает бургер” ======
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isCompactNav, setIsCompactNav] = useState(false);
   const [isLgUp, setIsLgUp] = useState(false);
+
+  // Гидрация/переходы: чтобы НЕ анимировать первый кадр
+  const [hasHydrated, setHasHydrated] = useState(false);
+  const [transitionsOn, setTransitionsOn] = useState(false);
+
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
 
   // “бургер-режим”: на мобилке всегда бургер, на десктопе — если меню не влезает
   const isBurgerMode = !isLgUp || isCompactNav;
 
-  // inert: чтобы скрытый слой не табался/не фокусился (React/TS могут не знать inert)
+  // inert: чтобы скрытый слой не табался/не фокусился
   const inertProps = (enabled: boolean) => (enabled ? ({ inert: true } as any) : {});
 
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
@@ -106,22 +107,40 @@ export function SiteShell({
   const [isBurgerRotated, setIsBurgerRotated] = useState(false);
   const prevIsMenuOpenRef = useRef(isMenuOpen);
 
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updatePreference = () => setPrefersReducedMotion(query.matches);
-
-    updatePreference();
-    query.addEventListener('change', updatePreference);
-    return () => query.removeEventListener('change', updatePreference);
+  // 1) На гидрации: фиксируем “мы уже в браузере” + включаем transitions только через 2 кадра
+  // (первый кадр даём на ResizeObserver/измерения, чтобы не было стартовой анимации)
+  useLayoutEffect(() => {
+    setHasHydrated(true);
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = window.requestAnimationFrame(() => {
+      raf2 = window.requestAnimationFrame(() => setTransitionsOn(true));
+    });
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
   }, []);
 
-  useEffect(() => {
-    const mql = window.matchMedia('(min-width: 1024px)');
-    const update = () => setIsLgUp(mql.matches);
+  // 2) matchMedia лучше в layoutEffect, чтобы успеть до paint
+  useLayoutEffect(() => {
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const lg = window.matchMedia('(min-width: 1024px)');
+
+    const update = () => {
+      setPrefersReducedMotion(rm.matches);
+      setIsLgUp(lg.matches);
+    };
 
     update();
-    mql.addEventListener('change', update);
-    return () => mql.removeEventListener('change', update);
+
+    rm.addEventListener('change', update);
+    lg.addEventListener('change', update);
+
+    return () => {
+      rm.removeEventListener('change', update);
+      lg.removeEventListener('change', update);
+    };
   }, []);
 
   /* eslint-disable react-hooks/set-state-in-effect -- пошаговая анимация бургера */
@@ -257,13 +276,42 @@ export function SiteShell({
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
+  // ====== Классы, которые убирают “бургер первым” и “мигание” ======
+  const shellTransitionClass = transitionsOn
+    ? 'transition-[padding-top] duration-200 ease-out'
+    : 'transition-none';
+
+  const wagonTransitionClass = transitionsOn
+    ? 'transition-transform duration-300 ease-out'
+    : 'transition-none';
+
+  const slideTransitionClass = transitionsOn
+    ? 'transition-[opacity,transform] duration-200 ease-out'
+    : 'transition-none';
+
+  const burgerDelayClass = transitionsOn ? 'delay-75' : 'delay-0';
+
+  // Пока НЕ гидрировались: используем CSS-правду (на lg показываем меню сразу)
+  const wagonTransformClass = hasHydrated
+    ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0')
+    : '-translate-y-1/2 lg:translate-y-0';
+
+  const menuSlideClass = hasHydrated
+    ? (isBurgerMode ? 'opacity-0 pointer-events-none -translate-y-1' : 'opacity-100 pointer-events-auto translate-y-0')
+    : 'opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0';
+
+  const burgerSlideClass = hasHydrated
+    ? (isBurgerMode ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1')
+    : 'opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1';
+
   return (
     <div
       ref={shellRef}
       className={cn(
         brandFont.variable,
         'theme-transition relative flex min-h-screen flex-col bg-background text-foreground',
-        'transition-[padding-top] duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
+        shellTransitionClass,
+        'motion-reduce:transition-none motion-reduce:duration-0',
       )}
       style={
         {
@@ -282,6 +330,7 @@ export function SiteShell({
         className={cn(
           'fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-[\'\']',
           'transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out',
+          'motion-reduce:transition-none motion-reduce:duration-0',
           isHeaderElevated
             ? 'bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md before:opacity-100'
             : 'bg-background/90 backdrop-blur',
@@ -322,15 +371,15 @@ export function SiteShell({
               </a>
             </div>
 
-            {/* RIGHT: один и тот же блок всегда (без hidden/lg:hidden) */}
+            {/* RIGHT: один и тот же блок всегда */}
             <div
               className={cn(
                 'w-full justify-items-end',
-                'grid grid-rows-[auto_auto] gap-y-2',
-                'lg:grid-rows-[minmax(44px,auto)_minmax(44px,auto)] lg:gap-y-0',
+                'grid grid-rows-[auto_auto] gap-y-1',
+                'lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-0',
               )}
             >
-              {/* Верхняя строка: контакты (md+) + тема/язык (всегда) */}
+              {/* Верхняя строка */}
               <div className="flex h-full w-full items-center justify-end gap-5 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
                   <a
@@ -364,27 +413,27 @@ export function SiteShell({
                 ref={navHostRef}
                 className={cn(
                   'relative w-full overflow-hidden rounded-lg',
-                  'h-10', // на мобилке это ровно высота кнопки
+                  'h-10',
                   'lg:h-full lg:min-h-[44px]',
                 )}
               >
                 <div
                   className={cn(
-                    'absolute inset-0 h-[200%] w-full will-change-transform',
-                    'transform-gpu transition-transform duration-300 ease-out',
+                    'absolute inset-0 h-[200%] w-full will-change-transform transform-gpu',
+                    wagonTransitionClass,
                     'motion-reduce:transition-none motion-reduce:duration-0',
-                    isBurgerMode ? '-translate-y-1/2' : 'translate-y-0',
+                    wagonTransformClass,
                   )}
                 >
                   {/* SLIDE 1: Меню */}
                   <div
-                    aria-hidden={isBurgerMode}
-                    {...inertProps(isBurgerMode)}
+                    aria-hidden={hasHydrated ? isBurgerMode : undefined}
+                    {...inertProps(hasHydrated ? isBurgerMode : false)}
                     className={cn(
                       'flex h-1/2 w-full items-center justify-end',
-                      'transition-[opacity,transform] duration-200 ease-out',
+                      slideTransitionClass,
                       'motion-reduce:transition-none motion-reduce:duration-0',
-                      isBurgerMode ? 'opacity-0 pointer-events-none -translate-y-1' : 'opacity-100 pointer-events-auto translate-y-0',
+                      menuSlideClass,
                     )}
                   >
                     <NavigationList
@@ -399,13 +448,14 @@ export function SiteShell({
 
                   {/* SLIDE 2: Бургер */}
                   <div
-                    aria-hidden={!isBurgerMode}
-                    {...inertProps(!isBurgerMode)}
+                    aria-hidden={hasHydrated ? !isBurgerMode : undefined}
+                    {...inertProps(hasHydrated ? !isBurgerMode : false)}
                     className={cn(
                       'flex h-1/2 w-full items-center justify-end',
-                      'transition-[opacity,transform] duration-200 ease-out delay-75',
+                      slideTransitionClass,
+                      burgerDelayClass,
                       'motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0',
-                      isBurgerMode ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1',
+                      burgerSlideClass,
                     )}
                   >
                     <button
@@ -436,7 +486,7 @@ export function SiteShell({
                   </div>
                 </div>
 
-                {/* Линейка для измерения ширины меню (не влияет на layout) */}
+                {/* Линейка для измерения ширины меню */}
                 <div
                   ref={navMeasureRef}
                   aria-hidden="true"
@@ -456,7 +506,7 @@ export function SiteShell({
           </div>
         </div>
 
-        {/* Боковая панель меню — только в burger-mode */}
+        {/* Боковая панель меню — только когда реально в burger-mode */}
         {isBurgerMode ? (
           <nav
             className={cn(
@@ -489,7 +539,12 @@ export function SiteShell({
         />
       ) : null}
 
-      <main id="main" role="main" tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12">
+      <main
+        id="main"
+        role="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
+      >
         {children}
       </main>
 
