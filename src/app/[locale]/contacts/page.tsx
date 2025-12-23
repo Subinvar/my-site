@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { SiteShell } from '@/app/(site)/shared/site-shell';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -90,6 +92,15 @@ type PageProps = {
   searchParams?: Promise<ContactSearchParams>;
 };
 
+type ContactEntry = {
+  id: string;
+  content: ReactNode;
+  icon: ReactNode;
+  href?: string;
+  target?: string;
+  rel?: string;
+};
+
 function resolveStatus(rawStatus: string | string[] | undefined): 'success' | 'error' | null {
   const status = Array.isArray(rawStatus) ? rawStatus[0] : rawStatus;
   if (status === '1') return 'success';
@@ -124,6 +135,45 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const email = shell.site.contacts.email ?? '';
   const telegramUrl = shell.site.contacts.telegramUrl ?? '';
   const telegramLabel = formatTelegramHandle(telegramUrl) ?? telegramUrl;
+
+  const contacts: ContactEntry[] = [];
+
+  if (address) {
+    contacts.push({
+      id: 'address',
+      icon: <MapPin aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
+      content: <span className="whitespace-pre-line font-medium">{address}</span>,
+    });
+  }
+
+  if (phone) {
+    contacts.push({
+      id: 'phone',
+      icon: <Phone aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
+      content: <span className="font-medium">{phone}</span>,
+      href: `tel:${phone}`,
+    });
+  }
+
+  if (email) {
+    contacts.push({
+      id: 'email',
+      icon: <Mail aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
+      content: <span className="font-medium">{email}</span>,
+      href: `mailto:${email}`,
+    });
+  }
+
+  if (telegramUrl) {
+    contacts.push({
+      id: 'telegram',
+      icon: <Send aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
+      content: <span className="font-medium">{telegramLabel || telegramUrl}</span>,
+      href: telegramUrl,
+      target: '_blank',
+      rel: 'noreferrer',
+    });
+  }
 
   return (
     <SiteShell
@@ -163,37 +213,13 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             />
           </div>
 
-          <div className="space-y-2 rounded-xl border border-border bg-background p-6 shadow-sm">
-            {address ? (
-              <p className="whitespace-pre-line text-base font-medium text-foreground">{address}</p>
-            ) : null}
-            {phone ? (
-              <a
-                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                href={`tel:${phone}`}
-              >
-                {phone}
-              </a>
-            ) : null}
-            {email ? (
-              <a
-                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                href={`mailto:${email}`}
-              >
-                {email}
-              </a>
-            ) : null}
-            {telegramUrl ? (
-              <a
-                className="block text-sm text-brand-700 underline underline-offset-4 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                href={telegramUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {telegramLabel || telegramUrl}
-              </a>
-            ) : null}
-          </div>
+          {contacts.length ? (
+            <div className="space-y-2 rounded-xl border border-border bg-background p-6 shadow-sm">
+              {contacts.map((contact) => (
+                <ContactRow key={contact.id} {...contact} />
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -206,6 +232,32 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       ) : null}
     </SiteShell>
   );
+}
+
+function ContactRow({ icon, content, href, target, rel }: ContactEntry) {
+  const inner = (
+    <span className="inline-flex items-baseline gap-3 text-base leading-6 text-foreground">
+      <span className="text-brand-700" aria-hidden="true">
+        {icon}
+      </span>
+      <span className="break-words">{content}</span>
+    </span>
+  );
+
+  if (href) {
+    return (
+      <a
+        className="block rounded-lg px-2 py-1.5 transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        href={href}
+        target={target}
+        rel={rel}
+      >
+        {inner}
+      </a>
+    );
+  }
+
+  return <div className="px-2 py-1.5">{inner}</div>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

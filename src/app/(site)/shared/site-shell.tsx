@@ -242,11 +242,14 @@ export function SiteShell({
                 <Image
                   src="/uploads/logo.svg"
                   alt={brandLabel}
-                  width={96}
-                  height={96}
-                  className="w-auto h-[clamp(48px,3.2vw,72px)] object-contain"
+                  width={84}
+                  height={84}
+                  className="w-auto h-[clamp(42px,2.8vw,64px)] object-contain"
                 />
-                <span className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600">
+                <span
+                  className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600"
+                  style={{ letterSpacing: 'clamp(-0.02em, -0.018em + 0.12vw, -0.01em)' }}
+                >
                   {brandLabel}
                 </span>
               </a>
