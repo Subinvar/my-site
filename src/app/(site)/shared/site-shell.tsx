@@ -236,10 +236,14 @@ export function SiteShell({
   return (
     <div
       ref={shellRef}
-      className={`${brandFont.variable} theme-transition relative flex min-h-screen flex-col bg-background text-foreground`}
+      className={cn(
+        brandFont.variable,
+        'theme-transition relative flex min-h-screen flex-col bg-background text-foreground',
+        'transition-[padding-top] duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
+      )}
       style={
         {
-          '--header-height': '56px',
+          '--header-height': 'var(--header-height-initial)',
           paddingTop: 'var(--header-height)',
         } as CSSProperties
       }
@@ -262,7 +266,8 @@ export function SiteShell({
         <div className="relative">
           <div
             className={cn(
-              'flex w-full items-center justify-between gap-4 px-4 py-[clamp(0.45rem,0.3rem+0.4vw,1rem)] sm:px-6',
+              'flex w-full items-center justify-between',
+              'gap-[var(--header-gap-x)] px-[var(--header-pad-x)] py-[var(--header-pad-y)]',
               'lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-stretch lg:gap-x-6',
             )}
           >
@@ -277,11 +282,16 @@ export function SiteShell({
                   alt={brandLabel}
                   width={84}
                   height={84}
-                  className="w-auto h-[clamp(42px,2.8vw,64px)] object-contain"
+                  priority
+                  sizes="(min-width: 1024px) 84px, (min-width: 640px) 72px, 56px"
+                  className="h-[var(--header-logo-h)] w-auto object-contain"
                 />
                 <span
-                  className="text-[clamp(1.05rem,0.9rem+0.6vw,1.6rem)] font-bold leading-tight text-brand-600 dark:text-brand-600"
-                  style={{ letterSpacing: 'clamp(-0.02em, -0.018em + 0.12vw, -0.01em)' }}
+                  className={cn(
+                    'font-[var(--font-heading)]',
+                    'text-[length:var(--header-brand-fs)] font-bold leading-[1.05]',
+                    'tracking-[-0.02em] text-brand-600 dark:text-brand-600',
+                  )}
                 >
                   {brandLabel}
                 </span>
