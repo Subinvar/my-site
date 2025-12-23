@@ -98,6 +98,7 @@ export function SiteShell({
   const hasCopyright = copyrightText.length > 0;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
@@ -110,10 +111,29 @@ export function SiteShell({
   const prevIsMenuOpenRef = useRef(isMenuOpen);
 
   useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const updatePreference = () => setPrefersReducedMotion(query.matches);
+
+    updatePreference();
+    query.addEventListener('change', updatePreference);
+
+    return () => {
+      query.removeEventListener('change', updatePreference);
+    };
+  }, []);
+
+  useEffect(() => {
     const prevIsMenuOpen = prevIsMenuOpenRef.current;
     prevIsMenuOpenRef.current = isMenuOpen;
 
     if (prevIsMenuOpen === isMenuOpen) {
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      setAreLinesConverged(isMenuOpen);
+      setIsBurgerRotated(isMenuOpen);
       return;
     }
 
@@ -144,6 +164,19 @@ export function SiteShell({
         window.clearTimeout(timer);
       }
     };
+  }, [isMenuOpen, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
   }, [isMenuOpen]);
 
   // Высота шапки: пишем в CSS-переменную напрямую (без React state)
@@ -315,7 +348,7 @@ export function SiteShell({
                 className={cn(
                   'inline-flex h-10 w-10 items-center justify-center rounded-xl',
                   'border border-transparent bg-background/70 text-foreground',
-                  'transition-colors duration-200 ease-out',
+                  'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
                   'hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                   'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
@@ -328,11 +361,11 @@ export function SiteShell({
                 {/* наш двухлинейный бургер */}
                 <span className="relative block h-4 w-5">
                   <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200"
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
                     style={{ transform: topLineTransform }}
                   />
                   <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200"
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
                     style={{ transform: bottomLineTransform }}
                   />
                 </span>
@@ -346,7 +379,7 @@ export function SiteShell({
           className={cn(
             'fixed inset-y-0 right-0 z-40 w-full max-w-xs border-l border-border bg-background/95 shadow-lg lg:hidden',
             'backdrop-blur-sm',
-            'transform-gpu transition-transform duration-300 ease-out',
+            'transform-gpu transition-transform duration-300 ease-out motion-reduce:transition-none motion-reduce:duration-0',
             isMenuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
           style={{ top: 'var(--header-height)', bottom: 0 } as CSSProperties}
@@ -365,8 +398,8 @@ export function SiteShell({
       {isMenuOpen ? (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-md lg:hidden"
-          aria-hidden="true"
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent lg:hidden"
+          aria-label={closeMenuLabel}
           onClick={() => setIsMenuOpen(false)}
         />
       ) : null}
