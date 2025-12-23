@@ -52,16 +52,16 @@
   --header-pad-y: clamp(0.45rem, 0.3rem + 0.4vw, 1rem);
   --header-gap-x: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
 
-  --header-logo-h: clamp(48px, 3.2vw, 72px);
+  --header-logo-h: clamp(72px, 4.8vw, 116px);
   --header-brand-fs: clamp(1.05rem, 0.9rem + 0.6vw, 1.6rem);
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
-  --header-height-initial: 64px;
+  --header-height-initial: 96px;
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-height-initial: 96px;
+    --header-height-initial: 136px;
   }
 }
 
