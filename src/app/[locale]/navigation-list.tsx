@@ -52,21 +52,25 @@ export function NavigationList({
       ? 'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight'
       : 'text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium';
 
-  const labelInnerClassName = cn(
+  const labelUnderlineBaseClassName = cn(
     'relative inline-block',
     // линия: 1px, позиция, скругление концов
     'after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full',
-    // старт: линии нет
-    'after:bg-transparent after:origin-left after:scale-x-0',
     // анимация: "рисуем" + плавно меняем цвет
-    'after:transition-[transform,background-color] after:duration-200 after:ease-out',
+    'after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out',
+  );
+
+  const labelInnerClassName = cn(
+    labelUnderlineBaseClassName,
+    // старт: линии нет
+    'after:bg-transparent after:scale-x-0',
     // hover/focus: линия появляется и по цвету = border (как у Theme/Language toggle)
     'group-hover:after:bg-[var(--border)] group-focus-visible:after:bg-[var(--border)]',
     'group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100',
   );
 
   const activeLabelInnerClassName = cn(
-    labelInnerClassName,
+    labelUnderlineBaseClassName,
     // активная страница: линия всегда видна и тёмная (в цвет текста пункта)
     'after:scale-x-100 after:bg-current',
     // и не перекрашиваем её в серую на hover/focus
