@@ -350,15 +350,18 @@ export function SiteShell({
               </div>
             </div>
 
-            {/* MOBILE: всё справа в одну линию + бургер */}
-            <div className="flex flex-1 items-center justify-end gap-3 lg:hidden">
-              <ThemeToggle />
-              <LanguageSwitcher
-                currentLocale={locale}
-                targetLocale={targetLocale}
-                href={switcherHref}
-                switchToLabels={switchToLabels}
-              />
+            {/* MOBILE: тема и язык отдельной строкой, бургер там, где была навигация */}
+            <div className="flex flex-1 flex-col items-end gap-2 lg:hidden">
+              <div className="flex items-center justify-end gap-3">
+                <ThemeToggle />
+                <LanguageSwitcher
+                  currentLocale={locale}
+                  targetLocale={targetLocale}
+                  href={switcherHref}
+                  switchToLabels={switchToLabels}
+                />
+              </div>
+
               <button
                 type="button"
                 className={cn(
