@@ -17,6 +17,7 @@ export type PostPreview = {
   excerpt: string | null;
   href: string;
   date: string | null;
+  formattedDate: string | null;
 };
 
 const SECTION_TITLE: Record<Locale, string> = {
@@ -45,6 +46,18 @@ function toTimestamp(value: string | null): number {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+function formatPostDate(date: string | null, locale: Locale): string | null {
+  if (!date) return null;
+
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return date;
+
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeZone: 'UTC',
+  }).format(parsed);
+}
+
 async function getLatestPosts(locale: Locale, limit = 3): Promise<PostPreview[]> {
   const summaries = await getAllPosts();
   const candidates = summaries
@@ -70,6 +83,7 @@ async function getLatestPosts(locale: Locale, limit = 3): Promise<PostPreview[]>
         excerpt,
         href,
         date,
+        formattedDate: formatPostDate(date, locale),
       } satisfies PostPreview;
     })
   );
@@ -98,7 +112,6 @@ export async function NewsPreview({ locale, intro }: Props) {
 
   return (
     <NewsPreviewContent
-      locale={locale}
       title={title}
       description={description}
       viewAllLabel={VIEW_ALL_LABEL[locale]}
