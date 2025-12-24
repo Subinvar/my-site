@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Open+Sans:wght@300..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Open+Sans:wght@300..800&display=swap");
 @import "tailwindcss";
 
 @layer utilities {
@@ -7,7 +7,7 @@
     transform: translateY(12px);
   }
 
-  .motion-fade-in-up[data-in-view='true'] {
+  .motion-fade-in-up[data-in-view="true"] {
     opacity: 1;
     transform: translateY(0);
     transition:
@@ -19,7 +19,7 @@
     opacity: 0;
   }
 
-  .motion-fade-in[data-in-view='true'] {
+  .motion-fade-in[data-in-view="true"] {
     opacity: 1;
     transition: opacity var(--transition-normal);
   }
@@ -38,10 +38,23 @@
 }
 
 @keyframes cta-ripple {
-  0%, 52%   { transform: scale(1);   opacity: 0; }
-  56%       { transform: scale(1);   opacity: 1; }
-  78%       { transform: scale(2.4); opacity: 0.25; }
-  100%      { transform: scale(3.1); opacity: 0; }
+  0%,
+  52% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  56% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  78% {
+    transform: scale(2.4);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(3.1);
+    opacity: 0;
+  }
 }
 
 @layer utilities {
@@ -79,15 +92,15 @@
 }
 
 .font-heading-var {
-  --font-heading: 'Montserrat', sans-serif;
+  --font-heading: "Montserrat", sans-serif;
 }
 
 .font-body-var {
-  --font-body: 'Open Sans', sans-serif;
+  --font-body: "Open Sans", sans-serif;
 }
 
 .font-brand-var {
-  --font-brand: 'Montserrat', sans-serif;
+  --font-brand: "Montserrat", sans-serif;
 }
 
 /* 1. Базовые переменные для светлой/тёмной темы */
@@ -150,7 +163,7 @@ html {
 
 /* Принудительная тема через data-theme — поверх всего */
 
-html[data-theme='light'] {
+html[data-theme="light"] {
   color-scheme: light;
   --background: #ffffff;
   --foreground: #111827;
@@ -176,7 +189,7 @@ html[data-theme='light'] {
   --destructive-border: #fecdd3;
 }
 
-html[data-theme='dark'] {
+html[data-theme="dark"] {
   color-scheme: dark;
   --background: #020617;
   --foreground: #f9fafb;
@@ -221,13 +234,16 @@ html[data-theme='dark'] {
   --color-brand-700: #7b141a;
 
   /* Шрифты */
-  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans:
+    var(--font-body), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans",
+    "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
 
-  --font-heading: var(--font-heading), var(--font-body), ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
-    sans-serif;
+  --font-heading:
+    var(--font-heading), var(--font-body), ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
+    "Noto Sans", "Liberation Sans", sans-serif;
 
   /* если у тебя есть mono — можешь отдельно добавить:
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
@@ -280,8 +296,11 @@ html[data-theme='dark'] {
 
   button,
   .card {
-    transition: color 150ms ease-out, background-color 150ms ease-out,
-      border-color 150ms ease-out, box-shadow 150ms ease-out,
+    transition:
+      color 150ms ease-out,
+      background-color 150ms ease-out,
+      border-color 150ms ease-out,
+      box-shadow 150ms ease-out,
       transform 150ms ease-out;
   }
 
@@ -332,7 +351,7 @@ html[data-theme='dark'] {
 @layer components {
   .hero-bg-image {
     @apply h-full w-full bg-cover bg-center;
-    background-image: url('/uploads/hero.jpg');
+    background-image: url("/uploads/hero.jpg");
   }
 
   /* Мобильное выезжающее меню: список пунктов в колонку */
