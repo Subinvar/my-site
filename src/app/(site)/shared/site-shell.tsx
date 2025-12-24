@@ -1,12 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from 'react';
 import Image from 'next/image';
 
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { NavigationList } from '@/app/[locale]/navigation-list';
-import { formatTelegramHandle } from '@/lib/contacts';
 import type { Navigation, SiteContent } from '@/lib/keystatic';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
@@ -16,19 +23,19 @@ import { HtmlLangSync } from './html-lang-sync';
 import { ThemeToggle } from './theme-toggle';
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
-  products: 96,
-  news: 80,
-  about: 104,
-  partners: 96,
-  contacts: 96,
+  products: 116,
+  news: 96,
+  about: 124,
+  partners: 120,
+  contacts: 120,
 };
 
 const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
-  phone: 168,
-  email: 220,
+  phone: 156,
+  email: 140,
   theme: 40,
   lang: 40,
-  cta: 190,
+  cta: 200,
 };
 
 const brandFont = { variable: 'font-brand-var' };
@@ -154,8 +161,6 @@ export function SiteShell({
   const navigationLabels = dictionary.navigation;
   const switchToLabels = dictionary.languageSwitcher.switchTo;
 
-  const telegramUrl = site.contacts.telegramUrl?.trim() ?? '';
-  const telegramLabel = formatTelegramHandle(telegramUrl) ?? (telegramUrl ? 'Telegram' : '');
   const brandLabel = brandName || 'Интема Групп';
 
   const currentYear = new Date().getFullYear();
@@ -180,7 +185,8 @@ export function SiteShell({
 
   const isBurgerMode = !isLgUp || isCompactNav;
 
-  const inertProps = (enabled: boolean) => (enabled ? ({ inert: true } as any) : {});
+  const inertProps = (enabled: boolean): HTMLAttributes<HTMLElement> =>
+    enabled ? { inert: true } : {};
 
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
@@ -196,12 +202,14 @@ export function SiteShell({
   const ctaLabel = locale === 'ru' ? 'Оставить заявку' : 'Send inquiry';
 
   useLayoutEffect(() => {
-    setHasHydrated(true);
     let raf1 = 0;
     let raf2 = 0;
+
     raf1 = window.requestAnimationFrame(() => {
+      setHasHydrated(true);
       raf2 = window.requestAnimationFrame(() => setTransitionsOn(true));
     });
+
     return () => {
       window.cancelAnimationFrame(raf1);
       window.cancelAnimationFrame(raf2);
@@ -228,7 +236,7 @@ export function SiteShell({
     };
   }, []);
 
-  /* eslint-disable react-hooks/set-state-in-effect -- пошаговая анимация бургера */
+  /* eslint-disable react-hooks/set-state-in-effect -- координаты для пошаговой анимации бургера */
   useEffect(() => {
     const prevIsMenuOpen = prevIsMenuOpenRef.current;
     prevIsMenuOpenRef.current = isMenuOpen;
@@ -259,7 +267,7 @@ export function SiteShell({
       if (timer) window.clearTimeout(timer);
     };
   }, [isMenuOpen, prefersReducedMotion]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+  /* eslint-enable react-hooks/set-state-in-effect -- возвращаем правило после анимации */
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -294,8 +302,8 @@ export function SiteShell({
 
   useLayoutEffect(() => {
     if (!isLgUp) {
-      setIsCompactNav(false);
-      return;
+      const frame = window.requestAnimationFrame(() => setIsCompactNav(false));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const host = navHostRef.current;
@@ -332,7 +340,10 @@ export function SiteShell({
   }, [isLgUp]);
 
   useEffect(() => {
-    if (!isBurgerMode && isMenuOpen) setIsMenuOpen(false);
+    if (!isBurgerMode && isMenuOpen) {
+      const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
+      return () => window.cancelAnimationFrame(frame);
+    }
   }, [isBurgerMode, isMenuOpen]);
 
   useEffect(() => {
@@ -452,7 +463,7 @@ export function SiteShell({
               )}
             >
               {/* Верхняя строка */}
-              <div className="flex h-full w-full items-center justify-end gap-5 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+              <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
                   <HeaderTopSlot id="phone" className="hidden md:inline-flex">
                     <a
@@ -489,7 +500,7 @@ export function SiteShell({
                 </HeaderTopSlot>
 
                 <HeaderTopSlot id="cta" className="hidden md:inline-flex">
-                  <HeaderCta href={contactsHref} label={ctaLabel} />
+                  <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
                 </HeaderTopSlot>
               </div>
 
