@@ -78,7 +78,7 @@ function HeaderTopSlot({
     <div
       data-header-top-slot={id}
       className={cn(
-        slotWidth ? 'flex flex-none justify-center' : 'inline-flex',
+        slotWidth ? 'flex flex-none justify-end' : 'inline-flex',
         // важно: min-w-0 + overflow-hidden позволяют truncate реально работать
         'h-10 min-w-0 items-center overflow-hidden',
         className,
@@ -136,8 +136,8 @@ function HeaderCta({
       aria-label={label}
       className={cn(
         'group inline-flex h-10 items-center justify-center rounded-xl px-4',
-        'border border-transparent bg-background/70',
-        'hover:border-[var(--header-border)] focus-visible:border-[var(--header-border)]',
+        'border border-[var(--header-border)] bg-background/70',
+        'focus-visible:border-[var(--header-border)]',
         'text-muted-foreground hover:text-foreground',
         'no-underline hover:no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
@@ -447,6 +447,18 @@ export function SiteShell({
     return () => observer.disconnect();
   }, []);
 
+    useEffect(() => {
+    const updateElevation = () => {
+      const next = window.scrollY > 1;
+      setIsHeaderElevated((prev) => (prev === next ? prev : next));
+    };
+
+    updateElevation();
+    window.addEventListener('scroll', updateElevation, { passive: true });
+
+    return () => window.removeEventListener('scroll', updateElevation);
+  }, []);
+
   const topLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : -4}px) rotate(${isBurgerRotated ? 45 : 0}deg)`;
   const bottomLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : 4}px) rotate(${isBurgerRotated ? -45 : 0}deg)`;
 
@@ -690,7 +702,7 @@ export function SiteShell({
               </div>
 
 {/* Нижняя строка: “вагончик” меню↔бургер */}
-              <div ref={navHostRef} className={cn('relative w-full overflow-hidden rounded-lg', 'h-10', 'lg:h-full lg:min-h-[44px]')}>
+              <div ref={navHostRef} className={cn('relative w-full overflow-hidden rounded-lg', 'h-11', 'lg:h-full lg:min-h-[44px]')}>
                 <div
                   className={cn(
                     'absolute inset-0 h-[200%] w-full will-change-transform transform-gpu',

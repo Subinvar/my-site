@@ -44,8 +44,8 @@ export function NavigationList({
 
   const listClassName =
     density === 'compact'
-      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-6 text-[13px] font-medium leading-tight'
-      : 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center gap-6 text-sm font-medium';
+      ? 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-[13px] font-medium leading-tight'
+      : 'm-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-sm font-medium';
 
   const densityClass =
     density === 'compact'
@@ -99,7 +99,7 @@ export function NavigationList({
           const liStyle = isStableSlot ? ({ width: `${slotWidth}px` } as React.CSSProperties) : undefined;
 
           const linkClassName = cn(
-            isStableSlot ? 'flex w-full justify-center' : 'inline-flex',
+            isStableSlot ? 'flex w-full justify-end' : 'inline-flex',
             'group',
             linkHeightClass,
             'items-center gap-1',
