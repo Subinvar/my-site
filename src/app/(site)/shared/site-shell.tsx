@@ -123,10 +123,12 @@ function HeaderCta({
   href,
   label,
   className,
+  children,
 }: {
   href: string;
   label: string;
   className?: string;
+  children?: ReactNode;
 }) {
   return (
     <Link
@@ -171,7 +173,7 @@ function HeaderCta({
           )}
         />
       </span>
-      {label}
+      {children ?? label}
     </Link>
   );
 }
@@ -210,13 +212,43 @@ export function SiteShell({
   const [hasHydrated, setHasHydrated] = useState(false);
   const [transitionsOn, setTransitionsOn] = useState(false);
 
-  const [isTopRowTight, setIsTopRowTight] = useState(false);
-  const topRowRef = useRef<HTMLDivElement | null>(null);
-
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
 
   const isBurgerMode = !isLgUp || isCompactNav;
+
+  // Top row wagons: keep width during fly-up, collapse after animation (prevents diagonal “flight”)
+  const [topWagonIsBurger, setTopWagonIsBurger] = useState(false);
+  const [topWagonsCollapsed, setTopWagonsCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+
+    // В burger-mode: сначала «улетаем вверх», и только потом схлопываем ширину
+    if (isBurgerMode) {
+      setTopWagonsCollapsed(false);
+      setTopWagonIsBurger(true);
+
+      if (prefersReducedMotion) {
+        setTopWagonsCollapsed(true);
+        return;
+      }
+
+      const t = window.setTimeout(() => setTopWagonsCollapsed(true), 320);
+      return () => window.clearTimeout(t);
+    }
+
+    // Выходим из burger-mode: сначала раскрываем ширину, потом «приезжаем вниз» (следующим кадром)
+    setTopWagonsCollapsed(false);
+    if (prefersReducedMotion) {
+      setTopWagonIsBurger(false);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => setTopWagonIsBurger(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [isBurgerMode, prefersReducedMotion, hasHydrated]);
+
 
   const inertProps = (enabled: boolean): HTMLAttributes<HTMLElement> =>
     enabled ? { inert: true } : {};
@@ -233,6 +265,7 @@ export function SiteShell({
   const basePath = basePathRaw !== '/' && basePathRaw.endsWith('/') ? basePathRaw.slice(0, -1) : basePathRaw;
   const contactsHref = basePath === '/' ? '/contacts' : `${basePath}/contacts`;
   const ctaLabel = locale === 'ru' ? 'Оставить заявку' : 'Send inquiry';
+  const ctaCompactLabel = locale === 'ru' ? 'Заявка' : 'Inquiry';
 
   const topContactsIds = [
     site.contacts.phone ? ('phone' as const) : null,
@@ -391,43 +424,6 @@ export function SiteShell({
     };
   }, [isLgUp]);
 
-  useLayoutEffect(() => {
-  const el = topRowRef.current;
-  if (!el || typeof ResizeObserver === 'undefined') return;
-
-  const HYST = 32; // запас, чтобы не было дрожания туда-сюда
-  let raf = 0;
-
-  const recalc = () => {
-    window.cancelAnimationFrame(raf);
-    raf = window.requestAnimationFrame(() => {
-      const overflow = el.scrollWidth - el.clientWidth;
-
-      setIsTopRowTight((prev) => {
-        // когда CTA видна: прячем, если реально переполнило
-        if (!prev) return overflow > 1;
-        // когда CTA скрыта: показываем обратно только если появилось достаточно “воздуха”
-        return overflow > -HYST;
-      });
-    });
-  };
-
-  const ro = new ResizeObserver(recalc);
-  ro.observe(el);
-
-  // на всякий: если текст меняется (язык), ResizeObserver может не сработать → MutationObserver поможет
-  const mo = new MutationObserver(recalc);
-  mo.observe(el, { subtree: true, childList: true, characterData: true });
-
-  recalc();
-
-  return () => {
-    window.cancelAnimationFrame(raf);
-    ro.disconnect();
-    mo.disconnect();
-  };
-}, []);
-
   useEffect(() => {
     if (!isBurgerMode && isMenuOpen) {
       const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
@@ -463,6 +459,13 @@ export function SiteShell({
   const burgerDelayClass = transitionsOn ? 'delay-75' : 'delay-0';
 
   const wagonTransformClass = hasHydrated ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0') : '-translate-y-1/2 lg:translate-y-0';
+
+  const topWagonTransformClass = hasHydrated
+    ? topWagonIsBurger
+      ? '-translate-y-1/2'
+      : 'translate-y-0'
+    : '-translate-y-1/2 lg:translate-y-0';
+
 
   const menuSlideClass = hasHydrated
     ? isBurgerMode
@@ -546,30 +549,34 @@ export function SiteShell({
 
             {/* RIGHT */}
 <div className={cn(
-  'w-full min-w-0 justify-items-end',
+  'w-full min-w-0',
   'grid grid-rows-[auto_auto] gap-y-2',
   'lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-2',
 )}>
               {/* Верхняя строка */}
-              <div ref={topRowRef} className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+              <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {/* Контакты: «вагончик» (улетают вверх при появлении бургера) */}
                 {hasTopContacts ? (
                   <div
-                    className="relative hidden h-10 overflow-hidden md:block"
-                    style={{ width: `${topContactsWidth}px` } as CSSProperties}
+                    className={cn(
+                      'relative hidden h-10 overflow-hidden md:block',
+                      transitionsOn ? 'transition-[width] duration-200 ease-out' : 'transition-none',
+                      'motion-reduce:transition-none motion-reduce:duration-0',
+                    )}
+                    style={{ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties}
                   >
                     <div
                       className={cn(
                         'absolute inset-0 h-[200%] w-full will-change-transform transform-gpu',
                         wagonTransitionClass,
                         'motion-reduce:transition-none motion-reduce:duration-0',
-                        wagonTransformClass,
+                        topWagonTransformClass,
                       )}
                     >
                       {/* SLIDE 1: контакты видны */}
                       <div
-                        aria-hidden={hasHydrated ? isBurgerMode : undefined}
-                        {...inertProps(hasHydrated ? isBurgerMode : false)}
+                        aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
+                        {...inertProps(hasHydrated ? topWagonIsBurger : false)}
                         className={cn(
                           'flex h-1/2 w-full items-center justify-end gap-6',
                           slideTransitionClass,
@@ -598,8 +605,8 @@ export function SiteShell({
 
                       {/* SLIDE 2: контакты скрыты */}
                       <div
-                        aria-hidden={hasHydrated ? !isBurgerMode : undefined}
-                        {...inertProps(hasHydrated ? !isBurgerMode : false)}
+                        aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
+                        {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
                         className={cn(
                           'flex h-1/2 w-full items-center justify-end gap-6',
                           slideTransitionClass,
@@ -614,24 +621,67 @@ export function SiteShell({
                   </div>
                 ) : null}
 
-                <HeaderTopSlot id="theme">
-                  <ThemeToggle />
-                </HeaderTopSlot>
+{/* CTA: живёт до burger-mode, потом «улетает вверх» (и переезжает вниз к бургеру) */}
+                <div
+                  className={cn(
+                    'relative hidden h-10 overflow-hidden md:block',
+                    transitionsOn ? 'transition-[width] duration-200 ease-out' : 'transition-none',
+                    'motion-reduce:transition-none motion-reduce:duration-0',
+                  )}
+                  style={{ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties}
+                >
+                  <div
+                    className={cn(
+                      'absolute inset-0 h-[200%] w-full will-change-transform transform-gpu',
+                      wagonTransitionClass,
+                      'motion-reduce:transition-none motion-reduce:duration-0',
+                      topWagonTransformClass,
+                    )}
+                  >
+                    {/* SLIDE 1: CTA видна */}
+                    <div
+                      aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
+                      {...inertProps(hasHydrated ? topWagonIsBurger : false)}
+                      className={cn(
+                        'flex h-1/2 w-full items-center justify-end',
+                        slideTransitionClass,
+                        'motion-reduce:transition-none motion-reduce:duration-0',
+                        menuSlideClass,
+                      )}
+                    >
+                      <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
+                    </div>
 
-                <HeaderTopSlot id="lang">
-                  <LanguageSwitcher
-                    currentLocale={locale}
-                    targetLocale={targetLocale}
-                    href={switcherHref}
-                    switchToLabels={switchToLabels}
-                  />
-                </HeaderTopSlot>
+                    {/* SLIDE 2: CTA скрыта */}
+                    <div
+                      aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
+                      {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
+                      className={cn(
+                        'flex h-1/2 w-full items-center justify-end',
+                        slideTransitionClass,
+                        burgerDelayClass,
+                        'motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0',
+                        burgerSlideClass,
+                      )}
+                    >
+                      {/* пусто намеренно */}
+                    </div>
+                  </div>
+                </div>
 
-                {!isTopRowTight ? (
-  <HeaderTopSlot id="cta" className="hidden md:inline-flex">
-    <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
-  </HeaderTopSlot>
-) : null}
+
+<HeaderTopSlot id="theme">
+  <ThemeToggle />
+</HeaderTopSlot>
+
+<HeaderTopSlot id="lang">
+  <LanguageSwitcher
+    currentLocale={locale}
+    targetLocale={targetLocale}
+    href={switcherHref}
+    switchToLabels={switchToLabels}
+  />
+</HeaderTopSlot>
               </div>
 
 {/* Нижняя строка: “вагончик” меню↔бургер */}
@@ -677,7 +727,12 @@ export function SiteShell({
                       burgerSlideClass,
                     )}
                   >
-                    <button
+                    <div className="flex items-center justify-end gap-3">
+                      <HeaderCta href={contactsHref} label={ctaLabel} className="px-3 whitespace-nowrap">
+                        <span className="hidden min-[420px]:inline">{ctaLabel}</span>
+                        <span className="min-[420px]:hidden">{ctaCompactLabel}</span>
+                      </HeaderCta>
+                      <button
                       type="button"
                       className={cn(
                         'inline-flex h-10 w-10 items-center justify-center rounded-xl',
@@ -702,6 +757,7 @@ export function SiteShell({
                         />
                       </span>
                     </button>
+                    </div>
                   </div>
                 </div>
 
