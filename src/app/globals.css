@@ -240,6 +240,7 @@ html[data-theme='dark'] {
     color: var(--foreground);
     max-width: 100%;
     overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
 
   .theme-transition {

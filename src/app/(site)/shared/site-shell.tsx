@@ -90,6 +90,32 @@ function HeaderTopSlot({
   );
 }
 
+function HeaderTopPillLink({
+  href,
+  label,
+}: {
+  href: string;
+  label: string;
+}) {
+  return (
+    <a
+      href={href}
+      className={cn(
+        'inline-flex h-10 w-full items-center justify-center rounded-xl px-3',
+        'border border-[var(--header-border)] bg-background/70',
+        'text-muted-foreground no-underline',
+        'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
+        'hover:bg-background/80 hover:text-foreground',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600',
+        'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+        'truncate',
+      )}
+    >
+      {label}
+    </a>
+  );
+}
+
 function HeaderCta({
   href,
   label,
@@ -474,13 +500,11 @@ export function SiteShell({
             </div>
 
             {/* RIGHT */}
-            <div
-              className={cn(
-                'w-full justify-items-end',
-                'grid grid-rows-[auto_auto] gap-y-1',
-                'lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-0',
-              )}
-            >
+<div className={cn(
+  'w-full min-w-0 justify-items-end',
+  'grid grid-rows-[auto_auto] gap-y-2',
+  'lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-2',
+)}>
               {/* Верхняя строка */}
               <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {/* Контакты: «вагончик» (улетают вверх при появлении бургера) */}
@@ -509,25 +533,21 @@ export function SiteShell({
                         )}
                       >
                         {site.contacts.phone ? (
-                          <HeaderTopSlot id="phone">
-                            <a
-                              href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                              className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
-                            >
-                              {site.contacts.phone}
-                            </a>
-                          </HeaderTopSlot>
+                         <HeaderTopSlot id="phone" className="hidden md:inline-flex">
+  <HeaderTopPillLink
+    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+    label={site.contacts.phone}
+  />
+</HeaderTopSlot>
                         ) : null}
 
                         {site.contacts.email ? (
-                          <HeaderTopSlot id="email">
-                            <a
-                              href={`mailto:${site.contacts.email}`}
-                              className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
-                            >
-                              {site.contacts.email}
-                            </a>
-                          </HeaderTopSlot>
+                          <HeaderTopSlot id="email" className="hidden md:inline-flex">
+  <HeaderTopPillLink
+    href={`mailto:${site.contacts.email}`}
+    label={site.contacts.email}
+  />
+</HeaderTopSlot>
                         ) : null}
                       </div>
 
