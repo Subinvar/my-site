@@ -105,7 +105,7 @@ function HeaderCta({
       aria-label={label}
       className={cn(
         'group inline-flex h-10 items-center justify-center rounded-xl px-4',
-        'border border-[var(--border)] bg-background/70',
+        'border border-[var(--header-border)] bg-background/70',
         'text-muted-foreground hover:text-foreground',
         'no-underline hover:no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',

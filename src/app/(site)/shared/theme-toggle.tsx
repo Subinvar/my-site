@@ -84,7 +84,7 @@ export function ThemeToggle() {
   const containerClasses = cn(
     'inline-flex h-10 w-10 items-center justify-center rounded-xl',
     'border border-transparent bg-background/70 text-muted-foreground transition-colors duration-150',
-    'hover:border-[var(--border)] hover:bg-background/80 hover:text-foreground',
+    'hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
     !isMounted && 'cursor-default opacity-60 hover:border-transparent hover:bg-background/70',

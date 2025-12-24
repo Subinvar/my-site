@@ -52,11 +52,12 @@ export function NavigationList({
       ? 'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight'
       : 'text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium';
 
+  const underlineOffsetClass = density === 'compact' ? 'after:-bottom-3' : 'after:-bottom-0.5';
+  
   const labelUnderlineBaseClassName = cn(
     'relative inline-block',
-    // линия: 1px, позиция, скругление концов
-    'after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full',
-    // анимация: "рисуем" + плавно меняем цвет
+    'after:absolute after:left-0 after:right-0 after:h-px after:rounded-full',
+    underlineOffsetClass,
     'after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out',
   );
 
@@ -65,7 +66,7 @@ export function NavigationList({
     // старт: линии нет
     'after:bg-transparent after:scale-x-0',
     // hover/focus: линия появляется и по цвету = border (как у Theme/Language toggle)
-    'group-hover:after:bg-[var(--border)] group-focus-visible:after:bg-[var(--border)]',
+    'group-hover:after:bg-[var(--header-border)] group-focus-visible:after:bg-[var(--header-border)]',
     'group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100',
   );
 
@@ -99,8 +100,8 @@ export function NavigationList({
             'group',
             'items-center gap-1',
             densityClass,
-            'no-underline transition-colors',
-            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+            'active:opacity-90',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
             isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
           );
 
