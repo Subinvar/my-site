@@ -66,24 +66,33 @@ function HeaderTopSlot({
   className,
   children,
   stableSlots = HEADER_TOP_STABLE_SLOTS,
+  collapsed = false,
 }: {
   id: string;
   className?: string;
   children: ReactNode;
   stableSlots?: Record<string, number>;
+  collapsed?: boolean;
 }) {
-  const slotWidth = stableSlots[id];
+  const slotWidth = stableSlots?.[id];
+  const hasSlot = typeof slotWidth === 'number';
 
   return (
     <div
       data-header-top-slot={id}
       className={cn(
-        slotWidth ? 'flex flex-none justify-center' : 'inline-flex',
-        // важно: min-w-0 + overflow-hidden позволяют truncate реально работать
+        hasSlot ? 'flex flex-none justify-center w-[var(--slot-w)]' : 'inline-flex',
         'h-10 min-w-0 items-center overflow-hidden',
+        'will-change-[width,opacity,transform] transform-gpu',
+        'transition-[width,opacity,transform] duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
+        collapsed && 'pointer-events-none opacity-0 -translate-y-1',
         className,
       )}
-      style={slotWidth ? ({ width: `${slotWidth}px` } as CSSProperties) : undefined}
+      style={
+        hasSlot
+          ? ({ '--slot-w': collapsed ? '0px' : `${slotWidth}px` } as CSSProperties)
+          : undefined
+      }
     >
       {children}
     </div>
@@ -112,7 +121,7 @@ function HeaderCta({
         'hover:bg-background/80',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]',
-        'text-[clamp(0.9rem,0.85rem+0.2vw,1.0rem)] font-medium leading-none',
+        'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight',
         className,
       )}
     >
@@ -310,7 +319,7 @@ export function SiteShell({
     const measure = navMeasureRef.current;
     if (!host || !measure || typeof ResizeObserver === 'undefined') return;
 
-    const HYST = 32;
+    const HYST = 48;
     const PAD = 16;
     let raf = 0;
 
@@ -465,7 +474,7 @@ export function SiteShell({
               {/* Верхняя строка */}
               <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
-                  <HeaderTopSlot id="phone" className="hidden md:inline-flex">
+                  <HeaderTopSlot id="phone" className="hidden md:inline-flex" collapsed={isBurgerMode}>
                     <a
                       href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
                       className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
@@ -476,7 +485,7 @@ export function SiteShell({
                 ) : null}
 
                 {site.contacts.email ? (
-                  <HeaderTopSlot id="email" className="hidden md:inline-flex">
+                  <HeaderTopSlot id="email" className="hidden md:inline-flex" collapsed={isBurgerMode}>
                     <a
                       href={`mailto:${site.contacts.email}`}
                       className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
@@ -604,6 +613,25 @@ export function SiteShell({
           >
             <div className="flex h-full flex-col gap-4 p-6">
               <HeaderCta href={contactsHref} label={ctaLabel} className="w-full justify-center" />
+                <div className="flex flex-col gap-2 text-sm">
+                  {site.contacts.phone ? (
+                    <a
+                      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                      className="text-foreground no-underline hover:underline underline-offset-4"
+                    >
+                      {site.contacts.phone}
+                    </a>
+                  ) : null}
+
+                  {site.contacts.email ? (
+                    <a
+                      href={`mailto:${site.contacts.email}`}
+                      className="text-foreground no-underline hover:underline underline-offset-4"
+                    >
+                      {site.contacts.email}
+                    </a>
+                  ) : null}
+                </div>
               <NavigationList
                 links={navigation.header}
                 ariaLabel={navigationLabels.headerLabel}

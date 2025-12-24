@@ -52,7 +52,7 @@ export function LanguageSwitcher({
   const baseContainerClasses =
     'relative inline-flex h-10 w-10 items-center justify-center ' +
     'rounded-xl border border-transparent ' +
-    'bg-background/70 text-[clamp(0.75rem,0.7rem+0.2vw,0.9rem)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
+    'bg-background/70 text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
     'hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground ' +
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
     'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]';
@@ -67,7 +67,7 @@ export function LanguageSwitcher({
   // Вагончики RU / EN
   const wagonBaseClasses =
     'absolute inset-0 flex items-center justify-center px-2 ' +
-    'text-[clamp(0.75rem,0.7rem+0.2vw,0.9rem)] font-medium uppercase tracking-[0.08em] ' +
+    'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium uppercase tracking-[0.08em] ' +
     'transition-transform duration-200 ease-out';
 
   const ruClassName = cn(
