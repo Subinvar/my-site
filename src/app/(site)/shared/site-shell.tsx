@@ -23,6 +23,14 @@ const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
   contacts: 96,
 };
 
+const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
+  phone: 168,
+  email: 220,
+  theme: 40,
+  lang: 40,
+  cta: 190,
+};
+
 const brandFont = { variable: 'font-brand-var' };
 
 type SiteShellProps = {
@@ -46,6 +54,35 @@ function SkipToContentLink({ label }: { label: string }) {
   );
 }
 
+function HeaderTopSlot({
+  id,
+  className,
+  children,
+  stableSlots = HEADER_TOP_STABLE_SLOTS,
+}: {
+  id: string;
+  className?: string;
+  children: ReactNode;
+  stableSlots?: Record<string, number>;
+}) {
+  const slotWidth = stableSlots[id];
+
+  return (
+    <div
+      data-header-top-slot={id}
+      className={cn(
+        slotWidth ? 'flex flex-none justify-center' : 'inline-flex',
+        // важно: min-w-0 + overflow-hidden позволяют truncate реально работать
+        'h-10 min-w-0 items-center overflow-hidden',
+        className,
+      )}
+      style={slotWidth ? ({ width: `${slotWidth}px` } as CSSProperties) : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
 function HeaderCta({
   href,
   label,
@@ -61,9 +98,7 @@ function HeaderCta({
       aria-label={label}
       className={cn(
         'group inline-flex h-10 items-center justify-center rounded-xl px-4',
-        // рамка/фон как у остальных кнопок шапки
         'border border-[var(--border)] bg-background/70',
-        // текст как у меню: muted → foreground
         'text-muted-foreground hover:text-foreground',
         'no-underline hover:no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
@@ -74,31 +109,31 @@ function HeaderCta({
         className,
       )}
     >
-<span aria-hidden="true" className="relative mr-2.5 inline-flex h-3 w-3 items-center justify-center">
-  {/* статичный ореол (градиентное кольцо, совпадает по радиусу с рябью) */}
-  <span
-    className={cn(
-      'absolute inset-0 rounded-full',
-      // до 58% пусто, на 62% пик, дальше плавно в ноль
-      'bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.22)_62%,rgba(148,27,32,0)_100%)]',
-    )}
-  />
-
-  {/* пульсирующее кольцо (тоже градиент, тот же inner-cut 58%) */}
-  <span
-    className={cn(
-      'absolute inset-0 rounded-full',
-      'will-change-transform',
-      'bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.60)_64%,rgba(148,27,32,0)_78%)]',
-      'animate-cta-ripple motion-reduce:animate-none',
-      // на hover чуть смелее
-      'group-hover:bg-[radial-gradient(circle,transparent_0%,transparent_58%,rgba(148,27,32,0.72)_64%,rgba(148,27,32,0)_78%)]',
-    )}
-  />
-
-  {/* ядро */}
-  <span className="relative h-3 w-3 rounded-full bg-brand-600" />
-</span>
+      <span aria-hidden="true" className="relative mr-2.5 inline-flex h-3.5 w-3.5 items-center justify-center">
+        <span
+          className={cn(
+            'absolute inset-0 rounded-full',
+            'bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.24)_60%,rgba(148,27,32,0)_86%)]',
+          )}
+        />
+        <span
+          className={cn(
+            'absolute inset-0 rounded-full',
+            'will-change-transform',
+            'bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.68)_60%,rgba(148,27,32,0)_86%)]',
+            'animate-cta-ripple motion-reduce:animate-none',
+            'group-hover:bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.78)_60%,rgba(148,27,32,0)_86%)]',
+          )}
+        />
+        <span
+          className={cn(
+            'relative h-2.5 w-2.5 overflow-hidden rounded-full',
+            'bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_56%,#a8242c_72%,#f7d5dc_100%)]',
+            'after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.08)_70%,transparent_100%)] after:content-[""]',
+            'shadow-[0_0_0_1.5px_rgba(148,27,32,0.18)]',
+          )}
+        />
+      </span>
       {label}
     </Link>
   );
@@ -123,14 +158,6 @@ export function SiteShell({
   const telegramLabel = formatTelegramHandle(telegramUrl) ?? (telegramUrl ? 'Telegram' : '');
   const brandLabel = brandName || 'Интема Групп';
 
-  const contactLinks = [
-    site.contacts.phone ? { id: 'phone', label: site.contacts.phone, href: `tel:${site.contacts.phone}` } : null,
-    site.contacts.email ? { id: 'email', label: site.contacts.email, href: `mailto:${site.contacts.email}` } : null,
-    telegramUrl ? { id: 'telegram', label: telegramLabel || telegramUrl, href: telegramUrl } : null,
-  ].filter((item): item is { id: string; label: string; href: string } => Boolean(item));
-
-  const hasContacts = contactLinks.length > 0 || Boolean(site.contacts.address);
-
   const currentYear = new Date().getFullYear();
   const copyrightTemplate = site.footer?.copyright?.trim() ?? '';
   const copyrightText = copyrightTemplate.length
@@ -145,28 +172,29 @@ export function SiteShell({
   const [isCompactNav, setIsCompactNav] = useState(false);
   const [isLgUp, setIsLgUp] = useState(false);
 
-  // Гидрация/переходы: чтобы НЕ анимировать первый кадр
   const [hasHydrated, setHasHydrated] = useState(false);
   const [transitionsOn, setTransitionsOn] = useState(false);
 
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
 
-  // “бургер-режим”: на мобилке всегда бургер, на десктопе — если меню не влезает
   const isBurgerMode = !isLgUp || isCompactNav;
 
-  // inert: чтобы скрытый слой не табался/не фокусился
   const inertProps = (enabled: boolean) => (enabled ? ({ inert: true } as any) : {});
 
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // Состояния для иконки бургера
   const [areLinesConverged, setAreLinesConverged] = useState(false);
   const [isBurgerRotated, setIsBurgerRotated] = useState(false);
   const prevIsMenuOpenRef = useRef(isMenuOpen);
 
-  // 1) На гидрации: фиксируем “мы уже в браузере” + включаем transitions только через 2 кадра
+  // CTA
+  const basePathRaw = buildPath(locale);
+  const basePath = basePathRaw !== '/' && basePathRaw.endsWith('/') ? basePathRaw.slice(0, -1) : basePathRaw;
+  const contactsHref = basePath === '/' ? '/contacts' : `${basePath}/contacts`;
+  const ctaLabel = locale === 'ru' ? 'Оставить заявку' : 'Send inquiry';
+
   useLayoutEffect(() => {
     setHasHydrated(true);
     let raf1 = 0;
@@ -180,7 +208,6 @@ export function SiteShell({
     };
   }, []);
 
-  // 2) matchMedia лучше в layoutEffect, чтобы успеть до paint
   useLayoutEffect(() => {
     const rm = window.matchMedia('(prefers-reduced-motion: reduce)');
     const lg = window.matchMedia('(min-width: 1024px)');
@@ -245,7 +272,6 @@ export function SiteShell({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isMenuOpen]);
 
-  // Высота шапки
   const shellRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
 
@@ -266,7 +292,6 @@ export function SiteShell({
     return () => observer.disconnect();
   }, []);
 
-  // Измеряем: “влезает ли меню” (ТОЛЬКО для lg+)
   useLayoutEffect(() => {
     if (!isLgUp) {
       setIsCompactNav(false);
@@ -306,12 +331,10 @@ export function SiteShell({
     };
   }, [isLgUp]);
 
-  // Если вышли из burger-mode — закрываем панель
   useEffect(() => {
     if (!isBurgerMode && isMenuOpen) setIsMenuOpen(false);
   }, [isBurgerMode, isMenuOpen]);
 
-  // Подъём/тень шапки при скролле
   useEffect(() => {
     const sentinel = scrollSentinelRef.current;
     if (!sentinel || typeof IntersectionObserver === 'undefined') return;
@@ -334,29 +357,23 @@ export function SiteShell({
   const openMenuLabel = locale === 'ru' ? 'Открыть меню' : 'Open menu';
   const closeMenuLabel = locale === 'ru' ? 'Закрыть меню' : 'Close menu';
 
-  // CTA (пока ведёт на контакты; потом заменим на открытие формы)
-  const basePathRaw = buildPath(locale);
-  const basePath =
-    basePathRaw !== '/' && basePathRaw.endsWith('/') ? basePathRaw.slice(0, -1) : basePathRaw;
-  const contactsHref = basePath === '/' ? '/contacts' : `${basePath}/contacts`;
-
-  const ctaLabel = locale === 'ru' ? 'Оставить заявку' : 'Send inquiry';
-
-  // ====== Классы, которые убирают “мигание” ======
   const shellTransitionClass = transitionsOn ? 'transition-[padding-top] duration-200 ease-out' : 'transition-none';
   const wagonTransitionClass = transitionsOn ? 'transition-transform duration-300 ease-out' : 'transition-none';
   const slideTransitionClass = transitionsOn ? 'transition-[opacity,transform] duration-200 ease-out' : 'transition-none';
   const burgerDelayClass = transitionsOn ? 'delay-75' : 'delay-0';
 
-  // Пока НЕ гидрировались: используем CSS-правду (на lg показываем меню сразу)
   const wagonTransformClass = hasHydrated ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0') : '-translate-y-1/2 lg:translate-y-0';
 
   const menuSlideClass = hasHydrated
-    ? (isBurgerMode ? 'opacity-0 pointer-events-none -translate-y-1' : 'opacity-100 pointer-events-auto translate-y-0')
+    ? isBurgerMode
+      ? 'opacity-0 pointer-events-none -translate-y-1'
+      : 'opacity-100 pointer-events-auto translate-y-0'
     : 'opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0';
 
   const burgerSlideClass = hasHydrated
-    ? (isBurgerMode ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-1')
+    ? isBurgerMode
+      ? 'opacity-100 pointer-events-auto translate-y-0'
+      : 'opacity-0 pointer-events-none translate-y-1'
     : 'opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1';
 
   return (
@@ -426,7 +443,7 @@ export function SiteShell({
               </a>
             </div>
 
-            {/* RIGHT: один и тот же блок всегда */}
+            {/* RIGHT */}
             <div
               className={cn(
                 'w-full justify-items-end',
@@ -437,40 +454,47 @@ export function SiteShell({
               {/* Верхняя строка */}
               <div className="flex h-full w-full items-center justify-end gap-5 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {site.contacts.phone ? (
-                  <a
-                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
-                    className="hidden text-muted-foreground no-underline hover:text-foreground md:inline-flex"
-                  >
-                    {site.contacts.phone}
-                  </a>
+                  <HeaderTopSlot id="phone" className="hidden md:inline-flex">
+                    <a
+                      href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}
+                      className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
+                    >
+                      {site.contacts.phone}
+                    </a>
+                  </HeaderTopSlot>
                 ) : null}
 
                 {site.contacts.email ? (
-                  <a
-                    href={`mailto:${site.contacts.email}`}
-                    className="hidden text-muted-foreground no-underline hover:text-foreground md:inline-flex"
-                  >
-                    {site.contacts.email}
-                  </a>
+                  <HeaderTopSlot id="email" className="hidden md:inline-flex">
+                    <a
+                      href={`mailto:${site.contacts.email}`}
+                      className="inline-flex max-w-full items-center truncate text-muted-foreground no-underline hover:text-foreground"
+                    >
+                      {site.contacts.email}
+                    </a>
+                  </HeaderTopSlot>
                 ) : null}
 
-                <ThemeToggle />
-                <LanguageSwitcher
-                  currentLocale={locale}
-                  targetLocale={targetLocale}
-                  href={switcherHref}
-                  switchToLabels={switchToLabels}
-                />
+                <HeaderTopSlot id="theme">
+                  <ThemeToggle />
+                </HeaderTopSlot>
 
-                {/* CTA (Ghost) — показываем с md+, чтобы не забивать узкую шапку */}
-                <HeaderCta href={contactsHref} label={ctaLabel} className="hidden md:inline-flex" />
+                <HeaderTopSlot id="lang">
+                  <LanguageSwitcher
+                    currentLocale={locale}
+                    targetLocale={targetLocale}
+                    href={switcherHref}
+                    switchToLabels={switchToLabels}
+                  />
+                </HeaderTopSlot>
+
+                <HeaderTopSlot id="cta" className="hidden md:inline-flex">
+                  <HeaderCta href={contactsHref} label={ctaLabel} />
+                </HeaderTopSlot>
               </div>
 
               {/* Нижняя строка: “вагончик” меню↔бургер */}
-              <div
-                ref={navHostRef}
-                className={cn('relative w-full overflow-hidden rounded-lg', 'h-10', 'lg:h-full lg:min-h-[44px]')}
-              >
+              <div ref={navHostRef} className={cn('relative w-full overflow-hidden rounded-lg', 'h-10', 'lg:h-full lg:min-h-[44px]')}>
                 <div
                   className={cn(
                     'absolute inset-0 h-[200%] w-full will-change-transform transform-gpu',
@@ -541,11 +565,7 @@ export function SiteShell({
                 </div>
 
                 {/* Линейка для измерения ширины меню */}
-                <div
-                  ref={navMeasureRef}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-0 top-0 invisible inline-block w-max"
-                >
+                <div ref={navMeasureRef} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 invisible inline-block w-max">
                   <NavigationList
                     links={navigation.header}
                     ariaLabel={navigationLabels.headerLabel}
@@ -572,9 +592,7 @@ export function SiteShell({
             style={{ top: 'var(--header-height)', bottom: 0 } as CSSProperties}
           >
             <div className="flex h-full flex-col gap-4 p-6">
-              {/* CTA дубль в боковой панели — чтобы на мобилке не терялся */}
               <HeaderCta href={contactsHref} label={ctaLabel} className="w-full justify-center" />
-
               <NavigationList
                 links={navigation.header}
                 ariaLabel={navigationLabels.headerLabel}
@@ -596,28 +614,13 @@ export function SiteShell({
         />
       ) : null}
 
-      <main
-        id="main"
-        role="main"
-        tabIndex={-1}
-        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
-      >
+      <main id="main" role="main" tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12">
         {children}
       </main>
 
       <footer className="border-t border-border bg-muted/60">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {hasContacts ? (
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                {site.contacts.phone ? (
-                  <a href={`tel:${site.contacts.phone.replace(/[^+\d]/g, '')}`}>{site.contacts.phone}</a>
-                ) : null}
-                {site.contacts.email ? <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> : null}
-                {site.contacts.address ? <span>{site.contacts.address}</span> : null}
-              </div>
-            ) : null}
-
             <NavigationList links={navigation.footer} ariaLabel={navigationLabels.footerLabel} currentPath={currentPath} />
           </div>
 
