@@ -9,11 +9,15 @@ export const LOCALE_HEADER = "x-middleware-request-locale";
 const LOCALE_PREFIXES = new Set(locales);
 
 function withLocaleCookie(response: NextResponse, locale: Locale): NextResponse {
+  const isProduction = process.env.NODE_ENV === "production";
+
   response.cookies.set({
     name: LOCALE_COOKIE,
     value: locale,
     path: "/",
     sameSite: "lax",
+    httpOnly: false,
+    secure: isProduction,
   });
   return response;
 }

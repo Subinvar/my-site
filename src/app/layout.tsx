@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     const preset = document.documentElement.dataset.theme;
     if (preset === 'light' || preset === 'dark') return;
 
-    const match = document.cookie.match(/(?:^|\\s*)theme=(light|dark)/);
+    const match = document.cookie.match(/(?:^|;\\s*)theme=(light|dark)/);
     const stored = match?.[1];
     const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
     const theme = stored ?? (systemDark ? 'dark' : 'light');

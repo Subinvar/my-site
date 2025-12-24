@@ -52,10 +52,13 @@ export function NavigationList({
       ? 'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight'
       : 'text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium';
 
-  const underlineOffsetClass = density === 'compact' ? 'after:-bottom-3' : 'after:-bottom-0.5';
+  const underlineOffsetClass = density === 'compact' ? 'after:bottom-0' : 'after:-bottom-0.5';
+  const underlinePadClass = density === 'compact' ? 'pb-3' : '';
+  const linkHeightClass = density === 'compact' ? 'h-10' : '';
   
   const labelUnderlineBaseClassName = cn(
     'relative inline-block',
+    underlinePadClass,
     'after:absolute after:left-0 after:right-0 after:h-px after:rounded-full',
     underlineOffsetClass,
     'after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out',
@@ -98,6 +101,7 @@ export function NavigationList({
           const linkClassName = cn(
             isStableSlot ? 'flex w-full justify-center' : 'inline-flex',
             'group',
+            linkHeightClass,
             'items-center gap-1',
             densityClass,
             'active:opacity-90',
