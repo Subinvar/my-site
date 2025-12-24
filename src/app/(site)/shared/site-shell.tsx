@@ -458,6 +458,11 @@ export function SiteShell({
   const slideTransitionClass = transitionsOn ? 'transition-[opacity,transform] duration-200 ease-out' : 'transition-none';
   const burgerDelayClass = transitionsOn ? 'delay-75' : 'delay-0';
 
+    // Чтобы верхняя линия «приезжала» строго сверху, а не по диагонали, выключаем
+  // анимацию ширины во время раскрытия (в этот момент topWagonIsBurger уже false)
+  const topWagonWidthTransitionClass =
+    transitionsOn && topWagonIsBurger ? 'transition-[width] duration-200 ease-out' : 'transition-none';
+
   const wagonTransformClass = hasHydrated ? (isBurgerMode ? '-translate-y-1/2' : 'translate-y-0') : '-translate-y-1/2 lg:translate-y-0';
 
   const topWagonTransformClass = hasHydrated
@@ -560,7 +565,7 @@ export function SiteShell({
                   <div
                     className={cn(
                       'relative hidden h-10 overflow-hidden md:block',
-                      transitionsOn ? 'transition-[width] duration-200 ease-out' : 'transition-none',
+                      topWagonWidthTransitionClass,
                       'motion-reduce:transition-none motion-reduce:duration-0',
                     )}
                     style={{ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties}
@@ -625,7 +630,7 @@ export function SiteShell({
                 <div
                   className={cn(
                     'relative hidden h-10 overflow-hidden md:block',
-                    transitionsOn ? 'transition-[width] duration-200 ease-out' : 'transition-none',
+                    topWagonWidthTransitionClass,
                     'motion-reduce:transition-none motion-reduce:duration-0',
                   )}
                   style={{ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties}
