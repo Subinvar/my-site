@@ -102,7 +102,9 @@ function HeaderTopPillLink({
       href={href}
       className={cn(
         'inline-flex h-10 w-full items-center justify-center rounded-xl px-3',
-        'border border-[var(--header-border)] bg-background/70',
+        // рамка появляется только на hover/focus (как у остальных контролов шапки)
+        'border border-transparent bg-background/70',
+        'hover:border-[var(--header-border)] focus-visible:border-[var(--header-border)]',
         'text-muted-foreground no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
         'hover:bg-background/80 hover:text-foreground',
@@ -115,6 +117,7 @@ function HeaderTopPillLink({
     </a>
   );
 }
+
 
 function HeaderCta({
   href,
@@ -131,14 +134,15 @@ function HeaderCta({
       aria-label={label}
       className={cn(
         'group inline-flex h-10 items-center justify-center rounded-xl px-4',
-        'border border-[var(--header-border)] bg-background/70',
+        'border border-transparent bg-background/70',
+        'hover:border-[var(--header-border)] focus-visible:border-[var(--header-border)]',
         'text-muted-foreground hover:text-foreground',
         'no-underline hover:no-underline',
         'transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0',
         'hover:bg-background/80',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]',
-        'text-[clamp(0.9rem,0.85rem+0.2vw,1.0rem)] font-medium leading-none',
+        'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight',
         className,
       )}
     >
@@ -205,6 +209,9 @@ export function SiteShell({
 
   const [hasHydrated, setHasHydrated] = useState(false);
   const [transitionsOn, setTransitionsOn] = useState(false);
+
+  const [isTopRowTight, setIsTopRowTight] = useState(false);
+  const topRowRef = useRef<HTMLDivElement | null>(null);
 
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
@@ -384,6 +391,43 @@ export function SiteShell({
     };
   }, [isLgUp]);
 
+  useLayoutEffect(() => {
+  const el = topRowRef.current;
+  if (!el || typeof ResizeObserver === 'undefined') return;
+
+  const HYST = 32; // запас, чтобы не было дрожания туда-сюда
+  let raf = 0;
+
+  const recalc = () => {
+    window.cancelAnimationFrame(raf);
+    raf = window.requestAnimationFrame(() => {
+      const overflow = el.scrollWidth - el.clientWidth;
+
+      setIsTopRowTight((prev) => {
+        // когда CTA видна: прячем, если реально переполнило
+        if (!prev) return overflow > 1;
+        // когда CTA скрыта: показываем обратно только если появилось достаточно “воздуха”
+        return overflow > -HYST;
+      });
+    });
+  };
+
+  const ro = new ResizeObserver(recalc);
+  ro.observe(el);
+
+  // на всякий: если текст меняется (язык), ResizeObserver может не сработать → MutationObserver поможет
+  const mo = new MutationObserver(recalc);
+  mo.observe(el, { subtree: true, childList: true, characterData: true });
+
+  recalc();
+
+  return () => {
+    window.cancelAnimationFrame(raf);
+    ro.disconnect();
+    mo.disconnect();
+  };
+}, []);
+
   useEffect(() => {
     if (!isBurgerMode && isMenuOpen) {
       const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
@@ -456,7 +500,7 @@ export function SiteShell({
       <header
         ref={headerRef}
         className={cn(
-          'fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-[\'\']',
+          'fixed inset-x-0 top-0 z-50 overflow-x-hidden backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-[\'\']',
           'transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out',
           'motion-reduce:transition-none motion-reduce:duration-0',
           isHeaderElevated
@@ -465,8 +509,9 @@ export function SiteShell({
         )}
       >
         <div className="relative">
-          <div
-            className={cn(
+          <div className="mx-auto w-full max-w-full">
+            <div
+              className={cn(
               'flex w-full items-center justify-between',
               'gap-[var(--header-gap-x)] px-[var(--header-pad-x)] py-[var(--header-pad-y)]',
               'lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-stretch lg:gap-x-6',
@@ -506,7 +551,7 @@ export function SiteShell({
   'lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-2',
 )}>
               {/* Верхняя строка */}
-              <div className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+              <div ref={topRowRef} className="flex h-full w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
                 {/* Контакты: «вагончик» (улетают вверх при появлении бургера) */}
                 {hasTopContacts ? (
                   <div
@@ -582,9 +627,11 @@ export function SiteShell({
                   />
                 </HeaderTopSlot>
 
-                <HeaderTopSlot id="cta" className="hidden md:inline-flex">
-                  <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
-                </HeaderTopSlot>
+                {!isTopRowTight ? (
+  <HeaderTopSlot id="cta" className="hidden md:inline-flex">
+    <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
+  </HeaderTopSlot>
+) : null}
               </div>
 
 {/* Нижняя строка: “вагончик” меню↔бургер */}
@@ -670,6 +717,7 @@ export function SiteShell({
                   />
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>

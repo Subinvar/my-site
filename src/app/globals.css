@@ -133,6 +133,7 @@ html {
     --card-foreground: #f9fafb;
 
     --border: #1f2937;
+    --header-border: #374151;
     --input: #1f2937;
 
     --success: #22c55e;
@@ -161,6 +162,7 @@ html[data-theme='light'] {
   --card-foreground: #111827;
 
   --border: #e5e7eb;
+  --header-border: #d1d5db;
   --input: #e5e7eb;
 
   --success: #16a34a;
