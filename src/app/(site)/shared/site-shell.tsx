@@ -41,6 +41,14 @@ type SiteShellProps = {
 
 const brandFont = { variable: "font-brand-var" };
 
+const headerButtonBase =
+  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-background/70 transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
+
+const pillBase =
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-background/70 text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
+
+const contactLinkBase = "text-foreground no-underline hover:underline underline-offset-4";
+
 type SkipToContentLinkProps = {
   label: string;
 };
@@ -316,6 +324,7 @@ export function SiteShell({
                   targetLocale={targetLocale}
                   switcherHref={switcherHref}
                   switchToLabels={switchToLabels}
+                  classNames={{ headerButtonBase, pillBase }}
                 />
 
                 <HeaderNav
@@ -341,6 +350,7 @@ export function SiteShell({
                   inertProps={inertProps}
                   contactsHref={contactsHref}
                   ctaLabel={ctaCompactLabel}
+                  headerButtonBase={headerButtonBase}
                 />
               </div>
             </div>
@@ -359,6 +369,7 @@ export function SiteShell({
           >
             <div className="flex h-full flex-col gap-4 p-6">
               <HeaderCta
+                headerButtonBase={headerButtonBase}
                 href={contactsHref}
                 label={ctaLabel}
                 className="w-full justify-center"
@@ -367,7 +378,7 @@ export function SiteShell({
                 {site.contacts.phone ? (
                   <a
                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                    className="text-foreground no-underline hover:underline underline-offset-4"
+                    className={contactLinkBase}
                   >
                     {site.contacts.phone}
                   </a>
@@ -376,7 +387,7 @@ export function SiteShell({
                 {site.contacts.email ? (
                   <a
                     href={`mailto:${site.contacts.email}`}
-                    className="text-foreground no-underline hover:underline underline-offset-4"
+                    className={contactLinkBase}
                   >
                     {site.contacts.email}
                   </a>
@@ -404,6 +415,7 @@ export function SiteShell({
                 inertProps={inertProps}
                 contactsHref={contactsHref}
                 ctaLabel={ctaCompactLabel}
+                headerButtonBase={headerButtonBase}
               />
             </div>
           </nav>
