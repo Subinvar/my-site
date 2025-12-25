@@ -55,6 +55,7 @@ export default async function PostPage({ params }: PostPageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <article className="mx-auto max-w-3xl">
         {hero?.image?.src ? (

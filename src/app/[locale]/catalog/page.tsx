@@ -90,6 +90,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <main className="page-shell">
         <section className="container py-10 lg:py-12">

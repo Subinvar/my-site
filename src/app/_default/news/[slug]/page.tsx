@@ -44,6 +44,7 @@ export default async function DefaultLocalePostPage({ params }: PostPageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <article className="max-w-none">
         <header className="mb-8 space-y-3">

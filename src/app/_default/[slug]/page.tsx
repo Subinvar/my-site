@@ -50,6 +50,7 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <div className="space-y-12">
         <article className="max-w-none space-y-6">

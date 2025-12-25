@@ -106,6 +106,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <div className="space-y-12">
         <header className="space-y-3">

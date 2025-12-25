@@ -79,6 +79,7 @@ export default async function AuxiliaryTypeCatalogPage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">

@@ -62,6 +62,7 @@ export default async function AuxiliaryTypesPage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={buildPath(targetLocale, ['products', 'auxiliaries'])}
       currentPath={buildPath(locale, ['products', 'auxiliaries'])}
+      currentYear={shell.currentYear}
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">

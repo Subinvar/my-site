@@ -61,6 +61,7 @@ export default async function HomePage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <div className="space-y-12">
         <Hero locale={locale} data={home?.hero} />
