@@ -117,7 +117,7 @@ export const HeaderCta = memo(function HeaderCta({
         "text-muted-foreground hover:text-foreground",
         "no-underline hover:no-underline",
         "hover:bg-background/80",
-        "text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight",
+        "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
         className,
       )}
     >
@@ -180,7 +180,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   const { headerButtonBase, pillBase } = classNames;
 
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
       {hasTopContacts ? (
         <div
           className={cn(

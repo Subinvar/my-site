@@ -130,7 +130,7 @@ export const HeaderNav = memo(function HeaderNav({
               onClick={onBurgerClick}
               className={cn(
                 headerButtonBase,
-                "h-11 gap-2 px-4 text-[clamp(0.9rem,0.87rem+0.08vw,1rem)] font-medium leading-tight text-foreground",
+                "h-11 gap-2 px-4 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)] text-foreground",
                 "hover:border-[var(--header-border)] hover:bg-background/85",
                 isMenuOpen ? "bg-background/90" : "",
               )}

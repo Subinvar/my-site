@@ -43,12 +43,12 @@ export function NavigationList({
 
   const listClassName =
     density === "compact"
-      ? "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-[13px] font-medium leading-tight"
+      ? "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6"
       : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-sm font-medium";
 
   const densityClass =
     density === "compact"
-      ? "text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight"
+      ? "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]"
       : "text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium";
 
   const underlineOffsetClass =

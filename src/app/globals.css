@@ -81,6 +81,10 @@
   --header-logo-h: clamp(72px, 4.8vw, 116px);
   --header-brand-fs: clamp(1.05rem, 0.9rem + 0.6vw, 1.6rem);
 
+  /* Единый размер текста для элементов шапки (меню / контакты / CTA / переключатели) */
+  --header-ui-fs: clamp(0.935rem, 0.858rem + 0.275vw, 1.078rem);
+  --header-ui-leading: 1.1;
+
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
   --header-height-initial: 96px;
 }
