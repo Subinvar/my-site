@@ -4,7 +4,7 @@ import { useWindowResize } from "./use-window-resize";
 
 export function useResizeTransitions() {
   const [transitionsOn, setTransitionsOn] = useState(false);
-  const timerRef = useRef<number | undefined>();
+  const timerRef = useRef<number | undefined>(undefined);
 
   useWindowResize(
     () => {
