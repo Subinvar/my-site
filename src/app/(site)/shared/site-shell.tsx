@@ -1,15 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 import Image from "next/image";
 
 import { getInterfaceDictionary } from "@/content/dictionary";
@@ -21,6 +13,11 @@ import { cn } from "@/lib/cn";
 import { LanguageSwitcher } from "./language-switcher";
 import { HtmlLangSync } from "./html-lang-sync";
 import { ThemeToggle } from "./theme-toggle";
+import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
+import { useResizeTransitions } from "./hooks/use-resize-transitions";
+import { useHeaderHeight } from "./hooks/use-header-height";
+import { useBurgerAnimation } from "./hooks/use-burger-animation";
+import { useScrollElevation } from "./hooks/use-scroll-elevation";
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
   products: 116,
@@ -206,61 +203,17 @@ export function SiteShell({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // ====== Шаг 3: “меню уезжает вверх → снизу приезжает бургер” ======
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [isCompactNav, setIsCompactNav] = useState(false);
-  const [isLgUp, setIsLgUp] = useState(false);
-
-  const [hasHydrated, setHasHydrated] = useState(false);
-  const [transitionsOn, setTransitionsOn] = useState(false);
-
-  const navHostRef = useRef<HTMLDivElement | null>(null);
-  const navMeasureRef = useRef<HTMLDivElement | null>(null);
-
-  const isBurgerMode = !isLgUp || isCompactNav;
-
-  // Top row wagons: keep width during fly-up, collapse after animation (prevents diagonal “flight”)
-  const [topWagonIsBurger, setTopWagonIsBurger] = useState(false);
-  const [topWagonsCollapsed, setTopWagonsCollapsed] = useState(false);
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-
-    // В burger-mode: сначала «улетаем вверх», и только потом схлопываем ширину
-    if (isBurgerMode) {
-      setTopWagonsCollapsed(false);
-      setTopWagonIsBurger(true);
-
-      if (prefersReducedMotion) {
-        setTopWagonsCollapsed(true);
-        return;
-      }
-
-      const t = window.setTimeout(() => setTopWagonsCollapsed(true), 320);
-      return () => window.clearTimeout(t);
-    }
-
-    // Выходим из burger-mode: сначала раскрываем ширину, потом «приезжаем вниз» (следующим кадром)
-    setTopWagonsCollapsed(false);
-    if (prefersReducedMotion) {
-      setTopWagonIsBurger(false);
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() =>
-      setTopWagonIsBurger(false),
-    );
-    return () => window.cancelAnimationFrame(frame);
-  }, [isBurgerMode, prefersReducedMotion, hasHydrated]);
+  const {
+    prefersReducedMotion,
+    hasHydrated,
+    isBurgerMode,
+    navHostRef,
+    navMeasureRef,
+  } = useMediaBreakpoints();
+  const transitionsOn = useResizeTransitions();
 
   const inertProps = (enabled: boolean): HTMLAttributes<HTMLElement> =>
     enabled ? { inert: true } : {};
-
-  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
-  const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const [areLinesConverged, setAreLinesConverged] = useState(false);
-  const [isBurgerRotated, setIsBurgerRotated] = useState(false);
-  const prevIsMenuOpenRef = useRef(isMenuOpen);
 
   // CTA
   const basePathRaw = buildPath(locale);
@@ -284,189 +237,20 @@ export function SiteShell({
     ) + (topContactsIds.length > 1 ? 24 : 0);
 
   const hasTopContacts = topContactsIds.length > 0;
-
-  useLayoutEffect(() => {
-    setHasHydrated(true);
-  }, []);
-
-  // Включаем анимации «вагончиков» только во время реального ресайза окна
-  useEffect(() => {
-    let timer: number | undefined;
-
-    const onResize = () => {
-      setTransitionsOn(true);
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(() => setTransitionsOn(false), 350);
-    };
-
-    window.addEventListener("resize", onResize, { passive: true });
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      if (timer) window.clearTimeout(timer);
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const lg = window.matchMedia("(min-width: 1024px)");
-
-    const update = () => {
-      setPrefersReducedMotion(rm.matches);
-      setIsLgUp(lg.matches);
-    };
-
-    update();
-
-    rm.addEventListener("change", update);
-    lg.addEventListener("change", update);
-
-    return () => {
-      rm.removeEventListener("change", update);
-      lg.removeEventListener("change", update);
-    };
-  }, []);
-
-  /* eslint-disable react-hooks/set-state-in-effect -- координаты для пошаговой анимации бургера */
-  useEffect(() => {
-    const prevIsMenuOpen = prevIsMenuOpenRef.current;
-    prevIsMenuOpenRef.current = isMenuOpen;
-
-    if (prevIsMenuOpen === isMenuOpen) return;
-
-    if (prefersReducedMotion) {
-      setAreLinesConverged(isMenuOpen);
-      setIsBurgerRotated(isMenuOpen);
-      return;
-    }
-
-    let timer: number | undefined;
-    const frameId = window.requestAnimationFrame(() => {
-      if (isMenuOpen) {
-        setAreLinesConverged(true);
-        setIsBurgerRotated(false);
-        timer = window.setTimeout(() => setIsBurgerRotated(true), 120);
-      } else {
-        setIsBurgerRotated(false);
-        setAreLinesConverged(true);
-        timer = window.setTimeout(() => setAreLinesConverged(false), 120);
-      }
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      if (timer) window.clearTimeout(timer);
-    };
-  }, [isMenuOpen, prefersReducedMotion]);
-  /* eslint-enable react-hooks/set-state-in-effect -- возвращаем правило после анимации */
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isMenuOpen]);
-
-  const shellRef = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLElement | null>(null);
-
-  useLayoutEffect(() => {
-    const headerEl = headerRef.current;
-    const shellEl = shellRef.current;
-    if (!headerEl || !shellEl || typeof ResizeObserver === "undefined") return;
-
-    const update = () => {
-      const h = Math.round(headerEl.getBoundingClientRect().height);
-      shellEl.style.setProperty("--header-height", `${h}px`);
-    };
-
-    const observer = new ResizeObserver(update);
-    observer.observe(headerEl);
-    update();
-
-    return () => observer.disconnect();
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!isLgUp) {
-      const frame = window.requestAnimationFrame(() => setIsCompactNav(false));
-      return () => window.cancelAnimationFrame(frame);
-    }
-
-    const host = navHostRef.current;
-    const measure = navMeasureRef.current;
-    if (!host || !measure || typeof ResizeObserver === "undefined") return;
-
-    const HYST = 32;
-    const PAD = 16;
-    let raf = 0;
-
-    const recalc = () => {
-      window.cancelAnimationFrame(raf);
-      raf = window.requestAnimationFrame(() => {
-        const hostW = Math.round(host.getBoundingClientRect().width);
-        const navW = Math.round(measure.getBoundingClientRect().width);
-        if (!hostW || !navW) return;
-
-        setIsCompactNav((prev) => {
-          if (!prev) return navW > hostW - PAD;
-          return navW > hostW - (HYST + PAD);
-        });
-      });
-    };
-
-    const ro = new ResizeObserver(recalc);
-    ro.observe(host);
-    ro.observe(measure);
-    recalc();
-
-    return () => {
-      window.cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [isLgUp]);
-
-  useEffect(() => {
-    if (!isBurgerMode && isMenuOpen) {
-      const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
-      return () => window.cancelAnimationFrame(frame);
-    }
-  }, [isBurgerMode, isMenuOpen]);
-
-  useEffect(() => {
-    const sentinel = scrollSentinelRef.current;
-    if (!sentinel || typeof IntersectionObserver === "undefined") return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const next = !entry.isIntersecting;
-        setIsHeaderElevated((prev) => (prev === next ? prev : next));
-      },
-      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const updateElevation = () => {
-      const next = window.scrollY > 1;
-      setIsHeaderElevated((prev) => (prev === next ? prev : next));
-    };
-
-    updateElevation();
-    window.addEventListener("scroll", updateElevation, { passive: true });
-
-    return () => window.removeEventListener("scroll", updateElevation);
-  }, []);
-
-  const topLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : -4}px) rotate(${isBurgerRotated ? 45 : 0}deg)`;
-  const bottomLineTransform = `translate(-50%, -50%) translateY(${areLinesConverged ? 0 : 4}px) rotate(${isBurgerRotated ? -45 : 0}deg)`;
+  const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
+  const { shellRef, headerRef } = useHeaderHeight();
+  const {
+    topWagonIsBurger,
+    topWagonsCollapsed,
+    topLineTransform,
+    bottomLineTransform,
+  } = useBurgerAnimation({
+    isMenuOpen,
+    isBurgerMode,
+    prefersReducedMotion,
+    hasHydrated,
+    onRequestClose: () => setIsMenuOpen(false),
+  });
 
   const openMenuLabel = locale === "ru" ? "Открыть меню" : "Open menu";
   const closeMenuLabel = locale === "ru" ? "Закрыть меню" : "Close menu";
