@@ -1,0 +1,309 @@
+"use client";
+
+import Link from "next/link";
+import { memo, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+
+import type { SiteContent } from "@/lib/keystatic";
+import type { Locale } from "@/lib/i18n";
+import { cn } from "@/lib/cn";
+import { LanguageSwitcher } from "./language-switcher";
+import { ThemeToggle } from "./theme-toggle";
+
+type HeaderTopSlotProps = {
+  id: string;
+  className?: string;
+  children: ReactNode;
+  stableSlots?: Record<string, number>;
+};
+
+type HeaderTopPillLinkProps = {
+  href: string;
+  label: string;
+};
+
+type HeaderCtaProps = {
+  href: string;
+  label: string;
+  className?: string;
+  children?: ReactNode;
+};
+
+type HeaderTopBarProps = {
+  contacts: SiteContent["contacts"];
+  hasTopContacts: boolean;
+  topContactsWidth: number;
+  topWagonsCollapsed: boolean;
+  topWagonIsBurger: boolean;
+  topWagonTransformClass: string;
+  topWagonWidthTransitionClass: string;
+  wagonTransitionClass: string;
+  slideTransitionClass: string;
+  burgerDelayClass: string;
+  menuSlideClass: string;
+  burgerSlideClass: string;
+  inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
+  hasHydrated: boolean;
+  contactsHref: string;
+  ctaLabel: string;
+  locale: Locale;
+  targetLocale: Locale;
+  switcherHref: string | null;
+  switchToLabels: Record<string, string>;
+};
+
+export const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
+  phone: 156,
+  email: 140,
+  theme: 40,
+  lang: 40,
+  cta: 200,
+};
+
+function HeaderTopSlot({
+  id,
+  className,
+  children,
+  stableSlots = HEADER_TOP_STABLE_SLOTS,
+}: HeaderTopSlotProps) {
+  const slotWidth = stableSlots[id];
+
+  return (
+    <div
+      data-header-top-slot={id}
+      className={cn(
+        slotWidth ? "flex flex-none justify-end" : "inline-flex",
+        // важно: min-w-0 + overflow-hidden позволяют truncate реально работать
+        "h-10 min-w-0 items-center overflow-hidden",
+        className,
+      )}
+      style={slotWidth ? ({ width: `${slotWidth}px` } as CSSProperties) : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
+function HeaderTopPillLink({ href, label }: HeaderTopPillLinkProps) {
+  return (
+    <a
+      href={href}
+      className={cn(
+        "inline-flex h-10 w-full items-center justify-center rounded-xl px-3",
+        // рамка появляется только на hover/focus (как у остальных контролов шапки)
+        "border border-transparent bg-background/70",
+        "hover:border-[var(--header-border)] focus-visible:border-[var(--header-border)]",
+        "text-muted-foreground no-underline",
+        "transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0",
+        "hover:bg-background/80 hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
+        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+        "truncate",
+      )}
+    >
+      {label}
+    </a>
+  );
+}
+
+export const HeaderCta = memo(function HeaderCta({
+  href,
+  label,
+  className,
+  children,
+}: HeaderCtaProps) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className={cn(
+        "group inline-flex h-10 items-center justify-center rounded-xl px-4",
+        "border border-[var(--header-border)] bg-background/70",
+        "focus-visible:border-[var(--header-border)]",
+        "text-muted-foreground hover:text-foreground",
+        "no-underline hover:no-underline",
+        "transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0",
+        "hover:bg-background/80",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+        "focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]",
+        "text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight",
+        className,
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="relative mr-2.5 inline-flex h-3.5 w-3.5 items-center justify-center"
+      >
+        <span
+          className={cn(
+            "absolute inset-0 rounded-full",
+            "bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.24)_60%,rgba(148,27,32,0)_86%)]",
+          )}
+        />
+        <span
+          className={cn(
+            "absolute inset-0 rounded-full",
+            "will-change-transform",
+            "bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.68)_60%,rgba(148,27,32,0)_86%)]",
+            "animate-cta-ripple motion-reduce:animate-none",
+            "group-hover:bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.78)_60%,rgba(148,27,32,0)_86%)]",
+          )}
+        />
+        <span
+            className={cn(
+              "relative h-2.5 w-2.5 overflow-hidden rounded-full",
+              "bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_56%,#a8242c_72%,#f7d5dc_100%)]",
+              "after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.08)_70%,transparent_100%)] after:content-['']",
+              "shadow-[0_0_0_1.5px_rgba(148,27,32,0.18)]",
+            )}
+          />
+      </span>
+      {children ?? label}
+    </Link>
+  );
+});
+
+export const HeaderTopBar = memo(function HeaderTopBar({
+  contacts,
+  hasTopContacts,
+  topContactsWidth,
+  topWagonsCollapsed,
+  topWagonIsBurger,
+  topWagonTransformClass,
+  topWagonWidthTransitionClass,
+  wagonTransitionClass,
+  slideTransitionClass,
+  burgerDelayClass,
+  menuSlideClass,
+  burgerSlideClass,
+  inertProps,
+  hasHydrated,
+  contactsHref,
+  ctaLabel,
+  locale,
+  targetLocale,
+  switcherHref,
+  switchToLabels,
+}: HeaderTopBarProps) {
+  return (
+    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
+      {hasTopContacts ? (
+        <div
+          className={cn(
+            "relative hidden h-10 overflow-hidden md:block",
+            topWagonWidthTransitionClass,
+            "motion-reduce:transition-none motion-reduce:duration-0",
+          )}
+          style={{ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties}
+        >
+          <div
+            className={cn(
+              "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
+              wagonTransitionClass,
+              "motion-reduce:transition-none motion-reduce:duration-0",
+              topWagonTransformClass,
+            )}
+          >
+            <div
+              aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
+              {...inertProps(hasHydrated ? topWagonIsBurger : false)}
+              className={cn(
+                "flex h-1/2 w-full items-center justify-end gap-6",
+                slideTransitionClass,
+                "motion-reduce:transition-none motion-reduce:duration-0",
+                menuSlideClass,
+              )}
+            >
+              {contacts.phone ? (
+                <HeaderTopSlot id="phone" className="hidden md:inline-flex">
+                  <HeaderTopPillLink
+                    href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                    label={contacts.phone}
+                  />
+                </HeaderTopSlot>
+              ) : null}
+
+              {contacts.email ? (
+                <HeaderTopSlot id="email" className="hidden md:inline-flex">
+                  <HeaderTopPillLink href={`mailto:${contacts.email}`} label={contacts.email} />
+                </HeaderTopSlot>
+              ) : null}
+            </div>
+
+            <div
+              aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
+              {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
+              className={cn(
+                "flex h-1/2 w-full items-center justify-end gap-6",
+                slideTransitionClass,
+                burgerDelayClass,
+                "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
+                burgerSlideClass,
+              )}
+            >
+              {/* пусто намеренно */}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div
+        className={cn(
+          "relative hidden h-10 overflow-hidden md:block",
+          topWagonWidthTransitionClass,
+          "motion-reduce:transition-none motion-reduce:duration-0",
+        )}
+        style={{ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
+            wagonTransitionClass,
+            "motion-reduce:transition-none motion-reduce:duration-0",
+            topWagonTransformClass,
+          )}
+        >
+          <div
+            aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
+            {...inertProps(hasHydrated ? topWagonIsBurger : false)}
+            className={cn(
+              "flex h-1/2 w-full items-center justify-end",
+              slideTransitionClass,
+              "motion-reduce:transition-none motion-reduce:duration-0",
+              menuSlideClass,
+            )}
+          >
+            <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
+          </div>
+
+          <div
+            aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
+            {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
+            className={cn(
+              "flex h-1/2 w-full items-center justify-end",
+              slideTransitionClass,
+              burgerDelayClass,
+              "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
+              burgerSlideClass,
+            )}
+          >
+            {/* пусто намеренно */}
+          </div>
+        </div>
+      </div>
+
+      <HeaderTopSlot id="theme">
+        <ThemeToggle />
+      </HeaderTopSlot>
+
+      <HeaderTopSlot id="lang">
+        <LanguageSwitcher
+          currentLocale={locale}
+          targetLocale={targetLocale}
+          href={switcherHref}
+          switchToLabels={switchToLabels}
+        />
+      </HeaderTopSlot>
+    </div>
+  );
+});
+
