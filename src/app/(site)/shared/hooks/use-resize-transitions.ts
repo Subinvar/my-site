@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { useWindowResize } from "./use-window-resize";
 
 export function useResizeTransitions() {
   const [transitionsOn, setTransitionsOn] = useState(false);
+  const timerRef = useRef<number | undefined>();
 
-  useEffect(() => {
-    let timer: number | undefined;
-
-    const onResize = () => {
+  useWindowResize(
+    () => {
       setTransitionsOn(true);
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(() => setTransitionsOn(false), 350);
-    };
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => setTransitionsOn(false), 350);
+    },
+    [],
+    { listenerOptions: { passive: true } },
+  );
 
-    window.addEventListener("resize", onResize, { passive: true });
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      if (timer) window.clearTimeout(timer);
-    };
+  useEffect(() => () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
   }, []);
 
   return transitionsOn;

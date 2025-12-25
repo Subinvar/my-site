@@ -1,36 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+
+import { useIntersection } from "./use-intersection";
+import { useScrollPosition } from "./use-scroll-position";
 
 export function useScrollElevation() {
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const sentinel = scrollSentinelRef.current;
-    if (!sentinel || typeof IntersectionObserver === "undefined") return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const next = !entry.isIntersecting;
-        setIsHeaderElevated((prev) => (prev === next ? prev : next));
-      },
-      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const updateElevation = () => {
-      const next = window.scrollY > 1;
+  useIntersection(
+    scrollSentinelRef,
+    (entry) => {
+      const next = !entry.isIntersecting;
       setIsHeaderElevated((prev) => (prev === next ? prev : next));
-    };
+    },
+    [scrollSentinelRef],
+    { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
+  );
 
-    updateElevation();
-    window.addEventListener("scroll", updateElevation, { passive: true });
-
-    return () => window.removeEventListener("scroll", updateElevation);
-  }, []);
+  useScrollPosition(
+    () => {
+      const next = typeof window !== "undefined" ? window.scrollY > 1 : false;
+      setIsHeaderElevated((prev) => (prev === next ? prev : next));
+    },
+    [],
+    { immediate: true },
+  );
 
   return { isHeaderElevated, scrollSentinelRef } as const;
 }
