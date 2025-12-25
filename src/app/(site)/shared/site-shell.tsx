@@ -287,7 +287,6 @@ export function SiteShell({
       if (!isBurgerMode || !isMenuOpen) return;
       setIsMenuOpen(false);
     },
-    [isBurgerMode, isMenuOpen],
     { disabled: !isBurgerMode },
   );
 
@@ -296,7 +295,6 @@ export function SiteShell({
       if (isBurgerMode || !isMenuOpen) return;
       setIsMenuOpen(false);
     },
-    [isBurgerMode, isMenuOpen],
   );
 
   const {

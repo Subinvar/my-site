@@ -1,4 +1,4 @@
-import { useEffect, type DependencyList } from "react";
+import { useEffect } from "react";
 
 type UseScrollPositionOptions = {
   listenerOptions?: AddEventListenerOptions;
@@ -9,7 +9,6 @@ type UseScrollPositionOptions = {
 
 export function useScrollPosition(
   onScroll: (event: Event) => void,
-  deps: DependencyList = [],
   { listenerOptions = { passive: true }, immediate = true, disabled = false, target }: UseScrollPositionOptions = {},
 ) {
   useEffect(() => {
@@ -23,5 +22,5 @@ export function useScrollPosition(
     eventTarget.addEventListener("scroll", handler, listenerOptions);
 
     return () => eventTarget.removeEventListener("scroll", handler, listenerOptions);
-  }, deps);
+  }, [onScroll, disabled, immediate, listenerOptions, target]);
 }

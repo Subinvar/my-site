@@ -32,27 +32,36 @@ export function useBurgerAnimation({
   useEffect(() => {
     if (!hasHydrated) return;
 
+    let resetFrame: number | undefined;
+    let collapseTimeout: number | undefined;
+    let rotationFrame: number | undefined;
+
     if (isBurgerMode) {
-      setTopWagonsCollapsed(false);
-      setTopWagonIsBurger(true);
+      resetFrame = window.requestAnimationFrame(() => {
+        setTopWagonsCollapsed(false);
+        setTopWagonIsBurger(true);
 
-      if (prefersReducedMotion) {
-        setTopWagonsCollapsed(true);
-        return;
-      }
+        const delay = prefersReducedMotion ? 0 : 320;
+        collapseTimeout = window.setTimeout(() => setTopWagonsCollapsed(true), delay);
+      });
+    } else {
+      resetFrame = window.requestAnimationFrame(() => {
+        setTopWagonsCollapsed(false);
 
-      const t = window.setTimeout(() => setTopWagonsCollapsed(true), 320);
-      return () => window.clearTimeout(t);
+        if (prefersReducedMotion) {
+          setTopWagonIsBurger(false);
+          return;
+        }
+
+        rotationFrame = window.requestAnimationFrame(() => setTopWagonIsBurger(false));
+      });
     }
 
-    setTopWagonsCollapsed(false);
-    if (prefersReducedMotion) {
-      setTopWagonIsBurger(false);
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => setTopWagonIsBurger(false));
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      if (resetFrame) window.cancelAnimationFrame(resetFrame);
+      if (rotationFrame) window.cancelAnimationFrame(rotationFrame);
+      if (collapseTimeout) window.clearTimeout(collapseTimeout);
+    };
   }, [isBurgerMode, prefersReducedMotion, hasHydrated]);
 
   /* eslint-disable react-hooks/set-state-in-effect -- координаты для пошаговой анимации бургера */

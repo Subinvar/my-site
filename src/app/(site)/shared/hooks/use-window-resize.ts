@@ -1,4 +1,4 @@
-import { useEffect, type DependencyList } from "react";
+import { useEffect } from "react";
 
 type UseWindowResizeOptions = {
   listenerOptions?: AddEventListenerOptions;
@@ -9,7 +9,6 @@ type UseWindowResizeOptions = {
 
 export function useWindowResize(
   onResize: (event: UIEvent) => void,
-  deps: DependencyList = [],
   { listenerOptions = { passive: true }, immediate = false, disabled = false, target }: UseWindowResizeOptions = {},
 ) {
   useEffect(() => {
@@ -23,5 +22,5 @@ export function useWindowResize(
     eventTarget.addEventListener("resize", handler, listenerOptions);
 
     return () => eventTarget.removeEventListener("resize", handler, listenerOptions);
-  }, deps);
+  }, [onResize, disabled, immediate, listenerOptions, target]);
 }
