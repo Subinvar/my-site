@@ -134,18 +134,18 @@ export const HeaderNav = memo(function HeaderNav({
                 "hover:border-[var(--header-border)] hover:bg-background/85",
                 isMenuOpen ? "bg-background/90" : "",
               )}
-            >
-              <span className="relative block h-4 w-5">
-                <span
-                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                  style={{ transform: topLineTransform }}
-                />
-                <span
-                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                  style={{ transform: bottomLineTransform }}
-                />
-              </span>
-              <span className="block">{isMenuOpen ? closeMenuLabel : openMenuLabel}</span>
+              >
+                <span className="relative block h-4 w-5">
+                  <span
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                    style={{ transform: topLineTransform }}
+                  />
+                  <span
+                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                    style={{ transform: bottomLineTransform }}
+                  />
+                </span>
+              <span className="sr-only">{isMenuOpen ? closeMenuLabel : openMenuLabel}</span>
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type CSSProperties,
@@ -169,6 +170,13 @@ export function SiteShell({
 
   const openMenuLabel = locale === "ru" ? "Открыть меню" : "Open menu";
   const closeMenuLabel = locale === "ru" ? "Закрыть меню" : "Close menu";
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [currentPath, isMenuOpen]);
 
   useScrollPosition(
     () => {
