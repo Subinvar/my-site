@@ -120,7 +120,7 @@ export function SiteShell({
         : basePathRaw;
     const contactsHref = basePath === "/" ? "/contacts" : `${basePath}/contacts`;
     const ctaLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
-    const ctaCompactLabel = locale === "ru" ? "Заявка" : "Inquiry";
+    const ctaCompactLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
 
     const topContactsIds = [
       site.contacts.phone ? ("phone" as const) : null,
