@@ -60,6 +60,7 @@ export default async function BinderProcessPage({ params }: PageProps) {
       navigation={shell.navigation}
       switcherHref={buildPath(targetLocale, ['products', 'binders'])}
       currentPath={buildPath(locale, ['products', 'binders'])}
+      currentYear={shell.currentYear}
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">

@@ -47,6 +47,7 @@ type SiteShellProps = {
   navigation: Navigation;
   switcherHref: string | null;
   currentPath: string;
+  currentYear: number;
   children: ReactNode;
 };
 
@@ -183,6 +184,7 @@ export function SiteShell({
   navigation,
   switcherHref,
   currentPath,
+  currentYear,
   children,
 }: SiteShellProps) {
   const brandName = site.name?.trim() ?? "";
@@ -193,7 +195,6 @@ export function SiteShell({
 
   const brandLabel = brandName || "Интема Групп";
 
-  const currentYear = new Date().getFullYear();
   const copyrightTemplate = site.footer?.copyright?.trim() ?? "";
   const copyrightText = copyrightTemplate.length
     ? copyrightTemplate

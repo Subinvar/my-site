@@ -110,6 +110,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <main id="main" className="page-shell">
         <div className="container py-8 lg:py-10 space-y-8">

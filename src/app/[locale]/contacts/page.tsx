@@ -183,6 +183,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       navigation={shell.navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
+      currentYear={shell.currentYear}
     >
       <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
         <div className="space-y-6">

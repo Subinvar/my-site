@@ -7,9 +7,10 @@ import type { Locale } from '@/lib/i18n';
 export type SiteShellData = {
   site: SiteContent;
   navigation: Navigation;
+  currentYear: number;
 };
 
 export const getSiteShellData = cache(async (locale: Locale): Promise<SiteShellData> => {
   const [site, navigation] = await Promise.all([getSite(locale), getNavigation(locale)]);
-  return { site, navigation };
+  return { site, navigation, currentYear: new Date().getFullYear() };
 });
