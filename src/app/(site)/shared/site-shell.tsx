@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+import {
+  useMemo,
+  useState,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import Image from "next/image";
 
 import { getInterfaceDictionary } from "@/content/dictionary";
@@ -216,25 +222,43 @@ export function SiteShell({
     enabled ? { inert: true } : {};
 
   // CTA
-  const basePathRaw = buildPath(locale);
-  const basePath =
-    basePathRaw !== "/" && basePathRaw.endsWith("/")
-      ? basePathRaw.slice(0, -1)
-      : basePathRaw;
-  const contactsHref = basePath === "/" ? "/contacts" : `${basePath}/contacts`;
-  const ctaLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
-  const ctaCompactLabel = locale === "ru" ? "Заявка" : "Inquiry";
+  const {
+    basePath,
+    contactsHref,
+    ctaLabel,
+    ctaCompactLabel,
+    topContactsIds,
+    topContactsWidth,
+  } = useMemo(() => {
+    const basePathRaw = buildPath(locale);
+    const basePath =
+      basePathRaw !== "/" && basePathRaw.endsWith("/")
+        ? basePathRaw.slice(0, -1)
+        : basePathRaw;
+    const contactsHref = basePath === "/" ? "/contacts" : `${basePath}/contacts`;
+    const ctaLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
+    const ctaCompactLabel = locale === "ru" ? "Заявка" : "Inquiry";
 
-  const topContactsIds = [
-    site.contacts.phone ? ("phone" as const) : null,
-    site.contacts.email ? ("email" as const) : null,
-  ].filter(Boolean) as Array<"phone" | "email">;
+    const topContactsIds = [
+      site.contacts.phone ? ("phone" as const) : null,
+      site.contacts.email ? ("email" as const) : null,
+    ].filter(Boolean) as Array<"phone" | "email">;
 
-  const topContactsWidth =
-    topContactsIds.reduce(
-      (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
-      0,
-    ) + (topContactsIds.length > 1 ? 24 : 0);
+    const topContactsWidth =
+      topContactsIds.reduce(
+        (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
+        0,
+      ) + (topContactsIds.length > 1 ? 24 : 0);
+
+    return {
+      basePath,
+      contactsHref,
+      ctaLabel,
+      ctaCompactLabel,
+      topContactsIds,
+      topContactsWidth,
+    } as const;
+  }, [locale, site.contacts.email, site.contacts.phone]);
 
   const hasTopContacts = topContactsIds.length > 0;
   const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
@@ -255,47 +279,74 @@ export function SiteShell({
   const openMenuLabel = locale === "ru" ? "Открыть меню" : "Open menu";
   const closeMenuLabel = locale === "ru" ? "Закрыть меню" : "Close menu";
 
-  const shellTransitionClass = transitionsOn
-    ? "transition-[padding-top] duration-200 ease-out"
-    : "transition-none";
-  const wagonTransitionClass = transitionsOn
-    ? "transition-transform duration-300 ease-out"
-    : "transition-none";
-  const slideTransitionClass = transitionsOn
-    ? "transition-[opacity,transform] duration-200 ease-out"
-    : "transition-none";
-  const burgerDelayClass = transitionsOn ? "delay-75" : "delay-0";
+  const {
+    shellTransitionClass,
+    wagonTransitionClass,
+    slideTransitionClass,
+    burgerDelayClass,
+    topWagonWidthTransitionClass,
+    wagonTransformClass,
+    topWagonTransformClass,
+    menuSlideClass,
+    burgerSlideClass,
+  } = useMemo(
+    () => {
+      const shellTransitionClass = transitionsOn
+        ? "transition-[padding-top] duration-200 ease-out"
+        : "transition-none";
+      const wagonTransitionClass = transitionsOn
+        ? "transition-transform duration-300 ease-out"
+        : "transition-none";
+      const slideTransitionClass = transitionsOn
+        ? "transition-[opacity,transform] duration-200 ease-out"
+        : "transition-none";
+      const burgerDelayClass = transitionsOn ? "delay-75" : "delay-0";
 
-  // Чтобы верхняя линия «приезжала» строго сверху, а не по диагонали, выключаем
-  // анимацию ширины во время раскрытия (в этот момент topWagonIsBurger уже false)
-  const topWagonWidthTransitionClass =
-    transitionsOn && topWagonIsBurger
-      ? "transition-[width] duration-200 ease-out"
-      : "transition-none";
+      // Чтобы верхняя линия «приезжала» строго сверху, а не по диагонали, выключаем
+      // анимацию ширины во время раскрытия (в этот момент topWagonIsBurger уже false)
+      const topWagonWidthTransitionClass =
+        transitionsOn && topWagonIsBurger
+          ? "transition-[width] duration-200 ease-out"
+          : "transition-none";
 
-  const wagonTransformClass = hasHydrated
-    ? isBurgerMode
-      ? "-translate-y-1/2"
-      : "translate-y-0"
-    : "-translate-y-1/2 lg:translate-y-0";
+      const wagonTransformClass = hasHydrated
+        ? isBurgerMode
+          ? "-translate-y-1/2"
+          : "translate-y-0"
+        : "-translate-y-1/2 lg:translate-y-0";
 
-  const topWagonTransformClass = hasHydrated
-    ? topWagonIsBurger
-      ? "-translate-y-1/2"
-      : "translate-y-0"
-    : "-translate-y-1/2 lg:translate-y-0";
+      const topWagonTransformClass = hasHydrated
+        ? topWagonIsBurger
+          ? "-translate-y-1/2"
+          : "translate-y-0"
+        : "-translate-y-1/2 lg:translate-y-0";
 
-  const menuSlideClass = hasHydrated
-    ? isBurgerMode
-      ? "opacity-0 pointer-events-none -translate-y-1"
-      : "opacity-100 pointer-events-auto translate-y-0"
-    : "opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0";
+      const menuSlideClass = hasHydrated
+        ? isBurgerMode
+          ? "opacity-0 pointer-events-none -translate-y-1"
+          : "opacity-100 pointer-events-auto translate-y-0"
+        : "opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0";
 
-  const burgerSlideClass = hasHydrated
-    ? isBurgerMode
-      ? "opacity-100 pointer-events-auto translate-y-0"
-      : "opacity-0 pointer-events-none translate-y-1"
-    : "opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1";
+      const burgerSlideClass = hasHydrated
+        ? isBurgerMode
+          ? "opacity-100 pointer-events-auto translate-y-0"
+          : "opacity-0 pointer-events-none translate-y-1"
+        : "opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1";
+
+      return {
+        shellTransitionClass,
+        wagonTransitionClass,
+        slideTransitionClass,
+        burgerDelayClass,
+        topWagonWidthTransitionClass,
+        wagonTransformClass,
+        topWagonTransformClass,
+        menuSlideClass,
+        burgerSlideClass,
+      } as const;
+    },
+    [hasHydrated, isBurgerMode, topWagonIsBurger, transitionsOn],
+  );
 
   return (
     <div
@@ -345,7 +396,7 @@ export function SiteShell({
               {/* Левый край: логотип */}
               <div className="flex items-center lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg">
                 <a
-                  href={buildPath(locale)}
+                  href={basePath}
                   className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   <Image
