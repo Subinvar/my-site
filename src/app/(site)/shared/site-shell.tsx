@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
   type HTMLAttributes,
@@ -91,6 +92,7 @@ export function SiteShell({
     : "";
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const prevPathRef = useRef(currentPath);
 
   const {
     prefersReducedMotion,
@@ -155,7 +157,7 @@ export function SiteShell({
     setIsMenuOpen((prev) => !prev);
   }, []);
 
-  const {
+  const {  
     topWagonIsBurger,
     topWagonsCollapsed,
     topLineTransform,
@@ -168,10 +170,11 @@ export function SiteShell({
     onRequestClose: handleCloseMenu,
   });
 
-  const openMenuLabel = locale === "ru" ? "Открыть меню" : "Open menu";
-  const closeMenuLabel = locale === "ru" ? "Закрыть меню" : "Close menu";
-
   useEffect(() => {
+    if (prevPathRef.current === currentPath) return;
+
+    prevPathRef.current = currentPath;
+
     if (!isMenuOpen) return;
 
     const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
@@ -344,8 +347,6 @@ export function SiteShell({
                   isBurgerMode={isBurgerMode}
                   hasHydrated={hasHydrated}
                   isMenuOpen={isMenuOpen}
-                  openMenuLabel={openMenuLabel}
-                  closeMenuLabel={closeMenuLabel}
                   onBurgerClick={handleBurgerClick}
                   topLineTransform={topLineTransform}
                   bottomLineTransform={bottomLineTransform}
@@ -409,8 +410,6 @@ export function SiteShell({
                 isBurgerMode={false}
                 hasHydrated={hasHydrated}
                 isMenuOpen={isMenuOpen}
-                openMenuLabel={openMenuLabel}
-                closeMenuLabel={closeMenuLabel}
                 onBurgerClick={handleBurgerClick}
                 topLineTransform={topLineTransform}
                 bottomLineTransform={bottomLineTransform}
@@ -433,7 +432,6 @@ export function SiteShell({
       <MenuOverlay
         isVisible={isBurgerMode && isMenuOpen}
         onClose={handleCloseMenu}
-        closeMenuLabel={closeMenuLabel}
       />
 
       <main

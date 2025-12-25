@@ -17,8 +17,6 @@ type HeaderNavProps = {
   isBurgerMode: boolean;
   hasHydrated: boolean;
   isMenuOpen: boolean;
-  openMenuLabel: string;
-  closeMenuLabel: string;
   onBurgerClick: () => void;
   topLineTransform: string;
   bottomLineTransform: string;
@@ -51,8 +49,6 @@ export const HeaderNav = memo(function HeaderNav({
   isBurgerMode,
   hasHydrated,
   isMenuOpen,
-  openMenuLabel,
-  closeMenuLabel,
   onBurgerClick,
   topLineTransform,
   bottomLineTransform,
@@ -126,26 +122,27 @@ export const HeaderNav = memo(function HeaderNav({
               type="button"
               aria-pressed={isMenuOpen}
               aria-expanded={isMenuOpen}
-              aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
+              aria-label={navigationLabel}
               onClick={onBurgerClick}
               className={cn(
-                headerButtonBase,
-                "h-11 gap-2 px-4 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)] text-foreground",
-                "hover:border-[var(--header-border)] hover:bg-background/85",
-                isMenuOpen ? "bg-background/90" : "",
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70",
+                "text-muted-foreground transition-colors duration-150",
+                "hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                isMenuOpen && "bg-background/85 text-foreground",
               )}
-              >
-                <span className="relative block h-4 w-5">
-                  <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                    style={{ transform: topLineTransform }}
-                  />
-                  <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                    style={{ transform: bottomLineTransform }}
-                  />
-                </span>
-              <span className="sr-only">{isMenuOpen ? closeMenuLabel : openMenuLabel}</span>
+            >
+              <span className="relative block h-4 w-5">
+                <span
+                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                  style={{ transform: topLineTransform }}
+                />
+                <span
+                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                  style={{ transform: bottomLineTransform }}
+                />
+              </span>
             </button>
           </div>
         </div>
