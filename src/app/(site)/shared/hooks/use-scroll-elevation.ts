@@ -13,7 +13,6 @@ export function useScrollElevation() {
       const next = !entry.isIntersecting;
       setIsHeaderElevated((prev) => (prev === next ? prev : next));
     },
-    [scrollSentinelRef],
     { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
   );
 
@@ -22,7 +21,6 @@ export function useScrollElevation() {
       const next = typeof window !== "undefined" ? window.scrollY > 1 : false;
       setIsHeaderElevated((prev) => (prev === next ? prev : next));
     },
-    [],
     { immediate: true },
   );
 

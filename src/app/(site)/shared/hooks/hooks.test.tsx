@@ -75,7 +75,7 @@ test("useWindowResize снимает подписку на unmount", async () =>
   function Component() {
     useWindowResize(() => {
       calls += 1;
-    }, [], { target });
+    }, { target });
     return null;
   }
 
@@ -103,7 +103,7 @@ test("useScrollPosition вызывает callback сразу и чистит с�
   function Component() {
     useScrollPosition(() => {
       calls += 1;
-    }, [], { target });
+    }, { target });
     return null;
   }
 
@@ -136,7 +136,6 @@ test("useIntersection подписывается и отключается пр�
       (entry) => {
         intersected = entry.isIntersecting;
       },
-      [ref],
       { Observer: MockIntersectionObserver as unknown as typeof IntersectionObserver },
     );
     return null;

@@ -3,15 +3,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 export function useMediaBreakpoints() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isLgUp, setIsLgUp] = useState(false);
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const [hasHydrated] = useState(() => typeof window !== "undefined");
   const [isCompactNav, setIsCompactNav] = useState(false);
 
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    setHasHydrated(true);
-  }, []);
 
   useLayoutEffect(() => {
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");

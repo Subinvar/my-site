@@ -12,7 +12,6 @@ export function useResizeTransitions() {
       if (timerRef.current) window.clearTimeout(timerRef.current);
       timerRef.current = window.setTimeout(() => setTransitionsOn(false), 350);
     },
-    [],
     { listenerOptions: { passive: true } },
   );
 
