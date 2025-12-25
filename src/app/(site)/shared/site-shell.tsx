@@ -24,6 +24,8 @@ import { useResizeTransitions } from "./hooks/use-resize-transitions";
 import { useHeaderHeight } from "./hooks/use-header-height";
 import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
+import { useWindowResize } from "./hooks/use-window-resize";
+import { useScrollPosition } from "./hooks/use-scroll-position";
 
 const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
   products: 116,
@@ -278,6 +280,24 @@ export function SiteShell({
 
   const openMenuLabel = locale === "ru" ? "Открыть меню" : "Open menu";
   const closeMenuLabel = locale === "ru" ? "Закрыть меню" : "Close menu";
+
+  // Закрываем бургер при скролле/ресайзе, используя общие хуки с корректной отпиской
+  useScrollPosition(
+    () => {
+      if (!isBurgerMode || !isMenuOpen) return;
+      setIsMenuOpen(false);
+    },
+    [isBurgerMode, isMenuOpen],
+    { disabled: !isBurgerMode },
+  );
+
+  useWindowResize(
+    () => {
+      if (isBurgerMode || !isMenuOpen) return;
+      setIsMenuOpen(false);
+    },
+    [isBurgerMode, isMenuOpen],
+  );
 
   const {
     shellTransitionClass,
