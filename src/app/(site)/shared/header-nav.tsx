@@ -31,6 +31,7 @@ type HeaderNavProps = {
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
   contactsHref: string;
   ctaLabel: string;
+  headerButtonBase: string;
 };
 
 export const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
@@ -64,6 +65,7 @@ export const HeaderNav = memo(function HeaderNav({
   inertProps,
   contactsHref,
   ctaLabel,
+  headerButtonBase,
 }: HeaderNavProps) {
   return (
     <div
@@ -114,6 +116,7 @@ export const HeaderNav = memo(function HeaderNav({
         >
           <div className="flex h-11 flex-1 items-center justify-end gap-3 lg:justify-between">
             <HeaderCta
+              headerButtonBase={headerButtonBase}
               href={contactsHref}
               label={ctaLabel}
               className="hidden h-10 min-w-[180px] max-w-[260px] justify-center lg:inline-flex"
@@ -126,11 +129,9 @@ export const HeaderNav = memo(function HeaderNav({
               aria-label={isMenuOpen ? closeMenuLabel : openMenuLabel}
               onClick={onBurgerClick}
               className={cn(
-                "inline-flex h-11 items-center gap-2 rounded-xl px-4 text-[clamp(0.9rem,0.87rem+0.08vw,1rem)] font-medium leading-tight",
-                "border border-[var(--header-border)] bg-background/70 text-foreground",
-                "transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-background/85",
-                "focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                "motion-reduce:transition-none motion-reduce:duration-0",
+                headerButtonBase,
+                "h-11 gap-2 px-4 text-[clamp(0.9rem,0.87rem+0.08vw,1rem)] font-medium leading-tight text-foreground",
+                "hover:border-[var(--header-border)] hover:bg-background/85",
                 isMenuOpen ? "bg-background/90" : "",
               )}
             >

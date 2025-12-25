@@ -19,6 +19,7 @@ type HeaderTopSlotProps = {
 type HeaderTopPillLinkProps = {
   href: string;
   label: string;
+  pillBase: string;
 };
 
 type HeaderCtaProps = {
@@ -26,6 +27,7 @@ type HeaderCtaProps = {
   label: string;
   className?: string;
   children?: ReactNode;
+  headerButtonBase: string;
 };
 
 type HeaderTopBarProps = {
@@ -49,6 +51,10 @@ type HeaderTopBarProps = {
   targetLocale: Locale;
   switcherHref: string | null;
   switchToLabels: Record<string, string>;
+  classNames: {
+    headerButtonBase: string;
+    pillBase: string;
+  };
 };
 
 export const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
@@ -83,22 +89,11 @@ function HeaderTopSlot({
   );
 }
 
-function HeaderTopPillLink({ href, label }: HeaderTopPillLinkProps) {
+function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
   return (
     <a
       href={href}
-      className={cn(
-        "inline-flex h-10 w-full items-center justify-center rounded-xl px-3",
-        // рамка появляется только на hover/focus (как у остальных контролов шапки)
-        "border border-transparent bg-background/70",
-        "hover:border-[var(--header-border)] focus-visible:border-[var(--header-border)]",
-        "text-muted-foreground no-underline",
-        "transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0",
-        "hover:bg-background/80 hover:text-foreground",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
-        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-        "truncate",
-      )}
+      className={cn(pillBase)}
     >
       {label}
     </a>
@@ -110,21 +105,18 @@ export const HeaderCta = memo(function HeaderCta({
   label,
   className,
   children,
+  headerButtonBase,
 }: HeaderCtaProps) {
   return (
     <Link
       href={href}
       aria-label={label}
       className={cn(
-        "group inline-flex h-10 items-center justify-center rounded-xl px-4",
-        "border border-[var(--header-border)] bg-background/70",
-        "focus-visible:border-[var(--header-border)]",
+        headerButtonBase,
+        "group h-10 justify-center px-4",
         "text-muted-foreground hover:text-foreground",
         "no-underline hover:no-underline",
-        "transition-colors duration-200 ease-out motion-reduce:transition-none motion-reduce:duration-0",
         "hover:bg-background/80",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        "focus-visible:ring-brand-600 focus-visible:ring-offset-[var(--background)]",
         "text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight",
         className,
       )}
@@ -183,7 +175,10 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   targetLocale,
   switcherHref,
   switchToLabels,
+  classNames,
 }: HeaderTopBarProps) {
+  const { headerButtonBase, pillBase } = classNames;
+
   return (
     <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium leading-tight">
       {hasTopContacts ? (
@@ -218,13 +213,18 @@ export const HeaderTopBar = memo(function HeaderTopBar({
                   <HeaderTopPillLink
                     href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
                     label={contacts.phone}
+                    pillBase={pillBase}
                   />
                 </HeaderTopSlot>
               ) : null}
 
               {contacts.email ? (
                 <HeaderTopSlot id="email" className="hidden md:inline-flex">
-                  <HeaderTopPillLink href={`mailto:${contacts.email}`} label={contacts.email} />
+                  <HeaderTopPillLink
+                    href={`mailto:${contacts.email}`}
+                    label={contacts.email}
+                    pillBase={pillBase}
+                  />
                 </HeaderTopSlot>
               ) : null}
             </div>
@@ -272,7 +272,12 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               menuSlideClass,
             )}
           >
-            <HeaderCta href={contactsHref} label={ctaLabel} className="w-full" />
+            <HeaderCta
+              headerButtonBase={headerButtonBase}
+              href={contactsHref}
+              label={ctaLabel}
+              className="w-full"
+            />
           </div>
 
           <div
