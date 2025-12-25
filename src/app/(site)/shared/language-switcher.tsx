@@ -52,8 +52,8 @@ export function LanguageSwitcher({
   const baseContainerClasses =
     'relative inline-flex h-10 w-10 items-center justify-center ' +
     'rounded-xl border border-transparent ' +
-    'bg-background/70 text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
-    'hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground ' +
+    'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
+    'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground ' +
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
     'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]';
 
@@ -61,13 +61,13 @@ export function LanguageSwitcher({
     baseContainerClasses,
     // До первого pointerenter не анимируем цвет → нет "мигания" на смене страницы
     isHoverAnimated ? 'transition-colors duration-150' : 'transition-none',
-    isDisabled && 'cursor-default opacity-50 hover:border-transparent hover:bg-background/70',
+    isDisabled && 'cursor-default opacity-50 hover:border-transparent hover:bg-transparent',
   );
 
   // Вагончики RU / EN
   const wagonBaseClasses =
     'absolute inset-0 flex items-center justify-center px-2 ' +
-    'text-[clamp(0.935rem,0.858rem+0.275vw,1.078rem)] font-medium uppercase tracking-[0.08em] ' +
+    'text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] ' +
     'transition-transform duration-200 ease-out';
 
   const ruClassName = cn(

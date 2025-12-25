@@ -95,7 +95,8 @@ export const HeaderNav = memo(function HeaderNav({
             ariaLabel={navigationLabel}
             currentPath={currentPath}
             className="hidden w-full justify-end gap-3 lg:flex"
-            density="default"
+            density="compact"
+            stableSlots={HEADER_NAV_STABLE_SLOTS}
           />
         </div>
 
@@ -110,7 +111,7 @@ export const HeaderNav = memo(function HeaderNav({
             burgerSlideClass,
           )}
         >
-          <div className="flex h-11 flex-1 items-center justify-end gap-3 lg:justify-between">
+          <div className="flex h-11 flex-1 items-center justify-end gap-3 translate-y-[-2px]">
             <HeaderCta
               headerButtonBase={headerButtonBase}
               href={contactsHref}
@@ -125,12 +126,12 @@ export const HeaderNav = memo(function HeaderNav({
               aria-label={navigationLabel}
               onClick={onBurgerClick}
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-background/70",
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-transparent",
                 "text-muted-foreground transition-colors duration-150",
-                "hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground",
+                "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                 "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                isMenuOpen && "bg-background/85 text-foreground",
+                isMenuOpen && "border-[var(--header-border)] text-foreground",
               )}
             >
               <span className="relative block h-4 w-5">

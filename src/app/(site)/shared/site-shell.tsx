@@ -16,6 +16,7 @@ import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { buildPath } from "@/lib/paths";
 import { cn } from "@/lib/cn";
+import { NavigationList } from "@/app/[locale]/navigation-list";
 import { HtmlLangSync } from "./html-lang-sync";
 import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
 import { useResizeTransitions } from "./hooks/use-resize-transitions";
@@ -44,10 +45,10 @@ type SiteShellProps = {
 const brandFont = { variable: "font-brand-var" };
 
 const headerButtonBase =
-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-background/70 transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
+  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
 
 const pillBase =
-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-background/70 text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-background/80 hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
 
 const contactLinkBase = "text-foreground no-underline hover:underline underline-offset-4";
 
@@ -186,7 +187,7 @@ export function SiteShell({
       if (!isBurgerMode || !isMenuOpen) return;
       handleCloseMenu();
     },
-    { disabled: !isBurgerMode },
+    { disabled: !isBurgerMode, immediate: false },
   );
 
   useWindowResize(
@@ -403,26 +404,12 @@ export function SiteShell({
                 ) : null}
               </div>
 
-              <HeaderNav
-                navigation={navigation}
-                navigationLabel={navigationLabels.headerLabel}
+              <NavigationList
+                links={navigation.header}
+                ariaLabel={navigationLabels.headerLabel}
                 currentPath={currentPath}
-                isBurgerMode={false}
-                hasHydrated={hasHydrated}
-                isMenuOpen={isMenuOpen}
-                onBurgerClick={handleBurgerClick}
-                topLineTransform={topLineTransform}
-                bottomLineTransform={bottomLineTransform}
-                wagonTransitionClass={wagonTransitionClass}
-                wagonTransformClass={wagonTransformClass}
-                slideTransitionClass={slideTransitionClass}
-                menuSlideClass={menuSlideClass}
-                burgerSlideClass={burgerSlideClass}
-                burgerDelayClass={burgerDelayClass}
-                inertProps={inertProps}
-                contactsHref={contactsHref}
-                ctaLabel={ctaCompactLabel}
-                headerButtonBase={headerButtonBase}
+                density="compact"
+                layout="panel"
               />
             </div>
           </nav>
@@ -432,6 +419,7 @@ export function SiteShell({
       <MenuOverlay
         isVisible={isBurgerMode && isMenuOpen}
         onClose={handleCloseMenu}
+        closeMenuLabel={locale === "ru" ? "Закрыть меню" : "Close menu"}
       />
 
       <main
