@@ -3,13 +3,18 @@ import { useLayoutEffect, useRef, useState } from "react";
 export function useMediaBreakpoints() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isLgUp, setIsLgUp] = useState(false);
-  const [hasHydrated] = useState(() => typeof window !== "undefined");
+  const [hasHydrated, setHasHydrated] = useState(false);
   const [isCompactNav, setIsCompactNav] = useState(false);
 
   const navHostRef = useRef<HTMLDivElement | null>(null);
   const navMeasureRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
+    // Нам нужно отметить гидратацию, чтобы не выводить лишние атрибуты в SSR;
+    // state переключается сразу после монтирования на клиенте.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- однократное выставление флага после монтирования
+    setHasHydrated(true);
+
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
     const lg = window.matchMedia("(min-width: 1024px)");
 
