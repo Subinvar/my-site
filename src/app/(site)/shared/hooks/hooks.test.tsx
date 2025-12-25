@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import React, { useRef } from "react";
-// eslint-disable-next-line import/no-unresolved -- типы есть в devDependencies, но eslint-resolver их не видит
 import { act, create } from "react-test-renderer";
 
 import { useIntersection } from "./use-intersection";
