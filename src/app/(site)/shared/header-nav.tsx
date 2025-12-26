@@ -94,7 +94,7 @@ export const HeaderNav = memo(function HeaderNav({
             links={navigation.header}
             ariaLabel={navigationLabel}
             currentPath={currentPath}
-            className="hidden w-full lg:flex"
+            className="w-full max-w-[var(--header-rail-w)]"
             density="compact"
             distribution="between"
           />
@@ -123,6 +123,7 @@ export const HeaderNav = memo(function HeaderNav({
               type="button"
               aria-pressed={isMenuOpen}
               aria-expanded={isMenuOpen}
+              aria-controls="site-menu"
               aria-label={navigationLabel}
               onClick={onBurgerClick}
               className={cn(

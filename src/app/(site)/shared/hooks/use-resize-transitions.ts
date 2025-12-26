@@ -1,22 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-
-import { useWindowResize } from "./use-window-resize";
+import { useEffect, useState } from "react";
 
 export function useResizeTransitions() {
   const [transitionsOn, setTransitionsOn] = useState(false);
-  const timerRef = useRef<number | undefined>(undefined);
 
-  useWindowResize(
-    () => {
-      setTransitionsOn(true);
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(() => setTransitionsOn(false), 350);
-    },
-    { listenerOptions: { passive: true } },
-  );
-
-  useEffect(() => () => {
-    if (timerRef.current) window.clearTimeout(timerRef.current);
+  useEffect(() => {
+    // Включаем анимации после первого кадра (после гидрации),
+    // чтобы не ловить нежелательные переходы на самом первом рендере.
+    const raf = window.requestAnimationFrame(() => setTransitionsOn(true));
+    return () => window.cancelAnimationFrame(raf);
   }, []);
 
   return transitionsOn;

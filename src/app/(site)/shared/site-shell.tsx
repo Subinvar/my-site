@@ -45,10 +45,10 @@ type SiteShellProps = {
 const brandFont = { variable: "font-brand-var" };
 
 const headerButtonBase =
-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
+  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
 
 const pillBase =
-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
 
 const contactLinkBase = "text-foreground no-underline hover:underline underline-offset-4";
 
@@ -60,7 +60,7 @@ function SkipToContentLink({ label }: SkipToContentLinkProps) {
   return (
     <a
       href="#main"
-      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-brand-600 focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-[color:var(--color-brand-600)] focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-brand-600)]"
     >
       {label}
     </a>
@@ -85,6 +85,8 @@ export function SiteShell({
 
   const brandLabel = brandName || "Интема Групп";
 
+  const menuDialogLabel = locale === "ru" ? "Меню" : "Menu";
+
   const copyrightTemplate = site.footer?.copyright?.trim() ?? "";
   const copyrightText = copyrightTemplate.length
     ? copyrightTemplate
@@ -94,6 +96,9 @@ export function SiteShell({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const prevPathRef = useRef(currentPath);
+  const menuPanelRef = useRef<HTMLElement | null>(null);
+  const lastActiveElementRef = useRef<HTMLElement | null>(null);
+
 
   const {
     prefersReducedMotion,
@@ -135,7 +140,7 @@ export function SiteShell({
       topContactsIds.reduce(
         (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
         0,
-      ) + (topContactsIds.length > 1 ? 24 : 0);
+      ) + (topContactsIds.length > 1 ? 36 : 0);
 
     return {
       basePath,
@@ -196,6 +201,84 @@ export function SiteShell({
       handleCloseMenu();
     },
   );
+
+  const isMenuModal = isBurgerMode && isMenuOpen;
+
+  // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
+  useEffect(() => {
+    if (!isMenuModal) return;
+
+    lastActiveElementRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusFirst = () => {
+      const container = menuPanelRef.current;
+      if (!container) return;
+      const firstFocusable = container.querySelector<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      firstFocusable?.focus();
+    };
+
+    const raf = window.requestAnimationFrame(focusFirst);
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        handleCloseMenu();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const container = menuPanelRef.current;
+      if (!container) return;
+
+      const focusables = Array.from(
+        container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+
+      if (focusables.length === 0) {
+        event.preventDefault();
+        container.focus();
+        return;
+      }
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey) {
+        if (active === first || !container.contains(active)) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (active === last || !container.contains(active)) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      window.cancelAnimationFrame(raf);
+
+      const prev = lastActiveElementRef.current;
+      if (prev) {
+        window.requestAnimationFrame(() => prev.focus());
+      }
+    };
+  }, [isMenuModal, handleCloseMenu]);
 
   const {
     shellTransitionClass,
@@ -282,18 +365,18 @@ export function SiteShell({
 
       <div
         ref={scrollSentinelRef}
-        className="absolute inset-x-0 top-0 h-1 w-px"
+        className="absolute inset-x-0 top-0 h-2 w-px"
         aria-hidden
       />
 
       <header
         ref={headerRef}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 overflow-hidden backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+          "fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-100 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           isHeaderElevated
-            ? "bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md before:opacity-100"
+            ? "bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md"
             : "bg-background/90 backdrop-blur",
         )}
       >
@@ -369,7 +452,12 @@ export function SiteShell({
         </div>
 
         {isBurgerMode ? (
-          <nav
+          <aside id="site-menu"
+            ref={menuPanelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={menuDialogLabel}
+            tabIndex={-1}
             className={cn(
               "fixed inset-y-0 right-0 z-40 w-full max-w-xs border-l border-border bg-background/95 shadow-lg",
               "backdrop-blur-sm",
@@ -413,7 +501,7 @@ export function SiteShell({
                 layout="panel"
               />
             </div>
-          </nav>
+          </aside>
         ) : null}
       </header>
 
@@ -427,17 +515,21 @@ export function SiteShell({
         id="main"
         role="main"
         tabIndex={-1}
-        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
+        aria-hidden={isMenuModal ? true : undefined}
+        {...inertProps(isMenuModal)}
+        className="mx-auto w-full max-w-screen-2xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
       >
         {children}
       </main>
 
-      <SiteFooter
-        navigation={navigation}
-        navigationLabel={navigationLabels.footerLabel}
-        currentPath={currentPath}
-        copyrightText={copyrightText}
-      />
+      <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
+        <SiteFooter
+          navigation={navigation}
+          navigationLabel={navigationLabels.footerLabel}
+          currentPath={currentPath}
+          copyrightText={copyrightText}
+        />
+      </div>
     </div>
   );
 }

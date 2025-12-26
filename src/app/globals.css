@@ -184,11 +184,12 @@
 
   /* Совпадение длины строк (от "+" до "RU" и от "Продукция" до "Контакты") */
   --header-nav-inset-x: 0.75rem;
+  --header-nav-inset-x-end: calc(var(--header-nav-inset-x) - 3px);
 
   /* Ширина "правого рельса" (контакты/CTA/переключатели + меню) на десктопе */
   --header-rail-w: 720px;
 
-  --header-logo-h: clamp(72px, 4.8vw, 116px);
+  --header-logo-h: clamp(56px, 3.2vw, 84px);
   --header-brand-fs: clamp(1.05rem, 0.9rem + 0.6vw, 1.6rem);
 
   /* Единый размер текста для элементов шапки (меню / контакты / CTA / переключатели) */
@@ -196,12 +197,12 @@
   --header-ui-leading: 1.1;
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
-  --header-height-initial: 96px;
+  --header-height-initial: 84px;
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-height-initial: 136px;
+    --header-height-initial: 116px;
   }
 }
 

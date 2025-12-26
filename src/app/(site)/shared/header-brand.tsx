@@ -15,7 +15,7 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
     <div className="flex items-center lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg">
       <a
         href={href}
-        className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Image
           src="/uploads/logo.svg"
@@ -30,7 +30,7 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
           className={cn(
             "font-[var(--font-heading)]",
             "text-[length:var(--header-brand-fs)] font-bold leading-[1.05]",
-            "tracking-[-0.02em] text-brand-600 dark:text-brand-600",
+            "tracking-[-0.02em] text-[var(--color-brand-600)] dark:text-[var(--color-brand-600)]",
           )}
         >
           {label}

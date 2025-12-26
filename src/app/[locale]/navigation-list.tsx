@@ -51,7 +51,7 @@ export function NavigationList({
     ? "m-0 p-0 list-none flex flex-col gap-1"
     : density === "compact"
       ? distribution === "between"
-        ? "m-0 p-0 list-none flex w-full flex-nowrap items-center justify-between gap-0 px-[var(--header-nav-inset-x)]"
+        ? "m-0 p-0 list-none flex w-full flex-nowrap items-center justify-between gap-0 pl-[var(--header-nav-inset-x)] pr-[var(--header-nav-inset-x-end)]"
         : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6"
       : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-sm font-medium";
 
@@ -112,13 +112,7 @@ export function NavigationList({
           const isFirst = index === 0;
           const isLast = index === links.length - 1;
 
-          const stableAlignClass = isStableSlot
-            ? isFirst
-              ? "flex w-full justify-start"
-              : isLast
-                ? "flex w-full justify-end"
-                : "flex w-full justify-center"
-            : "";
+          const stableAlignClass = isStableSlot ? "flex w-full justify-center" : "";
 
           const shouldUseStableSlot = !isPanel && isStableSlot;
 
@@ -137,7 +131,7 @@ export function NavigationList({
                 densityClass,
                 "no-underline transition-colors",
                 "active:opacity-90",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                 isActive
                   ? "bg-muted/60 text-foreground"
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -147,9 +141,10 @@ export function NavigationList({
                 "group",
                 linkHeightClass,
                 "items-center gap-1",
+                "whitespace-nowrap",
                 densityClass,
                 "active:opacity-90",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

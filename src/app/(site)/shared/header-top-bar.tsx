@@ -94,6 +94,7 @@ function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
     <a
       href={href}
       className={cn(pillBase)}
+      title={label}
     >
       {label}
     </a>
@@ -198,11 +199,12 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   const { headerButtonBase, pillBase } = classNames;
 
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end lg:justify-between gap-6 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+    <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-9">
       {hasTopContacts ? (
         <div
           className={cn(
-            "relative hidden h-10 overflow-hidden md:block",
+            "relative hidden h-10 overflow-hidden lg:block",
             topWagonWidthTransitionClass,
             "motion-reduce:transition-none motion-reduce:duration-0",
           )}
@@ -220,14 +222,14 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
               {...inertProps(hasHydrated ? topWagonIsBurger : false)}
               className={cn(
-                "flex h-1/2 w-full items-center justify-end gap-6",
+                "flex h-1/2 w-full items-center gap-9",
                 slideTransitionClass,
                 "motion-reduce:transition-none motion-reduce:duration-0",
                 menuSlideClass,
               )}
             >
               {contacts.phone ? (
-                <HeaderTopSlot id="phone" className="hidden md:inline-flex">
+                <HeaderTopSlot id="phone" className="hidden lg:inline-flex">
                   <HeaderTopPillLink
                     href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
                     label={contacts.phone}
@@ -237,7 +239,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               ) : null}
 
               {contacts.email ? (
-                <HeaderTopSlot id="email" className="hidden md:inline-flex">
+                <HeaderTopSlot id="email" className="hidden lg:inline-flex">
                   <HeaderTopPillLink
                     href={`mailto:${contacts.email}`}
                     label={contacts.email}
@@ -251,7 +253,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
               {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
               className={cn(
-                "flex h-1/2 w-full items-center justify-end gap-6",
+                "flex h-1/2 w-full items-center gap-9",
                 slideTransitionClass,
                 burgerDelayClass,
                 "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
@@ -266,7 +268,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 
       <div
         className={cn(
-          "relative hidden h-10 overflow-hidden md:block",
+          "relative hidden h-10 overflow-hidden lg:block",
           topWagonWidthTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
         )}
@@ -313,19 +315,21 @@ export const HeaderTopBar = memo(function HeaderTopBar({
           </div>
         </div>
       </div>
+      </div>
+      <div className="flex flex-none items-center gap-9">
+        <HeaderTopSlot id="theme">
+          <ThemeToggle />
+        </HeaderTopSlot>
 
-      <HeaderTopSlot id="theme">
-        <ThemeToggle />
-      </HeaderTopSlot>
-
-      <HeaderTopSlot id="lang">
-        <LanguageSwitcher
-          currentLocale={locale}
-          targetLocale={targetLocale}
-          href={switcherHref}
-          switchToLabels={switchToLabels}
-        />
-      </HeaderTopSlot>
+        <HeaderTopSlot id="lang">
+          <LanguageSwitcher
+            currentLocale={locale}
+            targetLocale={targetLocale}
+            href={switcherHref}
+            switchToLabels={switchToLabels}
+          />
+        </HeaderTopSlot>
+      </div>
     </div>
   );
 });

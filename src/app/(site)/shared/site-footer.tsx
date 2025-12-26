@@ -20,7 +20,7 @@ export const SiteFooter = memo(function SiteFooter({
 }: SiteFooterProps) {
   return (
     <footer className="border-t border-border bg-muted/60">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
+      <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-4 px-4 py-6 text-xs text-muted-foreground sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <NavigationList
             links={navigation.footer}
