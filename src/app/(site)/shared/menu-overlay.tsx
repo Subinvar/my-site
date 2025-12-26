@@ -21,7 +21,7 @@ export const MenuOverlay = memo(function MenuOverlay({
     <button
       type="button"
       className={cn(
-        "fixed inset-0 z-30 bg-black/60 backdrop-blur-md",
+        "fixed inset-0 z-[58] bg-black/60 backdrop-blur-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
       )}
       aria-label={closeMenuLabel}

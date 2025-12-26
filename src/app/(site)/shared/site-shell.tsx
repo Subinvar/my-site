@@ -374,7 +374,7 @@ export function SiteShell({
       <header
         ref={headerRef}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-100 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-100 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           isHeaderElevated
@@ -461,16 +461,18 @@ export function SiteShell({
     aria-modal="true"
     aria-label={menuDialogLabel}
     tabIndex={-1}
+    aria-hidden={hasHydrated ? !isMenuModal : undefined}
+    {...inertProps(hasHydrated ? !isMenuModal : false)}
     className={cn(
       // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
-      "fixed inset-x-0 z-[49]",
+      "fixed inset-x-0 z-[59]",
               isHeaderElevated
                 ? "bg-background/95 backdrop-blur-md"
                 : "bg-background/90 backdrop-blur",
       "transform-gpu will-change-transform",
       "transition-[opacity,transform] duration-300 ease-out",
       "motion-reduce:transition-none motion-reduce:duration-0",
-      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0",
+      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0 invisible",
     )}
     style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
   >
