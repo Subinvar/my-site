@@ -29,6 +29,18 @@ import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
 import { SiteFooter } from "./site-footer";
 
+const normalizePathname = (value: string): string => {
+  const [pathWithoutQuery] = value.split("?");
+  const [path] = (pathWithoutQuery ?? "").split("#");
+  const trimmed = (path ?? "/").replace(/\/+$/, "");
+  return trimmed.length ? trimmed : "/";
+};
+
+const resolveHref = (href: string): string => {
+  const normalized = (href ?? "").trim();
+  return normalized.length ? normalized : "/";
+};
+
 type SiteShellProps = {
   locale: Locale;
   targetLocale: Locale;
@@ -48,7 +60,22 @@ const headerButtonBase =
 const pillBase =
   "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
 
-const contactLinkBase = "text-foreground no-underline hover:underline underline-offset-4";
+const contactLinkBase =
+  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
+
+const menuUnderlineSpan =
+  "relative inline-block after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-px after:rounded-full " +
+  "after:bg-transparent after:origin-left after:scale-x-0 " +
+  "after:transition-[transform,background-color] after:duration-200 after:ease-out " +
+  "group-hover:after:bg-[var(--header-border)] group-focus-visible:after:bg-[var(--header-border)] " +
+  "group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100";
+
+const menuUnderlineSpanActive =
+  "relative inline-block after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:rounded-full " +
+  "after:bg-foreground after:origin-left after:scale-x-100 " +
+  "after:transition-[transform,background-color] after:duration-200 after:ease-out " +
+  "group-hover:after:bg-foreground group-focus-visible:after:bg-foreground";
+
 
 type SkipToContentLinkProps = {
   label: string;
@@ -192,7 +219,7 @@ export function SiteShell({
 
   useScrollPosition(
     () => {
-      if (!isBurgerMode || !isMenuOpen) return;
+      if (!isMenuModal) return;
       handleCloseMenu();
     },
     { disabled: !isBurgerMode, immediate: false },
@@ -205,7 +232,48 @@ export function SiteShell({
     },
   );
 
-  const isMenuModal = isBurgerMode && isMenuOpen;
+  const [isMenuMounted, setIsMenuMounted] = useState(false);
+
+  useEffect(() => {
+    if (!isBurgerMode) {
+      setIsMenuMounted(false);
+      return;
+    }
+
+    if (isMenuOpen) {
+      setIsMenuMounted(true);
+      return;
+    }
+
+    if (!isMenuMounted) return;
+
+    const duration = prefersReducedMotion ? 0 : 640;
+    const t = window.setTimeout(() => setIsMenuMounted(false), duration);
+    return () => window.clearTimeout(t);
+  }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
+
+  const isMenuModal = isBurgerMode && isMenuMounted;
+  const normalizedCurrentPath = useMemo(() => normalizePathname(currentPath), [currentPath]);
+
+  const isActiveHref = useCallback(
+    (href: string): boolean => {
+      const resolved = resolveHref(href);
+      const normalizedHref = normalizePathname(resolved);
+      return (
+        normalizedHref === normalizedCurrentPath ||
+        (normalizedHref !== "/" && normalizedCurrentPath.startsWith(`${normalizedHref}/`))
+      );
+    },
+    [normalizedCurrentPath],
+  );
+
+  const productsHrefRoot = useMemo(() => {
+    const href = (navigation.header.find((l) => l.id === "products")?.href ?? "/products").trim() || "/products";
+    return href;
+  }, [navigation.header]);
+
+  const isProductsActive = useMemo(() => isActiveHref(productsHrefRoot), [isActiveHref, productsHrefRoot]);
+
 
   // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
   useEffect(() => {
@@ -453,7 +521,10 @@ export function SiteShell({
           </div>
         </div>
 
-        {isBurgerMode ? (
+        
+      </header>
+
+      {isBurgerMode ? (
   <aside
     id="site-menu"
     ref={menuPanelRef}
@@ -461,8 +532,8 @@ export function SiteShell({
     aria-modal="true"
     aria-label={menuDialogLabel}
     tabIndex={-1}
-    aria-hidden={hasHydrated ? !isMenuModal : undefined}
-    {...inertProps(hasHydrated ? !isMenuModal : false)}
+    aria-hidden={hasHydrated ? !isMenuOpen : undefined}
+    {...inertProps(hasHydrated ? !isMenuOpen : false)}
     className={cn(
       // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
       "fixed inset-x-0 z-[59]",
@@ -470,44 +541,49 @@ export function SiteShell({
                 ? "bg-background/95 backdrop-blur-md"
                 : "bg-background/90 backdrop-blur",
       "transform-gpu will-change-transform",
-      "transition-[opacity,transform] duration-300 ease-out",
+      "transition-[opacity,transform] duration-[640ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
       "motion-reduce:transition-none motion-reduce:duration-0",
-      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0 invisible",
+      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0",
     )}
     style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
   >
-    <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] py-10">
+    <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
       <div className="flex h-full flex-col">
         <div className="relative flex-1 overflow-hidden">
           <div
             className={cn(
               "flex h-full w-[200%]",
-              "transform-gpu transition-transform duration-300 ease-out",
+              "transform-gpu transition-transform duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
               "motion-reduce:transition-none motion-reduce:duration-0",
               menuView === "products" ? "-translate-x-1/2" : "translate-x-0",
             )}
           >
             {/* ROOT */}
-            <div className="w-1/2 pr-6">
+            <div
+                aria-hidden={menuView === "products"}
+                {...inertProps(hasHydrated ? menuView === "products" : false)}
+                className={cn("w-1/2 pr-6")}
+              >
               <ul className="m-0 list-none space-y-4 p-0">
                 <li>
                   <button
                     type="button"
                     onClick={() => setMenuView("products")}
+                    aria-current={isProductsActive ? "page" : undefined}
                     className={cn(
                       "group flex w-full items-center justify-between py-2",
                       "no-underline",
-                      "text-[clamp(1.7rem,1.2rem+1.6vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.02em]",
-                      "text-foreground transition-opacity hover:opacity-80",
+                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                      isProductsActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                       "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                     )}
                   >
-                    <span>
+                    <span className={isProductsActive ? menuUnderlineSpanActive : menuUnderlineSpan}>
                       {navigation.header.find((l) => l.id === "products")?.label ??
                         (locale === "ru" ? "Продукция" : "Products")}
                     </span>
-                    <span className="text-muted-foreground transition-colors group-hover:text-foreground">
+                    <span className={cn("transition-colors", isProductsActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
                       ›
                     </span>
                   </button>
@@ -518,6 +594,7 @@ export function SiteShell({
                   if (!link) return null;
 
                   const href = (link.href ?? "/").trim() || "/";
+                  const isActive = isActiveHref(href);
                   return (
                     <li key={link.id}>
                       <a
@@ -525,16 +602,17 @@ export function SiteShell({
                         target={link.newTab ? "_blank" : undefined}
                         rel={link.newTab ? "noopener noreferrer" : undefined}
                         onClick={handleCloseMenu}
+                        aria-current={isActive ? "page" : undefined}
                         className={cn(
-                          "block w-full py-2",
+                          "group block w-full py-2",
                           "no-underline",
-                          "text-[clamp(1.7rem,1.2rem+1.6vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.02em]",
-                          "text-foreground transition-opacity hover:opacity-80",
+                          "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                          isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                           "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                         )}
                       >
-                        {link.label}
+                        <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
                       </a>
                     </li>
                   );
@@ -543,7 +621,11 @@ export function SiteShell({
             </div>
 
             {/* PRODUCTS */}
-            <div className="w-1/2 pl-6">
+            <div
+                aria-hidden={menuView === "root"}
+                {...inertProps(hasHydrated ? menuView === "root" : false)}
+                className={cn("w-1/2 pl-6")}
+              >
               <button
                 type="button"
                 onClick={() => setMenuView("root")}
@@ -591,15 +673,15 @@ export function SiteShell({
                           href={item.href}
                           onClick={handleCloseMenu}
                           className={cn(
-                            "block w-full py-2",
+                            "group block w-full py-2",
                             "no-underline",
-                            "text-[clamp(1.45rem,1.05rem+1.2vw,2.1rem)] font-semibold leading-[1.1] tracking-[-0.02em]",
-                            "text-foreground transition-opacity hover:opacity-80",
+                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+1.0vw,1.75rem)] font-medium leading-[1.1] tracking-[-0.01em]",
+                            "text-muted-foreground transition-colors hover:text-foreground",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                             "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                           )}
                         >
-                          {item.label}
+                          <span className={menuUnderlineSpan}>{item.label}</span>
                         </a>
                       </li>
                     ))}
@@ -608,15 +690,16 @@ export function SiteShell({
                       <a
                         href={productsHref}
                         onClick={handleCloseMenu}
+                        aria-current={isProductsActive ? "page" : undefined}
                         className={cn(
-                          "inline-flex",
+                          "group inline-flex",
                           "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                          "text-muted-foreground no-underline hover:text-foreground hover:underline underline-offset-4",
+                          isProductsActive ? "text-foreground" : "text-muted-foreground no-underline transition-colors hover:text-foreground",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                           "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                         )}
                       >
-                        {locale === "ru" ? "Все продукты" : "All products"}
+                        <span className={isProductsActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{locale === "ru" ? "Вся продукция" : "All products"}</span>
                       </a>
                     </li>
                   </ul>
@@ -627,8 +710,8 @@ export function SiteShell({
         </div>
 
         {/* контакты — снизу, в том же оформлении, что и в шапке */}
-        <div className="pt-10 text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)]">
-          <div className="flex flex-col gap-2">
+        <div className="pt-10 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+          <div className="flex flex-col items-start gap-2">
             {site.contacts.phone ? (
               <a
                 href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
@@ -649,7 +732,7 @@ export function SiteShell({
     </div>
   </aside>
 ) : null}
-      </header>
+
 
       <main
         id="main"
