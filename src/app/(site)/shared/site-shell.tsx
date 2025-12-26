@@ -289,7 +289,7 @@ export function SiteShell({
       <header
         ref={headerRef}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 overflow-hidden backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:translate-y-[1px] before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+          "fixed inset-x-0 top-0 z-50 overflow-hidden backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[var(--color-brand-600)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           isHeaderElevated
@@ -313,6 +313,7 @@ export function SiteShell({
                   "w-full min-w-0",
                   "grid grid-rows-[auto_auto] gap-y-2",
                   "lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-2",
+                  "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
                 )}
               >
                 <HeaderTopBar
@@ -440,4 +441,3 @@ export function SiteShell({
     </div>
   );
 }
-

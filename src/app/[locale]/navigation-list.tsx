@@ -12,6 +12,7 @@ type NavigationListProps = {
   density?: "default" | "compact";
   stableSlots?: Record<string, number>;
   layout?: "header" | "panel";
+  distribution?: "end" | "between";
 };
 
 const normalizePathname = (value: string): string => {
@@ -34,6 +35,7 @@ export function NavigationList({
   density = "default",
   stableSlots,
   layout = "header",
+  distribution = "end",
 }: NavigationListProps) {
   if (!links.length) {
     return null;
@@ -48,7 +50,9 @@ export function NavigationList({
   const listClassName = isPanel
     ? "m-0 p-0 list-none flex flex-col gap-1"
     : density === "compact"
-      ? "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6"
+      ? distribution === "between"
+        ? "m-0 p-0 list-none flex w-full flex-nowrap items-center justify-between gap-0 px-[var(--header-nav-inset-x)]"
+        : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6"
       : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-sm font-medium";
 
   const densityClass =
@@ -56,18 +60,14 @@ export function NavigationList({
       ? "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]"
       : "text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium";
 
-  const underlineOffsetClass = !isPanel
-    ? density === "compact"
-      ? "after:bottom-0"
-      : "after:-bottom-0.5"
-    : "";
-  const underlinePadClass = !isPanel && density === "compact" ? "pb-3" : "";
+  const underlineOffsetClass = !isPanel ? "after:bottom-0" : "";
+  const underlinePadClass = "";
   const linkHeightClass = isPanel ? "h-11" : density === "compact" ? "h-10" : "";
 
   const labelUnderlineBaseClassName = cn(
-    "relative inline-block",
+    isPanel ? "relative inline-block" : "relative inline-flex h-full items-center",
     underlinePadClass,
-    "after:absolute after:left-0 after:right-0 after:h-px after:rounded-full",
+    "after:absolute after:left-0 after:right-0 after:rounded-full",
     underlineOffsetClass,
     "after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out",
   );
@@ -76,10 +76,11 @@ export function NavigationList({
     ? "relative inline-block"
     : cn(
         labelUnderlineBaseClassName,
+        "after:h-[1px]",
         // старт: линии нет
         "after:bg-transparent after:scale-x-0",
         // hover/focus: линия появляется и по цвету = border (как у Theme/Language toggle)
-        "group-hover:after:bg-[var(--header-border)] group-focus-visible:after:bg-[var(--header-border)]",
+        "group-hover:after:bg-[color:var(--header-border)] group-focus-visible:after:bg-[color:var(--header-border)]",
         "group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100",
       );
 
@@ -87,6 +88,7 @@ export function NavigationList({
     ? labelInnerClassName
     : cn(
         labelUnderlineBaseClassName,
+        "after:h-[2px]",
         // активная страница: линия всегда видна и тёмная (в цвет текста пункта)
         "after:scale-x-100 after:bg-current",
         // и не перекрашиваем её в серую на hover/focus
@@ -96,7 +98,7 @@ export function NavigationList({
   return (
     <nav aria-label={resolvedLabel} className={className}>
       <ul className={listClassName}>
-        {links.map((link) => {
+        {links.map((link, index) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
           const isActive =
@@ -107,6 +109,16 @@ export function NavigationList({
 
           const slotWidth = stableSlots?.[link.id];
           const isStableSlot = typeof slotWidth === "number";
+          const isFirst = index === 0;
+          const isLast = index === links.length - 1;
+
+          const stableAlignClass = isStableSlot
+            ? isFirst
+              ? "flex w-full justify-start"
+              : isLast
+                ? "flex w-full justify-end"
+                : "flex w-full justify-center"
+            : "";
 
           const shouldUseStableSlot = !isPanel && isStableSlot;
 
@@ -131,7 +143,7 @@ export function NavigationList({
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
               )
             : cn(
-                isStableSlot ? "flex w-full justify-center" : "inline-flex",
+                isStableSlot ? stableAlignClass : "inline-flex",
                 "group",
                 linkHeightClass,
                 "items-center gap-1",

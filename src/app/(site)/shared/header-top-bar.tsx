@@ -128,26 +128,44 @@ export const HeaderCta = memo(function HeaderCta({
         <span
           className={cn(
             "absolute inset-0 rounded-full",
-            "bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.24)_60%,rgba(148,27,32,0)_86%)]",
+            "bg-[rgba(148,27,32,0.12)] blur-[0.5px]",
+            "will-change-[transform,opacity,filter]",
+            "animate-cta-glow motion-reduce:animate-none",
           )}
         />
         <span
           className={cn(
             "absolute inset-0 rounded-full",
-            "will-change-transform",
-            "bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.68)_60%,rgba(148,27,32,0)_86%)]",
-            "animate-cta-ripple motion-reduce:animate-none",
-            "group-hover:bg-[radial-gradient(circle,transparent_0%,transparent_52%,rgba(148,27,32,0.78)_60%,rgba(148,27,32,0)_86%)]",
+            "border border-[rgba(148,27,32,0.35)]",
+            "will-change-[transform,opacity,filter]",
+            "animate-cta-ring motion-reduce:animate-none",
           )}
         />
         <span
+          className={cn(
+            "relative h-2.5 w-2.5 overflow-hidden rounded-full",
+            "shadow-[0_0_0_1.5px_rgba(148,27,32,0.20),0_0_10px_rgba(148,27,32,0.16)]",
+            "will-change-[transform,opacity,filter]",
+            "animate-cta-dot motion-reduce:animate-none",
+          )}
+        >
+          <span
             className={cn(
-              "relative h-2.5 w-2.5 overflow-hidden rounded-full",
-              "bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_56%,#a8242c_72%,#f7d5dc_100%)]",
-              "after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.08)_70%,transparent_100%)] after:content-['']",
-              "shadow-[0_0_0_1.5px_rgba(148,27,32,0.18)]",
+              "absolute inset-0 rounded-full",
+              "bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_54%,#a8242c_74%,#d88993_86%,#f7d5dc_100%)]",
+              "after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.08)_72%,transparent_100%)] after:content-['']",
             )}
           />
+          <span
+            className={cn(
+              "absolute inset-0 rounded-full",
+              "bg-[radial-gradient(circle_at_center,transparent_0%,transparent_66%,rgba(247,213,220,0.00)_70%,rgba(247,213,220,0.40)_82%,rgba(247,213,220,0.78)_96%,transparent_100%)]",
+              "blur-[0.2px]",
+              "will-change-[transform,opacity,filter]",
+              "animate-cta-inner-ring motion-reduce:animate-none",
+            )}
+          />
+        </span>
       </span>
       {children ?? label}
     </Link>
@@ -180,7 +198,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   const { headerButtonBase, pillBase } = classNames;
 
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end gap-6 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+    <div className="flex h-full w-full min-w-0 max-w-full items-center justify-end lg:justify-between gap-6 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
       {hasTopContacts ? (
         <div
           className={cn(
