@@ -120,7 +120,6 @@ export function SiteShell({
     : "";
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [menuView, setMenuView] = useState<"root" | "products">("root");
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
@@ -188,10 +187,6 @@ export function SiteShell({
   const handleBurgerClick = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
   }, []);
-
-  useEffect(() => {
-    if (isMenuOpen) setMenuView("root");
-  }, [isMenuOpen]);
 
   const {  
     topWagonIsBurger,
@@ -274,6 +269,37 @@ export function SiteShell({
 
   const isProductsActive = useMemo(() => isActiveHref(productsHrefRoot), [isActiveHref, productsHrefRoot]);
 
+      // Подменю «Продукция»: основные категории — отдельные страницы
+  const productsBaseHref = useMemo(() => productsHrefRoot.replace(/\/+$/, ""), [productsHrefRoot]);
+
+  const productsSubLinks = useMemo(
+    () =>
+      [
+        {
+          id: "binders" as const,
+          label: locale === "ru" ? "Связующие" : "Binders",
+          href: `${productsBaseHref}/binders`,
+        },
+        {
+          id: "coatings" as const,
+          label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
+          href: `${productsBaseHref}/coatings`,
+        },
+        {
+          id: "aux" as const,
+          label: locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
+          href: `${productsBaseHref}/auxiliaries`,
+        },
+      ] as const,
+    [locale, productsBaseHref],
+  );
+
+  const activeProductsSubId = useMemo(() => {
+    const active = productsSubLinks.find((item) => isActiveHref(item.href));
+    return active?.id ?? "";
+  }, [isActiveHref, productsSubLinks]);
+
+  const isProductsRootActive = isProductsActive && !activeProductsSubId;
 
   // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
   useEffect(() => {
@@ -550,163 +576,88 @@ export function SiteShell({
     <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
       <div className="flex h-full flex-col">
         <div className="relative flex-1 overflow-hidden">
-          <div
-            className={cn(
-              "flex h-full w-[200%]",
-              "transform-gpu transition-transform duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
-              "motion-reduce:transition-none motion-reduce:duration-0",
-              menuView === "products" ? "-translate-x-1/2" : "translate-x-0",
-            )}
-          >
-            {/* ROOT */}
-            <div
-                aria-hidden={menuView === "products"}
-                {...inertProps(hasHydrated ? menuView === "products" : false)}
-                className={cn("w-1/2 pr-6")}
+          <ul className="m-0 list-none space-y-4 p-0">
+            <li>
+              <a
+                href={productsHrefRoot}
+                onClick={handleCloseMenu}
+                aria-current={isProductsRootActive ? "page" : undefined}
+                className={cn(
+                  "group block w-full py-2",
+                  "no-underline",
+                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                  isProductsRootActive
+                    ? "text-foreground"
+                    : "text-muted-foreground transition-colors hover:text-foreground",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                )}
               >
-              <ul className="m-0 list-none space-y-4 p-0">
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => setMenuView("products")}
-                    aria-current={isProductsActive ? "page" : undefined}
-                    className={cn(
-                      "group flex w-full items-center justify-between py-2",
-                      "no-underline",
-                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
-                      isProductsActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                    )}
-                  >
-                    <span className={isProductsActive ? menuUnderlineSpanActive : menuUnderlineSpan}>
-                      {navigation.header.find((l) => l.id === "products")?.label ??
-                        (locale === "ru" ? "Продукция" : "Products")}
-                    </span>
-                    <span className={cn("transition-colors", isProductsActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                      ›
-                    </span>
-                  </button>
-                </li>
+                <span className={isProductsRootActive ? menuUnderlineSpanActive : menuUnderlineSpan}>
+                  {navigation.header.find((l) => l.id === "products")?.label ??
+                    (locale === "ru" ? "Продукция" : "Products")}
+                </span>
+              </a>
 
-                {(["news", "about", "partners", "contacts"] as const).map((id) => {
-                  const link = navigation.header.find((l) => l.id === id);
-                  if (!link) return null;
-
-                  const href = (link.href ?? "/").trim() || "/";
-                  const isActive = isActiveHref(href);
+              
+              <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+                {productsSubLinks.map((item) => {
+                  const isActive = activeProductsSubId === item.id;
                   return (
-                    <li key={link.id}>
+                    <li key={item.id}>
                       <a
-                        href={href}
-                        target={link.newTab ? "_blank" : undefined}
-                        rel={link.newTab ? "noopener noreferrer" : undefined}
+                        href={item.href}
                         onClick={handleCloseMenu}
                         aria-current={isActive ? "page" : undefined}
                         className={cn(
-                          "group block w-full py-2",
+                          "group block w-full py-1.5",
                           "no-underline",
-                          "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
-                          isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                          "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                          isActive
+                            ? "text-foreground"
+                            : "text-muted-foreground transition-colors hover:text-foreground",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                           "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                         )}
                       >
-                        <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                        <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{item.label}</span>
                       </a>
                     </li>
                   );
                 })}
               </ul>
-            </div>
 
-            {/* PRODUCTS */}
-            <div
-                aria-hidden={menuView === "root"}
-                {...inertProps(hasHydrated ? menuView === "root" : false)}
-                className={cn("w-1/2 pl-6")}
-              >
-              <button
-                type="button"
-                onClick={() => setMenuView("root")}
-                className={cn(
-                  "mb-8 inline-flex items-center gap-2",
-                  "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                  "text-muted-foreground no-underline hover:text-foreground",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                )}
-              >
-                <span className="text-lg">‹</span>
-                {locale === "ru" ? "Назад" : "Back"}
-              </button>
+            </li>
 
-              {(() => {
-                const productsHref =
-                  (navigation.header.find((l) => l.id === "products")?.href ?? "/products").trim() ||
-                  "/products";
+            {(["news", "about", "partners", "contacts"] as const).map((id) => {
+              const link = navigation.header.find((l) => l.id === id);
+              if (!link) return null;
 
-                const items = [
-                  {
-                    id: "binders",
-                    label: locale === "ru" ? "Связующие" : "Binders",
-                    href: `${productsHref}#binders`,
-                  },
-                  {
-                    id: "coatings",
-                    label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
-                    href: `${productsHref}#coatings`,
-                  },
-                  {
-                    id: "aux",
-                    label:
-                      locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
-                    href: `${productsHref}#aux`,
-                  },
-                ] as const;
-
-                return (
-                  <ul className="m-0 list-none space-y-4 p-0">
-                    {items.map((item) => (
-                      <li key={item.id}>
-                        <a
-                          href={item.href}
-                          onClick={handleCloseMenu}
-                          className={cn(
-                            "group block w-full py-2",
-                            "no-underline",
-                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+1.0vw,1.75rem)] font-medium leading-[1.1] tracking-[-0.01em]",
-                            "text-muted-foreground transition-colors hover:text-foreground",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                          )}
-                        >
-                          <span className={menuUnderlineSpan}>{item.label}</span>
-                        </a>
-                      </li>
-                    ))}
-
-                    <li className="pt-6">
-                      <a
-                        href={productsHref}
-                        onClick={handleCloseMenu}
-                        aria-current={isProductsActive ? "page" : undefined}
-                        className={cn(
-                          "group inline-flex",
-                          "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                          isProductsActive ? "text-foreground" : "text-muted-foreground no-underline transition-colors hover:text-foreground",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                          "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                        )}
-                      >
-                        <span className={isProductsActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{locale === "ru" ? "Вся продукция" : "All products"}</span>
-                      </a>
-                    </li>
-                  </ul>
-                );
-              })()}
-            </div>
-          </div>
+              const href = (link.href ?? "/").trim() || "/";
+              const isActive = isActiveHref(href);
+              return (
+                <li key={link.id}>
+                  <a
+                    href={href}
+                    target={link.newTab ? "_blank" : undefined}
+                    rel={link.newTab ? "noopener noreferrer" : undefined}
+                    onClick={handleCloseMenu}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "group block w-full py-2",
+                      "no-underline",
+                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                      isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                    )}
+                  >
+                    <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         {/* контакты — снизу, в том же оформлении, что и в шапке */}
