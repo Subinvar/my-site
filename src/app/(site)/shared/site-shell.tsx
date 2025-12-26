@@ -16,7 +16,6 @@ import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { buildPath } from "@/lib/paths";
 import { cn } from "@/lib/cn";
-import { NavigationList } from "@/app/[locale]/navigation-list";
 import { HtmlLangSync } from "./html-lang-sync";
 import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
 import { useResizeTransitions } from "./hooks/use-resize-transitions";
@@ -27,8 +26,7 @@ import { useWindowResize } from "./hooks/use-window-resize";
 import { useScrollPosition } from "./hooks/use-scroll-position";
 import { HeaderBrand } from "./header-brand";
 import { HeaderNav } from "./header-nav";
-import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS, HeaderCta } from "./header-top-bar";
-import { MenuOverlay } from "./menu-overlay";
+import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
 import { SiteFooter } from "./site-footer";
 
 type SiteShellProps = {
@@ -95,6 +93,7 @@ export function SiteShell({
     : "";
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuView, setMenuView] = useState<"root" | "products">("root");
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
@@ -163,6 +162,10 @@ export function SiteShell({
     setIsMenuOpen((prev) => !prev);
   }, []);
 
+  useEffect(() => {
+    if (isMenuOpen) setMenuView("root");
+  }, [isMenuOpen]);
+
   const {  
     topWagonIsBurger,
     topWagonsCollapsed,
@@ -217,10 +220,9 @@ export function SiteShell({
     const focusFirst = () => {
       const container = menuPanelRef.current;
       if (!container) return;
-      const firstFocusable = container.querySelector<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
-      firstFocusable?.focus();
+      // Не уводим фокус на первую кнопку/ссылку (иначе появляется «как баг» яркая обводка).
+      // Вместо этого фокусируем контейнер: табуляция всё равно попадёт в первый пункт меню.
+      container.focus();
     };
 
     const raf = window.requestAnimationFrame(focusFirst);
@@ -452,64 +454,200 @@ export function SiteShell({
         </div>
 
         {isBurgerMode ? (
-          <aside id="site-menu"
-            ref={menuPanelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={menuDialogLabel}
-            tabIndex={-1}
+  <aside
+    id="site-menu"
+    ref={menuPanelRef}
+    role="dialog"
+    aria-modal="true"
+    aria-label={menuDialogLabel}
+    tabIndex={-1}
+    className={cn(
+      // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
+      "fixed inset-x-0 z-[49]",
+              isHeaderElevated
+                ? "bg-background/95 backdrop-blur-md"
+                : "bg-background/90 backdrop-blur",
+      "transform-gpu will-change-transform",
+      "transition-[opacity,transform] duration-300 ease-out",
+      "motion-reduce:transition-none motion-reduce:duration-0",
+      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0",
+    )}
+    style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
+  >
+    <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] py-10">
+      <div className="flex h-full flex-col">
+        <div className="relative flex-1 overflow-hidden">
+          <div
             className={cn(
-              "fixed inset-y-0 right-0 z-40 w-full max-w-xs border-l border-border bg-background/95 shadow-lg",
-              "backdrop-blur-sm",
-              "transform-gpu transition-transform duration-300 ease-out motion-reduce:transition-none motion-reduce:duration-0",
-              isMenuOpen ? "translate-x-0" : "translate-x-full",
+              "flex h-full w-[200%]",
+              "transform-gpu transition-transform duration-300 ease-out",
+              "motion-reduce:transition-none motion-reduce:duration-0",
+              menuView === "products" ? "-translate-x-1/2" : "translate-x-0",
             )}
-            style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
           >
-            <div className="flex h-full flex-col gap-4 p-6">
-              <HeaderCta
-                headerButtonBase={headerButtonBase}
-                href={contactsHref}
-                label={ctaLabel}
-                className="w-full justify-center"
-              />
-              <div className="flex flex-col gap-2 text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)]">
-                {site.contacts.phone ? (
-                  <a
-                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                    className={contactLinkBase}
+            {/* ROOT */}
+            <div className="w-1/2 pr-6">
+              <ul className="m-0 list-none space-y-4 p-0">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setMenuView("products")}
+                    className={cn(
+                      "group flex w-full items-center justify-between py-2",
+                      "no-underline",
+                      "text-[clamp(1.7rem,1.2rem+1.6vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.02em]",
+                      "text-foreground transition-opacity hover:opacity-80",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                    )}
                   >
-                    {site.contacts.phone}
-                  </a>
-                ) : null}
+                    <span>
+                      {navigation.header.find((l) => l.id === "products")?.label ??
+                        (locale === "ru" ? "Продукция" : "Products")}
+                    </span>
+                    <span className="text-muted-foreground transition-colors group-hover:text-foreground">
+                      ›
+                    </span>
+                  </button>
+                </li>
 
-                {site.contacts.email ? (
-                  <a
-                    href={`mailto:${site.contacts.email}`}
-                    className={contactLinkBase}
-                  >
-                    {site.contacts.email}
-                  </a>
-                ) : null}
-              </div>
+                {(["news", "about", "partners", "contacts"] as const).map((id) => {
+                  const link = navigation.header.find((l) => l.id === id);
+                  if (!link) return null;
 
-              <NavigationList
-                links={navigation.header}
-                ariaLabel={navigationLabels.headerLabel}
-                currentPath={currentPath}
-                density="compact"
-                layout="panel"
-              />
+                  const href = (link.href ?? "/").trim() || "/";
+                  return (
+                    <li key={link.id}>
+                      <a
+                        href={href}
+                        target={link.newTab ? "_blank" : undefined}
+                        rel={link.newTab ? "noopener noreferrer" : undefined}
+                        onClick={handleCloseMenu}
+                        className={cn(
+                          "block w-full py-2",
+                          "no-underline",
+                          "text-[clamp(1.7rem,1.2rem+1.6vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.02em]",
+                          "text-foreground transition-opacity hover:opacity-80",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                          "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                        )}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-          </aside>
-        ) : null}
-      </header>
 
-      <MenuOverlay
-        isVisible={isBurgerMode && isMenuOpen}
-        onClose={handleCloseMenu}
-        closeMenuLabel={locale === "ru" ? "Закрыть меню" : "Close menu"}
-      />
+            {/* PRODUCTS */}
+            <div className="w-1/2 pl-6">
+              <button
+                type="button"
+                onClick={() => setMenuView("root")}
+                className={cn(
+                  "mb-8 inline-flex items-center gap-2",
+                  "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                  "text-muted-foreground no-underline hover:text-foreground",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                )}
+              >
+                <span className="text-lg">‹</span>
+                {locale === "ru" ? "Назад" : "Back"}
+              </button>
+
+              {(() => {
+                const productsHref =
+                  (navigation.header.find((l) => l.id === "products")?.href ?? "/products").trim() ||
+                  "/products";
+
+                const items = [
+                  {
+                    id: "binders",
+                    label: locale === "ru" ? "Связующие" : "Binders",
+                    href: `${productsHref}#binders`,
+                  },
+                  {
+                    id: "coatings",
+                    label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
+                    href: `${productsHref}#coatings`,
+                  },
+                  {
+                    id: "aux",
+                    label:
+                      locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
+                    href: `${productsHref}#aux`,
+                  },
+                ] as const;
+
+                return (
+                  <ul className="m-0 list-none space-y-4 p-0">
+                    {items.map((item) => (
+                      <li key={item.id}>
+                        <a
+                          href={item.href}
+                          onClick={handleCloseMenu}
+                          className={cn(
+                            "block w-full py-2",
+                            "no-underline",
+                            "text-[clamp(1.45rem,1.05rem+1.2vw,2.1rem)] font-semibold leading-[1.1] tracking-[-0.02em]",
+                            "text-foreground transition-opacity hover:opacity-80",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                          )}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
+
+                    <li className="pt-6">
+                      <a
+                        href={productsHref}
+                        onClick={handleCloseMenu}
+                        className={cn(
+                          "inline-flex",
+                          "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                          "text-muted-foreground no-underline hover:text-foreground hover:underline underline-offset-4",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                          "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                        )}
+                      >
+                        {locale === "ru" ? "Все продукты" : "All products"}
+                      </a>
+                    </li>
+                  </ul>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+
+        {/* контакты — снизу, в том же оформлении, что и в шапке */}
+        <div className="pt-10 text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)]">
+          <div className="flex flex-col gap-2">
+            {site.contacts.phone ? (
+              <a
+                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
+                className={contactLinkBase}
+              >
+                {site.contacts.phone}
+              </a>
+            ) : null}
+
+            {site.contacts.email ? (
+              <a href={`mailto:${site.contacts.email}`} className={contactLinkBase}>
+                {site.contacts.email}
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+) : null}
+      </header>
 
       <main
         id="main"
