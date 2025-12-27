@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getHomePage, resolveHomeMetadata } from '@/app/(site)/shared/home-page';
 import { switchLocalePath, findTargetLocale, buildPath } from '@/lib/paths';
@@ -39,7 +39,7 @@ export default async function RootHomePage() {
   const currentPath = buildPath(locale);
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -73,7 +73,7 @@ export default async function RootHomePage() {
 
         <ProductCategoriesSection locale={locale} />
       </div>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

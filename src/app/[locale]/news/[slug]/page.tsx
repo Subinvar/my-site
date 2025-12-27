@@ -8,7 +8,7 @@ import {
   getPostPage,
   resolvePostPageMetadata,
 } from '@/app/(site)/shared/post-page';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
@@ -48,7 +48,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const hero = post.hero ?? post.cover ?? null;
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -93,7 +93,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </ul>
         ) : null}
       </article>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

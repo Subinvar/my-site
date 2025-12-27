@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { DocumentsFilters, type DocumentFilterValues, type LangFilterValue } from '@/app/(site)/shared/filter-controls';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import {
   DOCUMENT_TYPES,
@@ -99,7 +99,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
   };
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -197,7 +197,7 @@ export default async function DocumentsPage({ params, searchParams }: PageProps)
           )}
         </section>
       </div>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

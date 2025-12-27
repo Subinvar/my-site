@@ -32,7 +32,7 @@ import {
 } from '@/app/(site)/shared/catalog-page-messages';
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import { isLocale, type Locale } from '@/lib/i18n';
@@ -83,7 +83,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -155,7 +155,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
           </div>
         </section>
       </main>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

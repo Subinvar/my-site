@@ -10,7 +10,7 @@ import {
 } from '@/app/(site)/shared/catalog-page-messages';
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getCatalogTaxonomyOptions, getCatalogTaxonomyValues } from '@/lib/catalog/constants';
 import { isLocale, type Locale } from '@/lib/i18n';
@@ -72,7 +72,7 @@ export default async function BinderProcessCatalogPage({ params }: PageProps) {
       : `${processOption.label} binders. Open a product card to view specs and documents.`;
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -104,6 +104,6 @@ export default async function BinderProcessCatalogPage({ params }: PageProps) {
           />
         </section>
       </main>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }

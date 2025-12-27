@@ -11,7 +11,7 @@ import {
   getLocalizedCatalogParams,
   resolveCatalogProductMetadata,
 } from '@/app/(site)/shared/catalog';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { Button } from '@/app/(site)/shared/ui/button';
@@ -103,7 +103,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   });
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -209,7 +209,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
           </footer>
         </div>
       </main>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

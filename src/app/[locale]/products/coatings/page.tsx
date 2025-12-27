@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { ProductCategoryCard } from '@/app/(site)/shared/ui/product-category-card';
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
@@ -53,7 +53,7 @@ export default async function CoatingTypesPage({ params }: PageProps) {
     }));
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -81,6 +81,6 @@ export default async function CoatingTypesPage({ params }: PageProps) {
           </div>
         </section>
       </main>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
