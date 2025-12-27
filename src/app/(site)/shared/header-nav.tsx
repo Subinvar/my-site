@@ -3,6 +3,7 @@
 import { memo, type HTMLAttributes, type RefObject } from "react";
 
 import { NavigationList } from "@/app/[locale]/navigation-list";
+import type { Locale } from "@/lib/i18n";
 import type { Navigation } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
 
@@ -13,6 +14,7 @@ type HeaderNavProps = {
   navMeasureRef?: RefObject<HTMLDivElement | null>;
   navigation: Navigation;
   navigationLabel: string;
+  locale: Locale;
   currentPath: string;
   isBurgerMode: boolean;
   hasHydrated: boolean;
@@ -45,6 +47,7 @@ export const HeaderNav = memo(function HeaderNav({
   navMeasureRef,
   navigation,
   navigationLabel,
+  locale,
   currentPath,
   isBurgerMode,
   hasHydrated,
@@ -63,6 +66,14 @@ export const HeaderNav = memo(function HeaderNav({
   ctaLabel,
   headerButtonBase,
 }: HeaderNavProps) {
+  const burgerAriaLabel = locale === "ru"
+    ? isMenuOpen
+      ? "Закрыть меню"
+      : "Открыть меню"
+    : isMenuOpen
+      ? "Close menu"
+      : "Open menu";
+
   return (
     <div
       ref={navHostRef}
@@ -121,18 +132,17 @@ export const HeaderNav = memo(function HeaderNav({
 
             <button
               type="button"
-              aria-pressed={isMenuOpen}
               aria-expanded={isMenuOpen}
               aria-controls="site-menu"
-              aria-label={navigationLabel}
+              aria-label={burgerAriaLabel}
               onClick={onBurgerClick}
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-transparent bg-transparent",
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl border",
                 "transition-colors duration-150",
                 isMenuOpen
-                  ? "text-foreground !border-[color:var(--header-border)]"
-                  : "border-transparent text-muted-foreground",
-                "hover:border-[color:var(--header-border)] hover:bg-transparent hover:text-foreground",
+                  ? "border-[color:var(--header-border)] bg-background/70 text-foreground"
+                  : "border-transparent bg-transparent text-muted-foreground",
+                "hover:border-[color:var(--header-border)] hover:text-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                 "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
               )}

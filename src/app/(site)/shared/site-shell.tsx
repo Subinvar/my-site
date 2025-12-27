@@ -536,6 +536,7 @@ export function SiteShell({
                   navMeasureRef={navMeasureRef}
                   navigation={navigation}
                   navigationLabel={navigationLabels.headerLabel}
+                  locale={locale}
                   currentPath={currentPath}
                   isBurgerMode={isBurgerMode}
                   hasHydrated={hasHydrated}
@@ -733,6 +734,7 @@ export function SiteShell({
           currentPath={currentPath}
           copyrightText={copyrightText}
           contacts={site.contacts}
+          isBurgerMode={isBurgerMode}
         />
       </div>
     </div>
