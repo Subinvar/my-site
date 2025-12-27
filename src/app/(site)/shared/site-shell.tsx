@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -34,6 +35,17 @@ const normalizePathname = (value: string): string => {
   const [path] = (pathWithoutQuery ?? "").split("#");
   const trimmed = (path ?? "/").replace(/\/+$/, "");
   return trimmed.length ? trimmed : "/";
+};
+
+const isExternalHref = (href: string): boolean => {
+  const normalized = resolveHref(href);
+  return (
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://") ||
+    normalized.startsWith("//") ||
+    normalized.startsWith("mailto:") ||
+    normalized.startsWith("tel:")
+  );
 };
 
 const resolveHref = (href: string): string => {
@@ -578,7 +590,7 @@ export function SiteShell({
         <div className="relative flex-1 overflow-hidden">
           <ul className="m-0 list-none space-y-4 p-0">
             <li>
-              <a
+              <Link
                 href={productsHrefRoot}
                 onClick={handleCloseMenu}
                 aria-current={isProductsRootActive ? "page" : undefined}
@@ -597,15 +609,14 @@ export function SiteShell({
                   {navigation.header.find((l) => l.id === "products")?.label ??
                     (locale === "ru" ? "Продукция" : "Products")}
                 </span>
-              </a>
+              </Link>
 
-              
               <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
                 {productsSubLinks.map((item) => {
                   const isActive = activeProductsSubId === item.id;
                   return (
                     <li key={item.id}>
-                      <a
+                      <Link
                         href={item.href}
                         onClick={handleCloseMenu}
                         aria-current={isActive ? "page" : undefined}
@@ -621,7 +632,7 @@ export function SiteShell({
                         )}
                       >
                         <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{item.label}</span>
-                      </a>
+                      </Link>
                     </li>
                   );
                 })}
@@ -635,25 +646,43 @@ export function SiteShell({
 
               const href = (link.href ?? "/").trim() || "/";
               const isActive = isActiveHref(href);
+              const isExternal = link.newTab || isExternalHref(href);
               return (
                 <li key={link.id}>
-                  <a
-                    href={href}
-                    target={link.newTab ? "_blank" : undefined}
-                    rel={link.newTab ? "noopener noreferrer" : undefined}
-                    onClick={handleCloseMenu}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "group block w-full py-2",
-                      "no-underline",
-                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
-                      isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                    )}
-                  >
-                    <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
-                  </a>
+                  {isExternal ? (
+                    <a
+                      href={href}
+                      target={link.newTab ? "_blank" : undefined}
+                      rel={link.newTab ? "noopener noreferrer" : undefined}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "group block w-full py-2",
+                        "no-underline",
+                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                        isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                      )}
+                    >
+                      <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={href}
+                      onClick={handleCloseMenu}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "group block w-full py-2",
+                        "no-underline",
+                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                        isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                      )}
+                    >
+                      <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                    </Link>
+                  )}
                 </li>
               );
             })}

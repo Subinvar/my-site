@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { memo } from "react";
 
 import { cn } from "@/lib/cn";
@@ -13,7 +14,7 @@ export type HeaderBrandProps = {
 export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBrandProps) {
   return (
     <div className="flex items-center lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg">
-      <a
+      <Link
         href={href}
         className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
@@ -35,7 +36,7 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
         >
           {label}
         </span>
-      </a>
+      </Link>
     </div>
   );
 });
