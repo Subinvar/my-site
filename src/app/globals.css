@@ -224,7 +224,8 @@ html {
   --card-foreground: #111827;
 
   --border: #e5e7eb;
-  --header-border: rgba(17, 24, 39, 0.08);
+  --border-subtle: color-mix(in srgb, var(--border) 60%, transparent);
+  --header-border: var(--border-subtle);
   --input: #e5e7eb;
 
   --success: #16a34a;
@@ -252,7 +253,8 @@ html {
     --card-foreground: #f9fafb;
 
     --border: #1f2937;
-    --header-border: rgba(255, 255, 255, 0.1);
+    --border-subtle: color-mix(in srgb, var(--border) 65%, transparent);
+    --header-border: var(--border-subtle);
     --input: #1f2937;
 
     --success: #22c55e;
@@ -339,15 +341,25 @@ html[data-theme="dark"] {
   --color-brand-600: #941b20;
   --color-brand-700: #7b141a;
 
+  /* Радиусы */
+  --radius-ui: 0.75rem; /* 12px — единый радиус для кнопок/пиллов/переключателей */
+  --radius-surface: 1rem; /* 16px — для крупных поверхностей (панели/карточки) */
+
+  /* Маппинг в Tailwind scale: делаем rounded-lg и rounded-xl одинаковыми */
+  --radius-md: var(--radius-ui);
+  --radius-lg: var(--radius-ui);
+  --radius-xl: var(--radius-ui);
+  --radius-2xl: var(--radius-surface);
+
   /* Шрифты */
   --font-sans:
-    var(--font-body), ui-sans-serif, system-ui, -apple-system,
+    var(--font-body-var), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans",
     "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", "Noto Color Emoji";
 
   --font-heading:
-    var(--font-heading), var(--font-body), ui-sans-serif, system-ui,
+    var(--font-heading-var), var(--font-body-var), ui-sans-serif, system-ui,
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
     "Noto Sans", "Liberation Sans", sans-serif;
 
