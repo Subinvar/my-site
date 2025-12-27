@@ -698,10 +698,12 @@ export function SiteShell({
 
       <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
         <SiteFooter
+          locale={locale}
           navigation={navigation}
           navigationLabel={navigationLabels.footerLabel}
           currentPath={currentPath}
           copyrightText={copyrightText}
+          contacts={site.contacts}
         />
       </div>
     </div>
