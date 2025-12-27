@@ -25,7 +25,6 @@ import { useHeaderHeight } from "./hooks/use-header-height";
 import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
-import { useScrollPosition } from "./hooks/use-scroll-position";
 import { HeaderBrand } from "./header-brand";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
@@ -211,14 +210,6 @@ export function SiteShell({
     return () => window.cancelAnimationFrame(frame);
   }, [currentPath, isMenuOpen]);
 
-  useScrollPosition(
-    () => {
-      if (!isMenuModal) return;
-      handleCloseMenu();
-    },
-    { disabled: !isBurgerMode, immediate: false },
-  );
-
   useWindowResize(
     () => {
       if (isBurgerMode || !isMenuOpen) return;
@@ -241,7 +232,7 @@ export function SiteShell({
 
     if (!isMenuMounted) return;
 
-    const duration = prefersReducedMotion ? 0 : 640;
+    const duration = prefersReducedMotion ? 0 : 320;
     const t = window.setTimeout(() => setIsMenuMounted(false), duration);
     return () => window.clearTimeout(t);
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
@@ -555,9 +546,6 @@ export function SiteShell({
   <aside
     id="site-menu"
     ref={menuPanelRef}
-    role="dialog"
-    aria-modal="true"
-    aria-label={menuDialogLabel}
     tabIndex={-1}
     aria-hidden={hasHydrated ? !isMenuOpen : undefined}
     {...inertProps(hasHydrated ? !isMenuOpen : false)}
@@ -568,76 +556,77 @@ export function SiteShell({
                 ? "bg-background/95 backdrop-blur-md"
                 : "bg-background/90 backdrop-blur",
       "transform-gpu will-change-transform",
-      "transition-[opacity,transform] duration-[640ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+      "transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
       "motion-reduce:transition-none motion-reduce:duration-0",
       isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0",
     )}
     style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
   >
-    <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
-      <div className="flex h-full flex-col">
-        <div className="relative flex-1 overflow-hidden">
-          <ul className="m-0 list-none space-y-4 p-0">
-            <li>
-              <Link
-                href={productsHrefRoot}
-                onClick={handleCloseMenu}
-                aria-current={isProductsRootActive ? "page" : undefined}
-                className={cn(
-                  "group block w-full py-2",
-                  "no-underline",
-                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
-                  isProductsRootActive
-                    ? "text-foreground"
-                    : "text-muted-foreground transition-colors hover:text-foreground",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                )}
-              >
-                <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
-                  {navigation.header.find((l) => l.id === "products")?.label ??
-                    (locale === "ru" ? "Продукция" : "Products")}
-                </span>
-              </Link>
+    <nav aria-label={menuDialogLabel} className="h-full">
+      <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
+        <div className="flex h-full flex-col">
+          <div className="relative flex-1 overflow-hidden">
+            <ul className="m-0 list-none space-y-4 p-0">
+              <li>
+                <Link
+                  href={productsHrefRoot}
+                  onClick={handleCloseMenu}
+                  aria-current={isProductsRootActive ? "page" : undefined}
+                  className={cn(
+                    "group block w-full py-2",
+                    "no-underline",
+                    "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                    isProductsRootActive
+                      ? "text-foreground"
+                      : "text-muted-foreground transition-colors hover:text-foreground",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                    "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  )}
+                >
+                  <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
+                    {navigation.header.find((l) => l.id === "products")?.label ??
+                      (locale === "ru" ? "Продукция" : "Products")}
+                  </span>
+                </Link>
 
-              <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
-                {productsSubLinks.map((item) => {
-                  const isActive = activeProductsSubId === item.id;
-                  return (
-                    <li key={item.id}>
-                      <Link
-                        href={item.href}
-                        onClick={handleCloseMenu}
-                        aria-current={isActive ? "page" : undefined}
-                        className={cn(
-                          "group block w-full py-1.5",
-                          "no-underline",
-                          "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                          isActive
-                            ? "text-foreground"
-                            : "text-muted-foreground transition-colors hover:text-foreground",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                          "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                        )}
-                      >
-                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+                  {productsSubLinks.map((item) => {
+                    const isActive = activeProductsSubId === item.id;
+                    return (
+                      <li key={item.id}>
+                        <Link
+                          href={item.href}
+                          onClick={handleCloseMenu}
+                          aria-current={isActive ? "page" : undefined}
+                          className={cn(
+                            "group block w-full py-1.5",
+                            "no-underline",
+                            "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted-foreground transition-colors hover:text-foreground",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                          )}
+                        >
+                          <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
 
-            </li>
+              </li>
 
-            {(["news", "about", "partners", "contacts"] as const).map((id) => {
-              const link = navigation.header.find((l) => l.id === id);
-              if (!link) return null;
+              {(["news", "about", "partners", "contacts"] as const).map((id) => {
+                const link = navigation.header.find((l) => l.id === id);
+                if (!link) return null;
 
-              const href = (link.href ?? "/").trim() || "/";
-              const isActive = isActiveHref(href);
-              const isExternal = link.newTab || isExternalHref(href);
-              return (
-                <li key={link.id}>
+                const href = (link.href ?? "/").trim() || "/";
+                const isActive = isActiveHref(href);
+                const isExternal = link.newTab || isExternalHref(href);
+                return (
+                  <li key={link.id}>
                   {isExternal ? (
                     <a
                       href={href}
@@ -699,6 +688,7 @@ export function SiteShell({
         </div>
       </div>
     </div>
+  </nav>
   </aside>
 ) : null}
 
