@@ -14,7 +14,7 @@ import { PartnersSuppliersSection } from '@/app/(site)/shared/partners-suppliers
 import { KeyClientsStrip } from '@/app/(site)/shared/key-clients-strip';
 import { PartnersCta } from '@/app/(site)/shared/partners-cta';
 import { PostsList } from '@/app/(site)/shared/posts-list';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 
@@ -54,7 +54,7 @@ export default async function Page({ params }: PageProps) {
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -87,7 +87,7 @@ export default async function Page({ params }: PageProps) {
         {isProductsPage ? <ProductCategoriesSection locale={locale} /> : null}
         {isNewsPage ? <PostsList locale={locale} /> : null}
       </div>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

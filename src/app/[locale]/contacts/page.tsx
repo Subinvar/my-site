@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import type { ReactNode } from 'react';
 
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
@@ -176,7 +176,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   }
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -231,7 +231,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           </article>
         </div>
       ) : null}
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

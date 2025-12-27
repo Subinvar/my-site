@@ -7,7 +7,7 @@ import {
   resolveHomeMetadata,
 } from '@/app/(site)/shared/home-page';
 import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { findTargetLocale, switchLocalePath, buildPath } from '@/lib/paths';
 import { Hero } from '@/components/home/Hero';
@@ -54,7 +54,7 @@ export default async function HomePage({ params }: PageProps) {
   const currentPath = buildPath(locale);
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -88,7 +88,7 @@ export default async function HomePage({ params }: PageProps) {
 
         <ProductCategoriesSection locale={locale} />
       </div>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 

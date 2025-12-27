@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { SiteShell } from '@/app/(site)/shared/site-shell';
+import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import {
   getContentPage,
@@ -43,7 +43,7 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
   const currentPath = buildPath(locale, [slug]);
 
   return (
-    <SiteShell
+    <SiteShellLayout
       locale={locale}
       targetLocale={targetLocale}
       site={shell.site}
@@ -70,7 +70,7 @@ export default async function DefaultLocaleContentPage({ params }: PageProps) {
         ) : null}
         {isNewsPage ? <PostsList locale={locale} /> : null}
       </div>
-    </SiteShell>
+    </SiteShellLayout>
   );
 }
 
