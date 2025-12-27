@@ -28,7 +28,6 @@ import { useWindowResize } from "./hooks/use-window-resize";
 import { HeaderBrand } from "./header-brand";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
-import { SiteFooter } from "./site-footer";
 
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
@@ -62,6 +61,7 @@ type SiteShellProps = {
   currentPath: string;
   currentYear: number;
   children: ReactNode;
+  footer?: ReactNode;
 };
 
 const brandFont = { variable: "font-brand-var" };
@@ -99,6 +99,7 @@ export function SiteShell({
   currentPath,
   currentYear,
   children,
+  footer,
 }: SiteShellProps) {
   const brandName = site.name?.trim() ?? "";
   const dictionary = getInterfaceDictionary(locale);
@@ -705,15 +706,7 @@ export function SiteShell({
       </main>
 
       <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
-        <SiteFooter
-          locale={locale}
-          navigation={navigation}
-          navigationLabel={navigationLabels.footerLabel}
-          currentPath={currentPath}
-          copyrightText={copyrightText}
-          contacts={site.contacts}
-          isBurgerMode={isBurgerMode}
-        />
+        {footer}
       </div>
     </div>
   );

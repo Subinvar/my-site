@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { memo, useMemo } from "react";
 
 import { cn } from "@/lib/cn";
 import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
@@ -14,7 +11,6 @@ export type SiteFooterProps = {
   currentPath: string;
   copyrightText: string;
   contacts: SiteContent["contacts"];
-  isBurgerMode: boolean;
 };
 
 const normalizePathname = (value: string): string => {
@@ -43,6 +39,26 @@ const isPrivacyLikeLabel = (label: string): boolean => {
     v.includes("personal data") ||
     v.includes("персональн")
   );
+};
+
+const pickLinksByIds = (links: NavigationLink[], desiredIds: string[]): NavigationLink[] => {
+  if (!desiredIds.length) return [];
+
+  const byId = new Map<string, NavigationLink>();
+  for (const link of links) byId.set(link.id, link);
+
+  const picked: NavigationLink[] = [];
+  const pickedIds = new Set<string>();
+
+  for (const desiredId of desiredIds) {
+    const match = byId.get(desiredId);
+    if (match && !pickedIds.has(match.id)) {
+      picked.push(match);
+      pickedIds.add(match.id);
+    }
+  }
+
+  return picked;
 };
 
 const pickLinksByLabels = (
@@ -86,22 +102,32 @@ const pickLinksByLabels = (
 };
 
 
-export const SiteFooter = memo(function SiteFooter({
+export function SiteFooter({
   locale,
   navigation,
   navigationLabel,
   currentPath,
   copyrightText,
   contacts,
-  isBurgerMode,
 }: SiteFooterProps) {
   const normalizedCurrent = normalizePathname(currentPath);
 
-  const contactsHref = useMemo(() => inferContactsHref(currentPath), [currentPath]);
+  const contactsHref = inferContactsHref(currentPath);
 
-  const footerLinks = useMemo(() => {
+  const footerLinks = (() => {
     const base = navigation.footer ?? [];
 
+    const desiredIds = [
+      // IMPORTANT: эти id должны быть стабильными в navigation.footer (Keystatic/настройки навигации)
+      "binders",
+      "coatings",
+      "auxiliaries",
+      "catalog",
+      "documents",
+      "privacy",
+    ];
+
+    // Fallback по label на случай, если id ещё не приведены к стабильным
     const desiredRu = [
       "Связующие",
       "Противопригарные покрытия",
@@ -120,10 +146,10 @@ export const SiteFooter = memo(function SiteFooter({
       "Personal data policy",
     ];
 
-    const desired = locale === "ru" ? desiredRu : desiredEn;
+    const pickedById = pickLinksByIds(base, desiredIds);
+    const picked = pickedById.length ? pickedById : pickLinksByLabels(base, locale === "ru" ? desiredRu : desiredEn);
 
-    const picked = pickLinksByLabels(base, desired);
-    let result = picked.length ? picked : base;
+let result = picked.length ? picked : base;
 
     // Если по точным меткам не нашли — всё равно стараемся добавить политику
     if (!result.some((link) => isPrivacyLikeLabel(link.label))) {
@@ -132,17 +158,18 @@ export const SiteFooter = memo(function SiteFooter({
     }
 
     // Политика ПДн временно ведёт на страницу "Контакты"
-    return result.map((link) =>
-      isPrivacyLikeLabel(link.label)
+    return result.map((link) => {
+      const isPrivacyLink = link.id === "privacy" || isPrivacyLikeLabel(link.label);
+      return isPrivacyLink
         ? { ...link, href: contactsHref, isExternal: false }
-        : link,
-    );
-  }, [navigation.footer, locale, contactsHref]);
+        : link;
+    });
+  })();
 
-  const footerLinkRows = useMemo(() => {
+  const footerLinkRows = (() => {
     if (footerLinks.length <= 3) return [footerLinks];
     return [footerLinks.slice(0, 3), footerLinks.slice(3)];
-  }, [footerLinks]);
+  })();
 
   const tagline =
     locale === "ru"
@@ -163,9 +190,6 @@ export const SiteFooter = memo(function SiteFooter({
     copyrightText.trim().length > 0
       ? copyrightText.trim()
       : `© ${currentYear} Интема Групп. Все права защищены.`;
-
-  const dotClassName = "text-muted-foreground/60";
-
   const baseLinkClassName = cn(
     "relative inline-flex items-center no-underline",
     "after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full",
@@ -180,7 +204,7 @@ export const SiteFooter = memo(function SiteFooter({
 
   const menuLinkBaseClassName = cn(
     "group inline-flex h-10 items-center gap-1 no-underline",
-    "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+    "text-[clamp(0.875rem,0.84rem+0.18vw,0.95rem)] font-medium leading-[1.15]",
     "active:opacity-90",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   );
@@ -203,12 +227,12 @@ export const SiteFooter = memo(function SiteFooter({
 
 
   return (
-    <footer className="border-t border-border bg-muted/60">
-      <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-6">
-        <div className="flex flex-col gap-4 text-xs text-muted-foreground">
+    <footer className="border-t border-border bg-muted">
+      <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-[clamp(1.5rem,1.2rem+0.8vw,2rem)]">
+        <div className="flex flex-col gap-4 text-[13px] leading-[1.35] text-muted-foreground sm:text-[14px]">
           {/* Row 1: tagline + secondary navigation */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="m-0 text-xs font-medium text-foreground/90">{tagline}</p>
+            <p className="m-0 text-[14px] font-medium leading-[1.35] text-foreground/90 sm:text-[15px]">{tagline}</p>
 
             {footerLinks.length ? (
               <nav aria-label={navigationLabel}>
@@ -266,7 +290,7 @@ export const SiteFooter = memo(function SiteFooter({
 
           {/* Row 2: contacts + copyright */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-col gap-1 text-[11px] sm:text-xs">
+            <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <a
                   href={telegramHref}
@@ -277,55 +301,38 @@ export const SiteFooter = memo(function SiteFooter({
                   Telegram
                 </a>
 
-                {isBurgerMode ? (
-                  <>
-                    {contacts.phone ? (
-                      <>
-                        <span className={dotClassName}>•</span>
-                        <a
-                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                          className={cn(baseLinkClassName, "hover:text-foreground")}
-                        >
-                          {contacts.phone}
-                        </a>
-                      </>
-                    ) : null}
+                {contacts.phone ? (
+                  <a
+                    href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
+                  >
+                    {contacts.phone}
+                  </a>
+                ) : null}
 
-                    {contacts.email ? (
-                      <>
-                        <span className={dotClassName}>•</span>
-                        <a
-                          href={`mailto:${contacts.email}`}
-                          className={cn(baseLinkClassName, "hover:text-foreground")}
-                        >
-                          {contacts.email}
-                        </a>
-                      </>
-                    ) : null}
-                  </>
-                ) : (
-                  <>
-                    <span className={dotClassName}>•</span>
-                    <span>{address}</span>
-                    <span className={dotClassName}>•</span>
-                    <span>{hours}</span>
-                  </>
-                )}
+                {contacts.email ? (
+                  <a
+                    href={`mailto:${contacts.email}`}
+                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
+                  >
+                    {contacts.email}
+                  </a>
+                ) : null}
+
+                <span className="hidden lg:inline">{address}</span>
+                <span className="hidden lg:inline whitespace-nowrap">{hours}</span>
               </div>
 
-              {isBurgerMode ? (
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <span>{address}</span>
-                  <span className={dotClassName}>•</span>
-                  <span>{hours}</span>
-                </div>
-              ) : null}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 lg:hidden">
+                <span>{address}</span>
+                <span className="whitespace-nowrap">{hours}</span>
+              </div>
             </div>
 
-            <p className="m-0 text-[11px] sm:text-xs">{resolvedCopyright}</p>
+            <p className="m-0 text-[12px] leading-[1.4] sm:text-[13px]">{resolvedCopyright}</p>
           </div>
         </div>
       </div>
     </footer>
   );
-});
+}
