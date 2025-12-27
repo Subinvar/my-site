@@ -17,6 +17,7 @@ import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { buildPath } from "@/lib/paths";
 import { cn } from "@/lib/cn";
+import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import { HtmlLangSync } from "./html-lang-sync";
 import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
 import { useResizeTransitions } from "./hooks/use-resize-transitions";
@@ -74,20 +75,6 @@ const pillBase =
 
 const contactLinkBase =
   "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
-
-const menuUnderlineSpan =
-  "relative inline-block after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-px after:rounded-full " +
-  "after:bg-transparent after:origin-left after:scale-x-0 " +
-  "after:transition-[transform,background-color] after:duration-200 after:ease-out " +
-  "group-hover:after:bg-[var(--header-border)] group-focus-visible:after:bg-[var(--header-border)] " +
-  "group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100";
-
-const menuUnderlineSpanActive =
-  "relative inline-block after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:rounded-full " +
-  "after:bg-foreground after:origin-left after:scale-x-100 " +
-  "after:transition-[transform,background-color] after:duration-200 after:ease-out " +
-  "group-hover:after:bg-foreground group-focus-visible:after:bg-foreground";
-
 
 type SkipToContentLinkProps = {
   label: string;
@@ -607,7 +594,7 @@ export function SiteShell({
                   "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                 )}
               >
-                <span className={isProductsRootActive ? menuUnderlineSpanActive : menuUnderlineSpan}>
+                <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
                   {navigation.header.find((l) => l.id === "products")?.label ??
                     (locale === "ru" ? "Продукция" : "Products")}
                 </span>
@@ -633,7 +620,7 @@ export function SiteShell({
                           "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                         )}
                       >
-                        <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{item.label}</span>
+                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
                       </Link>
                     </li>
                   );
@@ -666,7 +653,7 @@ export function SiteShell({
                         "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                       )}
                     >
-                      <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                      <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
                     </a>
                   ) : (
                     <Link
@@ -682,7 +669,7 @@ export function SiteShell({
                         "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                       )}
                     >
-                      <span className={isActive ? menuUnderlineSpanActive : menuUnderlineSpan}>{link.label}</span>
+                      <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
                     </Link>
                   )}
                 </li>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type React from "react";
 
 import { cn } from "@/lib/cn";
+import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import type { NavigationLink } from "@/lib/keystatic";
 
 type NavigationListProps = {
@@ -60,45 +61,12 @@ export function NavigationList({
       ? "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]"
       : "text-[clamp(0.99rem,0.935rem+0.33vw,1.21rem)] font-medium";
 
-  const underlineOffsetClass = !isPanel ? "after:bottom-0" : "";
-  const underlinePadClass = "";
   const linkHeightClass = isPanel ? "h-11" : density === "compact" ? "h-10" : "";
-
-  const labelUnderlineBaseClassName = cn(
-    isPanel ? "relative inline-block" : "relative inline-flex h-full items-center",
-    underlinePadClass,
-    "after:absolute after:left-0 after:right-0 after:rounded-full",
-    underlineOffsetClass,
-    "after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out",
-  );
-
-  const labelInnerClassName = isPanel
-    ? "relative inline-block"
-    : cn(
-        labelUnderlineBaseClassName,
-        "after:h-[1px]",
-        // старт: линии нет
-        "after:bg-transparent after:scale-x-0",
-        // hover/focus: линия появляется и по цвету = border (как у Theme/Language toggle)
-        "group-hover:after:bg-[color:var(--header-border)] group-focus-visible:after:bg-[color:var(--header-border)]",
-        "group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100",
-      );
-
-  const activeLabelInnerClassName = isPanel
-    ? labelInnerClassName
-    : cn(
-        labelUnderlineBaseClassName,
-        "after:h-[2px]",
-        // активная страница: линия всегда видна и тёмная (в цвет текста пункта)
-        "after:scale-x-100 after:bg-current",
-        // и не перекрашиваем её в серую на hover/focus
-        "group-hover:after:bg-current group-focus-visible:after:bg-current",
-      );
 
   return (
     <nav aria-label={resolvedLabel} className={className}>
       <ul className={listClassName}>
-        {links.map((link, index) => {
+        {links.map((link) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
           const isActive =
@@ -109,8 +77,6 @@ export function NavigationList({
 
           const slotWidth = stableSlots?.[link.id];
           const isStableSlot = typeof slotWidth === "number";
-          const isFirst = index === 0;
-          const isLast = index === links.length - 1;
 
           const stableAlignClass = isStableSlot ? "flex w-full justify-center" : "";
 
@@ -162,7 +128,9 @@ export function NavigationList({
                 >
                   <span
                     className={
-                      isActive ? activeLabelInnerClassName : labelInnerClassName
+                      isPanel
+                        ? "relative inline-block"
+                        : navUnderlineSpanClass(isActive, "header")
                     }
                   >
                     {link.label}
@@ -181,7 +149,9 @@ export function NavigationList({
               >
                 <span
                   className={
-                    isActive ? activeLabelInnerClassName : labelInnerClassName
+                    isPanel
+                      ? "relative inline-block"
+                      : navUnderlineSpanClass(isActive, "header")
                   }
                 >
                   {link.label}
