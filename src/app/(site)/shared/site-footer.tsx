@@ -204,7 +204,7 @@ export const SiteFooter = memo(function SiteFooter({
 
   return (
     <footer className="border-t border-border bg-muted/60">
-      <div className="mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6">
+      <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-6">
         <div className="flex flex-col gap-4 text-xs text-muted-foreground">
           {/* Row 1: tagline + secondary navigation */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

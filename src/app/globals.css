@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Open+Sans:wght@300..800&display=swap");
 @import "tailwindcss";
 
 @layer utilities {
@@ -197,12 +196,12 @@
   --header-ui-leading: 1.1;
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
-  --header-height-initial: 84px;
+  --header-height-initial: calc(var(--header-logo-h) + var(--header-pad-y) + var(--header-pad-y));
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-height-initial: 116px;
+    --header-height-initial: calc(40px + 40px + 8px + var(--header-pad-y) + var(--header-pad-y));
   }
 }
 
@@ -233,7 +232,7 @@ html {
   --card-foreground: #111827;
 
   --border: #e5e7eb;
-  --header-border: #9ca3af;
+  --header-border: rgba(17, 24, 39, 0.08);
   --input: #e5e7eb;
 
   --success: #16a34a;
@@ -261,7 +260,7 @@ html {
     --card-foreground: #f9fafb;
 
     --border: #1f2937;
-    --header-border: #4b5563;
+    --header-border: rgba(255, 255, 255, 0.1);
     --input: #1f2937;
 
     --success: #22c55e;
@@ -290,7 +289,7 @@ html[data-theme="light"] {
   --card-foreground: #111827;
 
   --border: #e5e7eb;
-  --header-border: #9ca3af;
+  --header-border: rgba(17, 24, 39, 0.08);
   --input: #e5e7eb;
 
   --success: #16a34a;
@@ -316,7 +315,7 @@ html[data-theme="dark"] {
   --card-foreground: #f9fafb;
 
   --border: #1f2937;
-  --header-border: #4b5563;
+  --header-border: rgba(255, 255, 255, 0.1);
   --input: #1f2937;
 
   --success: #22c55e;

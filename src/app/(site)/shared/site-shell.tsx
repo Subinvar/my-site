@@ -480,16 +480,17 @@ export function SiteShell({
       <header
         ref={headerRef}
         className={cn(
-          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-100 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
+          "min-h-[var(--header-height-initial)]",
           isHeaderElevated
-            ? "bg-background/95 shadow-[0_14px_38px_rgba(0,0,0,0.12)] backdrop-blur-md"
-            : "bg-background/90 backdrop-blur",
+            ? "bg-background/92 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md before:opacity-100"
+            : "bg-background/80 backdrop-blur",
         )}
       >
         <div className="relative">
-          <div className="mx-auto w-full max-w-full">
+          <div className="mx-auto w-full max-w-screen-2xl">
             <div
               className={cn(
                 "flex w-full items-center justify-between",
@@ -721,7 +722,7 @@ export function SiteShell({
         tabIndex={-1}
         aria-hidden={isMenuModal ? true : undefined}
         {...inertProps(isMenuModal)}
-        className="mx-auto w-full max-w-screen-2xl flex-1 px-4 py-10 sm:px-6 sm:py-12"
+        className="mx-auto w-full max-w-screen-2xl flex-1 px-[var(--header-pad-x)] py-10 sm:py-12"
       >
         {children}
       </main>
