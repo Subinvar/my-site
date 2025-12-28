@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/cn";
-import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
+import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 
 export type SiteFooterProps = {

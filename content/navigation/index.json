@@ -13,7 +13,7 @@
     {
       "id": "products",
       "label": {
-        "ru": "Продукция",
+        "ru": "Продукцияя",
         "en": "Products"
       },
       "path": {
@@ -78,6 +78,19 @@
   ],
   "footerLinks": [
     {
+      "id": "footer-catalog",
+      "label": {
+        "ru": "Каталогя",
+        "en": "Catalog"
+      },
+      "path": {
+        "ru": "catalog",
+        "en": "catalog"
+      },
+      "newTab": false,
+      "order": 20
+    },
+    {
       "id": "footer-documents",
       "label": {
         "ru": "Документы",
@@ -89,19 +102,6 @@
       },
       "newTab": false,
       "order": 10
-    },
-    {
-      "id": "footer-catalog",
-      "label": {
-        "ru": "Каталог",
-        "en": "Catalog"
-      },
-      "path": {
-        "ru": "catalog",
-        "en": "catalog"
-      },
-      "newTab": false,
-      "order": 20
     }
   ]
 }

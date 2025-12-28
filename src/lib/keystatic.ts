@@ -1078,7 +1078,7 @@ const readSiteSingleton = cache(async (): Promise<SiteSingleton | null> => {
   return (await readFallbackSingleton<SiteSingleton>('content/site/index.json')) ?? null;
 });
 
-const readNavigationSingleton = cache(async (): Promise<NavigationSingleton | null> => {
+async function readNavigationSingleton(): Promise<NavigationSingleton | null> {
   const reader = getReader();
   try {
     const navigation = await reader.singletons.navigation.read();
@@ -1089,7 +1089,7 @@ const readNavigationSingleton = cache(async (): Promise<NavigationSingleton | nu
     // fall back to file system
   }
   return (await readFallbackSingleton<NavigationSingleton>('content/navigation/index.json')) ?? null;
-});
+}
 
 const readDocumentsPageSingleton = cache(async (): Promise<DocumentsPageSingleton | null> => {
   const reader = getReader();
