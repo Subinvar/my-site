@@ -11,6 +11,9 @@ export type SiteFooterProps = {
   currentPath: string;
   copyrightText: string;
   contacts: SiteContent["contacts"];
+  tagline: string | null;
+  address: string | null;
+  hours: string | null;
 };
 
 const normalizePathname = (value: string): string => {
@@ -109,6 +112,9 @@ export function SiteFooter({
   currentPath,
   copyrightText,
   contacts,
+  tagline,
+  address,
+  hours,
 }: SiteFooterProps) {
   const normalizedCurrent = normalizePathname(currentPath);
 
@@ -171,19 +177,7 @@ let result = picked.length ? picked : base;
     return [footerLinks.slice(0, 3), footerLinks.slice(3)];
   })();
 
-  const tagline =
-    locale === "ru"
-      ? "Заботимся о литейной промышленности — материалы для стабильных процессов и качественной отливки."
-      : "Caring for foundries — materials for stable processes and quality casting.";
-
-  const address =
-    locale === "ru"
-      ? "Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, лит. Б, оф. 8"
-      : "Russia, Moscow Region, Pushkino, Mamontovka, Centralnaya st., 2B, office 8";
-
-  const hours = locale === "ru" ? "Пн–Пт, 9:00–17:00" : "Mon–Fri, 9:00–17:00";
-
-  const telegramHref = "https://t.me/IntemaGroup";
+  const telegramHref = contacts.telegramUrl?.trim() ?? "";
 
   const currentYear = new Date().getFullYear();
   const resolvedCopyright =
@@ -234,7 +228,11 @@ let result = picked.length ? picked : base;
         <div className="flex flex-col gap-4 text-[13px] leading-[1.35] text-muted-foreground sm:text-[14px]">
           {/* Row 1: tagline + secondary navigation */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="m-0 text-[14px] font-medium leading-[1.35] text-foreground/90 sm:text-[15px]">{tagline}</p>
+            {tagline?.trim() ? (
+              <p className="m-0 text-[14px] font-medium leading-[1.35] text-foreground/90 sm:text-[15px]">
+                {tagline}
+              </p>
+            ) : null}
 
             {footerLinks.length ? (
               <nav aria-label={navigationLabel}>
@@ -294,14 +292,16 @@ let result = picked.length ? picked : base;
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <a
-                  href={telegramHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(baseLinkClassName, "hover:text-foreground")}
-                >
-                  Telegram
-                </a>
+                {telegramHref ? (
+                  <a
+                    href={telegramHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(baseLinkClassName, "hover:text-foreground")}
+                  >
+                    Telegram
+                  </a>
+                ) : null}
 
                 {contacts.phone ? (
                   <a
@@ -321,13 +321,13 @@ let result = picked.length ? picked : base;
                   </a>
                 ) : null}
 
-                <span className="hidden lg:inline">{address}</span>
-                <span className="hidden lg:inline whitespace-nowrap">{hours}</span>
+                {address?.trim() ? <span className="hidden lg:inline">{address}</span> : null}
+                {hours?.trim() ? <span className="hidden lg:inline whitespace-nowrap">{hours}</span> : null}
               </div>
 
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 lg:hidden">
-                <span>{address}</span>
-                <span className="whitespace-nowrap">{hours}</span>
+                {address?.trim() ? <span>{address}</span> : null}
+                {hours?.trim() ? <span className="whitespace-nowrap">{hours}</span> : null}
               </div>
             </div>
 

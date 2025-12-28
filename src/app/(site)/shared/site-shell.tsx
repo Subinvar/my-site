@@ -459,7 +459,7 @@ export function SiteShell({
             : "bg-background/80 backdrop-blur",
         )}
       >
-        <div className="relative">
+        <div className="relative pt-[var(--safe-area-top)]">
           <div className="mx-auto w-full max-w-screen-2xl">
             <div
               className={cn(
@@ -689,6 +689,7 @@ export function SiteShell({
         id="main"
         role="main"
         tabIndex={-1}
+        suppressHydrationWarning
         aria-hidden={isMenuModal ? true : undefined}
         {...inertProps(isMenuModal)}
         className="mx-auto w-full max-w-screen-2xl flex-1 space-y-12 px-[var(--header-pad-x)] py-10 sm:py-12"

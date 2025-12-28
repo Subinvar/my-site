@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
+import type { Viewport } from 'next';
 import { cookies, headers } from 'next/headers';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 import './globals.css';
 import { bodyFont, headingFont } from './fonts';

@@ -181,6 +181,8 @@
   --header-pad-y: clamp(0.35rem, 0.25rem + 0.35vw, 0.85rem);
   --header-gap-x: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
 
+  --safe-area-top: env(safe-area-inset-top, 0px);
+
   /* Совпадение длины строк (от "+" до "RU" и от "Продукция" до "Контакты") */
   --header-nav-inset-x: 0.75rem;
   --header-nav-inset-x-end: calc(var(--header-nav-inset-x) - 3px);
@@ -201,12 +203,14 @@
   --nav-underline-hover-opacity: 0.5;
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
-  --header-height-initial: calc(var(--header-logo-h) + var(--header-pad-y) + var(--header-pad-y));
+  --header-height-initial: calc(
+    var(--header-logo-h) + var(--header-pad-y) + var(--header-pad-y) + var(--safe-area-top)
+  );
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-height-initial: calc(40px + 40px + 8px + var(--header-pad-y) + var(--header-pad-y));
+    --header-height-initial: calc(40px + 40px + 8px + var(--header-pad-y) + var(--header-pad-y) + var(--safe-area-top));
   }
 }
 

@@ -54,6 +54,9 @@ export function SiteShellLayout({
           currentPath={currentPath}
           copyrightText={copyrightText}
           contacts={site.contacts}
+          tagline={site.footer.tagline}
+          address={site.footer.address}
+          hours={site.footer.hours}
         />
       }
     >

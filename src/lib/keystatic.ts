@@ -441,6 +441,9 @@ export type SiteContent = {
   domain: string | null;
   robots: { index: boolean; follow: boolean };
   footer: {
+    tagline: string | null;
+    address: string | null;
+    hours: string | null;
     copyright: string | null;
   };
 };
@@ -1327,6 +1330,9 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
       follow: site?.meta?.robots?.follow !== false,
     },
     footer: {
+      tagline: pickLocalized(footer?.tagline, locale) ?? null,
+      address: pickLocalized(footer?.address, locale) ?? null,
+      hours: pickLocalized(footer?.hours, locale) ?? null,
       copyright: pickLocalized(footer?.copyright, locale) ?? null,
     },
   } satisfies SiteContent;

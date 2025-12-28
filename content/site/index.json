@@ -17,6 +17,18 @@
     }
   },
   "footer": {
+    "tagline": {
+      "ru": "Заботимся о литейной промышленности — материалы для стабильных процессов и качественной отливки.",
+      "en": "Caring for foundries — materials for stable processes and quality casting."
+    },
+    "address": {
+      "ru": "Московская обл., г. Пушкино, мкр. Мамонтовка, ул. Центральная, д. 2, лит. Б, оф. 8",
+      "en": "Russia, Moscow Region, Pushkino, Mamontovka, Centralnaya st., 2B, office 8"
+    },
+    "hours": {
+      "ru": "Пн–Пт, 9:00–17:00",
+      "en": "Mon–Fri, 9:00–17:00"
+    },
     "copyright": {
       "ru": "© {year} Интема Групп. Все права защищены.",
       "en": "© {year} Intema Group. All rights reserved."
