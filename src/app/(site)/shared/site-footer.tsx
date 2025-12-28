@@ -12,8 +12,6 @@ export type SiteFooterProps = {
   copyrightText: string;
   contacts: SiteContent["contacts"];
   tagline: string | null;
-  address: string | null;
-  hours: string | null;
 };
 
 const normalizePathname = (value: string): string => {
@@ -28,22 +26,6 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : "/";
 };
 
-const inferContactsHref = (currentPath: string): string => {
-  const normalized = normalizePathname(currentPath);
-  const isEn = normalized === "/en" || normalized.startsWith("/en/");
-  return isEn ? "/en/contacts" : "/contacts";
-};
-
-const isPrivacyLikeLabel = (label: string): boolean => {
-  const v = (label ?? "").trim().toLowerCase();
-  return (
-    v.includes("персон") ||
-    v.includes("privacy") ||
-    v.includes("personal data") ||
-    v.includes("персональн")
-  );
-};
-
 export function SiteFooter({
   locale,
   navigation,
@@ -52,26 +34,10 @@ export function SiteFooter({
   copyrightText,
   contacts,
   tagline,
-  address,
-  hours,
 }: SiteFooterProps) {
   const normalizedCurrent = normalizePathname(currentPath);
 
-  const contactsHref = inferContactsHref(currentPath);
-
-  const footerLinks = (() => {
-    const base = navigation.footer ?? [];
-
-    if (!base.length) return base;
-
-    // Политика ПДн временно ведёт на страницу "Контакты"
-    return base.map((link) => {
-      const isPrivacyLink = link.id === "privacy" || isPrivacyLikeLabel(link.label);
-      return isPrivacyLink
-        ? { ...link, href: contactsHref, isExternal: false }
-        : link;
-    });
-  })();
+  const footerLinks = navigation.footer ?? [];
 
   const footerLinkRows = (() => {
     if (footerLinks.length <= 3) return [footerLinks];
@@ -221,14 +187,6 @@ export function SiteFooter({
                     {contacts.email}
                   </a>
                 ) : null}
-
-                {address?.trim() ? <span className="hidden lg:inline">{address}</span> : null}
-                {hours?.trim() ? <span className="hidden lg:inline whitespace-nowrap">{hours}</span> : null}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 lg:hidden">
-                {address?.trim() ? <span>{address}</span> : null}
-                {hours?.trim() ? <span className="whitespace-nowrap">{hours}</span> : null}
               </div>
             </div>
 

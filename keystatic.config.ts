@@ -302,8 +302,6 @@ export default config({
         footer: fields.object(
           {
             tagline: localizedText('Подвал — слоган', { multiline: true }),
-            address: localizedText('Подвал — адрес (короткий)', { multiline: true }),
-            hours: localizedText('Подвал — часы работы', { multiline: true }),
             copyright: localizedText('Копирайт', { multiline: true }),
           },
           { label: 'Подвал' }

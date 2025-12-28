@@ -1,0 +1,46 @@
+{
+  "id": "privacy",
+  "published": true,
+  "slug": {
+    "ru": "privacy-policy",
+    "en": "privacy-policy"
+  },
+  "title": {
+    "ru": "Политика в отношении обработки персональных данных",
+    "en": "Privacy Policy"
+  },
+  "description": {
+    "ru": "Краткая заглушка политики обработки персональных данных.",
+    "en": "A short placeholder for the privacy policy."
+  },
+  "excerpt": {
+    "ru": "Страница с основными принципами обработки персональных данных.",
+    "en": "Page with the core principles for handling personal data."
+  },
+  "content": {},
+  "hero": {
+    "alt": {}
+  },
+  "seo": {
+    "title": {
+      "ru": "Политика обработки персональных данных",
+      "en": "Privacy Policy"
+    },
+    "description": {
+      "ru": "Заглушка страницы с политикой обработки персональных данных.",
+      "en": "Placeholder page describing how personal data is handled."
+    },
+    "ogTitle": {
+      "ru": "Политика обработки персональных данных",
+      "en": "Privacy Policy"
+    },
+    "ogDescription": {
+      "ru": "Информация о принципах и целях обработки персональных данных.",
+      "en": "Information about the principles and purposes for processing personal data."
+    },
+    "ogImage": {
+      "alt": "Privacy policy"
+    }
+  },
+  "updatedAt": "2026-06-02T00:00:00.000Z"
+}

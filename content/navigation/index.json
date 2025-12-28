@@ -102,6 +102,19 @@
       },
       "newTab": false,
       "order": 10
+    },
+    {
+      "id": "privacy",
+      "label": {
+        "ru": "Политика ПДн",
+        "en": "Privacy"
+      },
+      "path": {
+        "ru": "privacy-policy",
+        "en": "privacy-policy"
+      },
+      "newTab": false,
+      "order": 30
     }
   ]
 }

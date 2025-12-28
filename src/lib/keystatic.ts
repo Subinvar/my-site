@@ -442,8 +442,6 @@ export type SiteContent = {
   robots: { index: boolean; follow: boolean };
   footer: {
     tagline: string | null;
-    address: string | null;
-    hours: string | null;
     copyright: string | null;
   };
 };
@@ -1039,8 +1037,6 @@ type SiteSingleton = {
   } | null;
   footer?: {
     tagline?: Localized<string>;
-    address?: Localized<string>;
-    hours?: Localized<string>;
     copyright?: Localized<string>;
   } | null;
   seo?: {
@@ -1334,8 +1330,6 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
     },
     footer: {
       tagline: pickLocalized(footer?.tagline, locale) ?? null,
-      address: pickLocalized(footer?.address, locale) ?? null,
-      hours: pickLocalized(footer?.hours, locale) ?? null,
       copyright: pickLocalized(footer?.copyright, locale) ?? null,
     },
   } satisfies SiteContent;
