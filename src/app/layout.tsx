@@ -50,6 +50,13 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     }
   })();`;
 
+  const setInitialHeaderElevation = `(() => {
+    try {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      document.documentElement.dataset.headerElevated = y > 0 ? '1' : '0';
+    } catch (e) {}
+  })();`;
+
   return (
     <html
       suppressHydrationWarning
@@ -61,6 +68,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     >
       <body className="antialiased">
         <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
+        <script dangerouslySetInnerHTML={{ __html: setInitialHeaderElevation }} />
         <HtmlLangSync />
         {children}
       </body>

@@ -388,6 +388,14 @@ html[data-theme="dark"] {
     scrollbar-gutter: stable;
   }
 
+  html[data-header-elevated='1'] [data-site-header] {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  html[data-header-elevated='1'] [data-site-header]::before {
+    opacity: 1;
+  }
+
   .theme-transition {
     transition:
       background-color var(--transition-normal),

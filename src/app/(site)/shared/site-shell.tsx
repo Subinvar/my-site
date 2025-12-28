@@ -229,7 +229,7 @@ export function SiteShell({
     return () => window.clearTimeout(t);
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
 
-  const isMenuModal = isBurgerMode && isMenuMounted;
+  const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
   const normalizedCurrentPath = useMemo(() => normalizePathname(currentPath), [currentPath]);
 
   const isActiveHref = useCallback(
@@ -449,6 +449,7 @@ export function SiteShell({
 
       <header
         ref={headerRef}
+        data-site-header
         className={cn(
           "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
@@ -533,13 +534,13 @@ export function SiteShell({
         
       </header>
 
-      {isBurgerMode ? (
+      {isMenuModal ? (
   <aside
     id="site-menu"
     ref={menuPanelRef}
     tabIndex={-1}
-    aria-hidden={hasHydrated ? !isMenuOpen : undefined}
-    {...inertProps(hasHydrated ? !isMenuOpen : false)}
+    aria-hidden={!isMenuOpen}
+    {...inertProps(!isMenuOpen)}
     className={cn(
       // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
       "fixed inset-x-0 z-[59]",
@@ -609,52 +610,52 @@ export function SiteShell({
 
               </li>
 
-              {(["news", "about", "partners", "contacts"] as const).map((id) => {
-                const link = navigation.header.find((l) => l.id === id);
-                if (!link) return null;
+              {navigation.header
+                .filter((l) => l.id !== "products")
+                .map((link) => {
+                  const href = (link.href ?? "/").trim() || "/";
+                  const isActive = isActiveHref(href);
+                  const isExternal = link.newTab || isExternalHref(href);
 
-                const href = (link.href ?? "/").trim() || "/";
-                const isActive = isActiveHref(href);
-                const isExternal = link.newTab || isExternalHref(href);
-                return (
-                  <li key={link.id}>
-                  {isExternal ? (
-                    <a
-                      href={href}
-                      target={link.newTab ? "_blank" : undefined}
-                      rel={link.newTab ? "noopener noreferrer" : undefined}
-                      aria-current={isActive ? "page" : undefined}
-                      className={cn(
-                        "group block w-full py-2",
-                        "no-underline",
-                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
-                        isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  return (
+                    <li key={link.id}>
+                      {isExternal ? (
+                        <a
+                          href={href}
+                          target={link.newTab ? "_blank" : undefined}
+                          rel={link.newTab ? "noopener noreferrer" : undefined}
+                          aria-current={isActive ? "page" : undefined}
+                          className={cn(
+                            "group block w-full py-2",
+                            "no-underline",
+                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                          )}
+                        >
+                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
+                        </a>
+                      ) : (
+                        <Link
+                          href={href}
+                          onClick={handleCloseMenu}
+                          aria-current={isActive ? "page" : undefined}
+                          className={cn(
+                            "group block w-full py-2",
+                            "no-underline",
+                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                          )}
+                        >
+                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
+                        </Link>
                       )}
-                    >
-                      <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
-                    </a>
-                  ) : (
-                    <Link
-                      href={href}
-                      onClick={handleCloseMenu}
-                      aria-current={isActive ? "page" : undefined}
-                      className={cn(
-                        "group block w-full py-2",
-                        "no-underline",
-                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
-                        isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                        "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                      )}
-                    >
-                      <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
+                    </li>
+                  );
+                })}
           </ul>
         </div>
 

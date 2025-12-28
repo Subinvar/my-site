@@ -42,5 +42,9 @@ export function useScrollElevation() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.dataset.headerElevated = isHeaderElevated ? "1" : "0";
+  }, [isHeaderElevated]);
+
   return { isHeaderElevated, scrollSentinelRef } as const;
 }
