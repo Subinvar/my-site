@@ -198,6 +198,7 @@
   /* Толщина подчёркивания навигации (важно: используется в src/lib/nav-underline.ts) */
   --nav-underline-h: 1px;
   --nav-underline-h-active: 2px;
+  --nav-underline-hover-opacity: 0.5;
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
   --header-height-initial: calc(var(--header-logo-h) + var(--header-pad-y) + var(--header-pad-y));
@@ -325,6 +326,7 @@ html[data-theme="dark"] {
   --destructive-foreground: #fef2f2;
   --destructive-surface: #2a0c0c;
   --destructive-border: #7f1d1d;
+  --nav-underline-hover-opacity: 0.6;
 }
 
 @theme {

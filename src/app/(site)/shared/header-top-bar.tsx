@@ -318,7 +318,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
       </div>
       <div className="flex flex-none items-center gap-9">
         <HeaderTopSlot id="theme">
-          <ThemeToggle />
+          <ThemeToggle locale={locale} />
         </HeaderTopSlot>
 
         <HeaderTopSlot id="lang">

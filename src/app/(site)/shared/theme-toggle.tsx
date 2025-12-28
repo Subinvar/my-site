@@ -4,8 +4,28 @@ import { Moon, Sun } from 'lucide-react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import type { Locale } from '@/lib/i18n';
 
 type Theme = 'light' | 'dark';
+
+type ThemeToggleLabels = {
+  ariaLabelLight: string;
+  ariaLabelDark: string;
+  loadingLabel: string;
+};
+
+const DEFAULT_THEME_TOGGLE_LABELS: Record<Locale, ThemeToggleLabels> = {
+  ru: {
+    ariaLabelLight: 'Включить светлую тему',
+    ariaLabelDark: 'Включить тёмную тему',
+    loadingLabel: 'Загрузка темы',
+  },
+  en: {
+    ariaLabelLight: 'Switch to light theme',
+    ariaLabelDark: 'Switch to dark theme',
+    loadingLabel: 'Loading theme',
+  },
+};
 
 const isClient = typeof document !== 'undefined';
 
@@ -49,7 +69,13 @@ const applyTheme = (theme: Theme) => {
   document.cookie = `theme=${theme}; path=/; expires=${expires.toUTCString()}`;
 };
 
-export function ThemeToggle() {
+export function ThemeToggle({
+  locale = 'ru',
+  labels,
+}: {
+  locale?: Locale;
+  labels?: ThemeToggleLabels;
+}) {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
@@ -75,6 +101,8 @@ export function ThemeToggle() {
   };
 
   const isDark = theme === 'dark';
+  const resolvedLabels =
+    labels ?? DEFAULT_THEME_TOGGLE_LABELS[locale] ?? DEFAULT_THEME_TOGGLE_LABELS.ru;
 
   // Капсула — по геометрии и поведению как у бургера / языка:
   // - квадрат 40×40
@@ -94,7 +122,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? 'Включить светлую тему' : 'Включить тёмную тему'}
+      aria-label={isDark ? resolvedLabels.ariaLabelLight : resolvedLabels.ariaLabelDark}
       className={containerClasses}
       disabled={!isMounted}
     >
@@ -123,7 +151,11 @@ export function ThemeToggle() {
       </span>
 
       <span className="sr-only">
-        {!isMounted ? 'Загрузка темы' : isDark ? 'Светлая тема' : 'Тёмная тема'}
+        {!isMounted
+          ? resolvedLabels.loadingLabel
+          : isDark
+            ? resolvedLabels.ariaLabelLight
+            : resolvedLabels.ariaLabelDark}
       </span>
     </button>
   );

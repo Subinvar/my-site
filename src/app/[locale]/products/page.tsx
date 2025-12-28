@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
-import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
@@ -40,11 +39,6 @@ export default async function ProductsPage({ params }: PageProps) {
 
   const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
   const pageTitle = locale === 'ru' ? 'Продукция' : 'Products';
-
-  const introDescription =
-    locale === 'ru'
-      ? 'Связующие системы, противопригарные покрытия и вспомогательные материалы для литейного производства. Выберите раздел или технологию — и сразу откройте подходящие позиции.'
-      : 'Binders, foundry coatings and auxiliary materials. Pick a direction or a process to jump straight to the matching items.';
 
   const binders: ProductsHubCard[] = taxonomyOptions.processes
     .filter((option) => ALLOWED_BINDER_PROCESSES.includes(option.value))
@@ -102,22 +96,27 @@ export default async function ProductsPage({ params }: PageProps) {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <div className="space-y-10">
-        <div className="space-y-4">
-          <Breadcrumbs
-            items={[{ label: homeLabel, href: buildPath(locale) }, { label: pageTitle }]}
-          />
-          <SectionHeading title={pageTitle} description={introDescription} as="h1" />
-        </div>
+      <main className="page-shell">
+        <section className="container py-10 lg:py-12">
+          <header className="mb-6 space-y-4 lg:mb-8">
+            <Breadcrumbs
+              className="text-left"
+              items={[{ label: homeLabel, href: buildPath(locale) }, { label: pageTitle }]}
+            />
+            {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
+                но оставляем для семантики/доступности. */}
+            <h1 className="sr-only">{pageTitle}</h1>
+          </header>
 
-        <ProductsPageClient
-          locale={locale}
-          title={pageTitle}
-          binders={binders}
-          coatings={coatings}
-          auxiliaries={auxiliaries}
-        />
-      </div>
+          <ProductsPageClient
+            locale={locale}
+            title={pageTitle}
+            binders={binders}
+            coatings={coatings}
+            auxiliaries={auxiliaries}
+          />
+        </section>
+      </main>
     </SiteShellLayout>
   );
 }

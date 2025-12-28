@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Beaker, PaintRoller, Sparkles, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, Beaker, PaintRoller, Sparkles } from 'lucide-react';
 
 import { Button } from '@/app/(site)/shared/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { cn } from '@/lib/cn';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
@@ -53,20 +53,9 @@ export function ProductsPageClient({
   auxiliaries,
 }: ProductsPageClientProps) {
   const [activeSection, setActiveSection] = useState<SectionId>('binders');
-  const [activeProcess, setActiveProcess] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
 
   const isRu = locale === 'ru';
-
-  const processChips = useMemo(
-    () =>
-      binders.map((card) => ({
-        value: card.value,
-        label: card.title,
-        href: card.href,
-      })),
-    [binders],
-  );
 
   useEffect(() => {
     const ids: SectionId[] = ['binders', 'coatings', 'auxiliaries'];
@@ -118,115 +107,34 @@ export function ProductsPageClient({
 
   return (
     <div className="space-y-10">
-      {/* HERO / CTA + экспериментальный подбор по технологии */}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-        <div className="space-y-4">
-          <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">
-            {isRu
-              ? 'Нажмите на карточку нужного процесса/типа — и вы попадёте в подборку товаров в каталоге.'
-              : 'Pick a process/type card to jump to the matching items in the catalogue.'}
-          </p>
+      {/* HERO / CTA */}
+      <div className="space-y-4">
+        <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">
+          {isRu
+            ? 'Нажмите на карточку нужного процесса/типа — и вы попадёте в подборку товаров в каталоге.'
+            : 'Pick a process/type card to jump to the matching items in the catalogue.'}
+        </p>
 
-          <div className="flex flex-wrap gap-3">
-            <Button asChild leftIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
-              <Link href={buildPath(locale, ['contacts'])}>
-                {isRu ? 'Подобрать материал' : 'Request a recommendation'}
-              </Link>
-            </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button asChild leftIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
+            <Link href={buildPath(locale, ['contacts'])}>
+              {isRu ? 'Подобрать материал' : 'Request a recommendation'}
+            </Link>
+          </Button>
 
-            <Button asChild variant="secondary">
-              <Link href={buildPath(locale, ['catalog'])}>{isRu ? 'Открыть каталог' : 'Open catalogue'}</Link>
-            </Button>
-          </div>
-
-          {/* Небольшой рискованный элемент: глобальный переключатель вида */}
-          <div className="pt-2">
-            <ViewModeToggle
-              isRu={isRu}
-              value={viewMode}
-              onChange={setViewMode}
-            />
-          </div>
+          <Button asChild variant="secondary">
+            <Link href={buildPath(locale, ['catalog'])}>{isRu ? 'Открыть каталог' : 'Open catalogue'}</Link>
+          </Button>
         </div>
 
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between gap-3">
-              <span>{isRu ? 'Подбор по технологии' : 'Pick your process'}</span>
-              {activeProcess ? (
-                <button
-                  type="button"
-                  onClick={() => setActiveProcess(null)}
-                  className={cn(
-                    'inline-flex items-center justify-center rounded-lg border border-border bg-background/60',
-                    'px-2 py-1 text-xs text-[var(--muted-foreground)]',
-                    'hover:bg-background hover:text-foreground',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
-                    'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
-                  )}
-                  aria-label={isRu ? 'Сбросить выбор процесса' : 'Clear selected process'}
-                >
-                  <X className="h-4 w-4" aria-hidden />
-                </button>
-              ) : null}
-            </CardTitle>
-            <CardDescription>
-              {isRu
-                ? 'Выберите процесс — подсветим карточку и дадим прямую ссылку.'
-                : 'Select a process to highlight it and get a direct link.'}
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {processChips.map((chip) => {
-                const isActive = activeProcess === chip.value;
-                return (
-                  <button
-                    key={chip.value}
-                    type="button"
-                    onClick={() => {
-                      setActiveProcess((prev) => (prev === chip.value ? null : chip.value));
-                      // Микро-«магия»: при выборе процесса ведём к секции связующих.
-                      document.getElementById('binders')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                    className={cn(
-                      'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm',
-                      'transition-colors duration-150',
-                      isActive
-                        ? 'border-[var(--color-brand-600)] bg-[color:var(--color-brand-600)] text-white'
-                        : 'border-border bg-background/60 text-foreground hover:bg-background',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
-                      'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
-                    )}
-                  >
-                    <span className="truncate">{chip.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {activeProcess ? (
-              <div className="rounded-xl border border-border bg-background/50 p-4">
-                <div className="text-sm font-medium">
-                  {isRu ? 'Выбран процесс:' : 'Selected process:'} {processChips.find((p) => p.value === activeProcess)?.label}
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Button asChild size="sm" rightIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
-                    <Link href={processChips.find((p) => p.value === activeProcess)?.href ?? '#'}>
-                      {isRu ? 'Связующие под процесс' : 'Binders for this process'}
-                    </Link>
-                  </Button>
-                  <Button asChild size="sm" variant="secondary">
-                    <Link href={buildPath(locale, ['products', 'binders'])}>
-                      {isRu ? 'Все процессы' : 'All processes'}
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
+        {/* Небольшой рискованный элемент: глобальный переключатель вида */}
+        <div className="pt-2">
+          <ViewModeToggle
+            isRu={isRu}
+            value={viewMode}
+            onChange={setViewMode}
+          />
+        </div>
       </div>
 
       {/* Sticky-навигатор по секциям */}
@@ -290,7 +198,6 @@ export function ProductsPageClient({
           }
           items={binders}
           viewMode={viewMode}
-          activeValue={activeProcess}
         />
 
         <ProductsSection
@@ -354,8 +261,8 @@ export function ProductsPageClient({
       {/* Микро-подвал страницы: техничная справка */}
       <p className="text-xs text-[var(--muted-foreground)]">
         {isRu
-          ? `Страница: «${title}». Драфт концепции: карточки + быстрый подбор по процессам + переключатель вида.`
-          : `Page: “${title}”. Draft concept: cards + process picker + view toggle.`}
+          ? `Страница: «${title}». Драфт концепции: карточки + быстрый переход в каталог + переключатель вида.`
+          : `Page: “${title}”. Draft concept: cards + quick catalogue jump + view toggle.`}
       </p>
     </div>
   );
@@ -368,7 +275,6 @@ function ProductsSection({
   description,
   items,
   viewMode,
-  activeValue,
 }: {
   id: SectionId;
   locale: Locale;
@@ -376,8 +282,6 @@ function ProductsSection({
   description: string;
   items: ProductsHubCard[];
   viewMode: 'cards' | 'list';
-  /** For highlighting (used mainly for binders/process selection). */
-  activeValue?: string | null;
 }) {
   const isRu = locale === 'ru';
   const sectionHref = buildPath(locale, ['products', id]);
@@ -409,9 +313,6 @@ function ProductsSection({
                   className={cn(
                     'flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-2',
                     'text-sm transition-colors hover:bg-muted',
-                    activeValue && activeValue === item.value
-                      ? 'border-[var(--color-brand-600)]'
-                      : 'border-border',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
                     'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
                   )}
@@ -430,7 +331,6 @@ function ProductsSection({
               key={item.href}
               item={item}
               locale={locale}
-              active={Boolean(activeValue && activeValue === item.value)}
             />
           ))}
         </div>
@@ -442,11 +342,9 @@ function ProductsSection({
 function HubCard({
   item,
   locale,
-  active,
 }: {
   item: ProductsHubCard;
   locale: Locale;
-  active: boolean;
 }) {
   const isRu = locale === 'ru';
   const kindLabel =
@@ -479,10 +377,7 @@ function HubCard({
     <Link href={item.href} className="block h-full">
       <Card
         as="article"
-        className={cn(
-          'h-full',
-          active ? 'border-[var(--color-brand-600)] shadow-lg/10' : undefined,
-        )}
+        className={cn('h-full')}
       >
         <CardHeader className="gap-1">
           <CardTitle className="flex items-start justify-between gap-3">
