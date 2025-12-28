@@ -31,11 +31,18 @@ const resolveHref = (href: string): string => {
   return normalized.length ? normalized : "/";
 };
 
-const clamp = (value: number, min: number, max: number): number => {
-  if (Number.isNaN(value)) return min;
-  return Math.max(min, Math.min(max, value));
+const getChildren = (links: NavigationLink[], id: string | null): NavigationLink[] => {
+  if (!id) return [];
+  const link = links.find((item) => item.id === id);
+  return link?.children ?? [];
 };
 
+/**
+ * Mega menu (Apple-like):
+ * - Full-width panel that раскрывается от нижнего края шапки.
+ * - Высота панели плавно анимируется под контент.
+ * - Всё, что ниже меню, блюрится и слегка затемняется.
+ */
 export function HeaderDesktopDropdown({
   links,
   activeId,
@@ -50,23 +57,19 @@ export function HeaderDesktopDropdown({
 
   const [isMounted, setIsMounted] = useState(false);
   const [renderedId, setRenderedId] = useState<string | null>(null);
-  const [panelLeft, setPanelLeft] = useState<number>(0);
-  const [panelSize, setPanelSize] = useState<{ width: number; height: number }>({
-    width: 320,
-    height: 120,
-  });
+  const [panelHeight, setPanelHeight] = useState<number>(0);
+  const [contentPhase, setContentPhase] = useState<0 | 1>(0);
 
-  const panelRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
 
-  const renderedLink = useMemo(() => {
-    if (!renderedId) return null;
-    return links.find((link) => link.id === renderedId) ?? null;
-  }, [links, renderedId]);
+  const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
+  const shouldBeOpen = Boolean(activeId && activeChildren.length);
 
-  const renderedItems = renderedLink?.children ?? [];
-  const shouldBeOpen = Boolean(activeId && (links.find((l) => l.id === activeId)?.children?.length ?? 0));
+  const renderedChildren = meansRenderedChildren(links, renderedId);
 
+  const isOpen = isMounted && shouldBeOpen;
+
+  // Mount / unmount for close animation.
   useEffect(() => {
     if (shouldBeOpen && activeId) {
       setIsMounted(true);
@@ -76,59 +79,61 @@ export function HeaderDesktopDropdown({
 
     if (!isMounted) return;
 
-    const duration = prefersReducedMotion ? 0 : 280;
-    const t = window.setTimeout(() => {
+    const duration = prefersReducedMotion ? 0 : 420;
+    const timer = window.setTimeout(() => {
       setIsMounted(false);
       setRenderedId(null);
+      setPanelHeight(0);
+      setContentPhase(0);
     }, duration);
-    return () => window.clearTimeout(t);
+
+    return () => window.clearTimeout(timer);
   }, [activeId, isMounted, prefersReducedMotion, shouldBeOpen]);
 
+  // When switching between menu items while open — update rendered id immediately.
   useEffect(() => {
-    if (!isMounted || !contentRef.current) return;
+    if (!shouldBeOpen || !activeId) return;
+    setRenderedId(activeId);
+  }, [activeId, shouldBeOpen]);
+
+  // Measure content height (numeric px) so we can animate height (can't animate auto).
+  useLayoutEffect(() => {
+    if (!isMounted || !contentRef.current || typeof ResizeObserver === "undefined") return;
 
     const el = contentRef.current;
-    const ro = new ResizeObserver(() => {
-      const rect = el.getBoundingClientRect();
-      setPanelSize({
-        width: Math.max(240, Math.ceil(rect.width)),
-        height: Math.max(64, Math.ceil(rect.height)),
-      });
-    });
-    ro.observe(el);
 
-    // начальное измерение
-    const rect = el.getBoundingClientRect();
-    setPanelSize({
-      width: Math.max(240, Math.ceil(rect.width)),
-      height: Math.max(64, Math.ceil(rect.height)),
-    });
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const next = Math.max(0, Math.ceil(rect.height));
+      setPanelHeight(next);
+    };
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    update();
 
     return () => ro.disconnect();
   }, [isMounted, renderedId]);
 
-  useLayoutEffect(() => {
+  // Animate content in (subtle) when menu opens / switches.
+  useEffect(() => {
     if (!isMounted || !renderedId) return;
+    setContentPhase(0);
+    const raf = window.requestAnimationFrame(() => setContentPhase(1));
+    return () => window.cancelAnimationFrame(raf);
+  }, [isMounted, renderedId]);
 
-    const update = () => {
-      const selector = `[data-nav-trigger="${CSS.escape(renderedId)}"]`;
-      const anchor = document.querySelector(selector) as HTMLElement | null;
-      if (!anchor) return;
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const desired = anchorRect.left + anchorRect.width / 2 - panelSize.width / 2;
-
-      const gutter = 14;
-      const nextLeft = clamp(desired, gutter, window.innerWidth - panelSize.width - gutter);
-      setPanelLeft(nextLeft);
+  // Close on Escape.
+  useEffect(() => {
+    if (!isOpen || !onRequestClose) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      onRequestClose();
     };
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [isMounted, panelSize.height, panelSize.width, renderedId]);
-
-  const isOpen = isMounted && shouldBeOpen && Boolean(renderedItems.length);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, onRequestClose]);
 
   const handleBlurCapture = onPanelLeave
     ? (event: React.FocusEvent<HTMLElement>) => {
@@ -138,113 +143,133 @@ export function HeaderDesktopDropdown({
       }
     : undefined;
 
-  if (!isMounted || !renderedId || renderedItems.length === 0) {
+  if (!isMounted || !renderedId || renderedChildren.length === 0) {
     return null;
   }
 
+  const transitionClass = prefersReducedMotion
+    ? "transition-none"
+    : "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+
+  const overlayTransitionClass = prefersReducedMotion
+    ? "transition-none"
+    : "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+
+  const contentTransitionClass = prefersReducedMotion
+    ? "transition-none"
+    : "transition-[opacity,transform] duration-[260ms] ease-out";
+
   return (
     <div
-      className={cn(
-        "fixed inset-x-0 z-[58]",
-        "motion-reduce:transition-none motion-reduce:duration-0",
-      )}
+      className="fixed inset-x-0 bottom-0 z-[58]"
       style={{ top: "var(--header-height)" }}
       aria-hidden={!isOpen}
     >
-      {/* фон под меню: даёт Apple-подобное ощущение "слоя" */}
+      {/*
+        Blur layer that covers EVERYTHING below the header (Apple-like).
+        The panel itself is above this layer.
+      */}
       <button
         type="button"
         aria-label={closeLabel}
         onClick={onRequestClose}
         tabIndex={-1}
         className={cn(
-          "absolute inset-0",
-          "bg-background/0 backdrop-blur-0",
-          "transition-[background-color,backdrop-filter,opacity] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "absolute inset-0 z-0",
+          overlayTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
           isOpen
-            ? "opacity-100 bg-background/15 backdrop-blur-[2px]"
-            : "pointer-events-none opacity-0",
+            ? "pointer-events-auto opacity-100 bg-black/15 backdrop-blur-2xl"
+            : "pointer-events-none opacity-0 bg-black/0 backdrop-blur-0",
         )}
       />
 
+      {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
       <div
-        ref={panelRef}
         onPointerEnter={onPanelEnter}
         onPointerLeave={onPanelLeave}
         onFocusCapture={onPanelEnter}
         onBlurCapture={handleBlurCapture}
         className={cn(
-          "absolute",
-          "mt-3",
-          "rounded-2xl border border-[color:var(--header-border)] bg-background/92 backdrop-blur-md",
-          "shadow-[0_24px_70px_rgba(0,0,0,0.16)]",
+          "relative z-10 w-full",
           "overflow-hidden",
-          "transition-[opacity,transform,width,height,left] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          // Surface
+          "bg-background/96",
+          "shadow-[0_24px_60px_rgba(0,0,0,0.12)]",
+          // Nice edge where it attaches to header
+          "border-b border-[color:var(--header-border)]",
+          transitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
-          isOpen
-            ? "pointer-events-auto opacity-100 translate-y-0 scale-100"
-            : "pointer-events-none opacity-0 -translate-y-2 scale-[0.98]",
+          isOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
-        style={{ left: `${panelLeft}px`, width: `${panelSize.width}px`, height: `${panelSize.height}px` }}
+        style={{ height: isOpen ? `${panelHeight}px` : "0px" }}
       >
         <div
           ref={contentRef}
           className={cn(
-            "p-3",
-            "transition-[opacity,transform] duration-[240ms] ease-out",
+            "mx-auto w-full max-w-screen-2xl",
+            "px-[var(--header-pad-x)]",
+            // Vertical rhythm similar to Apple
+            "py-8",
+            contentTransitionClass,
             "motion-reduce:transition-none motion-reduce:duration-0",
+            isOpen && contentPhase === 1 ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
           )}
-          key={renderedId}
         >
-          <ul className="m-0 list-none space-y-1 p-0">
-            {renderedItems.map((item) => {
-              const href = resolveHref(item.href);
-              const normalizedHref = normalizePathname(href);
-              const isActive =
-                !item.isExternal &&
-                (normalizedHref === normalizedCurrent ||
-                  (normalizedHref !== "/" &&
-                    normalizedCurrent.startsWith(`${normalizedHref}/`)));
+          <nav aria-label={renderedId}>
+            <ul className="m-0 grid list-none gap-x-12 gap-y-2 p-0 md:max-w-[520px]">
+              {renderedChildren.map((item) => {
+                const href = resolveHref(item.href);
+                const normalizedHref = normalizePathname(href);
+                const isActive =
+                  !item.isExternal &&
+                  (normalizedHref === normalizedCurrent ||
+                    (normalizedHref !== "/" && normalizedCurrent.startsWith(`${normalizedHref}/`)));
 
-              const linkClassName = cn(
-                "group flex w-full items-center justify-between rounded-xl px-3",
-                "h-11",
-                "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                "no-underline transition-colors",
-                "active:opacity-90",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                isActive
-                  ? "bg-muted/60 text-foreground"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-              );
+                const linkClassName = cn(
+                  "group inline-flex w-full items-center",
+                  "py-2",
+                  // Apple-like: крупнее, но в рамках фирменного стиля
+                  "font-[var(--font-heading)]",
+                  "text-[clamp(1.15rem,1.02rem+0.6vw,1.6rem)]",
+                  "font-medium leading-[1.12] tracking-[-0.01em]",
+                  "no-underline transition-colors",
+                  "active:opacity-90",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                );
 
-              if (item.isExternal) {
+                if (item.isExternal) {
+                  return (
+                    <li key={item.id}>
+                      <a
+                        href={href}
+                        target={item.newTab ? "_blank" : undefined}
+                        rel={item.newTab ? "noopener noreferrer" : undefined}
+                        className={linkClassName}
+                      >
+                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+                      </a>
+                    </li>
+                  );
+                }
+
                 return (
                   <li key={item.id}>
-                    <a
-                      href={href}
-                      target={item.newTab ? "_blank" : undefined}
-                      rel={item.newTab ? "noopener noreferrer" : undefined}
-                      className={linkClassName}
-                    >
+                    <Link href={href} className={linkClassName} aria-current={isActive ? "page" : undefined}>
                       <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                    </a>
+                    </Link>
                   </li>
                 );
-              }
-
-              return (
-                <li key={item.id}>
-                  <Link href={href} className={linkClassName} aria-current={isActive ? "page" : undefined}>
-                    <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+              })}
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
   );
+}
+
+function meansRenderedChildren(links: NavigationLink[], id: string | null): NavigationLink[] {
+  return getChildren(links, id);
 }
