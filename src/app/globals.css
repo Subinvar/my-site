@@ -195,6 +195,10 @@
   --header-ui-fs: clamp(0.935rem, 0.858rem + 0.275vw, 1.078rem);
   --header-ui-leading: 1.1;
 
+  /* Толщина подчёркивания навигации (важно: используется в src/lib/nav-underline.ts) */
+  --nav-underline-h: 1px;
+  --nav-underline-h-active: 2px;
+
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
   --header-height-initial: calc(var(--header-logo-h) + var(--header-pad-y) + var(--header-pad-y));
 }

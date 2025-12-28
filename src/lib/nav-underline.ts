@@ -23,12 +23,12 @@ export function navUnderlineSpanClass(active: boolean, variant: NavUnderlineVari
     "after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out",
     active
       ? cn(
-          "after:h-[var(--nav-underline-h-active)]",
+          "after:h-[var(--nav-underline-h-active,2px)]",
           "after:bg-current after:scale-x-100",
           "group-hover:after:bg-current group-focus-visible:after:bg-current",
         )
       : cn(
-          "after:h-[var(--nav-underline-h)]",
+          "after:h-[var(--nav-underline-h,1px)]",
           "after:bg-transparent after:scale-x-0",
           "group-hover:after:bg-[color:var(--header-border)] group-focus-visible:after:bg-[color:var(--header-border)]",
           "group-hover:after:scale-x-100 group-focus-visible:after:scale-x-100",

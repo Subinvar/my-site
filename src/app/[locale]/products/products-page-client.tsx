@@ -1,0 +1,561 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Beaker, PaintRoller, Sparkles, X } from 'lucide-react';
+
+import { Button } from '@/app/(site)/shared/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
+import { cn } from '@/lib/cn';
+import type { Locale } from '@/lib/i18n';
+import { buildPath } from '@/lib/paths';
+
+export type ProductsHubCardKind = 'binders' | 'coatings' | 'auxiliaries';
+
+export type ProductsHubCard = {
+  kind: ProductsHubCardKind;
+  /** raw taxonomy value (used for matching chips) */
+  value: string;
+  title: string;
+  description: string;
+  href: string;
+};
+
+type ProductsPageClientProps = {
+  locale: Locale;
+  title: string;
+  binders: ProductsHubCard[];
+  coatings: ProductsHubCard[];
+  auxiliaries: ProductsHubCard[];
+};
+
+type SectionId = 'binders' | 'coatings' | 'auxiliaries';
+
+const SECTION_META: Record<SectionId, { icon: JSX.Element; ru: string; en: string }> = {
+  binders: { icon: <Beaker className="h-4 w-4" aria-hidden />, ru: 'Связующие', en: 'Binders' },
+  coatings: {
+    icon: <PaintRoller className="h-4 w-4" aria-hidden />,
+    ru: 'Противопригарные покрытия',
+    en: 'Coatings',
+  },
+  auxiliaries: {
+    icon: <Sparkles className="h-4 w-4" aria-hidden />,
+    ru: 'Вспомогательные материалы',
+    en: 'Auxiliary materials',
+  },
+};
+
+export function ProductsPageClient({
+  locale,
+  title,
+  binders,
+  coatings,
+  auxiliaries,
+}: ProductsPageClientProps) {
+  const [activeSection, setActiveSection] = useState<SectionId>('binders');
+  const [activeProcess, setActiveProcess] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
+
+  const isRu = locale === 'ru';
+
+  const processChips = useMemo(
+    () =>
+      binders.map((card) => ({
+        value: card.value,
+        label: card.title,
+        href: card.href,
+      })),
+    [binders],
+  );
+
+  useEffect(() => {
+    const ids: SectionId[] = ['binders', 'coatings', 'auxiliaries'];
+    const nodes = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (!nodes.length) return;
+
+    // Активируем текущую секцию по скроллу (экспериментальная «липкая» навигация).
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Берём самую «видимую» секцию.
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
+
+        const top = visible[0];
+        if (!top?.target?.id) return;
+        const id = top.target.id as SectionId;
+        if (ids.includes(id)) setActiveSection(id);
+      },
+      {
+        root: null,
+        // Подбираем «точку переключения» так, чтобы она ощущалась естественно.
+        rootMargin: '-25% 0px -60% 0px',
+        threshold: [0.05, 0.15, 0.3, 0.5],
+      },
+    );
+
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
+  const trustTitle = isRu ? 'Как мы помогаем внедрять материалы' : 'How we help you implement materials';
+  const trustItems = isRu
+    ? [
+        'Подбираем решения под процесс и требования к поверхности/прочности.',
+        'Помогаем с режимами применения и типовыми ошибками внедрения.',
+        'По запросу предоставляем документацию и паспортные данные.',
+        'Сопровождаем тестирование и первые партии на участке.',
+      ]
+    : [
+        'We help you choose solutions for your process and quality targets.',
+        'We support implementation with application modes and common pitfalls.',
+        'Documentation and datasheets are provided on request.',
+        'We support trials and the first production batches.',
+      ];
+
+  return (
+    <div className="space-y-10">
+      {/* HERO / CTA + экспериментальный подбор по технологии */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="space-y-4">
+          <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">
+            {isRu
+              ? 'Нажмите на карточку нужного процесса/типа — и вы попадёте в подборку товаров в каталоге.'
+              : 'Pick a process/type card to jump to the matching items in the catalogue.'}
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <Button asChild leftIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
+              <Link href={buildPath(locale, ['contacts'])}>
+                {isRu ? 'Подобрать материал' : 'Request a recommendation'}
+              </Link>
+            </Button>
+
+            <Button asChild variant="secondary">
+              <Link href={buildPath(locale, ['catalog'])}>{isRu ? 'Открыть каталог' : 'Open catalogue'}</Link>
+            </Button>
+          </div>
+
+          {/* Небольшой рискованный элемент: глобальный переключатель вида */}
+          <div className="pt-2">
+            <ViewModeToggle
+              isRu={isRu}
+              value={viewMode}
+              onChange={setViewMode}
+            />
+          </div>
+        </div>
+
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between gap-3">
+              <span>{isRu ? 'Подбор по технологии' : 'Pick your process'}</span>
+              {activeProcess ? (
+                <button
+                  type="button"
+                  onClick={() => setActiveProcess(null)}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-lg border border-border bg-background/60',
+                    'px-2 py-1 text-xs text-[var(--muted-foreground)]',
+                    'hover:bg-background hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+                    'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                  )}
+                  aria-label={isRu ? 'Сбросить выбор процесса' : 'Clear selected process'}
+                >
+                  <X className="h-4 w-4" aria-hidden />
+                </button>
+              ) : null}
+            </CardTitle>
+            <CardDescription>
+              {isRu
+                ? 'Выберите процесс — подсветим карточку и дадим прямую ссылку.'
+                : 'Select a process to highlight it and get a direct link.'}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {processChips.map((chip) => {
+                const isActive = activeProcess === chip.value;
+                return (
+                  <button
+                    key={chip.value}
+                    type="button"
+                    onClick={() => {
+                      setActiveProcess((prev) => (prev === chip.value ? null : chip.value));
+                      // Микро-«магия»: при выборе процесса ведём к секции связующих.
+                      document.getElementById('binders')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm',
+                      'transition-colors duration-150',
+                      isActive
+                        ? 'border-[var(--color-brand-600)] bg-[color:var(--color-brand-600)] text-white'
+                        : 'border-border bg-background/60 text-foreground hover:bg-background',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+                      'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                    )}
+                  >
+                    <span className="truncate">{chip.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {activeProcess ? (
+              <div className="rounded-xl border border-border bg-background/50 p-4">
+                <div className="text-sm font-medium">
+                  {isRu ? 'Выбран процесс:' : 'Selected process:'} {processChips.find((p) => p.value === activeProcess)?.label}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button asChild size="sm" rightIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
+                    <Link href={processChips.find((p) => p.value === activeProcess)?.href ?? '#'}>
+                      {isRu ? 'Связующие под процесс' : 'Binders for this process'}
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" variant="secondary">
+                    <Link href={buildPath(locale, ['products', 'binders'])}>
+                      {isRu ? 'Все процессы' : 'All processes'}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sticky-навигатор по секциям */}
+      <nav
+        aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
+        className={cn(
+          'sticky z-10 -mx-2 rounded-2xl border border-border bg-background/70 px-2 py-2 backdrop-blur',
+          'top-[calc(var(--header-height)+0.75rem)]',
+        )}
+      >
+        <div className="flex gap-2 overflow-x-auto px-1">
+          {(['binders', 'coatings', 'auxiliaries'] as SectionId[]).map((id) => {
+            const meta = SECTION_META[id];
+            const label = isRu ? meta.ru : meta.en;
+            const isActive = activeSection === id;
+            const count = id === 'binders' ? binders.length : id === 'coatings' ? coatings.length : auxiliaries.length;
+            return (
+              <a
+                key={id}
+                href={`#${id}`}
+                onClick={() => setActiveSection(id)}
+                className={cn(
+                  'inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-sm',
+                  'transition-colors duration-150',
+                  isActive
+                    ? 'border-[var(--color-brand-600)] bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-foreground'
+                    : 'border-border bg-transparent text-[var(--muted-foreground)] hover:bg-background',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+                  'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                )}
+              >
+                {meta.icon}
+                <span className="truncate">{label}</span>
+                <span
+                  className={cn(
+                    'ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs',
+                    isActive
+                      ? 'bg-[color:var(--color-brand-600)] text-white'
+                      : 'bg-muted text-[var(--muted-foreground)]',
+                  )}
+                  aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
+                >
+                  {count}
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* СЕКЦИИ */}
+      <div className="space-y-12">
+        <ProductsSection
+          id="binders"
+          locale={locale}
+          title={isRu ? 'Связующие' : 'Binders'}
+          description={
+            isRu
+              ? 'Выберите процесс — откроется подборка связующих материалов в каталоге.'
+              : 'Pick a process to open matching binders in the catalogue.'
+          }
+          items={binders}
+          viewMode={viewMode}
+          activeValue={activeProcess}
+        />
+
+        <ProductsSection
+          id="coatings"
+          locale={locale}
+          title={isRu ? 'Противопригарные покрытия' : 'Coatings'}
+          description={
+            isRu
+              ? 'Спиртовые и водные покрытия — выберите основу.'
+              : 'Alcohol- and water-based coatings — choose the base.'
+          }
+          items={coatings}
+          viewMode={viewMode}
+        />
+
+        <ProductsSection
+          id="auxiliaries"
+          locale={locale}
+          title={isRu ? 'Вспомогательные материалы' : 'Auxiliary materials'}
+          description={
+            isRu
+              ? 'Сервисные материалы для производства: от разделительных составов до модификаторов.'
+              : 'Service supplies: from release compounds to modifiers.'
+          }
+          items={auxiliaries}
+          viewMode={viewMode}
+        />
+      </div>
+
+      {/* Блок доверия + CTA */}
+      <section className="rounded-2xl border border-border bg-[var(--card)] p-5 sm:p-6">
+        <header className="space-y-2">
+          <h2 className="text-lg font-semibold sm:text-xl">{trustTitle}</h2>
+          <p className="max-w-3xl text-sm text-[var(--muted-foreground)] sm:text-base">
+            {isRu
+              ? 'Не пытаемся «продать любой ценой». Наша цель — чтобы материалы стабильно работали на вашем участке.'
+              : 'We don’t aim to “sell at any cost”. Our goal is stable performance in your production.'}
+          </p>
+        </header>
+
+        <ul className="mt-5 grid gap-3 md:grid-cols-2">
+          {trustItems.map((item) => (
+            <li key={item} className="rounded-xl border border-border bg-background/60 p-4">
+              <span className="text-sm leading-relaxed">{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild rightIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
+            <Link href={buildPath(locale, ['contacts'])}>
+              {isRu ? 'Запросить консультацию' : 'Contact us'}
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href={buildPath(locale, ['catalog'])}>{isRu ? 'Смотреть весь каталог' : 'View full catalogue'}</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Микро-подвал страницы: техничная справка */}
+      <p className="text-xs text-[var(--muted-foreground)]">
+        {isRu
+          ? `Страница: «${title}». Драфт концепции: карточки + быстрый подбор по процессам + переключатель вида.`
+          : `Page: “${title}”. Draft concept: cards + process picker + view toggle.`}
+      </p>
+    </div>
+  );
+}
+
+function ProductsSection({
+  id,
+  locale,
+  title,
+  description,
+  items,
+  viewMode,
+  activeValue,
+}: {
+  id: SectionId;
+  locale: Locale;
+  title: string;
+  description: string;
+  items: ProductsHubCard[];
+  viewMode: 'cards' | 'list';
+  /** For highlighting (used mainly for binders/process selection). */
+  activeValue?: string | null;
+}) {
+  const isRu = locale === 'ru';
+  const sectionHref = buildPath(locale, ['products', id]);
+
+  return (
+    <section
+      id={id}
+      className={cn(
+        'scroll-mt-[calc(var(--header-height)+5rem)] space-y-4',
+      )}
+    >
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold sm:text-2xl">{title}</h2>
+          <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">{description}</p>
+        </div>
+        <Button asChild variant="secondary" size="sm" rightIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
+          <Link href={sectionHref}>{isRu ? 'Открыть раздел' : 'Open section'}</Link>
+        </Button>
+      </header>
+
+      {viewMode === 'list' ? (
+        <div className="rounded-2xl border border-border bg-background/60 p-4 sm:p-5">
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {items.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-2',
+                    'text-sm transition-colors hover:bg-muted',
+                    activeValue && activeValue === item.value
+                      ? 'border-[var(--color-brand-600)]'
+                      : 'border-border',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+                    'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                  )}
+                >
+                  <span className="truncate">{item.title}</span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <HubCard
+              key={item.href}
+              item={item}
+              locale={locale}
+              active={Boolean(activeValue && activeValue === item.value)}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function HubCard({
+  item,
+  locale,
+  active,
+}: {
+  item: ProductsHubCard;
+  locale: Locale;
+  active: boolean;
+}) {
+  const isRu = locale === 'ru';
+  const kindLabel =
+    item.kind === 'binders'
+      ? isRu
+        ? 'Связующие'
+        : 'Binders'
+      : item.kind === 'coatings'
+        ? isRu
+          ? 'Покрытия'
+          : 'Coatings'
+        : isRu
+          ? 'Вспомогательные'
+          : 'Auxiliary';
+
+  const ctaLabel =
+    item.kind === 'binders'
+      ? isRu
+        ? 'Смотреть материалы'
+        : 'View materials'
+      : item.kind === 'coatings'
+        ? isRu
+          ? 'Смотреть покрытия'
+          : 'View coatings'
+        : isRu
+          ? 'Смотреть материалы'
+          : 'View materials';
+
+  return (
+    <Link href={item.href} className="block h-full">
+      <Card
+        as="article"
+        className={cn(
+          'h-full',
+          active ? 'border-[var(--color-brand-600)] shadow-lg/10' : undefined,
+        )}
+      >
+        <CardHeader className="gap-1">
+          <CardTitle className="flex items-start justify-between gap-3">
+            <span className="leading-snug">{item.title}</span>
+            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]" aria-hidden />
+          </CardTitle>
+          <CardDescription>{item.description}</CardDescription>
+        </CardHeader>
+
+        <CardFooter className="mt-auto">
+          <span className="text-xs text-[var(--muted-foreground)]">{kindLabel}</span>
+          <span className="text-xs font-medium text-[var(--color-brand-600)]">{ctaLabel}</span>
+        </CardFooter>
+      </Card>
+    </Link>
+  );
+}
+
+function ViewModeToggle({
+  isRu,
+  value,
+  onChange,
+}: {
+  isRu: boolean;
+  value: 'cards' | 'list';
+  onChange: (next: 'cards' | 'list') => void;
+}) {
+  const label = isRu ? 'Вид:' : 'View:';
+  const cardsLabel = isRu ? 'Карточки' : 'Cards';
+  const listLabel = isRu ? 'Список' : 'List';
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted-foreground)]">{label}</span>
+      <div className="inline-flex rounded-xl border border-border bg-background/60 p-1">
+        <ToggleButton active={value === 'cards'} onClick={() => onChange('cards')}>
+          {cardsLabel}
+        </ToggleButton>
+        <ToggleButton active={value === 'list'} onClick={() => onChange('list')}>
+          {listLabel}
+        </ToggleButton>
+      </div>
+      <span className="text-xs text-[var(--muted-foreground)]">
+        {isRu ? 'Экспериментальный переключатель.' : 'Experimental toggle.'}
+      </span>
+    </div>
+  );
+}
+
+function ToggleButton({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'rounded-lg px-3 py-1.5 text-sm',
+        'transition-colors duration-150',
+        active
+          ? 'bg-[var(--color-brand-600)] text-white'
+          : 'bg-transparent text-[var(--muted-foreground)] hover:bg-background hover:text-foreground',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+        'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
