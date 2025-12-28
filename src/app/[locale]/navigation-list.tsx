@@ -15,6 +15,10 @@ type NavigationListProps = {
   layout?: "header" | "panel";
   distribution?: "end" | "between";
   measureMode?: boolean;
+  onNavEnter?: () => void;
+  onNavLeave?: () => void;
+  onLinkEnter?: (link: NavigationLink) => void;
+  onLinkFocus?: (link: NavigationLink) => void;
 };
 
 const normalizePathname = (value: string): string => {
@@ -39,6 +43,10 @@ export function NavigationList({
   layout = "header",
   distribution = "end",
   measureMode = false,
+  onNavEnter,
+  onNavLeave,
+  onLinkEnter,
+  onLinkFocus,
 }: NavigationListProps) {
   if (!links.length) {
     return null;
@@ -49,6 +57,15 @@ export function NavigationList({
   const resolvedLabel = label.length > 0 ? label : undefined;
 
   const isPanel = layout === "panel";
+  const isInteractive = !isPanel && !measureMode;
+
+  const handleBlurCapture = isInteractive && onNavLeave
+    ? (event: React.FocusEvent<HTMLElement>) => {
+        const next = event.relatedTarget;
+        if (next && event.currentTarget.contains(next as Node)) return;
+        onNavLeave();
+      }
+    : undefined;
 
   const betweenWidthClass = measureMode ? "w-max" : "w-full";
 
@@ -72,16 +89,37 @@ export function NavigationList({
   const linkHeightClass = isPanel ? "h-11" : density === "compact" ? "h-10" : "";
 
   return (
-    <nav aria-label={resolvedLabel} className={className}>
+    <nav
+      aria-label={resolvedLabel}
+      className={className}
+      onPointerEnter={isInteractive ? onNavEnter : undefined}
+      onPointerLeave={isInteractive ? onNavLeave : undefined}
+      onFocusCapture={isInteractive ? onNavEnter : undefined}
+      onBlurCapture={handleBlurCapture}
+    >
       <ul className={listClassName}>
         {links.map((link) => {
           const href = resolveHref(link.href);
           const normalizedHref = normalizePathname(href);
+          const isChildActive =
+            Array.isArray(link.children) &&
+            link.children.some((child) => {
+              if (child.isExternal) return false;
+              const childHref = resolveHref(child.href);
+              const normalizedChildHref = normalizePathname(childHref);
+              return (
+                normalizedChildHref === normalizedCurrent ||
+                (normalizedChildHref !== "/" &&
+                  normalizedCurrent.startsWith(`${normalizedChildHref}/`))
+              );
+            });
+
           const isActive =
-            !link.isExternal &&
-            (normalizedHref === normalizedCurrent ||
-              (normalizedHref !== "/" &&
-                normalizedCurrent.startsWith(`${normalizedHref}/`)));
+            (!link.isExternal &&
+              (normalizedHref === normalizedCurrent ||
+                (normalizedHref !== "/" &&
+                  normalizedCurrent.startsWith(`${normalizedHref}/`)))) ||
+            Boolean(isChildActive);
 
           const slotWidth = stableSlots?.[link.id];
           const isStableSlot = typeof slotWidth === "number";
@@ -125,6 +163,9 @@ export function NavigationList({
               );
 
 
+          const triggerId = isInteractive ? link.id : undefined;
+          const hasChildren = Boolean(link.children?.length);
+
           if (link.isExternal) {
             return (
               <li key={link.id} className={liClassName} style={liStyle}>
@@ -133,6 +174,10 @@ export function NavigationList({
                   target={link.newTab ? "_blank" : undefined}
                   rel={link.newTab ? "noopener noreferrer" : undefined}
                   className={linkClassName}
+                  data-nav-trigger={triggerId}
+                  data-nav-has-children={hasChildren ? "true" : undefined}
+                  onPointerEnter={isInteractive ? () => onLinkEnter?.(link) : undefined}
+                  onFocus={isInteractive ? () => onLinkFocus?.(link) : undefined}
                 >
                   <span
                     className={
@@ -154,6 +199,10 @@ export function NavigationList({
                 href={href}
                 className={linkClassName}
                 aria-current={isActive ? "page" : undefined}
+                data-nav-trigger={triggerId}
+                data-nav-has-children={hasChildren ? "true" : undefined}
+                onPointerEnter={isInteractive ? () => onLinkEnter?.(link) : undefined}
+                onFocus={isInteractive ? () => onLinkFocus?.(link) : undefined}
               >
                 <span
                   className={

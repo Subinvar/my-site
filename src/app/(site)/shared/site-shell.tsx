@@ -13,7 +13,7 @@ import {
 } from "react";
 
 import { getInterfaceDictionary } from "@/content/dictionary";
-import type { Navigation, SiteContent } from "@/lib/keystatic";
+import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { buildPath } from "@/lib/paths";
 import { cn } from "@/lib/cn";
@@ -26,6 +26,7 @@ import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
 import { HeaderBrand } from "./header-brand";
+import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
 
@@ -108,6 +109,8 @@ export function SiteShell({
   const menuDialogLabel = locale === "ru" ? "Меню" : "Menu";
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [desktopDropdownId, setDesktopDropdownId] = useState<string | null>(null);
+  const desktopDropdownCloseTimerRef = useRef<number | null>(null);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
@@ -121,6 +124,41 @@ export function SiteShell({
     navMeasureRef,
   } = useMediaBreakpoints();
   const transitionsOn = useResizeTransitions();
+
+  const clearDesktopDropdownClose = useCallback(() => {
+    const t = desktopDropdownCloseTimerRef.current;
+    if (t) {
+      window.clearTimeout(t);
+      desktopDropdownCloseTimerRef.current = null;
+    }
+  }, []);
+
+  const closeDesktopDropdown = useCallback(() => {
+    clearDesktopDropdownClose();
+    setDesktopDropdownId(null);
+  }, [clearDesktopDropdownClose]);
+
+  const scheduleDesktopDropdownClose = useCallback(() => {
+    clearDesktopDropdownClose();
+    const delay = prefersReducedMotion ? 0 : 160;
+    desktopDropdownCloseTimerRef.current = window.setTimeout(() => {
+      setDesktopDropdownId(null);
+    }, delay);
+  }, [clearDesktopDropdownClose, prefersReducedMotion]);
+
+  const handleDesktopNavLinkEnter = useCallback(
+    (link: NavigationLink) => {
+      if (isBurgerMode || isMenuOpen) return;
+      clearDesktopDropdownClose();
+
+      if (link.children?.length) {
+        setDesktopDropdownId(link.id);
+      } else {
+        setDesktopDropdownId(null);
+      }
+    },
+    [clearDesktopDropdownClose, isBurgerMode, isMenuOpen],
+  );
 
   const inertProps = useCallback(
     (enabled: boolean): HTMLAttributes<HTMLElement> => (enabled ? { inert: true } : {}),
@@ -194,11 +232,14 @@ export function SiteShell({
 
     prevPathRef.current = currentPath;
 
+    // закрываем подменю на десктопе при навигации
+    closeDesktopDropdown();
+
     if (!isMenuOpen) return;
 
     const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
     return () => window.cancelAnimationFrame(frame);
-  }, [currentPath, isMenuOpen]);
+  }, [closeDesktopDropdown, currentPath, isMenuOpen]);
 
   useWindowResize(
     () => {
@@ -228,6 +269,12 @@ export function SiteShell({
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
 
   const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+
+  useEffect(() => {
+    if (isBurgerMode || isMenuOpen) {
+      closeDesktopDropdown();
+    }
+  }, [closeDesktopDropdown, isBurgerMode, isMenuOpen]);
   const normalizedCurrentPath = useMemo(() => normalizePathname(currentPath), [currentPath]);
 
   const isActiveHref = useCallback(
@@ -242,44 +289,120 @@ export function SiteShell({
     [normalizedCurrentPath],
   );
 
-  const productsHrefRoot = useMemo(() => {
-    const href = (navigation.header.find((l) => l.id === "products")?.href ?? "/products").trim() || "/products";
-    return href;
-  }, [navigation.header]);
-
-  const isProductsActive = useMemo(() => isActiveHref(productsHrefRoot), [isActiveHref, productsHrefRoot]);
-
-      // Подменю «Продукция»: основные категории — отдельные страницы
-  const productsBaseHref = useMemo(() => productsHrefRoot.replace(/\/+$/, ""), [productsHrefRoot]);
-
-  const productsSubLinks = useMemo(
-    () =>
-      [
-        {
-          id: "binders" as const,
-          label: locale === "ru" ? "Литейные связующие" : "Binders",
-          href: `${productsBaseHref}/binders`,
-        },
-        {
-          id: "coatings" as const,
-          label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
-          href: `${productsBaseHref}/coatings`,
-        },
-        {
-          id: "aux" as const,
-          label: locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
-          href: `${productsBaseHref}/auxiliaries`,
-        },
-      ] as const,
-    [locale, productsBaseHref],
+  const productsLink = useMemo(
+    () => navigation.header.find((l) => l.id === "products") ?? null,
+    [navigation.header],
   );
 
+  const productsHrefRoot = useMemo(() => {
+    const href = (productsLink?.href ?? "/products").trim() || "/products";
+    return href;
+  }, [productsLink]);
+
+  const isProductsActive = useMemo(
+    () => isActiveHref(productsHrefRoot),
+    [isActiveHref, productsHrefRoot],
+  );
+
+  // Подменю «Продукция»: берём из Keystatic (children), иначе — fallback
+  const productsBaseHref = useMemo(
+    () => productsHrefRoot.replace(/\/+$/, ""),
+    [productsHrefRoot],
+  );
+
+  const productsSubLinks = useMemo<NavigationLink[]>(() => {
+    const fromKeystatic = productsLink?.children;
+    if (fromKeystatic?.length) {
+      return fromKeystatic;
+    }
+
+    const catalogHref = basePath === "/" ? "/catalog" : `${basePath}/catalog`;
+
+    return [
+      {
+        id: "products-binders",
+        label: locale === "ru" ? "Литейные связующие" : "Binders",
+        href: `${productsBaseHref}/binders`,
+        isExternal: false,
+        newTab: false,
+      },
+      {
+        id: "products-coatings",
+        label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
+        href: `${productsBaseHref}/coatings`,
+        isExternal: false,
+        newTab: false,
+      },
+      {
+        id: "products-auxiliaries",
+        label: locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
+        href: `${productsBaseHref}/auxiliaries`,
+        isExternal: false,
+        newTab: false,
+      },
+      {
+        id: "products-catalog",
+        label: locale === "ru" ? "Каталог" : "Catalog",
+        href: catalogHref,
+        isExternal: false,
+        newTab: false,
+      },
+    ];
+  }, [basePath, locale, productsBaseHref, productsLink?.children]);
+
   const activeProductsSubId = useMemo(() => {
-    const active = productsSubLinks.find((item) => isActiveHref(item.href));
+    const active = productsSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
     return active?.id ?? "";
   }, [isActiveHref, productsSubLinks]);
 
   const isProductsRootActive = isProductsActive && !activeProductsSubId;
+
+  const aboutLink = useMemo(
+    () => navigation.header.find((l) => l.id === "about") ?? null,
+    [navigation.header],
+  );
+
+  const aboutHrefRoot = useMemo(() => {
+    const href = (aboutLink?.href ?? "/about").trim() || "/about";
+    return href;
+  }, [aboutLink]);
+
+  const aboutSubLinks = useMemo<NavigationLink[]>(() => {
+    const fromKeystatic = aboutLink?.children;
+    if (fromKeystatic?.length) {
+      return fromKeystatic;
+    }
+
+    const documentsHref = basePath === "/" ? "/documents" : `${basePath}/documents`;
+    const privacyHref = basePath === "/" ? "/privacy-policy" : `${basePath}/privacy-policy`;
+
+    return [
+      {
+        id: "about-documents",
+        label: locale === "ru" ? "Документы" : "Documents",
+        href: documentsHref,
+        isExternal: false,
+        newTab: false,
+      },
+      {
+        id: "about-privacy",
+        label: locale === "ru" ? "Политика ПДн" : "Privacy Policy",
+        href: privacyHref,
+        isExternal: false,
+        newTab: false,
+      },
+    ];
+  }, [aboutLink?.children, basePath, locale]);
+
+  const activeAboutSubId = useMemo(() => {
+    const active = aboutSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
+    return active?.id ?? "";
+  }, [aboutSubLinks, isActiveHref]);
+
+  const isAboutMenuActive = useMemo(() => {
+    if (!aboutLink) return false;
+    return Boolean(activeAboutSubId) || isActiveHref(aboutHrefRoot);
+  }, [aboutHrefRoot, aboutLink, activeAboutSubId, isActiveHref]);
 
   // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
   useEffect(() => {
@@ -522,6 +645,10 @@ export function SiteShell({
                   contactsHref={contactsHref}
                   ctaLabel={ctaCompactLabel}
                   headerButtonBase={headerButtonBase}
+                  onDesktopNavEnter={clearDesktopDropdownClose}
+                  onDesktopNavLeave={scheduleDesktopDropdownClose}
+                  onDesktopNavLinkEnter={handleDesktopNavLinkEnter}
+                  onDesktopNavLinkFocus={handleDesktopNavLinkEnter}
                 />
               </div>
             </div>
@@ -530,6 +657,17 @@ export function SiteShell({
 
         
       </header>
+
+      <HeaderDesktopDropdown
+        links={navigation.header}
+        activeId={isBurgerMode || isMenuOpen ? null : desktopDropdownId}
+        currentPath={currentPath}
+        prefersReducedMotion={prefersReducedMotion}
+        closeLabel={locale === "ru" ? "Закрыть подменю" : "Close submenu"}
+        onPanelEnter={clearDesktopDropdownClose}
+        onPanelLeave={scheduleDesktopDropdownClose}
+        onRequestClose={closeDesktopDropdown}
+      />
 
       {isMenuModal ? (
   <aside
@@ -573,33 +711,48 @@ export function SiteShell({
                   )}
                 >
                   <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
-                    {navigation.header.find((l) => l.id === "products")?.label ??
-                      (locale === "ru" ? "Продукция" : "Products")}
+                    {productsLink?.label ?? (locale === "ru" ? "Продукция" : "Products")}
                   </span>
                 </Link>
 
                 <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
                   {productsSubLinks.map((item) => {
                     const isActive = activeProductsSubId === item.id;
+                    const itemHref = (item.href ?? "/").trim() || "/";
+                    const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
+
+                    const itemClassName = cn(
+                      "group block w-full py-1.5",
+                      "no-underline",
+                      "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                      isActive
+                        ? "text-foreground"
+                        : "text-muted-foreground transition-colors hover:text-foreground",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                    );
                     return (
                       <li key={item.id}>
-                        <Link
-                          href={item.href}
-                          onClick={handleCloseMenu}
-                          aria-current={isActive ? "page" : undefined}
-                          className={cn(
-                            "group block w-full py-1.5",
-                            "no-underline",
-                            "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                            isActive
-                              ? "text-foreground"
-                              : "text-muted-foreground transition-colors hover:text-foreground",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                          )}
-                        >
-                          <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                        </Link>
+                        {itemIsExternal ? (
+                          <a
+                            href={itemHref}
+                            target={item.newTab ? "_blank" : undefined}
+                            rel={item.newTab ? "noopener noreferrer" : undefined}
+                            aria-current={isActive ? "page" : undefined}
+                            className={itemClassName}
+                          >
+                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+                          </a>
+                        ) : (
+                          <Link
+                            href={itemHref}
+                            onClick={handleCloseMenu}
+                            aria-current={isActive ? "page" : undefined}
+                            className={itemClassName}
+                          >
+                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+                          </Link>
+                        )}
                       </li>
                     );
                   })}
@@ -613,6 +766,90 @@ export function SiteShell({
                   const href = (link.href ?? "/").trim() || "/";
                   const isActive = isActiveHref(href);
                   const isExternal = link.newTab || isExternalHref(href);
+
+                  if (link.id === "about" && aboutSubLinks.length > 0) {
+                    const rootActive = isAboutMenuActive;
+
+                    const rootClassName = cn(
+                      "group block w-full py-2",
+                      "no-underline",
+                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                      rootActive
+                        ? "text-foreground"
+                        : "text-muted-foreground transition-colors hover:text-foreground",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                    );
+
+                    return (
+                      <li key={link.id}>
+                        {isExternal ? (
+                          <a
+                            href={href}
+                            target={link.newTab ? "_blank" : undefined}
+                            rel={link.newTab ? "noopener noreferrer" : undefined}
+                            aria-current={isActive ? "page" : undefined}
+                            className={rootClassName}
+                          >
+                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+                          </a>
+                        ) : (
+                          <Link
+                            href={href}
+                            onClick={handleCloseMenu}
+                            aria-current={isActive ? "page" : undefined}
+                            className={rootClassName}
+                          >
+                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+                          </Link>
+                        )}
+
+                        <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+                          {aboutSubLinks.map((item) => {
+                            const isSubActive = activeAboutSubId === item.id;
+                            const itemHref = (item.href ?? "/").trim() || "/";
+                            const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
+
+                            const itemClassName = cn(
+                              "group block w-full py-1.5",
+                              "no-underline",
+                              "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                              isSubActive
+                                ? "text-foreground"
+                                : "text-muted-foreground transition-colors hover:text-foreground",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+                              "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                            );
+
+                            return (
+                              <li key={item.id}>
+                                {itemIsExternal ? (
+                                  <a
+                                    href={itemHref}
+                                    target={item.newTab ? "_blank" : undefined}
+                                    rel={item.newTab ? "noopener noreferrer" : undefined}
+                                    aria-current={isSubActive ? "page" : undefined}
+                                    className={itemClassName}
+                                  >
+                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
+                                  </a>
+                                ) : (
+                                  <Link
+                                    href={itemHref}
+                                    onClick={handleCloseMenu}
+                                    aria-current={isSubActive ? "page" : undefined}
+                                    className={itemClassName}
+                                  >
+                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
+                                  </Link>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </li>
+                    );
+                  }
 
                   return (
                     <li key={link.id}>

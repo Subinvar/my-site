@@ -20,6 +20,60 @@
         "ru": "products",
         "en": "products"
       },
+      "children": [
+        {
+          "id": "products-binders",
+          "label": {
+            "ru": "Литейные связующие",
+            "en": "Binders"
+          },
+          "path": {
+            "ru": "products/binders",
+            "en": "products/binders"
+          },
+          "newTab": false,
+          "order": 0
+        },
+        {
+          "id": "products-coatings",
+          "label": {
+            "ru": "Противопригарные покрытия",
+            "en": "Coatings"
+          },
+          "path": {
+            "ru": "products/coatings",
+            "en": "products/coatings"
+          },
+          "newTab": false,
+          "order": 10
+        },
+        {
+          "id": "products-auxiliaries",
+          "label": {
+            "ru": "Вспомогательные материалы",
+            "en": "Auxiliary materials"
+          },
+          "path": {
+            "ru": "products/auxiliaries",
+            "en": "products/auxiliaries"
+          },
+          "newTab": false,
+          "order": 20
+        },
+        {
+          "id": "products-catalog",
+          "label": {
+            "ru": "Каталог",
+            "en": "Catalog"
+          },
+          "path": {
+            "ru": "catalog",
+            "en": "catalog"
+          },
+          "newTab": false,
+          "order": 30
+        }
+      ],
       "newTab": false,
       "order": 10
     },
@@ -46,6 +100,34 @@
         "ru": "about",
         "en": "about"
       },
+      "children": [
+        {
+          "id": "about-documents",
+          "label": {
+            "ru": "Документы",
+            "en": "Documents"
+          },
+          "path": {
+            "ru": "documents",
+            "en": "documents"
+          },
+          "newTab": false,
+          "order": 0
+        },
+        {
+          "id": "about-privacy",
+          "label": {
+            "ru": "Политика ПДн",
+            "en": "Privacy Policy"
+          },
+          "path": {
+            "ru": "privacy-policy",
+            "en": "privacy-policy"
+          },
+          "newTab": false,
+          "order": 10
+        }
+      ],
       "newTab": false,
       "order": 30
     },

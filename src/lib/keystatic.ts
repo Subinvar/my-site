@@ -405,6 +405,7 @@ type NavigationEntry = {
   externalUrl?: string | null;
   newTab?: boolean | null;
   order?: number | null;
+  children?: NavigationEntry[] | null;
 };
 
 export type SeoImage = {
@@ -453,6 +454,7 @@ export type NavigationLink = {
   isExternal: boolean;
   newTab: boolean;
   localizedPath?: Localized<string>;
+  children?: NavigationLink[];
 };
 
 export type Navigation = {
@@ -1240,6 +1242,10 @@ function resolveNavigationLinks(
       const pathValue = localizedPath ? pickLocalized(localizedPath, locale) : undefined;
       const href = toOptionalString(link.externalUrl) ?? (pathValue ? buildInternalPath(locale, pathValue) : null);
       const isExternal = Boolean(link.externalUrl && toOptionalString(link.externalUrl));
+      const children = resolveNavigationLinks(
+        Array.isArray(link.children) ? link.children : undefined,
+        locale,
+      );
       if (!href) {
         return null;
       }
@@ -1251,6 +1257,7 @@ function resolveNavigationLinks(
         isExternal,
         newTab: Boolean(link.newTab),
         localizedPath,
+        children: children.length ? children : undefined,
         order,
       };
       return orderedLink;
@@ -1258,13 +1265,14 @@ function resolveNavigationLinks(
     .filter((value): value is NavigationLink & { order: number } => value !== null)
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
 
-  return withOrder.map(({ id, label, href, isExternal, newTab, localizedPath }) => ({
+  return withOrder.map(({ id, label, href, isExternal, newTab, localizedPath, children }) => ({
     id,
     label,
     href,
     isExternal,
     newTab,
     localizedPath,
+    children,
   } satisfies NavigationLink));
 }
 

@@ -146,7 +146,7 @@ const localizedSeoGroup = () =>
     canonicalOverride: fields.text({ label: 'Canonical override' }),
   });
 
-const navigationLinks = (label: string) =>
+const navigationSubLinks = (label: string, itemLabel: string) =>
   fields.array(
     fields.object({
       id: fields.text({ label: 'ID', validation: { isRequired: true } }),
@@ -155,6 +155,23 @@ const navigationLinks = (label: string) =>
       externalUrl: fields.text({ label: 'Внешний URL' }),
       newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: false }),
       order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
+    }),
+    {
+      label,
+      itemLabel: () => itemLabel,
+    }
+  );
+
+const navigationHeaderLinks = (label: string) =>
+  fields.array(
+    fields.object({
+      id: fields.text({ label: 'ID', validation: { isRequired: true } }),
+      label: localizedText('Подпись', { isRequired: true }),
+      path: localizedSlug('Путь'),
+      externalUrl: fields.text({ label: 'Внешний URL' }),
+      newTab: fields.checkbox({ label: 'Открывать в новой вкладке', defaultValue: false }),
+      order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
+      children: navigationSubLinks('Подменю', 'Подпункт'),
     }),
     {
       label,
@@ -426,8 +443,8 @@ export default config({
       path: 'content/navigation/',
       format: { data: 'json' },
       schema: {
-        headerLinks: navigationLinks('Ссылки в шапке'),
-        footerLinks: navigationLinks('Ссылки в подвале'),
+        headerLinks: navigationHeaderLinks('Ссылки в шапке'),
+        footerLinks: navigationSubLinks('Ссылки в подвале', 'Ссылка'),
       },
     }),
     dictionary: singleton({

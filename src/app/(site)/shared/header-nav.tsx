@@ -4,7 +4,7 @@ import { memo, type HTMLAttributes, type RefObject } from "react";
 
 import { NavigationList } from "@/app/[locale]/navigation-list";
 import type { Locale } from "@/lib/i18n";
-import type { Navigation } from "@/lib/keystatic";
+import type { Navigation, NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
 
 import { HeaderCta } from "./header-top-bar";
@@ -32,6 +32,10 @@ type HeaderNavProps = {
   contactsHref: string;
   ctaLabel: string;
   headerButtonBase: string;
+  onDesktopNavEnter?: () => void;
+  onDesktopNavLeave?: () => void;
+  onDesktopNavLinkEnter?: (link: NavigationLink) => void;
+  onDesktopNavLinkFocus?: (link: NavigationLink) => void;
 };
 
 export const HeaderNav = memo(function HeaderNav({
@@ -57,6 +61,10 @@ export const HeaderNav = memo(function HeaderNav({
   contactsHref,
   ctaLabel,
   headerButtonBase,
+  onDesktopNavEnter,
+  onDesktopNavLeave,
+  onDesktopNavLinkEnter,
+  onDesktopNavLinkFocus,
 }: HeaderNavProps) {
   const burgerAriaLabel = locale === "ru"
     ? isMenuOpen
@@ -100,6 +108,10 @@ export const HeaderNav = memo(function HeaderNav({
             className="w-full max-w-[var(--header-rail-w)]"
             density="compact"
             distribution="between"
+            onNavEnter={onDesktopNavEnter}
+            onNavLeave={onDesktopNavLeave}
+            onLinkEnter={onDesktopNavLinkEnter}
+            onLinkFocus={onDesktopNavLinkFocus}
           />
         </div>
 
