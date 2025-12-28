@@ -44,67 +44,6 @@ const isPrivacyLikeLabel = (label: string): boolean => {
   );
 };
 
-const pickLinksByIds = (links: NavigationLink[], desiredIds: string[]): NavigationLink[] => {
-  if (!desiredIds.length) return [];
-
-  const byId = new Map<string, NavigationLink>();
-  for (const link of links) byId.set(link.id, link);
-
-  const picked: NavigationLink[] = [];
-  const pickedIds = new Set<string>();
-
-  for (const desiredId of desiredIds) {
-    const match = byId.get(desiredId);
-    if (match && !pickedIds.has(match.id)) {
-      picked.push(match);
-      pickedIds.add(match.id);
-    }
-  }
-
-  return picked;
-};
-
-const pickLinksByLabels = (
-  links: NavigationLink[],
-  desiredLabels: string[],
-): NavigationLink[] => {
-  const normalize = (value: string): string => value.trim().toLowerCase();
-
-  const byLabel = new Map<string, NavigationLink>();
-  for (const link of links) {
-    const key = normalize(link.label ?? "");
-    if (key.length) byLabel.set(key, link);
-  }
-
-  const picked: NavigationLink[] = [];
-  const pickedIds = new Set<string>();
-
-  for (const desired of desiredLabels) {
-    const desiredKey = normalize(desired);
-
-    const exact = byLabel.get(desiredKey);
-    if (exact && !pickedIds.has(exact.id)) {
-      picked.push(exact);
-      pickedIds.add(exact.id);
-      continue;
-    }
-
-    const partial = links.find((link) => {
-      if (!link.label) return false;
-      const key = normalize(link.label);
-      return key.includes(desiredKey) || desiredKey.includes(key);
-    });
-
-    if (partial && !pickedIds.has(partial.id)) {
-      picked.push(partial);
-      pickedIds.add(partial.id);
-    }
-  }
-
-  return picked;
-};
-
-
 export function SiteFooter({
   locale,
   navigation,
@@ -123,48 +62,10 @@ export function SiteFooter({
   const footerLinks = (() => {
     const base = navigation.footer ?? [];
 
-    const desiredIds = [
-      // IMPORTANT: эти id должны быть стабильными в navigation.footer (Keystatic/настройки навигации)
-      "binders",
-      "coatings",
-      "auxiliaries",
-      "catalog",
-      "documents",
-      "privacy",
-    ];
-
-    // Fallback по label на случай, если id ещё не приведены к стабильным
-    const desiredRu = [
-      "Связующие",
-      "Противопригарные покрытия",
-      "Вспомогательные материалы",
-      "Каталог",
-      "Документы",
-      "Политика о персональных данных",
-    ];
-
-    const desiredEn = [
-      "Binders",
-      "Non-stick coatings",
-      "Auxiliary materials",
-      "Catalog",
-      "Documents",
-      "Personal data policy",
-    ];
-
-    const pickedById = pickLinksByIds(base, desiredIds);
-    const picked = pickedById.length ? pickedById : pickLinksByLabels(base, locale === "ru" ? desiredRu : desiredEn);
-
-let result = picked.length ? picked : base;
-
-    // Если по точным меткам не нашли — всё равно стараемся добавить политику
-    if (!result.some((link) => isPrivacyLikeLabel(link.label))) {
-      const privacy = base.find((link) => isPrivacyLikeLabel(link.label));
-      if (privacy) result = [...result, privacy];
-    }
+    if (!base.length) return base;
 
     // Политика ПДн временно ведёт на страницу "Контакты"
-    return result.map((link) => {
+    return base.map((link) => {
       const isPrivacyLink = link.id === "privacy" || isPrivacyLikeLabel(link.label);
       return isPrivacyLink
         ? { ...link, href: contactsHref, isExternal: false }

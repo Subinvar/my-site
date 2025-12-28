@@ -685,7 +685,7 @@ export function SiteShell({
 ) : null}
 
 
-      <main
+      <section
         id="main"
         role="main"
         tabIndex={-1}
@@ -695,7 +695,7 @@ export function SiteShell({
         className="mx-auto w-full max-w-screen-2xl flex-1 space-y-12 px-[var(--header-pad-x)] py-10 sm:py-12"
       >
         {children}
-      </main>
+      </section>
 
       <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
         {footer}
