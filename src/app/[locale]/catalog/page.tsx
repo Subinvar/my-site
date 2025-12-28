@@ -104,9 +104,9 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
             <SectionHeading title={heading} description={description} as="h1" />
           </header>
 
-          <div className="flex gap-8 xl:gap-10">
-            <aside className="hidden w-[280px] shrink-0 lg:block">
-              <section className="rounded-lg border border-border bg-card p-6">
+          <div className="grid gap-8 xl:gap-10 lg:grid-cols-[280px,1fr]">
+            <aside className="hidden lg:block">
+              <section className="w-[280px] shrink-0 rounded-lg border border-border bg-card p-6">
                 <CatalogFilters
                   locale={locale}
                   state={filters}

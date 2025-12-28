@@ -6,10 +6,6 @@ export function useScrollElevation() {
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsHeaderElevated(window.scrollY > 1);
-    }
-
     const sentinel = scrollSentinelRef.current;
     if (!sentinel) return;
 
@@ -19,6 +15,7 @@ export function useScrollElevation() {
         const next = window.scrollY > 1;
         setIsHeaderElevated((prev) => (prev === next ? prev : next));
       };
+      requestAnimationFrame(onScroll);
       window.addEventListener("scroll", onScroll, { passive: true });
       return () => window.removeEventListener("scroll", onScroll);
     }
