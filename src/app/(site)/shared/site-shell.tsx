@@ -555,8 +555,8 @@ export function SiteShell({
   >
     <nav aria-label={menuDialogLabel} className="h-full">
       <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
-        <div className="flex h-full flex-col">
-          <div className="relative flex-1 overflow-hidden">
+        <div className="flex h-full min-h-0 flex-col">
+          <div className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
             <ul className="m-0 list-none space-y-4 p-0">
               <li>
                 <Link
