@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 
 export function useScrollElevation() {
   // Начальное значение совпадает на сервере и клиенте, чтобы избежать проблем гидратации
-  const [isHeaderElevated, setIsHeaderElevated] = useState(
-    () => typeof window !== "undefined" && window.scrollY > 1,
-  );
+  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsHeaderElevated(window.scrollY > 1);
+    }
+
     const sentinel = scrollSentinelRef.current;
     if (!sentinel) return;
 

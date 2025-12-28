@@ -34,14 +34,6 @@ type HeaderNavProps = {
   headerButtonBase: string;
 };
 
-export const HEADER_NAV_STABLE_SLOTS: Record<string, number> = {
-  products: 116,
-  news: 96,
-  about: 124,
-  partners: 120,
-  contacts: 120,
-};
-
 export const HeaderNav = memo(function HeaderNav({
   navHostRef,
   navMeasureRef,
@@ -174,7 +166,6 @@ export const HeaderNav = memo(function HeaderNav({
             currentPath={currentPath}
             className="inline-block w-max"
             density="compact"
-            stableSlots={HEADER_NAV_STABLE_SLOTS}
             distribution="between"
             measureMode
           />

@@ -28,12 +28,12 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
           className="h-[var(--header-logo-h)] w-auto object-contain"
         />
         <span
-          className={cn(
-            "font-[var(--font-heading)]",
-            "text-[length:var(--header-brand-fs)] font-bold leading-[1.1] lg:leading-[1.05]",
-            "tracking-[-0.02em] text-[var(--color-brand-600)] dark:text-[var(--color-brand-600)]",
-          )}
-        >
+            className={cn(
+              "font-[var(--font-heading)]",
+              "text-[length:var(--header-brand-fs)] font-bold leading-[1.1]",
+              "tracking-[-0.02em] text-[var(--color-brand-600)] dark:text-[var(--color-brand-600)]",
+            )}
+          >
           {label}
         </span>
       </Link>
