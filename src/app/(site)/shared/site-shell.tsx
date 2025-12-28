@@ -63,8 +63,6 @@ type SiteShellProps = {
   footer?: ReactNode;
 };
 
-const brandFont = { variable: "font-brand-var" };
-
 const headerButtonBase =
   "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
 
@@ -428,7 +426,6 @@ export function SiteShell({
     <div
       ref={shellRef}
       className={cn(
-        brandFont.variable,
         "theme-transition relative flex min-h-screen flex-col bg-background text-foreground",
         shellTransitionClass,
         "motion-reduce:transition-none motion-reduce:duration-0",

@@ -6,12 +6,31 @@ export function useScrollElevation() {
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    const sentinel = scrollSentinelRef.current;
-    if (!sentinel) return;
+    // 1) берём то, что уже выставил ранний скрипт в layout.tsx
+    const preset = document.documentElement.dataset.headerElevated;
+    if (preset === "1") {
+      setIsHeaderElevated(true);
+    }
 
-    const rect = sentinel.getBoundingClientRect();
-    const next = rect.top < 0;
-    setIsHeaderElevated((prev) => (prev === next ? prev : next));
+    // 2) и уточняем после того, как браузер восстановит scroll (часто это происходит чуть позже)
+    let raf1 = 0;
+    let raf2 = 0;
+
+    const compute = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      const next = y > 0;
+      setIsHeaderElevated((prev) => (prev === next ? prev : next));
+    };
+
+    raf1 = requestAnimationFrame(() => {
+      compute();
+      raf2 = requestAnimationFrame(compute);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
   }, []);
 
   useEffect(() => {

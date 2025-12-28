@@ -56,13 +56,19 @@ export function SiteFooter({
         : `© ${currentYear} Intema Group. All rights reserved.`;
   const baseLinkClassName = cn(
     "relative inline-flex items-center no-underline",
-    "after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full",
-    "after:origin-left after:transition-[transform,background-color] after:duration-200 after:ease-out",
-    "after:bg-transparent after:scale-x-0",
-    "hover:after:bg-[color:var(--header-border)] hover:after:scale-x-100",
-    "focus-visible:after:bg-[color:var(--header-border)] focus-visible:after:scale-x-100",
+    // та же геометрия, что и в nav-underline
+    "after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:rounded-full",
+    "after:h-[var(--nav-underline-h,1px)]",
+    // underline = currentColor, но по умолчанию скрыт
+    "after:bg-current after:opacity-0 after:origin-left after:scale-x-0",
+    // анимация
+    "after:transition-[transform,opacity] after:duration-200 after:ease-out",
+    // hover/focus → показываем деликатно (тот же токен, что ты уже завёл)
+    "hover:after:opacity-[var(--nav-underline-hover-opacity,0.5)] hover:after:scale-x-100",
+    "focus-visible:after:opacity-[var(--nav-underline-hover-opacity,0.5)] focus-visible:after:scale-x-100",
     "active:opacity-90",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+    // твой стандартный focus-ring
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   );
 
   const menuLinkBaseClassName = cn(
