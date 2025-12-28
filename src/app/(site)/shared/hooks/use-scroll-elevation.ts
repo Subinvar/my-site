@@ -2,15 +2,14 @@ import { useEffect, useRef, useState } from "react";
 
 export function useScrollElevation() {
   // Начальное значение совпадает на сервере и клиенте, чтобы избежать проблем гидратации
-  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
+  const [isHeaderElevated, setIsHeaderElevated] = useState(
+    () => typeof window !== "undefined" && window.scrollY > 1,
+  );
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const sentinel = scrollSentinelRef.current;
     if (!sentinel) return;
-
-    const nextIsElevated = typeof window !== "undefined" && window.scrollY > 1;
-    setIsHeaderElevated((prev) => (prev === nextIsElevated ? prev : nextIsElevated));
 
     if (typeof IntersectionObserver === "undefined") {
       // Fallback для очень старых браузеров

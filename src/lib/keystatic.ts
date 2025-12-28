@@ -1038,6 +1038,9 @@ type SiteSingleton = {
     address?: Localized<string>;
   } | null;
   footer?: {
+    tagline?: Localized<string>;
+    address?: Localized<string>;
+    hours?: Localized<string>;
     copyright?: Localized<string>;
   } | null;
   seo?: {

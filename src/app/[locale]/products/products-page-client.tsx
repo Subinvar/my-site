@@ -14,7 +14,7 @@ export type ProductsHubCardKind = 'binders' | 'coatings' | 'auxiliaries';
 
 export type ProductsHubCard = {
   kind: ProductsHubCardKind;
-  /** raw taxonomy value (used for matching chips) */
+  /** raw taxonomy value */
   value: string;
   title: string;
   description: string;
@@ -23,7 +23,6 @@ export type ProductsHubCard = {
 
 type ProductsPageClientProps = {
   locale: Locale;
-  title: string;
   binders: ProductsHubCard[];
   coatings: ProductsHubCard[];
   auxiliaries: ProductsHubCard[];
@@ -47,7 +46,6 @@ const SECTION_META: Record<SectionId, { icon: ReactElement; ru: string; en: stri
 
 export function ProductsPageClient({
   locale,
-  title,
   binders,
   coatings,
   auxiliaries,
@@ -106,10 +104,10 @@ export function ProductsPageClient({
       ];
 
   return (
-    <div className="space-y-10">
-      {/* HERO / CTA */}
-      <div className="space-y-4">
-        <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">
+    <div className="space-y-12 lg:space-y-14">
+      {/* INTRO / CTA */}
+      <section className="space-y-5">
+        <p className="m-0 max-w-3xl text-[length:var(--header-ui-fs)] leading-relaxed text-[var(--muted-foreground)]">
           {isRu
             ? 'Нажмите на карточку нужного процесса/типа — и вы попадёте в подборку товаров в каталоге.'
             : 'Pick a process/type card to jump to the matching items in the catalogue.'}
@@ -127,21 +125,21 @@ export function ProductsPageClient({
           </Button>
         </div>
 
-        {/* Небольшой рискованный элемент: глобальный переключатель вида */}
-        <div className="pt-2">
+        {/* Переключатель вида: «карточки / список» */}
+        <div className="pt-1">
           <ViewModeToggle
             isRu={isRu}
             value={viewMode}
             onChange={setViewMode}
           />
         </div>
-      </div>
+      </section>
 
       {/* Sticky-навигатор по секциям */}
       <nav
         aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
         className={cn(
-          'sticky z-10 -mx-2 rounded-2xl border border-border bg-background/70 px-2 py-2 backdrop-blur',
+          'sticky z-10 rounded-2xl border border-[var(--header-border)] bg-background/60 px-2 py-2 backdrop-blur',
           'top-[calc(var(--header-height)+0.75rem)]',
         )}
       >
@@ -157,11 +155,11 @@ export function ProductsPageClient({
                 href={`#${id}`}
                 onClick={() => setActiveSection(id)}
                 className={cn(
-                  'inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-sm',
+                  'inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium',
                   'transition-colors duration-150',
                   isActive
-                    ? 'border-[var(--color-brand-600)] bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-foreground'
-                    : 'border-border bg-transparent text-[var(--muted-foreground)] hover:bg-background',
+                    ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-foreground'
+                    : 'border-[var(--header-border)] bg-transparent text-[var(--muted-foreground)] hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))] hover:bg-muted/40 hover:text-foreground',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
                   'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
                 )}
@@ -170,10 +168,10 @@ export function ProductsPageClient({
                 <span className="truncate">{label}</span>
                 <span
                   className={cn(
-                    'ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs',
+                    'ml-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
                     isActive
-                      ? 'bg-[color:var(--color-brand-600)] text-white'
-                      : 'bg-muted text-[var(--muted-foreground)]',
+                      ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
+                      : 'border-[var(--header-border)] bg-muted/60 text-[var(--muted-foreground)]',
                   )}
                   aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
                 >
@@ -186,7 +184,7 @@ export function ProductsPageClient({
       </nav>
 
       {/* СЕКЦИИ */}
-      <div className="space-y-12">
+      <div className="space-y-10 lg:space-y-12">
         <ProductsSection
           id="binders"
           locale={locale}
@@ -228,19 +226,19 @@ export function ProductsPageClient({
       </div>
 
       {/* Блок доверия + CTA */}
-      <section className="rounded-2xl border border-border bg-[var(--card)] p-5 sm:p-6">
+      <section className="rounded-3xl border border-[var(--header-border)] bg-muted/30 p-5 sm:p-6">
         <header className="space-y-2">
-          <h2 className="text-lg font-semibold sm:text-xl">{trustTitle}</h2>
-          <p className="max-w-3xl text-sm text-[var(--muted-foreground)] sm:text-base">
+          <h2 className="mt-0 text-lg font-semibold sm:text-xl">{trustTitle}</h2>
+          <p className="m-0 max-w-3xl text-sm text-[var(--muted-foreground)] sm:text-base">
             {isRu
               ? 'Не пытаемся «продать любой ценой». Наша цель — чтобы материалы стабильно работали на вашем участке.'
               : 'We don’t aim to “sell at any cost”. Our goal is stable performance in your production.'}
           </p>
         </header>
 
-        <ul className="mt-5 grid gap-3 md:grid-cols-2">
+        <ul className="m-0 mt-5 grid list-none gap-3 p-0 md:grid-cols-2">
           {trustItems.map((item) => (
-            <li key={item} className="rounded-xl border border-border bg-background/60 p-4">
+            <li key={item} className="rounded-2xl border border-[var(--header-border)] bg-background/50 p-4">
               <span className="text-sm leading-relaxed">{item}</span>
             </li>
           ))}
@@ -257,13 +255,6 @@ export function ProductsPageClient({
           </Button>
         </div>
       </section>
-
-      {/* Микро-подвал страницы: техничная справка */}
-      <p className="text-xs text-[var(--muted-foreground)]">
-        {isRu
-          ? `Страница: «${title}». Драфт концепции: карточки + быстрый переход в каталог + переключатель вида.`
-          : `Page: “${title}”. Draft concept: cards + quick catalogue jump + view toggle.`}
-      </p>
     </div>
   );
 }
@@ -285,47 +276,57 @@ function ProductsSection({
 }) {
   const isRu = locale === 'ru';
   const sectionHref = buildPath(locale, ['products', id]);
+  const meta = SECTION_META[id];
 
   return (
     <section
       id={id}
       className={cn(
-        'scroll-mt-[calc(var(--header-height)+5rem)] space-y-4',
+        'scroll-mt-[calc(var(--header-height)+4rem)] rounded-3xl border border-[var(--header-border)] bg-muted/30 p-5 sm:p-6',
       )}
     >
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold sm:text-2xl">{title}</h2>
-          <p className="max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">{description}</p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h2 className="mt-0 flex items-center gap-3 text-xl font-semibold leading-[1.12] tracking-[-0.01em] sm:text-2xl">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--header-border)] bg-background/60">
+              {meta.icon}
+            </span>
+            <span>{title}</span>
+          </h2>
+          <p className="m-0 max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">{description}</p>
         </div>
+
         <Button asChild variant="secondary" size="sm" rightIcon={<ArrowRight className="h-4 w-4" aria-hidden />}>
           <Link href={sectionHref}>{isRu ? 'Открыть раздел' : 'Open section'}</Link>
         </Button>
       </header>
 
       {viewMode === 'list' ? (
-        <div className="rounded-2xl border border-border bg-background/60 p-4 sm:p-5">
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {items.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-2',
-                    'text-sm transition-colors hover:bg-muted',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
-                    'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
-                  )}
-                >
-                  <span className="truncate">{item.title}</span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" aria-hidden />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="m-0 mt-5 grid list-none gap-2 p-0 sm:grid-cols-2">
+          {items.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={cn(
+                  'group flex items-center justify-between gap-3 rounded-xl border border-[var(--header-border)] bg-background/50 px-3 py-2',
+                  'text-sm text-foreground transition-colors',
+                  'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+                  'hover:bg-[color:color-mix(in_srgb,var(--color-brand-600)_4%,var(--background))]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+                  'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                )}
+              >
+                <span className="truncate">{item.title}</span>
+                <ArrowRight
+                  className="h-4 w-4 shrink-0 text-[var(--muted-foreground)] transition-transform group-hover:translate-x-0.5"
+                  aria-hidden
+                />
+              </Link>
+            </li>
+          ))}
+        </ul>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-5 grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <HubCard
               key={item.href}
@@ -374,22 +375,42 @@ function HubCard({
           : 'View materials';
 
   return (
-    <Link href={item.href} className="block h-full">
+    <Link
+      href={item.href}
+      className={cn(
+        'group block h-full rounded-2xl',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
+        'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+      )}
+    >
       <Card
         as="article"
-        className={cn('h-full')}
+        className={cn(
+          'h-full p-5 sm:p-6 shadow-none',
+          'hover:translate-y-0 hover:shadow-none focus-within:translate-y-0 focus-within:shadow-none',
+          'transition-colors',
+          'border-[var(--header-border)]',
+          'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+          'hover:bg-[color:color-mix(in_srgb,var(--color-brand-600)_3%,var(--card))]',
+          'focus-within:border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+        )}
       >
-        <CardHeader className="gap-1">
+        <CardHeader className="gap-2">
           <CardTitle className="flex items-start justify-between gap-3">
             <span className="leading-snug">{item.title}</span>
-            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]" aria-hidden />
+            <ArrowRight
+              className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)] transition-transform group-hover:translate-x-0.5"
+              aria-hidden
+            />
           </CardTitle>
           <CardDescription>{item.description}</CardDescription>
         </CardHeader>
 
-        <CardFooter className="mt-auto">
-          <span className="text-xs text-[var(--muted-foreground)]">{kindLabel}</span>
-          <span className="text-xs font-medium text-[var(--color-brand-600)]">{ctaLabel}</span>
+        <CardFooter className="mt-6">
+          <span className="text-xs font-medium text-[var(--muted-foreground)]">{kindLabel}</span>
+          <span className="text-xs font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--color-brand-600)]">
+            {ctaLabel}
+          </span>
         </CardFooter>
       </Card>
     </Link>
@@ -412,7 +433,7 @@ function ViewModeToggle({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted-foreground)]">{label}</span>
-      <div className="inline-flex rounded-xl border border-border bg-background/60 p-1">
+      <div className="inline-flex rounded-xl border border-[var(--header-border)] bg-background/60 p-1">
         <ToggleButton active={value === 'cards'} onClick={() => onChange('cards')}>
           {cardsLabel}
         </ToggleButton>
@@ -420,9 +441,6 @@ function ViewModeToggle({
           {listLabel}
         </ToggleButton>
       </div>
-      <span className="text-xs text-[var(--muted-foreground)]">
-        {isRu ? 'Экспериментальный переключатель.' : 'Experimental toggle.'}
-      </span>
     </div>
   );
 }
@@ -441,11 +459,11 @@ function ToggleButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-lg px-3 py-1.5 text-sm',
+        'rounded-lg px-3 py-1.5 text-sm font-medium',
         'transition-colors duration-150',
         active
-          ? 'bg-[var(--color-brand-600)] text-white'
-          : 'bg-transparent text-[var(--muted-foreground)] hover:bg-background hover:text-foreground',
+          ? 'bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
+          : 'bg-transparent text-[var(--muted-foreground)] hover:bg-muted/40 hover:text-foreground',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
         'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
       )}

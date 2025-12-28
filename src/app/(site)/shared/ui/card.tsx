@@ -31,7 +31,7 @@ export function CardHeader({ className, ...rest }: HTMLAttributes<HTMLDivElement
 
 export function CardTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className={cn('text-base font-semibold sm:text-lg', className)} {...rest}>
+    <h3 className={cn('m-0 text-base font-semibold sm:text-lg', className)} {...rest}>
       {children}
     </h3>
   );
@@ -41,7 +41,7 @@ export function CardDescription({ className, children, ...rest }: HTMLAttributes
   return (
     <p
       className={cn(
-        'text-sm text-[var(--muted-foreground)] leading-relaxed',
+        'm-0 text-sm text-[var(--muted-foreground)] leading-relaxed',
         className,
       )}
       {...rest}

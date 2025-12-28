@@ -110,7 +110,6 @@ export default async function ProductsPage({ params }: PageProps) {
 
           <ProductsPageClient
             locale={locale}
-            title={pageTitle}
             binders={binders}
             coatings={coatings}
             auxiliaries={auxiliaries}
