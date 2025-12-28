@@ -175,6 +175,8 @@ export const HeaderNav = memo(function HeaderNav({
             className="inline-block w-max"
             density="compact"
             stableSlots={HEADER_NAV_STABLE_SLOTS}
+            distribution="between"
+            measureMode
           />
         </div>
       ) : null}

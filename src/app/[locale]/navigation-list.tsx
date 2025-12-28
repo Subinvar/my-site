@@ -14,6 +14,7 @@ type NavigationListProps = {
   stableSlots?: Record<string, number>;
   layout?: "header" | "panel";
   distribution?: "end" | "between";
+  measureMode?: boolean;
 };
 
 const normalizePathname = (value: string): string => {
@@ -37,6 +38,7 @@ export function NavigationList({
   stableSlots,
   layout = "header",
   distribution = "end",
+  measureMode = false,
 }: NavigationListProps) {
   if (!links.length) {
     return null;
@@ -48,11 +50,17 @@ export function NavigationList({
 
   const isPanel = layout === "panel";
 
+  const betweenWidthClass = measureMode ? "w-max" : "w-full";
+
   const listClassName = isPanel
     ? "m-0 p-0 list-none flex flex-col gap-1"
     : density === "compact"
       ? distribution === "between"
-        ? "m-0 p-0 list-none flex w-full flex-nowrap items-center justify-between gap-0 pl-[var(--header-nav-inset-x)] pr-[var(--header-nav-inset-x-end)]"
+        ? cn(
+            "m-0 p-0 list-none flex flex-nowrap items-center justify-between gap-0",
+            betweenWidthClass,
+            "pl-[var(--header-nav-inset-x)] pr-[var(--header-nav-inset-x-end)]",
+          )
         : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6"
       : "m-0 p-0 list-none flex flex-wrap lg:flex-nowrap items-center justify-end gap-6 text-sm font-medium";
 

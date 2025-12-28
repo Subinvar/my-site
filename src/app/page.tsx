@@ -48,31 +48,29 @@ export default async function RootHomePage() {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <div className="space-y-12">
-        <Hero locale={locale} data={home?.hero} />
+      <Hero locale={locale} data={home?.hero} />
 
-        <ProductDirections locale={locale} items={home?.directions} />
+      <ProductDirections locale={locale} items={home?.directions} />
 
-        <HomeAbout locale={locale} data={home?.about} />
+      <HomeAbout locale={locale} data={home?.about} />
 
-        <HomeStats locale={locale} items={home?.stats} />
+      <HomeStats locale={locale} items={home?.stats} />
 
-        <NewsPreview locale={locale} intro={home?.newsIntro} />
+      <NewsPreview locale={locale} intro={home?.newsIntro} />
 
-        <PartnersStrip locale={locale} intro={home?.partnersIntro} />
+      <PartnersStrip locale={locale} intro={home?.partnersIntro} />
 
-        <KeyClientsStrip locale={locale} variant="compact" />
+      <KeyClientsStrip locale={locale} variant="compact" />
 
-        <article className="space-y-6 rounded-2xl border border-border/70 bg-card/80 p-6 shadow-sm sm:p-8">
-          <header className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{page.title}</h1>
-            {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
-          </header>
-          <div className="prose-markdoc">{content}</div>
-        </article>
+      <article className="space-y-6 rounded-2xl border border-border/70 bg-card/80 p-6 shadow-sm sm:p-8">
+        <header className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{page.title}</h1>
+          {summary ? <p className="text-lg text-muted-foreground">{summary}</p> : null}
+        </header>
+        <div className="prose-markdoc">{content}</div>
+      </article>
 
-        <ProductCategoriesSection locale={locale} />
-      </div>
+      <ProductCategoriesSection locale={locale} />
     </SiteShellLayout>
   );
 }

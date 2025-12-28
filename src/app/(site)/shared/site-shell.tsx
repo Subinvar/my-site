@@ -700,7 +700,7 @@ export function SiteShell({
         tabIndex={-1}
         aria-hidden={isMenuModal ? true : undefined}
         {...inertProps(isMenuModal)}
-        className="mx-auto w-full max-w-screen-2xl flex-1 px-[var(--header-pad-x)] py-10 sm:py-12"
+        className="mx-auto w-full max-w-screen-2xl flex-1 space-y-12 px-[var(--header-pad-x)] py-10 sm:py-12"
       >
         {children}
       </main>
