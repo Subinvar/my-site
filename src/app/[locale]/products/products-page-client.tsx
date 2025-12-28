@@ -31,7 +31,7 @@ type ProductsPageClientProps = {
 type SectionId = 'binders' | 'coatings' | 'auxiliaries';
 
 const SECTION_META: Record<SectionId, { icon: ReactElement; ru: string; en: string }> = {
-  binders: { icon: <Beaker className="h-4 w-4" aria-hidden />, ru: 'Связующие', en: 'Binders' },
+  binders: { icon: <Beaker className="h-4 w-4" aria-hidden />, ru: 'Литейные связующие', en: 'Binders' },
   coatings: {
     icon: <PaintRoller className="h-4 w-4" aria-hidden />,
     ru: 'Противопригарные покрытия',
@@ -188,11 +188,11 @@ export function ProductsPageClient({
         <ProductsSection
           id="binders"
           locale={locale}
-          title={isRu ? 'Связующие' : 'Binders'}
+          title={isRu ? 'Литейные связующие' : 'Binders'}
           description={
             isRu
-              ? 'Выберите процесс — откроется подборка связующих материалов в каталоге.'
-              : 'Pick a process to open matching binders in the catalogue.'
+              ? 'Выберите процесс — откроется подборка литейных связующих материалов в каталоге.'
+              : 'Pick a process to open matching foundry binders in the catalogue.'
           }
           items={binders}
           viewMode={viewMode}

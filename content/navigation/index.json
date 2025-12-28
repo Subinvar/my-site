@@ -78,17 +78,17 @@
   ],
   "footerLinks": [
     {
-      "id": "footer-catalog",
+      "id": "footer-binders",
       "label": {
-        "ru": "Каталог",
-        "en": "Catalog"
+        "ru": "Литейные связующие",
+        "en": "Foundry binders"
       },
       "path": {
-        "ru": "catalog",
-        "en": "catalog"
+        "ru": "products/binders",
+        "en": "products/binders"
       },
       "newTab": false,
-      "order": 20
+      "order": 5
     },
     {
       "id": "footer-documents",
@@ -102,6 +102,45 @@
       },
       "newTab": false,
       "order": 10
+    },
+    {
+      "id": "footer-coatings",
+      "label": {
+        "ru": "Противопригарные покрытия",
+        "en": "Foundry coatings"
+      },
+      "path": {
+        "ru": "products/coatings",
+        "en": "products/coatings"
+      },
+      "newTab": false,
+      "order": 15
+    },
+    {
+      "id": "footer-catalog",
+      "label": {
+        "ru": "Каталог",
+        "en": "Catalog"
+      },
+      "path": {
+        "ru": "catalog",
+        "en": "catalog"
+      },
+      "newTab": false,
+      "order": 20
+    },
+    {
+      "id": "footer-auxiliaries",
+      "label": {
+        "ru": "Вспомогательные материалы",
+        "en": "Auxiliary materials"
+      },
+      "path": {
+        "ru": "products/auxiliaries",
+        "en": "products/auxiliaries"
+      },
+      "newTab": false,
+      "order": 25
     },
     {
       "id": "privacy",

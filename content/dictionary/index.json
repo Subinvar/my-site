@@ -157,12 +157,12 @@
     "categories": {
       "binders": {
         "title": {
-          "ru": "Связующие",
+          "ru": "Литейные связующие",
           "en": "Binders"
         },
         "description": {
-          "ru": "Связующие системы под ваши процессы: холодный/горячий ящик, самотвердеющие смеси и специальные решения.",
-          "en": "Binder systems tuned to your processes: cold/hot box, self-setting mixes, and special solutions."
+          "ru": "Литейные связующие системы под ваши процессы: холодный/горячий ящик, самотвердеющие смеси и специальные решения.",
+          "en": "Foundry binder systems tuned to your processes: cold/hot box, self-setting mixes, and special solutions."
         }
       },
       "coatings": {

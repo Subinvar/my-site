@@ -259,7 +259,7 @@ export function SiteShell({
       [
         {
           id: "binders" as const,
-          label: locale === "ru" ? "Связующие" : "Binders",
+          label: locale === "ru" ? "Литейные связующие" : "Binders",
           href: `${productsBaseHref}/binders`,
         },
         {
@@ -473,8 +473,7 @@ export function SiteShell({
               <div
                 className={cn(
                   "w-full min-w-0",
-                  "grid grid-rows-[auto_auto] gap-y-2",
-                  "lg:grid-rows-[minmax(40px,auto)_minmax(40px,auto)] lg:gap-y-2",
+                  "grid grid-rows-[minmax(var(--header-row-top-h),auto)_minmax(var(--header-row-bottom-h),auto)] gap-y-[var(--header-rows-gap)]",
                   "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
                 )}
               >

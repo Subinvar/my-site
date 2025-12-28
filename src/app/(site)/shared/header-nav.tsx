@@ -71,8 +71,8 @@ export const HeaderNav = memo(function HeaderNav({
       ref={navHostRef}
       className={cn(
         "relative w-full overflow-hidden rounded-lg",
-        "h-11",
-        "lg:h-full lg:min-h-[44px]",
+        "h-[var(--header-row-bottom-h)]",
+        "lg:h-full lg:min-h-[var(--header-row-bottom-h)]",
       )}
     >
       <div
@@ -114,7 +114,7 @@ export const HeaderNav = memo(function HeaderNav({
             burgerSlideClass,
           )}
         >
-          <div className="flex h-11 flex-1 items-center justify-end gap-3 ">
+          <div className="flex h-full flex-1 items-center justify-end gap-3 ">
             <HeaderCta
               headerButtonBase={headerButtonBase}
               href={contactsHref}
