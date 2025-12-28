@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export function useScrollElevation() {
   // Начальное значение совпадает на сервере и клиенте, чтобы избежать проблем гидратации
-  const [isHeaderElevated, setIsHeaderElevated] = useState(
-    () => (typeof window !== "undefined" ? window.scrollY > 1 : false),
-  );
+  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -31,6 +29,13 @@ export function useScrollElevation() {
     );
 
     observer.observe(sentinel);
+
+    // Убедимся, что актуальное состояние выставлено сразу после монтирования.
+    requestAnimationFrame(() => {
+      const rect = sentinel.getBoundingClientRect();
+      const next = rect.top < 0;
+      setIsHeaderElevated((prev) => (prev === next ? prev : next));
+    });
 
     return () => observer.disconnect();
   }, []);
