@@ -26,7 +26,7 @@ import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
 import { HeaderBrand } from "./header-brand";
-import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
+import { HeaderDesktopDropdown, DESKTOP_DROPDOWN_CLOSE_MS } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
 
@@ -110,6 +110,7 @@ export function SiteShell({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [desktopDropdownId, setDesktopDropdownId] = useState<string | null>(null);
+  const [isDesktopDropdownMounted, setIsDesktopDropdownMounted] = useState(false);
   const desktopDropdownCloseTimerRef = useRef<number | null>(null);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
@@ -145,6 +146,21 @@ export function SiteShell({
       setDesktopDropdownId(null);
     }, delay);
   }, [clearDesktopDropdownClose, prefersReducedMotion]);
+
+  // Keep a "mounted" flag for the desktop dropdown so we can apply the
+  // header separator / shadow during the closing animation as well.
+  useEffect(() => {
+    if (desktopDropdownId) {
+      setIsDesktopDropdownMounted(true);
+      return;
+    }
+
+    if (!isDesktopDropdownMounted) return;
+
+    const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
+    const t = window.setTimeout(() => setIsDesktopDropdownMounted(false), duration);
+    return () => window.clearTimeout(t);
+  }, [desktopDropdownId, isDesktopDropdownMounted, prefersReducedMotion]);
 
   const handleDesktopNavLinkEnter = useCallback(
     (link: NavigationLink) => {
@@ -269,6 +285,12 @@ export function SiteShell({
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
 
   const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+
+  // We want the same subtle separator line and shadow that appear on scroll,
+  // to also appear when the Apple-like mega menu is opened at the very top
+  // of the page (before any scroll).
+  const isHeaderVisuallyElevated =
+    isHeaderElevated || isDesktopDropdownMounted || isMenuModal;
 
   useEffect(() => {
     if (isBurgerMode || isMenuOpen) {
@@ -575,7 +597,7 @@ export function SiteShell({
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           "min-h-[var(--header-height-initial)]",
-          isHeaderElevated
+          isHeaderVisuallyElevated
             ? "bg-background/92 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md before:opacity-100"
             : "bg-background/80 backdrop-blur",
         )}

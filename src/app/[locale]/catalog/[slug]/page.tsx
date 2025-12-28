@@ -13,7 +13,10 @@ import {
 } from '@/app/(site)/shared/catalog';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { PRODUCT_CATEGORIES } from '@/app/[locale]/products/constants';
+import { toSlug } from '@/app/[locale]/products/helpers';
 import { getInterfaceDictionary } from '@/content/dictionary';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type { CatalogBadge, CatalogItem, CatalogVariant } from '@/lib/keystatic';
@@ -34,6 +37,11 @@ type CatalogProductParams = { locale: Locale; slug: string };
 type CatalogProductPageProps = {
   params: Promise<CatalogProductParams>;
 };
+
+type ProductDirectionCategories = Record<
+  keyof typeof PRODUCT_CATEGORIES,
+  { title: string }
+>;
 
 export default async function CatalogProductPage({ params }: CatalogProductPageProps) {
   const { locale: rawLocale, slug } = await params;
@@ -62,6 +70,9 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   const dictionary = getInterfaceDictionary(locale);
   const attributes = dictionary.catalog.attributes;
   const emptyValue = dictionary.common.emptyValue;
+  const catalogLabel = locale === 'ru' ? 'Каталог' : 'Catalog';
+  const productsLabel = locale === 'ru' ? 'Продукция' : 'Products';
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
   const categoryLabel = resolveSingleValue(
     item.category,
     TAXONOMY_KEYS.category,
@@ -78,6 +89,12 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
   const showAuxiliary = item.category === AUXILIARY_CATEGORY && Boolean(auxiliaryValue);
   const contactHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
   const leadText = item.shortDescription ?? summary;
+  const sectionBreadcrumb = resolveSectionBreadcrumb(
+    item.category,
+    locale,
+    dictionary.productDirections.categories,
+  );
+  const typeBreadcrumb = resolveTypeBreadcrumb(item, locale);
   const variantsLabel = locale === 'ru' ? 'Другие марки в серии' : 'Other grades in series';
   const renderedContent = await renderCatalogContent({
     item,
@@ -97,6 +114,30 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
     >
       <main id="main" className="page-shell">
         <div className="container py-8 lg:py-10 space-y-8">
+          <nav className="text-xs text-muted-foreground">
+            <Breadcrumbs
+              items={[
+                { label: homeLabel, href: buildPath(locale) },
+                { label: productsLabel, href: buildPath(locale, ['products']) },
+                sectionBreadcrumb,
+                typeBreadcrumb,
+                !sectionBreadcrumb && item.category
+                  ? {
+                      label: catalogLabel,
+                      href: `${buildPath(locale, ['catalog'])}?category=${encodeURIComponent(item.category)}`,
+                    }
+                  : null,
+                !sectionBreadcrumb && categoryLabel && item.category
+                  ? {
+                      label: categoryLabel,
+                      href: `${buildPath(locale, ['catalog'])}?category=${encodeURIComponent(item.category)}`,
+                    }
+                  : null,
+                { label: item.title },
+              ].filter(Boolean) as { label: string; href?: string }[]}
+            />
+          </nav>
+
           <header className="space-y-2">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{item.title}</h1>
 
@@ -437,6 +478,73 @@ function resolveBadge(badge: CatalogBadge | null, locale: Locale) {
 
   const label = locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en;
   return { label, className: classMap[badge] };
+}
+
+function resolveSectionBreadcrumb(
+  category: CatalogItem['category'],
+  locale: Locale,
+  dictionaryCategories: ProductDirectionCategories,
+): { label: string; href: string } | null {
+  if (!category) {
+    return null;
+  }
+
+  const matchedEntry = (Object.entries(PRODUCT_CATEGORIES) as Array<
+    [keyof typeof PRODUCT_CATEGORIES, string]
+  >).find(([, value]) => value === category);
+
+  if (!matchedEntry) {
+    return null;
+  }
+
+  const [categoryKey] = matchedEntry;
+  const label =
+    dictionaryCategories[categoryKey]?.title ??
+    getCatalogTaxonomyLabel(TAXONOMY_KEYS.category, category, locale) ??
+    category;
+
+  return {
+    label,
+    href: buildPath(locale, ['products', categoryKey]),
+  };
+}
+
+function resolveTypeBreadcrumb(
+  item: CatalogItem,
+  locale: Locale,
+): { label: string; href: string } | null {
+  if (item.category === PRODUCT_CATEGORIES.binders) {
+    const processValue = item.process?.[0];
+    if (!processValue) {
+      return null;
+    }
+
+    const label = getCatalogTaxonomyLabel(TAXONOMY_KEYS.process, processValue, locale) ?? processValue;
+    return { label, href: buildPath(locale, ['products', 'binders', toSlug(processValue)]) };
+  }
+
+  if (item.category === PRODUCT_CATEGORIES.coatings) {
+    const baseValue = item.base?.[0];
+    if (!baseValue) {
+      return null;
+    }
+
+    const label = getCatalogTaxonomyLabel(TAXONOMY_KEYS.base, baseValue, locale) ?? baseValue;
+    return { label, href: buildPath(locale, ['products', 'coatings', toSlug(baseValue)]) };
+  }
+
+  if (item.category === PRODUCT_CATEGORIES.auxiliaries) {
+    const auxiliaryValue = item.auxiliary?.[0];
+    if (!auxiliaryValue) {
+      return null;
+    }
+
+    const label =
+      getCatalogTaxonomyLabel(TAXONOMY_KEYS.auxiliary, auxiliaryValue, locale) ?? auxiliaryValue;
+    return { label, href: buildPath(locale, ['products', 'auxiliaries', toSlug(auxiliaryValue)]) };
+  }
+
+  return null;
 }
 
 function ProductBadge({ badge, locale }: { badge?: CatalogBadge | null; locale: Locale }) {

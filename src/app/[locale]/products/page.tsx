@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
@@ -36,6 +37,7 @@ export default async function ProductsPage({ params }: PageProps) {
   const switcherHref = buildPath(targetLocale, ['products']);
   const currentPath = buildPath(locale, ['products']);
 
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
   const pageTitle = locale === 'ru' ? 'Продукция' : 'Products';
 
   const binders: ProductsHubCard[] = taxonomyOptions.processes
@@ -96,7 +98,11 @@ export default async function ProductsPage({ params }: PageProps) {
     >
       <main className="page-shell">
         <section className="container py-10 lg:py-12">
-          <header className="mb-6 lg:mb-8">
+          <header className="mb-6 space-y-4 lg:mb-8">
+            <Breadcrumbs
+              className="text-left"
+              items={[{ label: homeLabel, href: buildPath(locale) }, { label: pageTitle }]}
+            />
             {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
                 но оставляем для семантики/доступности. */}
             <h1 className="sr-only">{pageTitle}</h1>

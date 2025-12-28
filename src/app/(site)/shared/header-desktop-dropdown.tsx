@@ -19,6 +19,22 @@ type HeaderDesktopDropdownProps = {
   onRequestClose?: () => void;
 };
 
+/**
+ * Apple-like motion tuning
+ *
+ * Apple ощущается так, потому что:
+ * - раскрытие чуть медленнее, сворачивание быстрее
+ * - текст внутри появляется с небольшой задержкой и каскадом, параллельно раскрытию
+ * - при закрытии текст «растворяется» быстрее, чем панель успевает схлопнуться
+ */
+export const DESKTOP_DROPDOWN_OPEN_MS = 420;
+export const DESKTOP_DROPDOWN_CLOSE_MS = 280;
+
+export const DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS = 90;
+export const DESKTOP_DROPDOWN_TEXT_STAGGER_MS = 34;
+export const DESKTOP_DROPDOWN_TEXT_ENTER_MS = 240;
+export const DESKTOP_DROPDOWN_TEXT_EXIT_MS = 160;
+
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
   const [path] = (pathWithoutQuery ?? "").split("#");
@@ -61,6 +77,7 @@ export function HeaderDesktopDropdown({
   const [contentPhase, setContentPhase] = useState<0 | 1>(0);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const wasOpenRef = useRef(false);
 
   const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
   const shouldBeOpen = Boolean(activeId && activeChildren.length);
@@ -68,6 +85,7 @@ export function HeaderDesktopDropdown({
   const renderedChildren = meansRenderedChildren(links, renderedId);
 
   const isOpen = isMounted && shouldBeOpen;
+  const isClosing = isMounted && !shouldBeOpen;
 
   // Mount / unmount for close animation.
   useEffect(() => {
@@ -79,7 +97,7 @@ export function HeaderDesktopDropdown({
 
     if (!isMounted) return;
 
-    const duration = prefersReducedMotion ? 0 : 420;
+    const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
     const timer = window.setTimeout(() => {
       setIsMounted(false);
       setRenderedId(null);
@@ -115,13 +133,31 @@ export function HeaderDesktopDropdown({
     return () => ro.disconnect();
   }, [isMounted, renderedId]);
 
-  // Animate content in (subtle) when menu opens / switches.
+  // Text animation: delayed cascade on first open; quicker on switching.
   useEffect(() => {
     if (!isMounted || !renderedId) return;
+
+    const wasOpen = wasOpenRef.current;
+    wasOpenRef.current = shouldBeOpen;
+
+    // When closing — start dissolving immediately.
+    if (!shouldBeOpen) {
+      setContentPhase(0);
+      return;
+    }
+
     setContentPhase(0);
-    const raf = window.requestAnimationFrame(() => setContentPhase(1));
-    return () => window.cancelAnimationFrame(raf);
-  }, [isMounted, renderedId]);
+
+    if (prefersReducedMotion) {
+      setContentPhase(1);
+      return;
+    }
+
+    // On first open we delay the text a bit to let the panel begin expanding.
+    const delay = wasOpen ? 0 : DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS;
+    const t = window.setTimeout(() => setContentPhase(1), delay);
+    return () => window.clearTimeout(t);
+  }, [isMounted, prefersReducedMotion, renderedId, shouldBeOpen]);
 
   // Close on Escape.
   useEffect(() => {
@@ -149,15 +185,17 @@ export function HeaderDesktopDropdown({
 
   const transitionClass = prefersReducedMotion
     ? "transition-none"
-    : "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+    : shouldBeOpen
+      ? "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+      : "transition-[height] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 
   const overlayTransitionClass = prefersReducedMotion
     ? "transition-none"
-    : "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+    : shouldBeOpen
+      ? "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+      : "transition-[opacity,background-color,backdrop-filter] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 
-  const contentTransitionClass = prefersReducedMotion
-    ? "transition-none"
-    : "transition-[opacity,transform] duration-[260ms] ease-out";
+  const itemsVisible = shouldBeOpen && contentPhase === 1;
 
   return (
     <div
@@ -211,20 +249,51 @@ export function HeaderDesktopDropdown({
             "px-[var(--header-pad-x)]",
             // Vertical rhythm similar to Apple
             "py-8",
-            contentTransitionClass,
             "motion-reduce:transition-none motion-reduce:duration-0",
-            isOpen && contentPhase === 1 ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
+            itemsVisible ? "pointer-events-auto" : "pointer-events-none",
           )}
         >
           <nav aria-label={renderedId}>
             <ul className="m-0 grid list-none gap-x-12 gap-y-2 p-0 md:max-w-[520px]">
-              {renderedChildren.map((item) => {
+              {renderedChildren.map((item, index) => {
                 const href = resolveHref(item.href);
                 const normalizedHref = normalizePathname(href);
                 const isActive =
                   !item.isExternal &&
                   (normalizedHref === normalizedCurrent ||
                     (normalizedHref !== "/" && normalizedCurrent.startsWith(`${normalizedHref}/`)));
+
+                const itemDelay = prefersReducedMotion
+                  ? 0
+                  : shouldBeOpen
+                    ? index * DESKTOP_DROPDOWN_TEXT_STAGGER_MS
+                    : 0;
+
+                const itemDuration = prefersReducedMotion
+                  ? 0
+                  : shouldBeOpen
+                    ? DESKTOP_DROPDOWN_TEXT_ENTER_MS
+                    : DESKTOP_DROPDOWN_TEXT_EXIT_MS;
+
+                const itemStyle = {
+                  transitionDelay: `${itemDelay}ms`,
+                  transitionDuration: `${itemDuration}ms`,
+                  transitionTimingFunction: shouldBeOpen
+                    ? "cubic-bezier(0.16,1,0.3,1)"
+                    : "cubic-bezier(0.2,0,0.38,0.9)",
+                } satisfies React.CSSProperties;
+
+                const itemMotionClass = prefersReducedMotion
+                  ? ""
+                  : cn(
+                      "will-change-[opacity,transform,filter]",
+                      "transition-[opacity,transform,filter]",
+                      itemsVisible
+                        ? "opacity-100 translate-y-0 blur-0"
+                        : isClosing
+                          ? "opacity-0 translate-y-0 blur-[2px]"
+                          : "opacity-0 translate-y-3 blur-[2px]",
+                    );
 
                 const linkClassName = cn(
                   "group inline-flex w-full items-center",
@@ -241,7 +310,7 @@ export function HeaderDesktopDropdown({
 
                 if (item.isExternal) {
                   return (
-                    <li key={item.id}>
+                    <li key={item.id} className={itemMotionClass} style={itemStyle}>
                       <a
                         href={href}
                         target={item.newTab ? "_blank" : undefined}
@@ -255,7 +324,7 @@ export function HeaderDesktopDropdown({
                 }
 
                 return (
-                  <li key={item.id}>
+                  <li key={item.id} className={itemMotionClass} style={itemStyle}>
                     <Link href={href} className={linkClassName} aria-current={isActive ? "page" : undefined}>
                       <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
                     </Link>

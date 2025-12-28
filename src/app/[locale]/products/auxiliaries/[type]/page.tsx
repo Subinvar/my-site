@@ -8,6 +8,7 @@ import {
   resolveEmptyState,
   resolveRequestLabel,
 } from '@/app/(site)/shared/catalog-page-messages';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -61,6 +62,8 @@ export default async function AuxiliaryTypeCatalogPage({ params }: PageProps) {
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['products', 'auxiliaries', type]);
   const currentPath = buildPath(locale, ['products', 'auxiliaries', type]);
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
+  const productsLabel = locale === 'ru' ? 'Продукция' : 'Products';
   const sectionLabel = locale === 'ru' ? 'Вспомогательные материалы' : 'Auxiliary materials';
   const heading = `${sectionLabel} — ${auxiliaryOption.label}`;
   const description =
@@ -80,6 +83,15 @@ export default async function AuxiliaryTypeCatalogPage({ params }: PageProps) {
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
+          <Breadcrumbs
+            items={[
+              { label: homeLabel, href: buildPath(locale) },
+              { label: productsLabel, href: buildPath(locale, ['products']) },
+              { label: sectionLabel, href: buildPath(locale, ['products', 'auxiliaries']) },
+              { label: auxiliaryOption.label },
+            ]}
+          />
+
           <SectionHeading title={heading} description={description} />
 
           <CatalogList

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { ProductCategoryCard } from '@/app/(site)/shared/ui/product-category-card';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -29,6 +30,8 @@ export default async function BinderProcessPage({ params }: PageProps) {
     Promise.resolve(getCatalogTaxonomyOptions(locale)),
   ]);
   const dictionary = getInterfaceDictionary(locale);
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
+  const productsLabel = locale === 'ru' ? 'Продукция' : 'Products';
   const targetLocale = findTargetLocale(locale);
   const pageTitle = dictionary.productDirections.categories.binders.title;
   const pageDescription =
@@ -61,6 +64,14 @@ export default async function BinderProcessPage({ params }: PageProps) {
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
+          <Breadcrumbs
+            items={[
+              { label: homeLabel, href: buildPath(locale) },
+              { label: productsLabel, href: buildPath(locale, ['products']) },
+              { label: pageTitle },
+            ]}
+          />
+
           <SectionHeading title={pageTitle} description={pageDescription} />
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

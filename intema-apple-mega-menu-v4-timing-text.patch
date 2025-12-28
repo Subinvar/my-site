@@ -1,0 +1,2527 @@
+diff -ruN work_orig/src/app/(site)/shared/header-desktop-dropdown.tsx work/src/app/(site)/shared/header-desktop-dropdown.tsx
+--- work_orig/src/app/(site)/shared/header-desktop-dropdown.tsx	2025-12-29 00:53:22.000000000 +0000
++++ work/src/app/(site)/shared/header-desktop-dropdown.tsx	2025-12-28 22:59:24.151283885 +0000
+@@ -1,275 +1,344 @@
+-"use client";
+-
+-import Link from "next/link";
+-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+-import type React from "react";
+-
+-import type { NavigationLink } from "@/lib/keystatic";
+-import { cn } from "@/lib/cn";
+-import { navUnderlineSpanClass } from "@/lib/nav-underline";
+-
+-type HeaderDesktopDropdownProps = {
+-  links: NavigationLink[];
+-  activeId: string | null;
+-  currentPath: string;
+-  prefersReducedMotion: boolean;
+-  closeLabel: string;
+-  onPanelEnter?: () => void;
+-  onPanelLeave?: () => void;
+-  onRequestClose?: () => void;
+-};
+-
+-const normalizePathname = (value: string): string => {
+-  const [pathWithoutQuery] = value.split("?");
+-  const [path] = (pathWithoutQuery ?? "").split("#");
+-  const trimmed = (path ?? "/").replace(/\/+$/, "");
+-  return trimmed.length ? trimmed : "/";
+-};
+-
+-const resolveHref = (href: string): string => {
+-  const normalized = (href ?? "").trim();
+-  return normalized.length ? normalized : "/";
+-};
+-
+-const getChildren = (links: NavigationLink[], id: string | null): NavigationLink[] => {
+-  if (!id) return [];
+-  const link = links.find((item) => item.id === id);
+-  return link?.children ?? [];
+-};
+-
+-/**
+- * Mega menu (Apple-like):
+- * - Full-width panel that раскрывается от нижнего края шапки.
+- * - Высота панели плавно анимируется под контент.
+- * - Всё, что ниже меню, блюрится и слегка затемняется.
+- */
+-export function HeaderDesktopDropdown({
+-  links,
+-  activeId,
+-  currentPath,
+-  prefersReducedMotion,
+-  closeLabel,
+-  onPanelEnter,
+-  onPanelLeave,
+-  onRequestClose,
+-}: HeaderDesktopDropdownProps) {
+-  const normalizedCurrent = useMemo(() => normalizePathname(currentPath), [currentPath]);
+-
+-  const [isMounted, setIsMounted] = useState(false);
+-  const [renderedId, setRenderedId] = useState<string | null>(null);
+-  const [panelHeight, setPanelHeight] = useState<number>(0);
+-  const [contentPhase, setContentPhase] = useState<0 | 1>(0);
+-
+-  const contentRef = useRef<HTMLDivElement | null>(null);
+-
+-  const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
+-  const shouldBeOpen = Boolean(activeId && activeChildren.length);
+-
+-  const renderedChildren = meansRenderedChildren(links, renderedId);
+-
+-  const isOpen = isMounted && shouldBeOpen;
+-
+-  // Mount / unmount for close animation.
+-  useEffect(() => {
+-    if (shouldBeOpen && activeId) {
+-      setIsMounted(true);
+-      setRenderedId(activeId);
+-      return;
+-    }
+-
+-    if (!isMounted) return;
+-
+-    const duration = prefersReducedMotion ? 0 : 420;
+-    const timer = window.setTimeout(() => {
+-      setIsMounted(false);
+-      setRenderedId(null);
+-      setPanelHeight(0);
+-      setContentPhase(0);
+-    }, duration);
+-
+-    return () => window.clearTimeout(timer);
+-  }, [activeId, isMounted, prefersReducedMotion, shouldBeOpen]);
+-
+-  // When switching between menu items while open — update rendered id immediately.
+-  useEffect(() => {
+-    if (!shouldBeOpen || !activeId) return;
+-    setRenderedId(activeId);
+-  }, [activeId, shouldBeOpen]);
+-
+-  // Measure content height (numeric px) so we can animate height (can't animate auto).
+-  useLayoutEffect(() => {
+-    if (!isMounted || !contentRef.current || typeof ResizeObserver === "undefined") return;
+-
+-    const el = contentRef.current;
+-
+-    const update = () => {
+-      const rect = el.getBoundingClientRect();
+-      const next = Math.max(0, Math.ceil(rect.height));
+-      setPanelHeight(next);
+-    };
+-
+-    const ro = new ResizeObserver(update);
+-    ro.observe(el);
+-    update();
+-
+-    return () => ro.disconnect();
+-  }, [isMounted, renderedId]);
+-
+-  // Animate content in (subtle) when menu opens / switches.
+-  useEffect(() => {
+-    if (!isMounted || !renderedId) return;
+-    setContentPhase(0);
+-    const raf = window.requestAnimationFrame(() => setContentPhase(1));
+-    return () => window.cancelAnimationFrame(raf);
+-  }, [isMounted, renderedId]);
+-
+-  // Close on Escape.
+-  useEffect(() => {
+-    if (!isOpen || !onRequestClose) return;
+-    const onKeyDown = (event: KeyboardEvent) => {
+-      if (event.key !== "Escape") return;
+-      event.preventDefault();
+-      onRequestClose();
+-    };
+-    document.addEventListener("keydown", onKeyDown);
+-    return () => document.removeEventListener("keydown", onKeyDown);
+-  }, [isOpen, onRequestClose]);
+-
+-  const handleBlurCapture = onPanelLeave
+-    ? (event: React.FocusEvent<HTMLElement>) => {
+-        const next = event.relatedTarget;
+-        if (next && event.currentTarget.contains(next as Node)) return;
+-        onPanelLeave();
+-      }
+-    : undefined;
+-
+-  if (!isMounted || !renderedId || renderedChildren.length === 0) {
+-    return null;
+-  }
+-
+-  const transitionClass = prefersReducedMotion
+-    ? "transition-none"
+-    : "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+-
+-  const overlayTransitionClass = prefersReducedMotion
+-    ? "transition-none"
+-    : "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+-
+-  const contentTransitionClass = prefersReducedMotion
+-    ? "transition-none"
+-    : "transition-[opacity,transform] duration-[260ms] ease-out";
+-
+-  return (
+-    <div
+-      className="fixed inset-x-0 bottom-0 z-[58]"
+-      style={{ top: "var(--header-height)" }}
+-      aria-hidden={!isOpen}
+-    >
+-      {/*
+-        Blur layer that covers EVERYTHING below the header (Apple-like).
+-        The panel itself is above this layer.
+-      */}
+-      <button
+-        type="button"
+-        aria-label={closeLabel}
+-        onClick={onRequestClose}
+-        tabIndex={-1}
+-        className={cn(
+-          "absolute inset-0 z-0",
+-          overlayTransitionClass,
+-          "motion-reduce:transition-none motion-reduce:duration-0",
+-          isOpen
+-            ? "pointer-events-auto opacity-100 bg-black/15 backdrop-blur-2xl"
+-            : "pointer-events-none opacity-0 bg-black/0 backdrop-blur-0",
+-        )}
+-      />
+-
+-      {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
+-      <div
+-        onPointerEnter={onPanelEnter}
+-        onPointerLeave={onPanelLeave}
+-        onFocusCapture={onPanelEnter}
+-        onBlurCapture={handleBlurCapture}
+-        className={cn(
+-          "relative z-10 w-full",
+-          "overflow-hidden",
+-          // Surface
+-          "bg-background/96",
+-          "shadow-[0_24px_60px_rgba(0,0,0,0.12)]",
+-          // Nice edge where it attaches to header
+-          "border-b border-[color:var(--header-border)]",
+-          transitionClass,
+-          "motion-reduce:transition-none motion-reduce:duration-0",
+-          isOpen ? "pointer-events-auto" : "pointer-events-none",
+-        )}
+-        style={{ height: isOpen ? `${panelHeight}px` : "0px" }}
+-      >
+-        <div
+-          ref={contentRef}
+-          className={cn(
+-            "mx-auto w-full max-w-screen-2xl",
+-            "px-[var(--header-pad-x)]",
+-            // Vertical rhythm similar to Apple
+-            "py-8",
+-            contentTransitionClass,
+-            "motion-reduce:transition-none motion-reduce:duration-0",
+-            isOpen && contentPhase === 1 ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
+-          )}
+-        >
+-          <nav aria-label={renderedId}>
+-            <ul className="m-0 grid list-none gap-x-12 gap-y-2 p-0 md:max-w-[520px]">
+-              {renderedChildren.map((item) => {
+-                const href = resolveHref(item.href);
+-                const normalizedHref = normalizePathname(href);
+-                const isActive =
+-                  !item.isExternal &&
+-                  (normalizedHref === normalizedCurrent ||
+-                    (normalizedHref !== "/" && normalizedCurrent.startsWith(`${normalizedHref}/`)));
+-
+-                const linkClassName = cn(
+-                  "group inline-flex w-full items-center",
+-                  "py-2",
+-                  // Apple-like: крупнее, но в рамках фирменного стиля
+-                  "font-[var(--font-heading)]",
+-                  "text-[clamp(1.15rem,1.02rem+0.6vw,1.6rem)]",
+-                  "font-medium leading-[1.12] tracking-[-0.01em]",
+-                  "no-underline transition-colors",
+-                  "active:opacity-90",
+-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+-                );
+-
+-                if (item.isExternal) {
+-                  return (
+-                    <li key={item.id}>
+-                      <a
+-                        href={href}
+-                        target={item.newTab ? "_blank" : undefined}
+-                        rel={item.newTab ? "noopener noreferrer" : undefined}
+-                        className={linkClassName}
+-                      >
+-                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+-                      </a>
+-                    </li>
+-                  );
+-                }
+-
+-                return (
+-                  <li key={item.id}>
+-                    <Link href={href} className={linkClassName} aria-current={isActive ? "page" : undefined}>
+-                      <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+-                    </Link>
+-                  </li>
+-                );
+-              })}
+-            </ul>
+-          </nav>
+-        </div>
+-      </div>
+-    </div>
+-  );
+-}
+-
+-function meansRenderedChildren(links: NavigationLink[], id: string | null): NavigationLink[] {
+-  return getChildren(links, id);
+-}
++"use client";
++
++import Link from "next/link";
++import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
++import type React from "react";
++
++import type { NavigationLink } from "@/lib/keystatic";
++import { cn } from "@/lib/cn";
++import { navUnderlineSpanClass } from "@/lib/nav-underline";
++
++type HeaderDesktopDropdownProps = {
++  links: NavigationLink[];
++  activeId: string | null;
++  currentPath: string;
++  prefersReducedMotion: boolean;
++  closeLabel: string;
++  onPanelEnter?: () => void;
++  onPanelLeave?: () => void;
++  onRequestClose?: () => void;
++};
++
++/**
++ * Apple-like motion tuning
++ *
++ * Apple ощущается так, потому что:
++ * - раскрытие чуть медленнее, сворачивание быстрее
++ * - текст внутри появляется с небольшой задержкой и каскадом, параллельно раскрытию
++ * - при закрытии текст «растворяется» быстрее, чем панель успевает схлопнуться
++ */
++export const DESKTOP_DROPDOWN_OPEN_MS = 420;
++export const DESKTOP_DROPDOWN_CLOSE_MS = 280;
++
++export const DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS = 90;
++export const DESKTOP_DROPDOWN_TEXT_STAGGER_MS = 34;
++export const DESKTOP_DROPDOWN_TEXT_ENTER_MS = 240;
++export const DESKTOP_DROPDOWN_TEXT_EXIT_MS = 160;
++
++const normalizePathname = (value: string): string => {
++  const [pathWithoutQuery] = value.split("?");
++  const [path] = (pathWithoutQuery ?? "").split("#");
++  const trimmed = (path ?? "/").replace(/\/+$/, "");
++  return trimmed.length ? trimmed : "/";
++};
++
++const resolveHref = (href: string): string => {
++  const normalized = (href ?? "").trim();
++  return normalized.length ? normalized : "/";
++};
++
++const getChildren = (links: NavigationLink[], id: string | null): NavigationLink[] => {
++  if (!id) return [];
++  const link = links.find((item) => item.id === id);
++  return link?.children ?? [];
++};
++
++/**
++ * Mega menu (Apple-like):
++ * - Full-width panel that раскрывается от нижнего края шапки.
++ * - Высота панели плавно анимируется под контент.
++ * - Всё, что ниже меню, блюрится и слегка затемняется.
++ */
++export function HeaderDesktopDropdown({
++  links,
++  activeId,
++  currentPath,
++  prefersReducedMotion,
++  closeLabel,
++  onPanelEnter,
++  onPanelLeave,
++  onRequestClose,
++}: HeaderDesktopDropdownProps) {
++  const normalizedCurrent = useMemo(() => normalizePathname(currentPath), [currentPath]);
++
++  const [isMounted, setIsMounted] = useState(false);
++  const [renderedId, setRenderedId] = useState<string | null>(null);
++  const [panelHeight, setPanelHeight] = useState<number>(0);
++  const [contentPhase, setContentPhase] = useState<0 | 1>(0);
++
++  const contentRef = useRef<HTMLDivElement | null>(null);
++  const wasOpenRef = useRef(false);
++
++  const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
++  const shouldBeOpen = Boolean(activeId && activeChildren.length);
++
++  const renderedChildren = meansRenderedChildren(links, renderedId);
++
++  const isOpen = isMounted && shouldBeOpen;
++  const isClosing = isMounted && !shouldBeOpen;
++
++  // Mount / unmount for close animation.
++  useEffect(() => {
++    if (shouldBeOpen && activeId) {
++      setIsMounted(true);
++      setRenderedId(activeId);
++      return;
++    }
++
++    if (!isMounted) return;
++
++    const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
++    const timer = window.setTimeout(() => {
++      setIsMounted(false);
++      setRenderedId(null);
++      setPanelHeight(0);
++      setContentPhase(0);
++    }, duration);
++
++    return () => window.clearTimeout(timer);
++  }, [activeId, isMounted, prefersReducedMotion, shouldBeOpen]);
++
++  // When switching between menu items while open — update rendered id immediately.
++  useEffect(() => {
++    if (!shouldBeOpen || !activeId) return;
++    setRenderedId(activeId);
++  }, [activeId, shouldBeOpen]);
++
++  // Measure content height (numeric px) so we can animate height (can't animate auto).
++  useLayoutEffect(() => {
++    if (!isMounted || !contentRef.current || typeof ResizeObserver === "undefined") return;
++
++    const el = contentRef.current;
++
++    const update = () => {
++      const rect = el.getBoundingClientRect();
++      const next = Math.max(0, Math.ceil(rect.height));
++      setPanelHeight(next);
++    };
++
++    const ro = new ResizeObserver(update);
++    ro.observe(el);
++    update();
++
++    return () => ro.disconnect();
++  }, [isMounted, renderedId]);
++
++  // Text animation: delayed cascade on first open; quicker on switching.
++  useEffect(() => {
++    if (!isMounted || !renderedId) return;
++
++    const wasOpen = wasOpenRef.current;
++    wasOpenRef.current = shouldBeOpen;
++
++    // When closing — start dissolving immediately.
++    if (!shouldBeOpen) {
++      setContentPhase(0);
++      return;
++    }
++
++    setContentPhase(0);
++
++    if (prefersReducedMotion) {
++      setContentPhase(1);
++      return;
++    }
++
++    // On first open we delay the text a bit to let the panel begin expanding.
++    const delay = wasOpen ? 0 : DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS;
++    const t = window.setTimeout(() => setContentPhase(1), delay);
++    return () => window.clearTimeout(t);
++  }, [isMounted, prefersReducedMotion, renderedId, shouldBeOpen]);
++
++  // Close on Escape.
++  useEffect(() => {
++    if (!isOpen || !onRequestClose) return;
++    const onKeyDown = (event: KeyboardEvent) => {
++      if (event.key !== "Escape") return;
++      event.preventDefault();
++      onRequestClose();
++    };
++    document.addEventListener("keydown", onKeyDown);
++    return () => document.removeEventListener("keydown", onKeyDown);
++  }, [isOpen, onRequestClose]);
++
++  const handleBlurCapture = onPanelLeave
++    ? (event: React.FocusEvent<HTMLElement>) => {
++        const next = event.relatedTarget;
++        if (next && event.currentTarget.contains(next as Node)) return;
++        onPanelLeave();
++      }
++    : undefined;
++
++  if (!isMounted || !renderedId || renderedChildren.length === 0) {
++    return null;
++  }
++
++  const transitionClass = prefersReducedMotion
++    ? "transition-none"
++    : shouldBeOpen
++      ? "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
++      : "transition-[height] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
++
++  const overlayTransitionClass = prefersReducedMotion
++    ? "transition-none"
++    : shouldBeOpen
++      ? "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
++      : "transition-[opacity,background-color,backdrop-filter] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
++
++  const itemsVisible = shouldBeOpen && contentPhase === 1;
++
++  return (
++    <div
++      className="fixed inset-x-0 bottom-0 z-[58]"
++      style={{ top: "var(--header-height)" }}
++      aria-hidden={!isOpen}
++    >
++      {/*
++        Blur layer that covers EVERYTHING below the header (Apple-like).
++        The panel itself is above this layer.
++      */}
++      <button
++        type="button"
++        aria-label={closeLabel}
++        onClick={onRequestClose}
++        tabIndex={-1}
++        className={cn(
++          "absolute inset-0 z-0",
++          overlayTransitionClass,
++          "motion-reduce:transition-none motion-reduce:duration-0",
++          isOpen
++            ? "pointer-events-auto opacity-100 bg-black/15 backdrop-blur-2xl"
++            : "pointer-events-none opacity-0 bg-black/0 backdrop-blur-0",
++        )}
++      />
++
++      {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
++      <div
++        onPointerEnter={onPanelEnter}
++        onPointerLeave={onPanelLeave}
++        onFocusCapture={onPanelEnter}
++        onBlurCapture={handleBlurCapture}
++        className={cn(
++          "relative z-10 w-full",
++          "overflow-hidden",
++          // Surface
++          "bg-background/96",
++          "shadow-[0_24px_60px_rgba(0,0,0,0.12)]",
++          // Nice edge where it attaches to header
++          "border-b border-[color:var(--header-border)]",
++          transitionClass,
++          "motion-reduce:transition-none motion-reduce:duration-0",
++          isOpen ? "pointer-events-auto" : "pointer-events-none",
++        )}
++        style={{ height: isOpen ? `${panelHeight}px` : "0px" }}
++      >
++        <div
++          ref={contentRef}
++          className={cn(
++            "mx-auto w-full max-w-screen-2xl",
++            "px-[var(--header-pad-x)]",
++            // Vertical rhythm similar to Apple
++            "py-8",
++            "motion-reduce:transition-none motion-reduce:duration-0",
++            itemsVisible ? "pointer-events-auto" : "pointer-events-none",
++          )}
++        >
++          <nav aria-label={renderedId}>
++            <ul className="m-0 grid list-none gap-x-12 gap-y-2 p-0 md:max-w-[520px]">
++              {renderedChildren.map((item, index) => {
++                const href = resolveHref(item.href);
++                const normalizedHref = normalizePathname(href);
++                const isActive =
++                  !item.isExternal &&
++                  (normalizedHref === normalizedCurrent ||
++                    (normalizedHref !== "/" && normalizedCurrent.startsWith(`${normalizedHref}/`)));
++
++                const itemDelay = prefersReducedMotion
++                  ? 0
++                  : shouldBeOpen
++                    ? index * DESKTOP_DROPDOWN_TEXT_STAGGER_MS
++                    : 0;
++
++                const itemDuration = prefersReducedMotion
++                  ? 0
++                  : shouldBeOpen
++                    ? DESKTOP_DROPDOWN_TEXT_ENTER_MS
++                    : DESKTOP_DROPDOWN_TEXT_EXIT_MS;
++
++                const itemStyle = {
++                  transitionDelay: `${itemDelay}ms`,
++                  transitionDuration: `${itemDuration}ms`,
++                  transitionTimingFunction: shouldBeOpen
++                    ? "cubic-bezier(0.16,1,0.3,1)"
++                    : "cubic-bezier(0.2,0,0.38,0.9)",
++                } satisfies React.CSSProperties;
++
++                const itemMotionClass = prefersReducedMotion
++                  ? ""
++                  : cn(
++                      "will-change-[opacity,transform,filter]",
++                      "transition-[opacity,transform,filter]",
++                      itemsVisible
++                        ? "opacity-100 translate-y-0 blur-0"
++                        : isClosing
++                          ? "opacity-0 translate-y-0 blur-[2px]"
++                          : "opacity-0 translate-y-3 blur-[2px]",
++                    );
++
++                const linkClassName = cn(
++                  "group inline-flex w-full items-center",
++                  "py-2",
++                  // Apple-like: крупнее, но в рамках фирменного стиля
++                  "font-[var(--font-heading)]",
++                  "text-[clamp(1.15rem,1.02rem+0.6vw,1.6rem)]",
++                  "font-medium leading-[1.12] tracking-[-0.01em]",
++                  "no-underline transition-colors",
++                  "active:opacity-90",
++                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
++                );
++
++                if (item.isExternal) {
++                  return (
++                    <li key={item.id} className={itemMotionClass} style={itemStyle}>
++                      <a
++                        href={href}
++                        target={item.newTab ? "_blank" : undefined}
++                        rel={item.newTab ? "noopener noreferrer" : undefined}
++                        className={linkClassName}
++                      >
++                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
++                      </a>
++                    </li>
++                  );
++                }
++
++                return (
++                  <li key={item.id} className={itemMotionClass} style={itemStyle}>
++                    <Link href={href} className={linkClassName} aria-current={isActive ? "page" : undefined}>
++                      <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
++                    </Link>
++                  </li>
++                );
++              })}
++            </ul>
++          </nav>
++        </div>
++      </div>
++    </div>
++  );
++}
++
++function meansRenderedChildren(links: NavigationLink[], id: string | null): NavigationLink[] {
++  return getChildren(links, id);
++}
+diff -ruN work_orig/src/app/(site)/shared/site-shell.tsx work/src/app/(site)/shared/site-shell.tsx
+--- work_orig/src/app/(site)/shared/site-shell.tsx	2025-12-29 00:01:14.000000000 +0000
++++ work/src/app/(site)/shared/site-shell.tsx	2025-12-28 23:04:33.551248778 +0000
+@@ -1,939 +1,961 @@
+-"use client";
+-
+-import Link from "next/link";
+-import {
+-  useCallback,
+-  useEffect,
+-  useMemo,
+-  useRef,
+-  useState,
+-  type CSSProperties,
+-  type HTMLAttributes,
+-  type ReactNode,
+-} from "react";
+-
+-import { getInterfaceDictionary } from "@/content/dictionary";
+-import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
+-import type { Locale } from "@/lib/i18n";
+-import { buildPath } from "@/lib/paths";
+-import { cn } from "@/lib/cn";
+-import { navUnderlineSpanClass } from "@/lib/nav-underline";
+-import { HtmlLangSync } from "./html-lang-sync";
+-import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
+-import { useResizeTransitions } from "./hooks/use-resize-transitions";
+-import { useHeaderHeight } from "./hooks/use-header-height";
+-import { useBurgerAnimation } from "./hooks/use-burger-animation";
+-import { useScrollElevation } from "./hooks/use-scroll-elevation";
+-import { useWindowResize } from "./hooks/use-window-resize";
+-import { HeaderBrand } from "./header-brand";
+-import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
+-import { HeaderNav } from "./header-nav";
+-import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
+-
+-const normalizePathname = (value: string): string => {
+-  const [pathWithoutQuery] = value.split("?");
+-  const [path] = (pathWithoutQuery ?? "").split("#");
+-  const trimmed = (path ?? "/").replace(/\/+$/, "");
+-  return trimmed.length ? trimmed : "/";
+-};
+-
+-const isExternalHref = (href: string): boolean => {
+-  const normalized = resolveHref(href);
+-  return (
+-    normalized.startsWith("http://") ||
+-    normalized.startsWith("https://") ||
+-    normalized.startsWith("//") ||
+-    normalized.startsWith("mailto:") ||
+-    normalized.startsWith("tel:")
+-  );
+-};
+-
+-const resolveHref = (href: string): string => {
+-  const normalized = (href ?? "").trim();
+-  return normalized.length ? normalized : "/";
+-};
+-
+-type SiteShellProps = {
+-  locale: Locale;
+-  targetLocale: Locale;
+-  site: SiteContent;
+-  navigation: Navigation;
+-  switcherHref: string | null;
+-  currentPath: string;
+-  children: ReactNode;
+-  footer?: ReactNode;
+-};
+-
+-const headerButtonBase =
+-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
+-
+-const pillBase =
+-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
+-
+-const contactLinkBase =
+-  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
+-
+-type SkipToContentLinkProps = {
+-  label: string;
+-};
+-
+-function SkipToContentLink({ label }: SkipToContentLinkProps) {
+-  return (
+-    <a
+-      href="#main"
+-      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-[color:var(--color-brand-600)] focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-brand-600)]"
+-    >
+-      {label}
+-    </a>
+-  );
+-}
+-
+-export function SiteShell({
+-  locale,
+-  targetLocale,
+-  site,
+-  navigation,
+-  switcherHref,
+-  currentPath,
+-  children,
+-  footer,
+-}: SiteShellProps) {
+-  const brandName = site.name?.trim() ?? "";
+-  const dictionary = getInterfaceDictionary(locale);
+-  const skipLinkLabel = dictionary.common.skipToContent;
+-  const navigationLabels = dictionary.navigation;
+-  const switchToLabels = dictionary.languageSwitcher.switchTo;
+-
+-  const brandLabel = brandName || "Интема Групп";
+-
+-  const menuDialogLabel = locale === "ru" ? "Меню" : "Menu";
+-
+-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+-  const [desktopDropdownId, setDesktopDropdownId] = useState<string | null>(null);
+-  const desktopDropdownCloseTimerRef = useRef<number | null>(null);
+-  const prevPathRef = useRef(currentPath);
+-  const menuPanelRef = useRef<HTMLElement | null>(null);
+-  const lastActiveElementRef = useRef<HTMLElement | null>(null);
+-
+-
+-  const {
+-    prefersReducedMotion,
+-    hasHydrated,
+-    isBurgerMode,
+-    navHostRef,
+-    navMeasureRef,
+-  } = useMediaBreakpoints();
+-  const transitionsOn = useResizeTransitions();
+-
+-  const clearDesktopDropdownClose = useCallback(() => {
+-    const t = desktopDropdownCloseTimerRef.current;
+-    if (t) {
+-      window.clearTimeout(t);
+-      desktopDropdownCloseTimerRef.current = null;
+-    }
+-  }, []);
+-
+-  const closeDesktopDropdown = useCallback(() => {
+-    clearDesktopDropdownClose();
+-    setDesktopDropdownId(null);
+-  }, [clearDesktopDropdownClose]);
+-
+-  const scheduleDesktopDropdownClose = useCallback(() => {
+-    clearDesktopDropdownClose();
+-    const delay = prefersReducedMotion ? 0 : 160;
+-    desktopDropdownCloseTimerRef.current = window.setTimeout(() => {
+-      setDesktopDropdownId(null);
+-    }, delay);
+-  }, [clearDesktopDropdownClose, prefersReducedMotion]);
+-
+-  const handleDesktopNavLinkEnter = useCallback(
+-    (link: NavigationLink) => {
+-      if (isBurgerMode || isMenuOpen) return;
+-      clearDesktopDropdownClose();
+-
+-      if (link.children?.length) {
+-        setDesktopDropdownId(link.id);
+-      } else {
+-        setDesktopDropdownId(null);
+-      }
+-    },
+-    [clearDesktopDropdownClose, isBurgerMode, isMenuOpen],
+-  );
+-
+-  const inertProps = useCallback(
+-    (enabled: boolean): HTMLAttributes<HTMLElement> => (enabled ? { inert: true } : {}),
+-    [],
+-  );
+-
+-  const {
+-    basePath,
+-    contactsHref,
+-    ctaLabel,
+-    ctaCompactLabel,
+-    topContactsIds,
+-    topContactsWidth,
+-  } = useMemo(() => {
+-    const basePathRaw = buildPath(locale);
+-    const basePath =
+-      basePathRaw !== "/" && basePathRaw.endsWith("/")
+-        ? basePathRaw.slice(0, -1)
+-        : basePathRaw;
+-    const contactsHref = basePath === "/" ? "/contacts" : `${basePath}/contacts`;
+-    const ctaLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
+-    const ctaCompactLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
+-
+-    const topContactsIds = [
+-      site.contacts.phone ? ("phone" as const) : null,
+-      site.contacts.email ? ("email" as const) : null,
+-    ].filter(Boolean) as Array<"phone" | "email">;
+-
+-    const topContactsWidth =
+-      topContactsIds.reduce(
+-        (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
+-        0,
+-      ) + (topContactsIds.length > 1 ? 36 : 0);
+-
+-    return {
+-      basePath,
+-      contactsHref,
+-      ctaLabel,
+-      ctaCompactLabel,
+-      topContactsIds,
+-      topContactsWidth,
+-    } as const;
+-  }, [locale, site.contacts.email, site.contacts.phone]);
+-
+-  const hasTopContacts = topContactsIds.length > 0;
+-  const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
+-  const { shellRef, headerRef } = useHeaderHeight();
+-  const handleCloseMenu = useCallback(() => {
+-    setIsMenuOpen(false);
+-  }, []);
+-
+-  const handleBurgerClick = useCallback(() => {
+-    setIsMenuOpen((prev) => !prev);
+-  }, []);
+-
+-  const {  
+-    topWagonIsBurger,
+-    topWagonsCollapsed,
+-    topLineTransform,
+-    bottomLineTransform,
+-  } = useBurgerAnimation({
+-    isMenuOpen,
+-    isBurgerMode,
+-    prefersReducedMotion,
+-    hasHydrated,
+-    onRequestClose: handleCloseMenu,
+-  });
+-
+-  useEffect(() => {
+-    if (prevPathRef.current === currentPath) return;
+-
+-    prevPathRef.current = currentPath;
+-
+-    // закрываем подменю на десктопе при навигации
+-    closeDesktopDropdown();
+-
+-    if (!isMenuOpen) return;
+-
+-    const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
+-    return () => window.cancelAnimationFrame(frame);
+-  }, [closeDesktopDropdown, currentPath, isMenuOpen]);
+-
+-  useWindowResize(
+-    () => {
+-      if (isBurgerMode || !isMenuOpen) return;
+-      handleCloseMenu();
+-    },
+-  );
+-
+-  const [isMenuMounted, setIsMenuMounted] = useState(false);
+-
+-  useEffect(() => {
+-    if (!isBurgerMode) {
+-      const frame = window.requestAnimationFrame(() => setIsMenuMounted(false));
+-      return () => window.cancelAnimationFrame(frame);
+-    }
+-
+-    if (isMenuOpen) {
+-      const frame = window.requestAnimationFrame(() => setIsMenuMounted(true));
+-      return () => window.cancelAnimationFrame(frame);
+-    }
+-
+-    if (!isMenuMounted) return;
+-
+-    const duration = prefersReducedMotion ? 0 : 320;
+-    const t = window.setTimeout(() => setIsMenuMounted(false), duration);
+-    return () => window.clearTimeout(t);
+-  }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
+-
+-  const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+-
+-  useEffect(() => {
+-    if (isBurgerMode || isMenuOpen) {
+-      closeDesktopDropdown();
+-    }
+-  }, [closeDesktopDropdown, isBurgerMode, isMenuOpen]);
+-  const normalizedCurrentPath = useMemo(() => normalizePathname(currentPath), [currentPath]);
+-
+-  const isActiveHref = useCallback(
+-    (href: string): boolean => {
+-      const resolved = resolveHref(href);
+-      const normalizedHref = normalizePathname(resolved);
+-      return (
+-        normalizedHref === normalizedCurrentPath ||
+-        (normalizedHref !== "/" && normalizedCurrentPath.startsWith(`${normalizedHref}/`))
+-      );
+-    },
+-    [normalizedCurrentPath],
+-  );
+-
+-  const productsLink = useMemo(
+-    () => navigation.header.find((l) => l.id === "products") ?? null,
+-    [navigation.header],
+-  );
+-
+-  const productsHrefRoot = useMemo(() => {
+-    const href = (productsLink?.href ?? "/products").trim() || "/products";
+-    return href;
+-  }, [productsLink]);
+-
+-  const isProductsActive = useMemo(
+-    () => isActiveHref(productsHrefRoot),
+-    [isActiveHref, productsHrefRoot],
+-  );
+-
+-  // Подменю «Продукция»: берём из Keystatic (children), иначе — fallback
+-  const productsBaseHref = useMemo(
+-    () => productsHrefRoot.replace(/\/+$/, ""),
+-    [productsHrefRoot],
+-  );
+-
+-  const productsSubLinks = useMemo<NavigationLink[]>(() => {
+-    const fromKeystatic = productsLink?.children;
+-    if (fromKeystatic?.length) {
+-      return fromKeystatic;
+-    }
+-
+-    const catalogHref = basePath === "/" ? "/catalog" : `${basePath}/catalog`;
+-
+-    return [
+-      {
+-        id: "products-binders",
+-        label: locale === "ru" ? "Литейные связующие" : "Binders",
+-        href: `${productsBaseHref}/binders`,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-      {
+-        id: "products-coatings",
+-        label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
+-        href: `${productsBaseHref}/coatings`,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-      {
+-        id: "products-auxiliaries",
+-        label: locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
+-        href: `${productsBaseHref}/auxiliaries`,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-      {
+-        id: "products-catalog",
+-        label: locale === "ru" ? "Каталог" : "Catalog",
+-        href: catalogHref,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-    ];
+-  }, [basePath, locale, productsBaseHref, productsLink?.children]);
+-
+-  const activeProductsSubId = useMemo(() => {
+-    const active = productsSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
+-    return active?.id ?? "";
+-  }, [isActiveHref, productsSubLinks]);
+-
+-  const isProductsRootActive = isProductsActive && !activeProductsSubId;
+-
+-  const aboutLink = useMemo(
+-    () => navigation.header.find((l) => l.id === "about") ?? null,
+-    [navigation.header],
+-  );
+-
+-  const aboutHrefRoot = useMemo(() => {
+-    const href = (aboutLink?.href ?? "/about").trim() || "/about";
+-    return href;
+-  }, [aboutLink]);
+-
+-  const aboutSubLinks = useMemo<NavigationLink[]>(() => {
+-    const fromKeystatic = aboutLink?.children;
+-    if (fromKeystatic?.length) {
+-      return fromKeystatic;
+-    }
+-
+-    const documentsHref = basePath === "/" ? "/documents" : `${basePath}/documents`;
+-    const privacyHref = basePath === "/" ? "/privacy-policy" : `${basePath}/privacy-policy`;
+-
+-    return [
+-      {
+-        id: "about-documents",
+-        label: locale === "ru" ? "Документы" : "Documents",
+-        href: documentsHref,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-      {
+-        id: "about-privacy",
+-        label: locale === "ru" ? "Политика ПДн" : "Privacy Policy",
+-        href: privacyHref,
+-        isExternal: false,
+-        newTab: false,
+-      },
+-    ];
+-  }, [aboutLink?.children, basePath, locale]);
+-
+-  const activeAboutSubId = useMemo(() => {
+-    const active = aboutSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
+-    return active?.id ?? "";
+-  }, [aboutSubLinks, isActiveHref]);
+-
+-  const isAboutMenuActive = useMemo(() => {
+-    if (!aboutLink) return false;
+-    return Boolean(activeAboutSubId) || isActiveHref(aboutHrefRoot);
+-  }, [aboutHrefRoot, aboutLink, activeAboutSubId, isActiveHref]);
+-
+-  // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
+-  useEffect(() => {
+-    if (!isMenuModal) return;
+-
+-    lastActiveElementRef.current =
+-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+-
+-    const prevOverflow = document.body.style.overflow;
+-    document.body.style.overflow = "hidden";
+-
+-    const focusFirst = () => {
+-      const container = menuPanelRef.current;
+-      if (!container) return;
+-      // Не уводим фокус на первую кнопку/ссылку (иначе появляется «как баг» яркая обводка).
+-      // Вместо этого фокусируем контейнер: табуляция всё равно попадёт в первый пункт меню.
+-      container.focus();
+-    };
+-
+-    const raf = window.requestAnimationFrame(focusFirst);
+-
+-    const onKeyDown = (event: KeyboardEvent) => {
+-      if (event.key === "Escape") {
+-        event.preventDefault();
+-        handleCloseMenu();
+-        return;
+-      }
+-
+-      if (event.key !== "Tab") return;
+-
+-      const container = menuPanelRef.current;
+-      if (!container) return;
+-
+-      const focusables = Array.from(
+-        container.querySelectorAll<HTMLElement>(
+-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+-        ),
+-      );
+-
+-      if (focusables.length === 0) {
+-        event.preventDefault();
+-        container.focus();
+-        return;
+-      }
+-
+-      const first = focusables[0];
+-      const last = focusables[focusables.length - 1];
+-      const active = document.activeElement;
+-
+-      if (event.shiftKey) {
+-        if (active === first || !container.contains(active)) {
+-          event.preventDefault();
+-          last.focus();
+-        }
+-      } else {
+-        if (active === last || !container.contains(active)) {
+-          event.preventDefault();
+-          first.focus();
+-        }
+-      }
+-    };
+-
+-    document.addEventListener("keydown", onKeyDown);
+-
+-    return () => {
+-      document.body.style.overflow = prevOverflow;
+-      document.removeEventListener("keydown", onKeyDown);
+-      window.cancelAnimationFrame(raf);
+-
+-      const prev = lastActiveElementRef.current;
+-      if (prev) {
+-        window.requestAnimationFrame(() => prev.focus());
+-      }
+-    };
+-  }, [isMenuModal, handleCloseMenu]);
+-
+-  const {
+-    shellTransitionClass,
+-    wagonTransitionClass,
+-    slideTransitionClass,
+-    burgerDelayClass,
+-    topWagonWidthTransitionClass,
+-    wagonTransformClass,
+-    topWagonTransformClass,
+-    menuSlideClass,
+-    burgerSlideClass,
+-  } = useMemo(
+-    () => {
+-      const shellTransitionClass = transitionsOn
+-        ? "transition-[padding-top] duration-200 ease-out"
+-        : "transition-none";
+-      const wagonTransitionClass = transitionsOn
+-        ? "transition-transform duration-300 ease-out"
+-        : "transition-none";
+-      const slideTransitionClass = transitionsOn
+-        ? "transition-[opacity,transform] duration-200 ease-out"
+-        : "transition-none";
+-      const burgerDelayClass = transitionsOn ? "delay-75" : "delay-0";
+-
+-      const topWagonWidthTransitionClass =
+-        transitionsOn && topWagonIsBurger
+-          ? "transition-[width] duration-200 ease-out"
+-          : "transition-none";
+-
+-      const wagonTransformClass = hasHydrated
+-        ? isBurgerMode
+-          ? "-translate-y-1/2"
+-          : "translate-y-0"
+-        : "-translate-y-1/2 lg:translate-y-0";
+-
+-      const topWagonTransformClass = hasHydrated
+-        ? topWagonIsBurger
+-          ? "-translate-y-1/2"
+-          : "translate-y-0"
+-        : "-translate-y-1/2 lg:translate-y-0";
+-
+-      const menuSlideClass = hasHydrated
+-        ? isBurgerMode
+-          ? "opacity-0 pointer-events-none -translate-y-1"
+-          : "opacity-100 pointer-events-auto translate-y-0"
+-        : "opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0";
+-
+-      const burgerSlideClass = hasHydrated
+-        ? isBurgerMode
+-          ? "opacity-100 pointer-events-auto translate-y-0"
+-          : "opacity-0 pointer-events-none translate-y-1"
+-        : "opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1";
+-
+-      return {
+-        shellTransitionClass,
+-        wagonTransitionClass,
+-        slideTransitionClass,
+-        burgerDelayClass,
+-        topWagonWidthTransitionClass,
+-        wagonTransformClass,
+-        topWagonTransformClass,
+-        menuSlideClass,
+-        burgerSlideClass,
+-      } as const;
+-    }, [hasHydrated, isBurgerMode, topWagonIsBurger, transitionsOn],
+-  );
+-
+-  return (
+-    <div
+-      ref={shellRef}
+-      className={cn(
+-        "theme-transition relative flex min-h-screen flex-col bg-background text-foreground",
+-        shellTransitionClass,
+-        "motion-reduce:transition-none motion-reduce:duration-0",
+-      )}
+-      style={{
+-        "--header-height": "var(--header-height-initial)",
+-        paddingTop: "var(--header-height)",
+-      } as CSSProperties}
+-    >
+-      <HtmlLangSync initialLocale={locale} />
+-      <SkipToContentLink label={skipLinkLabel} />
+-
+-      <div
+-        ref={scrollSentinelRef}
+-        className="absolute inset-x-0 top-0 h-2 w-px"
+-        aria-hidden
+-      />
+-
+-      <header
+-        ref={headerRef}
+-        data-site-header
+-        className={cn(
+-          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+-          "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
+-          "motion-reduce:transition-none motion-reduce:duration-0",
+-          "min-h-[var(--header-height-initial)]",
+-          isHeaderElevated
+-            ? "bg-background/92 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md before:opacity-100"
+-            : "bg-background/80 backdrop-blur",
+-        )}
+-      >
+-        <div className="relative pt-[var(--safe-area-top)]">
+-          <div className="mx-auto w-full max-w-screen-2xl">
+-            <div
+-              className={cn(
+-                "flex w-full items-center justify-between",
+-                "gap-[var(--header-gap-x)] px-[var(--header-pad-x)] py-[var(--header-pad-y)]",
+-                "lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-stretch lg:gap-x-6",
+-              )}
+-            >
+-              <HeaderBrand href={basePath} label={brandLabel} />
+-
+-              <div
+-                className={cn(
+-                  "w-full min-w-0",
+-                  "grid grid-rows-[minmax(var(--header-row-top-h),auto)_minmax(var(--header-row-bottom-h),auto)] gap-y-[var(--header-rows-gap)]",
+-                  "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
+-                )}
+-              >
+-                <HeaderTopBar
+-                  contacts={site.contacts}
+-                  hasTopContacts={hasTopContacts}
+-                  topContactsWidth={topContactsWidth}
+-                  topWagonsCollapsed={topWagonsCollapsed}
+-                  topWagonIsBurger={topWagonIsBurger}
+-                  topWagonTransformClass={topWagonTransformClass}
+-                  topWagonWidthTransitionClass={topWagonWidthTransitionClass}
+-                  wagonTransitionClass={wagonTransitionClass}
+-                  slideTransitionClass={slideTransitionClass}
+-                  burgerDelayClass={burgerDelayClass}
+-                  menuSlideClass={menuSlideClass}
+-                  burgerSlideClass={burgerSlideClass}
+-                  inertProps={inertProps}
+-                  hasHydrated={hasHydrated}
+-                  contactsHref={contactsHref}
+-                  ctaLabel={ctaLabel}
+-                  locale={locale}
+-                  targetLocale={targetLocale}
+-                  switcherHref={switcherHref}
+-                  switchToLabels={switchToLabels}
+-                  classNames={{ headerButtonBase, pillBase }}
+-                />
+-
+-                <HeaderNav
+-                  navHostRef={navHostRef}
+-                  navMeasureRef={navMeasureRef}
+-                  navigation={navigation}
+-                  navigationLabel={navigationLabels.headerLabel}
+-                  locale={locale}
+-                  currentPath={currentPath}
+-                  isBurgerMode={isBurgerMode}
+-                  hasHydrated={hasHydrated}
+-                  isMenuOpen={isMenuOpen}
+-                  onBurgerClick={handleBurgerClick}
+-                  topLineTransform={topLineTransform}
+-                  bottomLineTransform={bottomLineTransform}
+-                  wagonTransitionClass={wagonTransitionClass}
+-                  wagonTransformClass={wagonTransformClass}
+-                  slideTransitionClass={slideTransitionClass}
+-                  menuSlideClass={menuSlideClass}
+-                  burgerSlideClass={burgerSlideClass}
+-                  burgerDelayClass={burgerDelayClass}
+-                  inertProps={inertProps}
+-                  contactsHref={contactsHref}
+-                  ctaLabel={ctaCompactLabel}
+-                  headerButtonBase={headerButtonBase}
+-                  onDesktopNavEnter={clearDesktopDropdownClose}
+-                  onDesktopNavLeave={scheduleDesktopDropdownClose}
+-                  onDesktopNavLinkEnter={handleDesktopNavLinkEnter}
+-                  onDesktopNavLinkFocus={handleDesktopNavLinkEnter}
+-                />
+-              </div>
+-            </div>
+-          </div>
+-        </div>
+-
+-        
+-      </header>
+-
+-      <HeaderDesktopDropdown
+-        links={navigation.header}
+-        activeId={isBurgerMode || isMenuOpen ? null : desktopDropdownId}
+-        currentPath={currentPath}
+-        prefersReducedMotion={prefersReducedMotion}
+-        closeLabel={locale === "ru" ? "Закрыть подменю" : "Close submenu"}
+-        onPanelEnter={clearDesktopDropdownClose}
+-        onPanelLeave={scheduleDesktopDropdownClose}
+-        onRequestClose={closeDesktopDropdown}
+-      />
+-
+-      {isMenuModal ? (
+-  <aside
+-    id="site-menu"
+-    ref={menuPanelRef}
+-    tabIndex={-1}
+-    aria-hidden={!isMenuOpen}
+-    {...inertProps(!isMenuOpen)}
+-    className={cn(
+-      // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
+-      "fixed inset-x-0 z-[59]",
+-              isHeaderElevated
+-                ? "bg-background/95 backdrop-blur-md"
+-                : "bg-background/90 backdrop-blur",
+-      "transform-gpu will-change-transform",
+-      "transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+-      "motion-reduce:transition-none motion-reduce:duration-0",
+-      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0",
+-    )}
+-    style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
+-  >
+-    <nav aria-label={menuDialogLabel} className="h-full">
+-      <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
+-        <div className="flex h-full min-h-0 flex-col">
+-          <div className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+-            <ul className="m-0 list-none space-y-4 p-0">
+-              <li>
+-                <Link
+-                  href={productsHrefRoot}
+-                  onClick={handleCloseMenu}
+-                  aria-current={isProductsRootActive ? "page" : undefined}
+-                  className={cn(
+-                    "group block w-full py-2",
+-                    "no-underline",
+-                    "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+-                    isProductsRootActive
+-                      ? "text-foreground"
+-                      : "text-muted-foreground transition-colors hover:text-foreground",
+-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                    "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                  )}
+-                >
+-                  <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
+-                    {productsLink?.label ?? (locale === "ru" ? "Продукция" : "Products")}
+-                  </span>
+-                </Link>
+-
+-                <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+-                  {productsSubLinks.map((item) => {
+-                    const isActive = activeProductsSubId === item.id;
+-                    const itemHref = (item.href ?? "/").trim() || "/";
+-                    const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
+-
+-                    const itemClassName = cn(
+-                      "group block w-full py-1.5",
+-                      "no-underline",
+-                      "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+-                      isActive
+-                        ? "text-foreground"
+-                        : "text-muted-foreground transition-colors hover:text-foreground",
+-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                    );
+-                    return (
+-                      <li key={item.id}>
+-                        {itemIsExternal ? (
+-                          <a
+-                            href={itemHref}
+-                            target={item.newTab ? "_blank" : undefined}
+-                            rel={item.newTab ? "noopener noreferrer" : undefined}
+-                            aria-current={isActive ? "page" : undefined}
+-                            className={itemClassName}
+-                          >
+-                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+-                          </a>
+-                        ) : (
+-                          <Link
+-                            href={itemHref}
+-                            onClick={handleCloseMenu}
+-                            aria-current={isActive ? "page" : undefined}
+-                            className={itemClassName}
+-                          >
+-                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
+-                          </Link>
+-                        )}
+-                      </li>
+-                    );
+-                  })}
+-                </ul>
+-
+-              </li>
+-
+-              {navigation.header
+-                .filter((l) => l.id !== "products")
+-                .map((link) => {
+-                  const href = (link.href ?? "/").trim() || "/";
+-                  const isActive = isActiveHref(href);
+-                  const isExternal = link.newTab || isExternalHref(href);
+-
+-                  if (link.id === "about" && aboutSubLinks.length > 0) {
+-                    const rootActive = isAboutMenuActive;
+-
+-                    const rootClassName = cn(
+-                      "group block w-full py-2",
+-                      "no-underline",
+-                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+-                      rootActive
+-                        ? "text-foreground"
+-                        : "text-muted-foreground transition-colors hover:text-foreground",
+-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                    );
+-
+-                    return (
+-                      <li key={link.id}>
+-                        {isExternal ? (
+-                          <a
+-                            href={href}
+-                            target={link.newTab ? "_blank" : undefined}
+-                            rel={link.newTab ? "noopener noreferrer" : undefined}
+-                            aria-current={isActive ? "page" : undefined}
+-                            className={rootClassName}
+-                          >
+-                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+-                          </a>
+-                        ) : (
+-                          <Link
+-                            href={href}
+-                            onClick={handleCloseMenu}
+-                            aria-current={isActive ? "page" : undefined}
+-                            className={rootClassName}
+-                          >
+-                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+-                          </Link>
+-                        )}
+-
+-                        <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+-                          {aboutSubLinks.map((item) => {
+-                            const isSubActive = activeAboutSubId === item.id;
+-                            const itemHref = (item.href ?? "/").trim() || "/";
+-                            const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
+-
+-                            const itemClassName = cn(
+-                              "group block w-full py-1.5",
+-                              "no-underline",
+-                              "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+-                              isSubActive
+-                                ? "text-foreground"
+-                                : "text-muted-foreground transition-colors hover:text-foreground",
+-                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                              "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                            );
+-
+-                            return (
+-                              <li key={item.id}>
+-                                {itemIsExternal ? (
+-                                  <a
+-                                    href={itemHref}
+-                                    target={item.newTab ? "_blank" : undefined}
+-                                    rel={item.newTab ? "noopener noreferrer" : undefined}
+-                                    aria-current={isSubActive ? "page" : undefined}
+-                                    className={itemClassName}
+-                                  >
+-                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
+-                                  </a>
+-                                ) : (
+-                                  <Link
+-                                    href={itemHref}
+-                                    onClick={handleCloseMenu}
+-                                    aria-current={isSubActive ? "page" : undefined}
+-                                    className={itemClassName}
+-                                  >
+-                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
+-                                  </Link>
+-                                )}
+-                              </li>
+-                            );
+-                          })}
+-                        </ul>
+-                      </li>
+-                    );
+-                  }
+-
+-                  return (
+-                    <li key={link.id}>
+-                      {isExternal ? (
+-                        <a
+-                          href={href}
+-                          target={link.newTab ? "_blank" : undefined}
+-                          rel={link.newTab ? "noopener noreferrer" : undefined}
+-                          aria-current={isActive ? "page" : undefined}
+-                          className={cn(
+-                            "group block w-full py-2",
+-                            "no-underline",
+-                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+-                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                          )}
+-                        >
+-                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
+-                        </a>
+-                      ) : (
+-                        <Link
+-                          href={href}
+-                          onClick={handleCloseMenu}
+-                          aria-current={isActive ? "page" : undefined}
+-                          className={cn(
+-                            "group block w-full py-2",
+-                            "no-underline",
+-                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+-                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
+-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
+-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+-                          )}
+-                        >
+-                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
+-                        </Link>
+-                      )}
+-                    </li>
+-                  );
+-                })}
+-          </ul>
+-        </div>
+-
+-        {/* контакты — снизу, в том же оформлении, что и в шапке */}
+-        <div className="pt-10 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+-          <div className="flex flex-col items-start gap-2">
+-            {site.contacts.phone ? (
+-              <a
+-                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
+-                className={contactLinkBase}
+-              >
+-                {site.contacts.phone}
+-              </a>
+-            ) : null}
+-
+-            {site.contacts.email ? (
+-              <a href={`mailto:${site.contacts.email}`} className={contactLinkBase}>
+-                {site.contacts.email}
+-              </a>
+-            ) : null}
+-          </div>
+-        </div>
+-      </div>
+-    </div>
+-  </nav>
+-  </aside>
+-) : null}
+-
+-
+-      <section
+-        id="main"
+-        role="main"
+-        tabIndex={-1}
+-        suppressHydrationWarning
+-        aria-hidden={isMenuModal ? true : undefined}
+-        {...inertProps(isMenuModal)}
+-        className="mx-auto w-full max-w-screen-2xl flex-1 space-y-12 px-[var(--header-pad-x)] py-10 sm:py-12"
+-      >
+-        {children}
+-      </section>
+-
+-      <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
+-        {footer}
+-      </div>
+-    </div>
+-  );
++"use client";
++
++import Link from "next/link";
++import {
++  useCallback,
++  useEffect,
++  useMemo,
++  useRef,
++  useState,
++  type CSSProperties,
++  type HTMLAttributes,
++  type ReactNode,
++} from "react";
++
++import { getInterfaceDictionary } from "@/content/dictionary";
++import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
++import type { Locale } from "@/lib/i18n";
++import { buildPath } from "@/lib/paths";
++import { cn } from "@/lib/cn";
++import { navUnderlineSpanClass } from "@/lib/nav-underline";
++import { HtmlLangSync } from "./html-lang-sync";
++import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
++import { useResizeTransitions } from "./hooks/use-resize-transitions";
++import { useHeaderHeight } from "./hooks/use-header-height";
++import { useBurgerAnimation } from "./hooks/use-burger-animation";
++import { useScrollElevation } from "./hooks/use-scroll-elevation";
++import { useWindowResize } from "./hooks/use-window-resize";
++import { HeaderBrand } from "./header-brand";
++import { HeaderDesktopDropdown, DESKTOP_DROPDOWN_CLOSE_MS } from "./header-desktop-dropdown";
++import { HeaderNav } from "./header-nav";
++import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
++
++const normalizePathname = (value: string): string => {
++  const [pathWithoutQuery] = value.split("?");
++  const [path] = (pathWithoutQuery ?? "").split("#");
++  const trimmed = (path ?? "/").replace(/\/+$/, "");
++  return trimmed.length ? trimmed : "/";
++};
++
++const isExternalHref = (href: string): boolean => {
++  const normalized = resolveHref(href);
++  return (
++    normalized.startsWith("http://") ||
++    normalized.startsWith("https://") ||
++    normalized.startsWith("//") ||
++    normalized.startsWith("mailto:") ||
++    normalized.startsWith("tel:")
++  );
++};
++
++const resolveHref = (href: string): string => {
++  const normalized = (href ?? "").trim();
++  return normalized.length ? normalized : "/";
++};
++
++type SiteShellProps = {
++  locale: Locale;
++  targetLocale: Locale;
++  site: SiteContent;
++  navigation: Navigation;
++  switcherHref: string | null;
++  currentPath: string;
++  children: ReactNode;
++  footer?: ReactNode;
++};
++
++const headerButtonBase =
++  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
++
++const pillBase =
++  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
++
++const contactLinkBase =
++  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
++
++type SkipToContentLinkProps = {
++  label: string;
++};
++
++function SkipToContentLink({ label }: SkipToContentLinkProps) {
++  return (
++    <a
++      href="#main"
++      className="sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:not-sr-only focus-visible:rounded focus-visible:bg-[color:var(--color-brand-600)] focus-visible:px-4 focus-visible:py-2 focus-visible:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-brand-600)]"
++    >
++      {label}
++    </a>
++  );
++}
++
++export function SiteShell({
++  locale,
++  targetLocale,
++  site,
++  navigation,
++  switcherHref,
++  currentPath,
++  children,
++  footer,
++}: SiteShellProps) {
++  const brandName = site.name?.trim() ?? "";
++  const dictionary = getInterfaceDictionary(locale);
++  const skipLinkLabel = dictionary.common.skipToContent;
++  const navigationLabels = dictionary.navigation;
++  const switchToLabels = dictionary.languageSwitcher.switchTo;
++
++  const brandLabel = brandName || "Интема Групп";
++
++  const menuDialogLabel = locale === "ru" ? "Меню" : "Menu";
++
++  const [isMenuOpen, setIsMenuOpen] = useState(false);
++  const [desktopDropdownId, setDesktopDropdownId] = useState<string | null>(null);
++  const [isDesktopDropdownMounted, setIsDesktopDropdownMounted] = useState(false);
++  const desktopDropdownCloseTimerRef = useRef<number | null>(null);
++  const prevPathRef = useRef(currentPath);
++  const menuPanelRef = useRef<HTMLElement | null>(null);
++  const lastActiveElementRef = useRef<HTMLElement | null>(null);
++
++
++  const {
++    prefersReducedMotion,
++    hasHydrated,
++    isBurgerMode,
++    navHostRef,
++    navMeasureRef,
++  } = useMediaBreakpoints();
++  const transitionsOn = useResizeTransitions();
++
++  const clearDesktopDropdownClose = useCallback(() => {
++    const t = desktopDropdownCloseTimerRef.current;
++    if (t) {
++      window.clearTimeout(t);
++      desktopDropdownCloseTimerRef.current = null;
++    }
++  }, []);
++
++  const closeDesktopDropdown = useCallback(() => {
++    clearDesktopDropdownClose();
++    setDesktopDropdownId(null);
++  }, [clearDesktopDropdownClose]);
++
++  const scheduleDesktopDropdownClose = useCallback(() => {
++    clearDesktopDropdownClose();
++    const delay = prefersReducedMotion ? 0 : 160;
++    desktopDropdownCloseTimerRef.current = window.setTimeout(() => {
++      setDesktopDropdownId(null);
++    }, delay);
++  }, [clearDesktopDropdownClose, prefersReducedMotion]);
++
++  // Keep a "mounted" flag for the desktop dropdown so we can apply the
++  // header separator / shadow during the closing animation as well.
++  useEffect(() => {
++    if (desktopDropdownId) {
++      setIsDesktopDropdownMounted(true);
++      return;
++    }
++
++    if (!isDesktopDropdownMounted) return;
++
++    const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
++    const t = window.setTimeout(() => setIsDesktopDropdownMounted(false), duration);
++    return () => window.clearTimeout(t);
++  }, [desktopDropdownId, isDesktopDropdownMounted, prefersReducedMotion]);
++
++  const handleDesktopNavLinkEnter = useCallback(
++    (link: NavigationLink) => {
++      if (isBurgerMode || isMenuOpen) return;
++      clearDesktopDropdownClose();
++
++      if (link.children?.length) {
++        setDesktopDropdownId(link.id);
++      } else {
++        setDesktopDropdownId(null);
++      }
++    },
++    [clearDesktopDropdownClose, isBurgerMode, isMenuOpen],
++  );
++
++  const inertProps = useCallback(
++    (enabled: boolean): HTMLAttributes<HTMLElement> => (enabled ? { inert: true } : {}),
++    [],
++  );
++
++  const {
++    basePath,
++    contactsHref,
++    ctaLabel,
++    ctaCompactLabel,
++    topContactsIds,
++    topContactsWidth,
++  } = useMemo(() => {
++    const basePathRaw = buildPath(locale);
++    const basePath =
++      basePathRaw !== "/" && basePathRaw.endsWith("/")
++        ? basePathRaw.slice(0, -1)
++        : basePathRaw;
++    const contactsHref = basePath === "/" ? "/contacts" : `${basePath}/contacts`;
++    const ctaLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
++    const ctaCompactLabel = locale === "ru" ? "Оставить заявку" : "Send inquiry";
++
++    const topContactsIds = [
++      site.contacts.phone ? ("phone" as const) : null,
++      site.contacts.email ? ("email" as const) : null,
++    ].filter(Boolean) as Array<"phone" | "email">;
++
++    const topContactsWidth =
++      topContactsIds.reduce(
++        (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
++        0,
++      ) + (topContactsIds.length > 1 ? 36 : 0);
++
++    return {
++      basePath,
++      contactsHref,
++      ctaLabel,
++      ctaCompactLabel,
++      topContactsIds,
++      topContactsWidth,
++    } as const;
++  }, [locale, site.contacts.email, site.contacts.phone]);
++
++  const hasTopContacts = topContactsIds.length > 0;
++  const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
++  const { shellRef, headerRef } = useHeaderHeight();
++  const handleCloseMenu = useCallback(() => {
++    setIsMenuOpen(false);
++  }, []);
++
++  const handleBurgerClick = useCallback(() => {
++    setIsMenuOpen((prev) => !prev);
++  }, []);
++
++  const {  
++    topWagonIsBurger,
++    topWagonsCollapsed,
++    topLineTransform,
++    bottomLineTransform,
++  } = useBurgerAnimation({
++    isMenuOpen,
++    isBurgerMode,
++    prefersReducedMotion,
++    hasHydrated,
++    onRequestClose: handleCloseMenu,
++  });
++
++  useEffect(() => {
++    if (prevPathRef.current === currentPath) return;
++
++    prevPathRef.current = currentPath;
++
++    // закрываем подменю на десктопе при навигации
++    closeDesktopDropdown();
++
++    if (!isMenuOpen) return;
++
++    const frame = window.requestAnimationFrame(() => setIsMenuOpen(false));
++    return () => window.cancelAnimationFrame(frame);
++  }, [closeDesktopDropdown, currentPath, isMenuOpen]);
++
++  useWindowResize(
++    () => {
++      if (isBurgerMode || !isMenuOpen) return;
++      handleCloseMenu();
++    },
++  );
++
++  const [isMenuMounted, setIsMenuMounted] = useState(false);
++
++  useEffect(() => {
++    if (!isBurgerMode) {
++      const frame = window.requestAnimationFrame(() => setIsMenuMounted(false));
++      return () => window.cancelAnimationFrame(frame);
++    }
++
++    if (isMenuOpen) {
++      const frame = window.requestAnimationFrame(() => setIsMenuMounted(true));
++      return () => window.cancelAnimationFrame(frame);
++    }
++
++    if (!isMenuMounted) return;
++
++    const duration = prefersReducedMotion ? 0 : 320;
++    const t = window.setTimeout(() => setIsMenuMounted(false), duration);
++    return () => window.clearTimeout(t);
++  }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
++
++  const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
++
++  // We want the same subtle separator line and shadow that appear on scroll,
++  // to also appear when the Apple-like mega menu is opened at the very top
++  // of the page (before any scroll).
++  const isHeaderVisuallyElevated =
++    isHeaderElevated || isDesktopDropdownMounted || isMenuModal;
++
++  useEffect(() => {
++    if (isBurgerMode || isMenuOpen) {
++      closeDesktopDropdown();
++    }
++  }, [closeDesktopDropdown, isBurgerMode, isMenuOpen]);
++  const normalizedCurrentPath = useMemo(() => normalizePathname(currentPath), [currentPath]);
++
++  const isActiveHref = useCallback(
++    (href: string): boolean => {
++      const resolved = resolveHref(href);
++      const normalizedHref = normalizePathname(resolved);
++      return (
++        normalizedHref === normalizedCurrentPath ||
++        (normalizedHref !== "/" && normalizedCurrentPath.startsWith(`${normalizedHref}/`))
++      );
++    },
++    [normalizedCurrentPath],
++  );
++
++  const productsLink = useMemo(
++    () => navigation.header.find((l) => l.id === "products") ?? null,
++    [navigation.header],
++  );
++
++  const productsHrefRoot = useMemo(() => {
++    const href = (productsLink?.href ?? "/products").trim() || "/products";
++    return href;
++  }, [productsLink]);
++
++  const isProductsActive = useMemo(
++    () => isActiveHref(productsHrefRoot),
++    [isActiveHref, productsHrefRoot],
++  );
++
++  // Подменю «Продукция»: берём из Keystatic (children), иначе — fallback
++  const productsBaseHref = useMemo(
++    () => productsHrefRoot.replace(/\/+$/, ""),
++    [productsHrefRoot],
++  );
++
++  const productsSubLinks = useMemo<NavigationLink[]>(() => {
++    const fromKeystatic = productsLink?.children;
++    if (fromKeystatic?.length) {
++      return fromKeystatic;
++    }
++
++    const catalogHref = basePath === "/" ? "/catalog" : `${basePath}/catalog`;
++
++    return [
++      {
++        id: "products-binders",
++        label: locale === "ru" ? "Литейные связующие" : "Binders",
++        href: `${productsBaseHref}/binders`,
++        isExternal: false,
++        newTab: false,
++      },
++      {
++        id: "products-coatings",
++        label: locale === "ru" ? "Противопригарные покрытия" : "Coatings",
++        href: `${productsBaseHref}/coatings`,
++        isExternal: false,
++        newTab: false,
++      },
++      {
++        id: "products-auxiliaries",
++        label: locale === "ru" ? "Вспомогательные материалы" : "Auxiliary materials",
++        href: `${productsBaseHref}/auxiliaries`,
++        isExternal: false,
++        newTab: false,
++      },
++      {
++        id: "products-catalog",
++        label: locale === "ru" ? "Каталог" : "Catalog",
++        href: catalogHref,
++        isExternal: false,
++        newTab: false,
++      },
++    ];
++  }, [basePath, locale, productsBaseHref, productsLink?.children]);
++
++  const activeProductsSubId = useMemo(() => {
++    const active = productsSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
++    return active?.id ?? "";
++  }, [isActiveHref, productsSubLinks]);
++
++  const isProductsRootActive = isProductsActive && !activeProductsSubId;
++
++  const aboutLink = useMemo(
++    () => navigation.header.find((l) => l.id === "about") ?? null,
++    [navigation.header],
++  );
++
++  const aboutHrefRoot = useMemo(() => {
++    const href = (aboutLink?.href ?? "/about").trim() || "/about";
++    return href;
++  }, [aboutLink]);
++
++  const aboutSubLinks = useMemo<NavigationLink[]>(() => {
++    const fromKeystatic = aboutLink?.children;
++    if (fromKeystatic?.length) {
++      return fromKeystatic;
++    }
++
++    const documentsHref = basePath === "/" ? "/documents" : `${basePath}/documents`;
++    const privacyHref = basePath === "/" ? "/privacy-policy" : `${basePath}/privacy-policy`;
++
++    return [
++      {
++        id: "about-documents",
++        label: locale === "ru" ? "Документы" : "Documents",
++        href: documentsHref,
++        isExternal: false,
++        newTab: false,
++      },
++      {
++        id: "about-privacy",
++        label: locale === "ru" ? "Политика ПДн" : "Privacy Policy",
++        href: privacyHref,
++        isExternal: false,
++        newTab: false,
++      },
++    ];
++  }, [aboutLink?.children, basePath, locale]);
++
++  const activeAboutSubId = useMemo(() => {
++    const active = aboutSubLinks.find((item) => !item.isExternal && isActiveHref(item.href));
++    return active?.id ?? "";
++  }, [aboutSubLinks, isActiveHref]);
++
++  const isAboutMenuActive = useMemo(() => {
++    if (!aboutLink) return false;
++    return Boolean(activeAboutSubId) || isActiveHref(aboutHrefRoot);
++  }, [aboutHrefRoot, aboutLink, activeAboutSubId, isActiveHref]);
++
++  // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
++  useEffect(() => {
++    if (!isMenuModal) return;
++
++    lastActiveElementRef.current =
++      document.activeElement instanceof HTMLElement ? document.activeElement : null;
++
++    const prevOverflow = document.body.style.overflow;
++    document.body.style.overflow = "hidden";
++
++    const focusFirst = () => {
++      const container = menuPanelRef.current;
++      if (!container) return;
++      // Не уводим фокус на первую кнопку/ссылку (иначе появляется «как баг» яркая обводка).
++      // Вместо этого фокусируем контейнер: табуляция всё равно попадёт в первый пункт меню.
++      container.focus();
++    };
++
++    const raf = window.requestAnimationFrame(focusFirst);
++
++    const onKeyDown = (event: KeyboardEvent) => {
++      if (event.key === "Escape") {
++        event.preventDefault();
++        handleCloseMenu();
++        return;
++      }
++
++      if (event.key !== "Tab") return;
++
++      const container = menuPanelRef.current;
++      if (!container) return;
++
++      const focusables = Array.from(
++        container.querySelectorAll<HTMLElement>(
++          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
++        ),
++      );
++
++      if (focusables.length === 0) {
++        event.preventDefault();
++        container.focus();
++        return;
++      }
++
++      const first = focusables[0];
++      const last = focusables[focusables.length - 1];
++      const active = document.activeElement;
++
++      if (event.shiftKey) {
++        if (active === first || !container.contains(active)) {
++          event.preventDefault();
++          last.focus();
++        }
++      } else {
++        if (active === last || !container.contains(active)) {
++          event.preventDefault();
++          first.focus();
++        }
++      }
++    };
++
++    document.addEventListener("keydown", onKeyDown);
++
++    return () => {
++      document.body.style.overflow = prevOverflow;
++      document.removeEventListener("keydown", onKeyDown);
++      window.cancelAnimationFrame(raf);
++
++      const prev = lastActiveElementRef.current;
++      if (prev) {
++        window.requestAnimationFrame(() => prev.focus());
++      }
++    };
++  }, [isMenuModal, handleCloseMenu]);
++
++  const {
++    shellTransitionClass,
++    wagonTransitionClass,
++    slideTransitionClass,
++    burgerDelayClass,
++    topWagonWidthTransitionClass,
++    wagonTransformClass,
++    topWagonTransformClass,
++    menuSlideClass,
++    burgerSlideClass,
++  } = useMemo(
++    () => {
++      const shellTransitionClass = transitionsOn
++        ? "transition-[padding-top] duration-200 ease-out"
++        : "transition-none";
++      const wagonTransitionClass = transitionsOn
++        ? "transition-transform duration-300 ease-out"
++        : "transition-none";
++      const slideTransitionClass = transitionsOn
++        ? "transition-[opacity,transform] duration-200 ease-out"
++        : "transition-none";
++      const burgerDelayClass = transitionsOn ? "delay-75" : "delay-0";
++
++      const topWagonWidthTransitionClass =
++        transitionsOn && topWagonIsBurger
++          ? "transition-[width] duration-200 ease-out"
++          : "transition-none";
++
++      const wagonTransformClass = hasHydrated
++        ? isBurgerMode
++          ? "-translate-y-1/2"
++          : "translate-y-0"
++        : "-translate-y-1/2 lg:translate-y-0";
++
++      const topWagonTransformClass = hasHydrated
++        ? topWagonIsBurger
++          ? "-translate-y-1/2"
++          : "translate-y-0"
++        : "-translate-y-1/2 lg:translate-y-0";
++
++      const menuSlideClass = hasHydrated
++        ? isBurgerMode
++          ? "opacity-0 pointer-events-none -translate-y-1"
++          : "opacity-100 pointer-events-auto translate-y-0"
++        : "opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0";
++
++      const burgerSlideClass = hasHydrated
++        ? isBurgerMode
++          ? "opacity-100 pointer-events-auto translate-y-0"
++          : "opacity-0 pointer-events-none translate-y-1"
++        : "opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1";
++
++      return {
++        shellTransitionClass,
++        wagonTransitionClass,
++        slideTransitionClass,
++        burgerDelayClass,
++        topWagonWidthTransitionClass,
++        wagonTransformClass,
++        topWagonTransformClass,
++        menuSlideClass,
++        burgerSlideClass,
++      } as const;
++    }, [hasHydrated, isBurgerMode, topWagonIsBurger, transitionsOn],
++  );
++
++  return (
++    <div
++      ref={shellRef}
++      className={cn(
++        "theme-transition relative flex min-h-screen flex-col bg-background text-foreground",
++        shellTransitionClass,
++        "motion-reduce:transition-none motion-reduce:duration-0",
++      )}
++      style={{
++        "--header-height": "var(--header-height-initial)",
++        paddingTop: "var(--header-height)",
++      } as CSSProperties}
++    >
++      <HtmlLangSync initialLocale={locale} />
++      <SkipToContentLink label={skipLinkLabel} />
++
++      <div
++        ref={scrollSentinelRef}
++        className="absolute inset-x-0 top-0 h-2 w-px"
++        aria-hidden
++      />
++
++      <header
++        ref={headerRef}
++        data-site-header
++        className={cn(
++          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
++          "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
++          "motion-reduce:transition-none motion-reduce:duration-0",
++          "min-h-[var(--header-height-initial)]",
++          isHeaderVisuallyElevated
++            ? "bg-background/92 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md before:opacity-100"
++            : "bg-background/80 backdrop-blur",
++        )}
++      >
++        <div className="relative pt-[var(--safe-area-top)]">
++          <div className="mx-auto w-full max-w-screen-2xl">
++            <div
++              className={cn(
++                "flex w-full items-center justify-between",
++                "gap-[var(--header-gap-x)] px-[var(--header-pad-x)] py-[var(--header-pad-y)]",
++                "lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-stretch lg:gap-x-6",
++              )}
++            >
++              <HeaderBrand href={basePath} label={brandLabel} />
++
++              <div
++                className={cn(
++                  "w-full min-w-0",
++                  "grid grid-rows-[minmax(var(--header-row-top-h),auto)_minmax(var(--header-row-bottom-h),auto)] gap-y-[var(--header-rows-gap)]",
++                  "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
++                )}
++              >
++                <HeaderTopBar
++                  contacts={site.contacts}
++                  hasTopContacts={hasTopContacts}
++                  topContactsWidth={topContactsWidth}
++                  topWagonsCollapsed={topWagonsCollapsed}
++                  topWagonIsBurger={topWagonIsBurger}
++                  topWagonTransformClass={topWagonTransformClass}
++                  topWagonWidthTransitionClass={topWagonWidthTransitionClass}
++                  wagonTransitionClass={wagonTransitionClass}
++                  slideTransitionClass={slideTransitionClass}
++                  burgerDelayClass={burgerDelayClass}
++                  menuSlideClass={menuSlideClass}
++                  burgerSlideClass={burgerSlideClass}
++                  inertProps={inertProps}
++                  hasHydrated={hasHydrated}
++                  contactsHref={contactsHref}
++                  ctaLabel={ctaLabel}
++                  locale={locale}
++                  targetLocale={targetLocale}
++                  switcherHref={switcherHref}
++                  switchToLabels={switchToLabels}
++                  classNames={{ headerButtonBase, pillBase }}
++                />
++
++                <HeaderNav
++                  navHostRef={navHostRef}
++                  navMeasureRef={navMeasureRef}
++                  navigation={navigation}
++                  navigationLabel={navigationLabels.headerLabel}
++                  locale={locale}
++                  currentPath={currentPath}
++                  isBurgerMode={isBurgerMode}
++                  hasHydrated={hasHydrated}
++                  isMenuOpen={isMenuOpen}
++                  onBurgerClick={handleBurgerClick}
++                  topLineTransform={topLineTransform}
++                  bottomLineTransform={bottomLineTransform}
++                  wagonTransitionClass={wagonTransitionClass}
++                  wagonTransformClass={wagonTransformClass}
++                  slideTransitionClass={slideTransitionClass}
++                  menuSlideClass={menuSlideClass}
++                  burgerSlideClass={burgerSlideClass}
++                  burgerDelayClass={burgerDelayClass}
++                  inertProps={inertProps}
++                  contactsHref={contactsHref}
++                  ctaLabel={ctaCompactLabel}
++                  headerButtonBase={headerButtonBase}
++                  onDesktopNavEnter={clearDesktopDropdownClose}
++                  onDesktopNavLeave={scheduleDesktopDropdownClose}
++                  onDesktopNavLinkEnter={handleDesktopNavLinkEnter}
++                  onDesktopNavLinkFocus={handleDesktopNavLinkEnter}
++                />
++              </div>
++            </div>
++          </div>
++        </div>
++
++        
++      </header>
++
++      <HeaderDesktopDropdown
++        links={navigation.header}
++        activeId={isBurgerMode || isMenuOpen ? null : desktopDropdownId}
++        currentPath={currentPath}
++        prefersReducedMotion={prefersReducedMotion}
++        closeLabel={locale === "ru" ? "Закрыть подменю" : "Close submenu"}
++        onPanelEnter={clearDesktopDropdownClose}
++        onPanelLeave={scheduleDesktopDropdownClose}
++        onRequestClose={closeDesktopDropdown}
++      />
++
++      {isMenuModal ? (
++  <aside
++    id="site-menu"
++    ref={menuPanelRef}
++    tabIndex={-1}
++    aria-hidden={!isMenuOpen}
++    {...inertProps(!isMenuOpen)}
++    className={cn(
++      // «Шторка» на весь экран под шапкой (Apple-подобный режим навигации)
++      "fixed inset-x-0 z-[59]",
++              isHeaderElevated
++                ? "bg-background/95 backdrop-blur-md"
++                : "bg-background/90 backdrop-blur",
++      "transform-gpu will-change-transform",
++      "transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
++      "motion-reduce:transition-none motion-reduce:duration-0",
++      isMenuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-8 opacity-0",
++    )}
++    style={{ top: "var(--header-height)", bottom: 0 } as CSSProperties}
++  >
++    <nav aria-label={menuDialogLabel} className="h-full">
++      <div className="mx-auto h-full w-full max-w-screen-2xl px-[var(--header-pad-x)] pt-10 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
++        <div className="flex h-full min-h-0 flex-col">
++          <div className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
++            <ul className="m-0 list-none space-y-4 p-0">
++              <li>
++                <Link
++                  href={productsHrefRoot}
++                  onClick={handleCloseMenu}
++                  aria-current={isProductsRootActive ? "page" : undefined}
++                  className={cn(
++                    "group block w-full py-2",
++                    "no-underline",
++                    "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
++                    isProductsRootActive
++                      ? "text-foreground"
++                      : "text-muted-foreground transition-colors hover:text-foreground",
++                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                    "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                  )}
++                >
++                  <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
++                    {productsLink?.label ?? (locale === "ru" ? "Продукция" : "Products")}
++                  </span>
++                </Link>
++
++                <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
++                  {productsSubLinks.map((item) => {
++                    const isActive = activeProductsSubId === item.id;
++                    const itemHref = (item.href ?? "/").trim() || "/";
++                    const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
++
++                    const itemClassName = cn(
++                      "group block w-full py-1.5",
++                      "no-underline",
++                      "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
++                      isActive
++                        ? "text-foreground"
++                        : "text-muted-foreground transition-colors hover:text-foreground",
++                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                    );
++                    return (
++                      <li key={item.id}>
++                        {itemIsExternal ? (
++                          <a
++                            href={itemHref}
++                            target={item.newTab ? "_blank" : undefined}
++                            rel={item.newTab ? "noopener noreferrer" : undefined}
++                            aria-current={isActive ? "page" : undefined}
++                            className={itemClassName}
++                          >
++                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
++                          </a>
++                        ) : (
++                          <Link
++                            href={itemHref}
++                            onClick={handleCloseMenu}
++                            aria-current={isActive ? "page" : undefined}
++                            className={itemClassName}
++                          >
++                            <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
++                          </Link>
++                        )}
++                      </li>
++                    );
++                  })}
++                </ul>
++
++              </li>
++
++              {navigation.header
++                .filter((l) => l.id !== "products")
++                .map((link) => {
++                  const href = (link.href ?? "/").trim() || "/";
++                  const isActive = isActiveHref(href);
++                  const isExternal = link.newTab || isExternalHref(href);
++
++                  if (link.id === "about" && aboutSubLinks.length > 0) {
++                    const rootActive = isAboutMenuActive;
++
++                    const rootClassName = cn(
++                      "group block w-full py-2",
++                      "no-underline",
++                      "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
++                      rootActive
++                        ? "text-foreground"
++                        : "text-muted-foreground transition-colors hover:text-foreground",
++                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                      "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                    );
++
++                    return (
++                      <li key={link.id}>
++                        {isExternal ? (
++                          <a
++                            href={href}
++                            target={link.newTab ? "_blank" : undefined}
++                            rel={link.newTab ? "noopener noreferrer" : undefined}
++                            aria-current={isActive ? "page" : undefined}
++                            className={rootClassName}
++                          >
++                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
++                          </a>
++                        ) : (
++                          <Link
++                            href={href}
++                            onClick={handleCloseMenu}
++                            aria-current={isActive ? "page" : undefined}
++                            className={rootClassName}
++                          >
++                            <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
++                          </Link>
++                        )}
++
++                        <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
++                          {aboutSubLinks.map((item) => {
++                            const isSubActive = activeAboutSubId === item.id;
++                            const itemHref = (item.href ?? "/").trim() || "/";
++                            const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
++
++                            const itemClassName = cn(
++                              "group block w-full py-1.5",
++                              "no-underline",
++                              "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
++                              isSubActive
++                                ? "text-foreground"
++                                : "text-muted-foreground transition-colors hover:text-foreground",
++                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                              "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                            );
++
++                            return (
++                              <li key={item.id}>
++                                {itemIsExternal ? (
++                                  <a
++                                    href={itemHref}
++                                    target={item.newTab ? "_blank" : undefined}
++                                    rel={item.newTab ? "noopener noreferrer" : undefined}
++                                    aria-current={isSubActive ? "page" : undefined}
++                                    className={itemClassName}
++                                  >
++                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
++                                  </a>
++                                ) : (
++                                  <Link
++                                    href={itemHref}
++                                    onClick={handleCloseMenu}
++                                    aria-current={isSubActive ? "page" : undefined}
++                                    className={itemClassName}
++                                  >
++                                    <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
++                                  </Link>
++                                )}
++                              </li>
++                            );
++                          })}
++                        </ul>
++                      </li>
++                    );
++                  }
++
++                  return (
++                    <li key={link.id}>
++                      {isExternal ? (
++                        <a
++                          href={href}
++                          target={link.newTab ? "_blank" : undefined}
++                          rel={link.newTab ? "noopener noreferrer" : undefined}
++                          aria-current={isActive ? "page" : undefined}
++                          className={cn(
++                            "group block w-full py-2",
++                            "no-underline",
++                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
++                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
++                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                          )}
++                        >
++                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
++                        </a>
++                      ) : (
++                        <Link
++                          href={href}
++                          onClick={handleCloseMenu}
++                          aria-current={isActive ? "page" : undefined}
++                          className={cn(
++                            "group block w-full py-2",
++                            "no-underline",
++                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
++                            isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
++                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
++                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
++                          )}
++                        >
++                          <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
++                        </Link>
++                      )}
++                    </li>
++                  );
++                })}
++          </ul>
++        </div>
++
++        {/* контакты — снизу, в том же оформлении, что и в шапке */}
++        <div className="pt-10 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
++          <div className="flex flex-col items-start gap-2">
++            {site.contacts.phone ? (
++              <a
++                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
++                className={contactLinkBase}
++              >
++                {site.contacts.phone}
++              </a>
++            ) : null}
++
++            {site.contacts.email ? (
++              <a href={`mailto:${site.contacts.email}`} className={contactLinkBase}>
++                {site.contacts.email}
++              </a>
++            ) : null}
++          </div>
++        </div>
++      </div>
++    </div>
++  </nav>
++  </aside>
++) : null}
++
++
++      <section
++        id="main"
++        role="main"
++        tabIndex={-1}
++        suppressHydrationWarning
++        aria-hidden={isMenuModal ? true : undefined}
++        {...inertProps(isMenuModal)}
++        className="mx-auto w-full max-w-screen-2xl flex-1 space-y-12 px-[var(--header-pad-x)] py-10 sm:py-12"
++      >
++        {children}
++      </section>
++
++      <div aria-hidden={isMenuModal ? true : undefined} {...inertProps(isMenuModal)}>
++        {footer}
++      </div>
++    </div>
++  );
+ }
+\ No newline at end of file

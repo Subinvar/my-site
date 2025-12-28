@@ -7,6 +7,7 @@ import {
   getLocalizedPageParams,
   resolveContentPageMetadata,
 } from '@/app/(site)/shared/content-page';
+import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { ProductCategoriesSection } from '@/app/(site)/shared/product-categories';
 import { PartnersSuppliersSection } from '@/app/(site)/shared/partners-suppliers-section';
@@ -50,6 +51,7 @@ export default async function Page({ params }: PageProps) {
     slugs: page.slugByLocale,
   });
   const currentPath = buildPath(locale, [slug]);
+  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
     <SiteShellLayout
@@ -64,6 +66,12 @@ export default async function Page({ params }: PageProps) {
       <div className="space-y-12">
         <article className="max-w-none space-y-6">
           <div className="space-y-4">
+            <Breadcrumbs
+              items={[
+                { label: homeLabel, href: buildPath(locale) },
+                { label: page.title },
+              ]}
+            />
             <SectionHeading title={page.title} description={summary ?? undefined} as="h1" />
           </div>
           <div className="prose-markdoc">{content}</div>
