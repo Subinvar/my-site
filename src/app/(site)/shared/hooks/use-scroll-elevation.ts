@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useScrollElevation() {
-  const [isHeaderElevated, setIsHeaderElevated] = useState(false);
+  const [isHeaderElevated, setIsHeaderElevated] = useState(() =>
+    typeof window !== "undefined" ? window.scrollY > 1 : false,
+  );
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const sentinel = scrollSentinelRef.current;
     if (!sentinel) return;
-
-    // Страница может быть загружена уже со скроллом (back/forward cache и т.п.)
-    const initial = typeof window !== "undefined" ? window.scrollY > 1 : false;
-    setIsHeaderElevated((prev) => (prev === initial ? prev : initial));
 
     if (typeof IntersectionObserver === "undefined") {
       // Fallback для очень старых браузеров

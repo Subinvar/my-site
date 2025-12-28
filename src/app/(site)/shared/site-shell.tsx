@@ -111,13 +111,6 @@ export function SiteShell({
 
   const menuDialogLabel = locale === "ru" ? "Меню" : "Menu";
 
-  const copyrightTemplate = site.footer?.copyright?.trim() ?? "";
-  const copyrightText = copyrightTemplate.length
-    ? copyrightTemplate
-        .replaceAll("{year}", String(currentYear))
-        .replaceAll("{siteName}", brandName)
-    : "";
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);

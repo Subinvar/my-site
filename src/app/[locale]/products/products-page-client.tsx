@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { ArrowRight, Beaker, PaintRoller, Sparkles } from 'lucide-react';
 
 import { Button } from '@/app/(site)/shared/ui/button';
@@ -31,7 +31,7 @@ type ProductsPageClientProps = {
 
 type SectionId = 'binders' | 'coatings' | 'auxiliaries';
 
-const SECTION_META: Record<SectionId, { icon: JSX.Element; ru: string; en: string }> = {
+const SECTION_META: Record<SectionId, { icon: ReactElement; ru: string; en: string }> = {
   binders: { icon: <Beaker className="h-4 w-4" aria-hidden />, ru: 'Связующие', en: 'Binders' },
   coatings: {
     icon: <PaintRoller className="h-4 w-4" aria-hidden />,

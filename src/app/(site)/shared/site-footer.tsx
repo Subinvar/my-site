@@ -189,7 +189,9 @@ let result = picked.length ? picked : base;
   const resolvedCopyright =
     copyrightText.trim().length > 0
       ? copyrightText.trim()
-      : `© ${currentYear} Интема Групп. Все права защищены.`;
+      : locale === "ru"
+        ? `© ${currentYear} Интема Групп. Все права защищены.`
+        : `© ${currentYear} Intema Group. All rights reserved.`;
   const baseLinkClassName = cn(
     "relative inline-flex items-center no-underline",
     "after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:rounded-full",
@@ -268,7 +270,7 @@ let result = picked.length ? picked : base;
                               <a
                                 href={href}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                                 className={linkClassName}
                               >
                                 <span className={labelClassName}>{link.label}</span>
@@ -295,7 +297,7 @@ let result = picked.length ? picked : base;
                 <a
                   href={telegramHref}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className={cn(baseLinkClassName, "hover:text-foreground")}
                 >
                   Telegram
