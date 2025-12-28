@@ -30,7 +30,7 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
         <span
           className={cn(
             "font-[var(--font-heading)]",
-            "text-[length:var(--header-brand-fs)] font-bold leading-[1.05]",
+            "text-[length:var(--header-brand-fs)] font-bold leading-[1.1] lg:leading-[1.05]",
             "tracking-[-0.02em] text-[var(--color-brand-600)] dark:text-[var(--color-brand-600)]",
           )}
         >

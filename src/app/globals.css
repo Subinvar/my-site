@@ -193,7 +193,7 @@
 
   /* Единый размер текста для элементов шапки (меню / контакты / CTA / переключатели) */
   --header-ui-fs: clamp(0.935rem, 0.858rem + 0.275vw, 1.078rem);
-  --header-ui-leading: 1.1;
+  --header-ui-leading: 1.15;
 
   /* Толщина подчёркивания навигации (важно: используется в src/lib/nav-underline.ts) */
   --nav-underline-h: 1px;

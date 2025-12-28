@@ -46,7 +46,6 @@ export function SiteShellLayout({
       navigation={navigation}
       switcherHref={switcherHref}
       currentPath={currentPath}
-      currentYear={currentYear}
       footer={
         <SiteFooter
           locale={locale}

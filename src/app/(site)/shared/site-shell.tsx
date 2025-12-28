@@ -59,7 +59,6 @@ type SiteShellProps = {
   navigation: Navigation;
   switcherHref: string | null;
   currentPath: string;
-  currentYear: number;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -97,7 +96,6 @@ export function SiteShell({
   navigation,
   switcherHref,
   currentPath,
-  currentYear,
   children,
   footer,
 }: SiteShellProps) {
@@ -215,13 +213,13 @@ export function SiteShell({
 
   useEffect(() => {
     if (!isBurgerMode) {
-      setIsMenuMounted(false);
-      return;
+      const frame = window.requestAnimationFrame(() => setIsMenuMounted(false));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     if (isMenuOpen) {
-      setIsMenuMounted(true);
-      return;
+      const frame = window.requestAnimationFrame(() => setIsMenuMounted(true));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     if (!isMenuMounted) return;
@@ -569,7 +567,7 @@ export function SiteShell({
                   className={cn(
                     "group block w-full py-2",
                     "no-underline",
-                    "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                    "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                     isProductsRootActive
                       ? "text-foreground"
                       : "text-muted-foreground transition-colors hover:text-foreground",
@@ -630,7 +628,7 @@ export function SiteShell({
                       className={cn(
                         "group block w-full py-2",
                         "no-underline",
-                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                         isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                         "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
@@ -646,7 +644,7 @@ export function SiteShell({
                       className={cn(
                         "group block w-full py-2",
                         "no-underline",
-                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.08] tracking-[-0.01em]",
+                        "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                         isActive ? "text-foreground" : "text-muted-foreground transition-colors hover:text-foreground",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
                         "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
