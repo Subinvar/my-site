@@ -18,6 +18,45 @@ type PageProps = {
   params: Promise<PageParams>;
 };
 
+const CARD_PLACEHOLDER = {
+  src: '/placeholders/product-card.svg',
+  alt: '',
+} as const;
+
+const BINDER_CARD_DESCRIPTIONS_RU: Record<string, string> = {
+  // Короткие, «технологичные» описания — чтобы карточки читались быстро.
+  // Ключ = raw taxonomy value (важно: используется в URL).
+  'Альфа-cет':
+    'Щелочные фенолформальдегидные связующие, отверждаемые сложными эфирами (различная живучесть).',
+  ЖСС: 'Жидкостекольные системы: жидкое стекло, добавки и отвердители под режимы участка.',
+  'Колд-Бокс':
+    'Полиуретановые cold-box системы: смола/изоцианат и отверждение газообразным амином.',
+  Кронинг:
+    'Термореактивные смолы и добавки для оболочковых форм и стержней (процесс Кронинга).',
+  'Пеп-сет':
+    'Кислотно-отверждаемые системы (PEP-SET): связующие и катализаторы для форм и стержней.',
+  'Резол-CO₂':
+    'Резольные (щелочные фенольные) связующие, отверждаемые CO₂; материалы под стабильную прочность.',
+  Фуран: 'Фурановые смолы и кислотные отвердители для форм и стержней; настройка под требования литья.',
+};
+
+const COATING_CARD_DESCRIPTIONS_RU: Record<string, string> = {
+  Спиртовое: 'Быстросохнущие покрытия для форм и стержней; выбираются по наполнителю и условиям нанесения.',
+  Водное: 'Покрытия на водной основе; подбор по наполнителю, вязкости и условиям сушки.',
+};
+
+const AUXILIARY_CARD_DESCRIPTIONS_RU: Record<string, string> = {
+  'Разделительный состав':
+    'Разделительные составы для оснастки и поверхностей: стабильный съём и защита в процессе работы.',
+  Клей: 'Клеи для сборки стержней и ремонта форм; подбор по вязкости и скорости схватывания.',
+  'Ремонтная паста': 'Пасты для локального ремонта форм/стержней: заделка сколов, раковин и дефектов.',
+  'Уплотнительный шнур': 'Шнуры для герметизации разъёмов и стыков; стойкость к температуре и газам.',
+  'Отмывающий состав': 'Составы для очистки инструмента и оборудования от смол и покрытий; выбор по загрязнению.',
+  'Экзотермическая смесь':
+    'Экзотермические смеси для питания отливок и узлов; формы поставки под конкретную задачу.',
+  Модификатор: 'Модификаторы для корректировки свойств смеси и качества поверхности; подбор под рецептуру.',
+};
+
 export default async function ProductsPage({ params }: PageProps) {
   const { locale: rawLocale } = await params;
 
@@ -47,8 +86,9 @@ export default async function ProductsPage({ params }: PageProps) {
       title: option.label,
       description:
         locale === 'ru'
-          ? `Связующие для процесса «${option.label}».`
+          ? (BINDER_CARD_DESCRIPTIONS_RU[option.value] ?? `Связующие для процесса «${option.label}».`)
           : `Binders for “${option.label}”.`,
+      image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'binders', toSlug(option.value)]),
     }));
 
@@ -61,12 +101,9 @@ export default async function ProductsPage({ params }: PageProps) {
       title: option.label,
       description:
         locale === 'ru'
-          ? option.value === 'Водное'
-            ? 'Покрытия на водной основе.'
-            : option.value === 'Спиртовое'
-              ? 'Покрытия на спиртовой основе.'
-              : `Покрытия на ${option.label.toLowerCase()} основе.`
+          ? (COATING_CARD_DESCRIPTIONS_RU[option.value] ?? `Покрытия на ${option.label.toLowerCase()} основе.`)
           : `${option.label} coatings.`,
+      image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'coatings', toSlug(option.value)]),
     }));
 
@@ -79,8 +116,9 @@ export default async function ProductsPage({ params }: PageProps) {
       title: option.label,
       description:
         locale === 'ru'
-          ? `Вспомогательные материалы: ${option.label.toLowerCase()}.`
+          ? (AUXILIARY_CARD_DESCRIPTIONS_RU[option.value] ?? `Вспомогательные материалы: ${option.label.toLowerCase()}.`)
           : `Auxiliary materials: ${option.label.toLowerCase()}.`,
+      image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'auxiliaries', toSlug(option.value)]),
     }));
 
@@ -95,7 +133,7 @@ export default async function ProductsPage({ params }: PageProps) {
       currentYear={shell.currentYear}
     >
       <main className="page-shell">
-        <section className="container py-10 lg:py-12">
+        <section className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-10 lg:py-12">
           <header className="mb-6 space-y-4 lg:mb-8">
             {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
                 но оставляем для семантики/доступности. */}

@@ -532,13 +532,13 @@ export function SiteShell({
       };
 
       const className = cn(
-        "will-change-[opacity,transform,filter]",
-        "transition-[opacity,transform,filter]",
+        "will-change-[opacity,transform]",
+        "transition-[opacity,transform]",
         burgerMenuItemsVisible
-          ? "opacity-100 translate-y-0 blur-0"
+          ? "opacity-100 translate-y-0"
           : isBurgerMenuClosing
-            ? "opacity-0 translate-y-0 blur-[2px]"
-            : "opacity-0 translate-y-4 blur-[2px]",
+            ? "opacity-0 translate-y-0"
+            : "opacity-0 translate-y-4",
       );
 
       return { className, style };

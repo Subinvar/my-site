@@ -28,6 +28,7 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
           className="h-[var(--header-logo-h)] w-auto object-contain"
         />
         <span
+            aria-hidden="true"
             className={cn(
               "font-[var(--font-heading)]",
               "text-[length:var(--header-brand-fs)] font-bold leading-[1.1]",

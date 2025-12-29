@@ -333,13 +333,13 @@ export function HeaderDesktopDropdown({
                 const itemMotionClass = prefersReducedMotion
                   ? ""
                   : cn(
-                      "will-change-[opacity,transform,filter]",
-                      "transition-[opacity,transform,filter]",
+                      "will-change-[opacity,transform]",
+                      "transition-[opacity,transform]",
                       itemsVisible
-                        ? "opacity-100 translate-y-0 blur-0"
+                        ? "opacity-100 translate-y-0"
                         : isClosing
-                          ? "opacity-0 translate-y-0 blur-[2px]"
-                          : "opacity-0 translate-y-3 blur-[2px]",
+                          ? "opacity-0 translate-y-0"
+                          : "opacity-0 translate-y-3",
                     );
 
                 const linkClassName = cn(
