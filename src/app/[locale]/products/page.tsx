@@ -7,10 +7,11 @@ import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
 import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { buildPath, findTargetLocale } from '@/lib/paths';
+import { getProductsHubContent, type ProductsHubCard, type ProductsHubGroup } from '@/lib/content/products-hub';
 
 import { ALLOWED_AUXILIARIES, ALLOWED_BINDER_PROCESSES, ALLOWED_COATING_BASES } from './constants';
 import { sortByOrderAndLabel, toSlug } from './helpers';
-import { ProductsPageClient, type ProductsHubCard } from './products-page-client';
+import { ProductsPageClient } from './products-page-client';
 
 type PageParams = { locale: Locale };
 
@@ -80,9 +81,8 @@ export default async function ProductsPage({ params }: PageProps) {
   const binders: ProductsHubCard[] = taxonomyOptions.processes
     .filter((option) => ALLOWED_BINDER_PROCESSES.includes(option.value))
     .sort(sortByOrderAndLabel)
-    .map((option) => ({
-      kind: 'binders',
-      value: option.value,
+    .map((option, index) => ({
+      id: `binders-${option.value}`,
       title: option.label,
       description:
         locale === 'ru'
@@ -90,14 +90,14 @@ export default async function ProductsPage({ params }: PageProps) {
           : `Binders for “${option.label}”.`,
       image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'binders', toSlug(option.value)]),
+      order: index,
     }));
 
   const coatings: ProductsHubCard[] = taxonomyOptions.bases
     .filter((option) => ALLOWED_COATING_BASES.includes(option.value))
     .sort(sortByOrderAndLabel)
-    .map((option) => ({
-      kind: 'coatings',
-      value: option.value,
+    .map((option, index) => ({
+      id: `coatings-${option.value}`,
       title: option.label,
       description:
         locale === 'ru'
@@ -105,14 +105,14 @@ export default async function ProductsPage({ params }: PageProps) {
           : `${option.label} coatings.`,
       image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'coatings', toSlug(option.value)]),
+      order: index,
     }));
 
   const auxiliaries: ProductsHubCard[] = taxonomyOptions.auxiliaries
     .filter((option) => ALLOWED_AUXILIARIES.includes(option.value))
     .sort(sortByOrderAndLabel)
-    .map((option) => ({
-      kind: 'auxiliaries',
-      value: option.value,
+    .map((option, index) => ({
+      id: `auxiliaries-${option.value}`,
       title: option.label,
       description:
         locale === 'ru'
@@ -120,7 +120,47 @@ export default async function ProductsPage({ params }: PageProps) {
           : `Auxiliary materials: ${option.label.toLowerCase()}.`,
       image: CARD_PLACEHOLDER,
       href: buildPath(locale, ['products', 'auxiliaries', toSlug(option.value)]),
+      order: index,
     }));
+
+  const fallbackGroups: ProductsHubGroup[] = [
+    {
+      id: 'binders',
+      title: locale === 'ru' ? 'Связующие системы' : 'Binder systems',
+      description:
+        locale === 'ru'
+          ? 'Связующие и отвердители для основных процессов формовки и стержневого производства.'
+          : 'Binders and hardeners for the main moulding and core-making processes.',
+      icon: 'beaker',
+      order: 0,
+      cards: binders,
+    },
+    {
+      id: 'coatings',
+      title: locale === 'ru' ? 'Противопригарные покрытия' : 'Coatings',
+      description:
+        locale === 'ru'
+          ? 'Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.'
+          : 'Alcohol- and water-based coatings with a wide range of fillers.',
+      icon: 'roller',
+      order: 1,
+      cards: coatings,
+    },
+    {
+      id: 'auxiliaries',
+      title: locale === 'ru' ? 'Вспомогательные материалы' : 'Auxiliary materials',
+      description:
+        locale === 'ru'
+          ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
+          : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.',
+      icon: 'sparkles',
+      order: 2,
+      cards: auxiliaries,
+    },
+  ];
+
+  const hubGroups = await getProductsHubContent(locale);
+  const groups = hubGroups?.length ? hubGroups : fallbackGroups;
 
   return (
     <SiteShellLayout
@@ -140,12 +180,7 @@ export default async function ProductsPage({ params }: PageProps) {
             <h1 className="sr-only">{pageTitle}</h1>
           </header>
 
-          <ProductsPageClient
-            locale={locale}
-            binders={binders}
-            coatings={coatings}
-            auxiliaries={auxiliaries}
-          />
+          <ProductsPageClient locale={locale} groups={groups} />
         </section>
       </main>
     </SiteShellLayout>
