@@ -205,6 +205,10 @@
   --nav-underline-h-active: 2px;
   --nav-underline-hover-opacity: 0.5;
 
+  /* Desktop mega-menu overlay (без “дешёвого тумана”) */
+  --mega-menu-scrim: rgba(17, 24, 39, 0.08); /* лёгкое затемнение в светлой теме */
+  --mega-menu-blur: 16px; /* вместо 2xl-ки */
+
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
   --header-height-initial: calc(
     var(--header-row-top-h) + var(--header-row-bottom-h) + var(--header-rows-gap)
@@ -326,6 +330,10 @@ html[data-theme="dark"] {
   --destructive-surface: #2a0c0c;
   --destructive-border: #7f1d1d;
   --nav-underline-hover-opacity: 0.6;
+
+  /* Desktop mega-menu overlay (тёплый scrim, чтобы не уходить в холодный чёрный) */
+  --mega-menu-scrim: rgba(25, 22, 19, 0.38); /* тон в тон вашего dark background */
+  --mega-menu-blur: 12px;
 
   --focus-ring: color-mix(in srgb, var(--color-brand-200) 65%, var(--color-brand-600));
 }

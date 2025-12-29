@@ -260,7 +260,7 @@ export function HeaderDesktopDropdown({
           overlayTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
 
-          "bg-black/15 backdrop-blur-2xl",
+          "bg-[color:var(--mega-menu-scrim)] backdrop-blur-[var(--mega-menu-blur)]",
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
