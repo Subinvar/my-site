@@ -7,6 +7,14 @@ import type React from "react";
 import type { NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
+import {
+  DESKTOP_DROPDOWN_CLOSE_MS,
+  DESKTOP_DROPDOWN_OPEN_MS,
+  DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS,
+  DESKTOP_DROPDOWN_TEXT_ENTER_MS,
+  DESKTOP_DROPDOWN_TEXT_EXIT_MS,
+  DESKTOP_DROPDOWN_TEXT_STAGGER_MS,
+} from "@/lib/nav-motion";
 
 type HeaderDesktopDropdownProps = {
   links: NavigationLink[];
@@ -18,22 +26,6 @@ type HeaderDesktopDropdownProps = {
   onPanelLeave?: () => void;
   onRequestClose?: () => void;
 };
-
-/**
- * Apple-like motion tuning
- *
- * Apple ощущается так, потому что:
- * - раскрытие чуть медленнее, сворачивание быстрее
- * - текст внутри появляется с небольшой задержкой и каскадом, параллельно раскрытию
- * - при закрытии текст «растворяется» быстрее, чем панель успевает схлопнуться
- */
-export const DESKTOP_DROPDOWN_OPEN_MS = 420;
-export const DESKTOP_DROPDOWN_CLOSE_MS = 280;
-
-export const DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS = 90;
-export const DESKTOP_DROPDOWN_TEXT_STAGGER_MS = 34;
-export const DESKTOP_DROPDOWN_TEXT_ENTER_MS = 240;
-export const DESKTOP_DROPDOWN_TEXT_EXIT_MS = 160;
 
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
@@ -182,18 +174,33 @@ export function HeaderDesktopDropdown({
   if (!isMounted || !renderedId || renderedChildren.length === 0) {
     return null;
   }
-
-  const transitionClass = prefersReducedMotion
-    ? "transition-none"
+  const panelDurationMs = prefersReducedMotion
+    ? 0
     : shouldBeOpen
-      ? "transition-[height] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-      : "transition-[height] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+      ? DESKTOP_DROPDOWN_OPEN_MS
+      : DESKTOP_DROPDOWN_CLOSE_MS;
+
+  const overlayDurationMs = panelDurationMs;
+
+  const transitionClass = prefersReducedMotion ? "transition-none" : "transition-[height]";
 
   const overlayTransitionClass = prefersReducedMotion
     ? "transition-none"
-    : shouldBeOpen
-      ? "transition-[opacity,background-color,backdrop-filter] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-      : "transition-[opacity,background-color,backdrop-filter] duration-[280ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+    : "transition-[opacity,background-color,backdrop-filter]";
+
+  const panelTransitionStyle = prefersReducedMotion
+    ? undefined
+    : ({
+        transitionDuration: `${panelDurationMs}ms`,
+        transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)",
+      } as React.CSSProperties);
+
+  const overlayTransitionStyle = prefersReducedMotion
+    ? undefined
+    : ({
+        transitionDuration: `${overlayDurationMs}ms`,
+        transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)",
+      } as React.CSSProperties);
 
   const itemsVisible = shouldBeOpen && contentPhase === 1;
 
@@ -212,6 +219,7 @@ export function HeaderDesktopDropdown({
         aria-label={closeLabel}
         onClick={onRequestClose}
         tabIndex={-1}
+        style={overlayTransitionStyle}
         className={cn(
           "absolute inset-0 z-0",
           overlayTransitionClass,
@@ -240,7 +248,10 @@ export function HeaderDesktopDropdown({
           "motion-reduce:transition-none motion-reduce:duration-0",
           isOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
-        style={{ height: isOpen ? `${panelHeight}px` : "0px" }}
+        style={{
+          height: isOpen ? `${panelHeight}px` : "0px",
+          ...(panelTransitionStyle ?? {}),
+        }}
       >
         <div
           ref={contentRef}
