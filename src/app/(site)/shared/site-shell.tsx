@@ -1231,7 +1231,7 @@ export function SiteShell({
                   </ul>
                   {site.contacts.phone || site.contacts.email ? (
                     <div className="mt-6">
-                      <div className="flex flex-col items-start gap-2">
+                      <div className="flex flex-row flex-wrap items-center gap-2">
                         {site.contacts.phone
                           ? (() => {
                               const motion = getBurgerItemMotion(nextBurgerMotionIndex());
