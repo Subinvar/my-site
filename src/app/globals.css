@@ -200,6 +200,8 @@
   --header-ui-fs: clamp(0.935rem, 0.858rem + 0.275vw, 1.078rem);
   --header-ui-leading: 1.15;
 
+  --focus-ring: var(--color-brand-600);
+
   /* Толщина подчёркивания навигации (важно: используется в src/lib/nav-underline.ts) */
   --nav-underline-h: 1px;
   --nav-underline-h-active: 2px;
@@ -269,6 +271,8 @@ html {
     --success-foreground: #ecfdf3;
     --success-surface: #0f2d1d;
     --success-border: #14532d;
+
+    --focus-ring: color-mix(in srgb, var(--color-brand-200) 65%, var(--color-brand-600));
 
     --destructive: #f87171;
     --destructive-foreground: #fef2f2;
@@ -365,8 +369,6 @@ html[data-theme="dark"] {
   --radius-lg: var(--radius-ui);
   --radius-xl: var(--radius-ui);
   --radius-2xl: var(--radius-surface);
-
-  --focus-ring: var(--color-brand-600);
 
   /* Шрифты */
   --font-sans:

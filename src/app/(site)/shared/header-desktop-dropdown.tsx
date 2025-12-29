@@ -346,10 +346,9 @@ export function HeaderDesktopDropdown({
                 const linkClassName = cn(
                   "group inline-flex w-full items-center",
                   "py-2",
-                  // Apple-like: крупнее, но в рамках фирменного стиля
-                  "font-[var(--font-heading)]",
-                  "text-[clamp(1.15rem,1.02rem+0.6vw,1.6rem)]",
-                  "font-medium leading-[1.12] tracking-[-0.01em]",
+                  // Те же размеры, что и у пунктов десктопного меню
+                  "text-[length:var(--header-ui-fs)]",
+                  "font-medium leading-[var(--header-ui-leading)]",
                   "no-underline transition-colors",
                   "active:opacity-90",
                   focusRingBase,

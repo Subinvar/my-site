@@ -91,16 +91,6 @@ const pillBase = cn(
   "truncate motion-reduce:transition-none motion-reduce:duration-0",
 );
 
-const contactLinkBase = cn(
-  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline",
-  "transition-colors duration-200 ease-out",
-  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
-  "focus-visible:border-[var(--header-border)]",
-  focusRingBase,
-  "text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0",
-);
-
-
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
 
 type DesktopHoverSuppressRecord = {
@@ -1234,40 +1224,45 @@ export function SiteShell({
                         );
                       })}
                   </ul>
-                </div>
+                  {site.contacts.phone || site.contacts.email ? (
+                    <div className="mt-6">
+                      <div className="grid grid-cols-2 gap-2">
+                        {site.contacts.phone
+                          ? (() => {
+                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                              return (
+                                <div className={motion.className} style={motion.style}>
+                                  <a
+                                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
+                                    className={pillBase}
+                                    onClick={handleCloseMenu}
+                                  >
+                                    {site.contacts.phone}
+                                  </a>
+                                </div>
+                              );
+                            })()
+                          : null}
 
-                {/* контакты — снизу, в том же оформлении, что и в шапке */}
-                <div className="pt-10 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
-                  <div className="flex flex-col items-start gap-2">
-                    {site.contacts.phone
-                      ? (() => {
-                          const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-                          return (
-                            <div className={motion.className} style={motion.style}>
-                              <a
-                                href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                                className={contactLinkBase}
-                              >
-                                {site.contacts.phone}
-                              </a>
-                            </div>
-                          );
-                        })()
-                      : null}
-
-                    {site.contacts.email
-                      ? (() => {
-                          const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-                          return (
-                            <div className={motion.className} style={motion.style}>
-                              <a href={`mailto:${site.contacts.email}`} className={contactLinkBase}>
-                                {site.contacts.email}
-                              </a>
-                            </div>
-                          );
-                        })()
-                      : null}
-                  </div>
+                        {site.contacts.email
+                          ? (() => {
+                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                              return (
+                                <div className={motion.className} style={motion.style}>
+                                  <a
+                                    href={`mailto:${site.contacts.email}`}
+                                    className={pillBase}
+                                    onClick={handleCloseMenu}
+                                  >
+                                    {site.contacts.email}
+                                  </a>
+                                </div>
+                              );
+                            })()
+                          : null}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
