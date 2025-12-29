@@ -282,7 +282,7 @@ export function createComponents(locale: Locale) {
         : 'primary';
       const computedLabel = label?.trim() || buttonLabelFallback[normalizedVariant];
       const baseClass =
-        'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-600';
+        'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-[var(--background)]';
       const variantClass =
         normalizedVariant === 'primary'
           ? 'border-brand-700 bg-brand-700 text-white hover:bg-brand-600'

@@ -17,6 +17,7 @@ import type { Navigation, NavigationLink, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { buildPath } from "@/lib/paths";
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import {
   BURGER_MENU_CLOSE_MS,
@@ -74,14 +75,30 @@ type SiteShellProps = {
   footer?: ReactNode;
 };
 
-const headerButtonBase =
-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] motion-reduce:transition-none motion-reduce:duration-0";
+const headerButtonBase = cn(
+  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out",
+  "focus-visible:border-[var(--header-border)]",
+  focusRingBase,
+  "motion-reduce:transition-none motion-reduce:duration-0",
+);
 
-const pillBase =
-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent text-muted-foreground no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] truncate motion-reduce:transition-none motion-reduce:duration-0";
+const pillBase = cn(
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "text-muted-foreground no-underline transition-colors duration-200 ease-out",
+  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
+  "focus-visible:border-[var(--header-border)]",
+  focusRingBase,
+  "truncate motion-reduce:transition-none motion-reduce:duration-0",
+);
 
-const contactLinkBase =
-  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
+const contactLinkBase = cn(
+  "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline",
+  "transition-colors duration-200 ease-out",
+  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
+  "focus-visible:border-[var(--header-border)]",
+  focusRingBase,
+  "text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0",
+);
 
 
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
@@ -1018,8 +1035,7 @@ export function SiteShell({
                                 isProductsRootActive
                                   ? "text-foreground"
                                   : "text-muted-foreground transition-colors hover:text-foreground",
-                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                                focusRingBase,
                               )}
                             >
                               <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
@@ -1043,8 +1059,7 @@ export function SiteShell({
                             isActive
                               ? "text-foreground"
                               : "text-muted-foreground transition-colors hover:text-foreground",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                            focusRingBase,
                           );
 
                           const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1087,16 +1102,15 @@ export function SiteShell({
                         if (link.id === "about" && aboutSubLinks.length > 0) {
                           const rootActive = isAboutMenuActive;
 
-                          const rootClassName = cn(
-                            "group block w-full py-2",
-                            "no-underline",
-                            "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
-                            rootActive
-                              ? "text-foreground"
-                              : "text-muted-foreground transition-colors hover:text-foreground",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                            "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                          );
+                            const rootClassName = cn(
+                              "group block w-full py-2",
+                              "no-underline",
+                              "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                              rootActive
+                                ? "text-foreground"
+                                : "text-muted-foreground transition-colors hover:text-foreground",
+                            focusRingBase,
+                            );
 
                           return (
                             <li key={link.id}>
@@ -1141,8 +1155,7 @@ export function SiteShell({
                                     isSubActive
                                       ? "text-foreground"
                                       : "text-muted-foreground transition-colors hover:text-foreground",
-                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                                    "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                                    focusRingBase,
                                   );
 
                                   const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1194,8 +1207,7 @@ export function SiteShell({
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
-                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                                  focusRingBase,
                                 )}
                               >
                                 <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
@@ -1212,8 +1224,7 @@ export function SiteShell({
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
-                                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                                  focusRingBase,
                                 )}
                               >
                                 <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>

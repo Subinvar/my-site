@@ -5,6 +5,7 @@ import Link from "next/link";
 import { memo } from "react";
 
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 
 export type HeaderBrandProps = {
   href: string;
@@ -16,7 +17,10 @@ export const HeaderBrand = memo(function HeaderBrand({ href, label }: HeaderBran
     <div className="flex items-center lg:h-full lg:w-full lg:items-center lg:justify-start lg:rounded-lg">
       <Link
         href={href}
-        className="flex items-center gap-2 text-left no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className={cn(
+          "flex items-center gap-2 text-left no-underline hover:no-underline",
+          focusRingBase,
+        )}
       >
         <Image
           src="/uploads/logo.svg"

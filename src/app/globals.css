@@ -326,6 +326,8 @@ html[data-theme="dark"] {
   --destructive-surface: #2a0c0c;
   --destructive-border: #7f1d1d;
   --nav-underline-hover-opacity: 0.6;
+
+  --focus-ring: color-mix(in srgb, var(--color-brand-200) 65%, var(--color-brand-600));
 }
 
 @theme {
@@ -355,6 +357,8 @@ html[data-theme="dark"] {
   --radius-lg: var(--radius-ui);
   --radius-xl: var(--radius-ui);
   --radius-2xl: var(--radius-surface);
+
+  --focus-ring: var(--color-brand-600);
 
   /* Шрифты */
   --font-sans:

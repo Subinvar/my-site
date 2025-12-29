@@ -399,7 +399,7 @@ export function DocumentsFilters({
                       return { ...prev, types: nextValues };
                     })
                   }
-                  className="h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-600"
+                  className="h-4 w-4 rounded border-border text-brand-600 focus:ring-2 focus:ring-offset-2 focus:ring-[var(--focus-ring)] focus:ring-offset-[var(--background)]"
                 />
                 {option.label}
               </label>
@@ -425,7 +425,7 @@ export function DocumentsFilters({
                       prev.lang === option.value ? prev : { ...prev, lang: option.value }
                     )
                   }
-                  className="h-4 w-4 border-border text-brand-600 focus:ring-brand-600"
+                  className="h-4 w-4 border-border text-brand-600 focus:ring-2 focus:ring-offset-2 focus:ring-[var(--focus-ring)] focus:ring-offset-[var(--background)]"
                 />
                 {option.label}
               </label>

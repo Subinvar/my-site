@@ -25,7 +25,7 @@ export default function LocaleNotFound() {
       <p className="text-lg text-muted-foreground">{copy.description}</p>
         <Link
           href={buildPath(locale)}
-          className="rounded-full border border-foreground px-4 py-2 text-sm font-semibold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+          className="rounded-full border border-foreground px-4 py-2 text-sm font-semibold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
           {dictionary.common.buttons.goHome}
         </Link>

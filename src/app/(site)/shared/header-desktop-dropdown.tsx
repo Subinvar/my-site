@@ -6,6 +6,7 @@ import type React from "react";
 
 import type { NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import {
   DESKTOP_DROPDOWN_CLOSE_MS,
@@ -351,7 +352,7 @@ export function HeaderDesktopDropdown({
                   "font-medium leading-[1.12] tracking-[-0.01em]",
                   "no-underline transition-colors",
                   "active:opacity-90",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  focusRingBase,
                   isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 );
 

@@ -80,7 +80,7 @@ function createHtmlConfig(locale: Locale): Config {
             return new Markdoc.Tag('span', { class: 'font-semibold text-primary-600' }, children);
           }
           const baseClass =
-            'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-600';
+            'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-[var(--background)]';
           const variantClass =
             variant === 'primary'
               ? 'border-brand-700 bg-brand-700 text-white hover:bg-brand-600'

@@ -14,6 +14,7 @@ import {
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
 
@@ -86,8 +87,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
       href={item.href}
       className={cn(
         'group block h-full rounded-2xl',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
-        'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+        focusRingBase,
       )}
     >
       <Card
@@ -445,8 +445,7 @@ export function ProductsPageClient({
                         'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
                         'hover:bg-muted/40 hover:text-foreground',
                       ),
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]',
-                  'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+                  focusRingBase,
                 )}
               >
                 {meta.icon}

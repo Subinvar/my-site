@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -7,8 +8,7 @@ const baseClasses =
   [
     'inline-flex items-center justify-center rounded-xl font-medium select-none',
     'transition-colors transition-shadow transition-transform duration-200 ease-out',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+    focusRingBase,
     'disabled:opacity-60 disabled:cursor-not-allowed',
     'transform-gpu active:translate-y-[1px]',
   ].join(' ');
