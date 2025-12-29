@@ -528,7 +528,6 @@ export default config({
                 base: localizedText('Подпись «Основы»', { isRequired: true }),
                 filler: localizedText('Подпись «Наполнители»', { isRequired: true }),
                 auxiliary: localizedText('Подпись «Вспомогательные материалы»', { isRequired: true }),
-                metal: localizedText('Подпись «Металл»', { isRequired: true }),
               },
               { label: 'Подписи атрибутов' }
             ),
