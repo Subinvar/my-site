@@ -1,0 +1,84 @@
+.keystaticShell {
+  position: relative;
+  min-height: 100vh;
+}
+
+:global(.kui-scheme--light .keystaticShell) {
+  background-color: #f5f5f5;
+  color: #1f2937;
+}
+
+:global(.kui-scheme--auto .keystaticShell) {
+  background-color: #f5f5f5;
+  color: #1f2937;
+}
+
+:global(.kui-scheme--dark .keystaticShell) {
+  background-color: #121212;
+  color: #f5f2ed;
+}
+
+/* Брендовые цвета Keystatic: светлая тема */
+:global(.kui-scheme--light),
+:global(.kui-scheme--auto) {
+  --kui-color-background-canvas: #ffffff;
+  --kui-color-background-surface: #f5f5f5;
+  --kui-color-background-surface-secondary: #ededed;
+  --kui-color-background-surface-tertiary: #e6e1dc;
+
+  --kui-color-foreground-neutral: #1f2937;
+  --kui-color-foreground-neutral-secondary: #4b5563;
+  --kui-color-foreground-neutral-tertiary: #6b7280;
+
+  --kui-color-border-neutral: #e5e7eb;
+  --kui-color-border-emphasis: #d1d5db;
+
+  --kui-color-background-accent: #f6d8da;
+  --kui-color-background-accent-emphasis: #b2292f;
+  --kui-color-foreground-accent: #941b20;
+  --kui-color-border-accent: #c23c42;
+  --kui-color-alias-foreground-selected: #941b20;
+  --kui-color-alias-focus-ring: #c23c42;
+
+  --kui-color-background-positive: #e8f7ea;
+  --kui-color-background-positive-emphasis: #4bb543;
+  --kui-color-foreground-positive: #2f7a30;
+  --kui-color-border-positive: #a6d7aa;
+
+  --kui-color-background-critical: #fde7e7;
+  --kui-color-background-critical-emphasis: #d65c5c;
+  --kui-color-foreground-critical: #7b141a;
+  --kui-color-border-critical: #f1b4b4;
+}
+
+/* Брендовые цвета Keystatic: тёмная тема */
+:global(.kui-scheme--dark) {
+  --kui-color-background-canvas: #121212;
+  --kui-color-background-surface: #191613;
+  --kui-color-background-surface-secondary: #1f1b16;
+  --kui-color-background-surface-tertiary: #262019;
+
+  --kui-color-foreground-neutral: #f5f2ed;
+  --kui-color-foreground-neutral-secondary: #d8d0c4;
+  --kui-color-foreground-neutral-tertiary: #a79f94;
+
+  --kui-color-border-neutral: #3a332c;
+  --kui-color-border-emphasis: #4b4137;
+
+  --kui-color-background-accent: #321011;
+  --kui-color-background-accent-emphasis: #c23c42;
+  --kui-color-foreground-accent: #f06b73;
+  --kui-color-border-accent: #d65c61;
+  --kui-color-alias-foreground-selected: #f06b73;
+  --kui-color-alias-focus-ring: #f06b73;
+
+  --kui-color-background-positive: #0f2d1d;
+  --kui-color-background-positive-emphasis: #4bb543;
+  --kui-color-foreground-positive: #c9f1cf;
+  --kui-color-border-positive: #2f7a30;
+
+  --kui-color-background-critical: #2a0c0c;
+  --kui-color-background-critical-emphasis: #d65c5c;
+  --kui-color-foreground-critical: #f7d9d9;
+  --kui-color-border-critical: #a63434;
+}
