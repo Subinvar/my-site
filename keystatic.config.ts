@@ -452,7 +452,7 @@ export default config({
       },
     }),
     productsHub: singleton({
-      label: 'Страница «Продукция» — группы и карточки',
+      label: 'Продукция',
       path: 'content/products-hub/',
       format: { data: 'json' },
       schema: {
@@ -493,8 +493,18 @@ export default config({
                 ),
                 {
                   label: 'Карточки',
-                  itemLabel: ({ fields }) =>
-                    fields.title.value?.ru || fields.title.value?.en || 'Карточка',
+                  itemLabel: ({
+                    fields,
+                  }: {
+                    fields: {
+                      title: {
+                        value?: {
+                          ru?: string | null;
+                          en?: string | null;
+                        } | null;
+                      };
+                    };
+                  }) => fields.title.value?.ru || fields.title.value?.en || 'Карточка',
                 }
               ),
             },
@@ -502,7 +512,16 @@ export default config({
           ),
           {
             label: 'Группы',
-            itemLabel: ({ fields }) => fields.title.value?.ru || fields.id.value || 'Группа',
+            itemLabel: ({
+              fields,
+            }: {
+              fields: {
+                title: {
+                  value?: { ru?: string | null; en?: string | null } | null;
+                };
+                id: { value?: string | null };
+              };
+            }) => fields.title.value?.ru || fields.id.value || 'Группа',
           }
         ),
       },
