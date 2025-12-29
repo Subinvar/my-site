@@ -92,7 +92,7 @@ export function HeaderDesktopDropdown({
       // Первый кадр после монтирования: держим закрытое состояние,
       // чтобы самое первое раскрытие анимировалось (иначе оно 'прыгает' мгновенно).
       if (prefersReducedMotion) {
-        setEnterReady(true);
+        scheduleStateUpdate(() => setEnterReady(true));
         return;
       }
 
@@ -121,7 +121,7 @@ export function HeaderDesktopDropdown({
       openRafRef.current = null;
     }
 
-    setEnterReady(false);
+    scheduleStateUpdate(() => setEnterReady(false));
 
     const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
     const timer = window.setTimeout(() => {
