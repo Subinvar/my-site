@@ -101,7 +101,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
       >
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
           {/* img (а не next/image) — чтобы позже можно было подменять источники без доп. конфигов */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- Используем <img>, чтобы при необходимости легко менять источники без дополнительных конфигов */}
           <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
           <div
             className={cn(

@@ -91,6 +91,11 @@ const pillBase = cn(
   "truncate motion-reduce:transition-none motion-reduce:duration-0",
 );
 
+const CONTACT_SLOT_WIDTHS = {
+  phone: HEADER_TOP_STABLE_SLOTS.phone,
+  email: HEADER_TOP_STABLE_SLOTS.email,
+};
+
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
 
 type DesktopHoverSuppressRecord = {
@@ -1226,7 +1231,7 @@ export function SiteShell({
                   </ul>
                   {site.contacts.phone || site.contacts.email ? (
                     <div className="mt-6">
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex flex-col items-start gap-2">
                         {site.contacts.phone
                           ? (() => {
                               const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1234,8 +1239,9 @@ export function SiteShell({
                                 <div className={motion.className} style={motion.style}>
                                   <a
                                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                                    className={pillBase}
+                                    className={cn(pillBase, "justify-start")}
                                     onClick={handleCloseMenu}
+                                    style={{ width: `${CONTACT_SLOT_WIDTHS.phone}px` }}
                                   >
                                     {site.contacts.phone}
                                   </a>
@@ -1251,8 +1257,9 @@ export function SiteShell({
                                 <div className={motion.className} style={motion.style}>
                                   <a
                                     href={`mailto:${site.contacts.email}`}
-                                    className={pillBase}
+                                    className={cn(pillBase, "justify-start")}
                                     onClick={handleCloseMenu}
+                                    style={{ width: `${CONTACT_SLOT_WIDTHS.email}px` }}
                                   >
                                     {site.contacts.email}
                                   </a>
