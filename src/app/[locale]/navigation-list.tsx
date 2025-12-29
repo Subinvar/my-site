@@ -2,6 +2,7 @@ import Link from "next/link";
 import type React from "react";
 
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import type { NavigationLink } from "@/lib/keystatic";
 
@@ -143,7 +144,7 @@ export function NavigationList({
                 densityClass,
                 "no-underline transition-colors",
                 "active:opacity-90",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                focusRingBase,
                 isActive
                   ? "bg-muted/60 text-foreground"
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -156,7 +157,7 @@ export function NavigationList({
                 "whitespace-nowrap",
                 densityClass,
                 "active:opacity-90",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                focusRingBase,
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

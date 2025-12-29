@@ -12,7 +12,7 @@ export default function RootNotFound() {
       <p className="text-lg text-muted-foreground">{dictionary.errors.notFound.description}</p>
         <Link
           href={buildPath(defaultLocale)}
-          className="rounded-full border border-foreground px-5 py-2 text-sm font-semibold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+          className="rounded-full border border-foreground px-5 py-2 text-sm font-semibold uppercase tracking-wide text-foreground transition hover:bg-foreground hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
           {dictionary.common.buttons.goHome}
         </Link>

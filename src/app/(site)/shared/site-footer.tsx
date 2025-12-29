@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
@@ -68,14 +69,14 @@ export function SiteFooter({
     "focus-visible:after:opacity-[var(--nav-underline-hover-opacity,0.5)] focus-visible:after:scale-x-100",
     "active:opacity-90",
     // твой стандартный focus-ring
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+    focusRingBase,
   );
 
   const menuLinkBaseClassName = cn(
     "group inline-flex h-10 items-center gap-1 whitespace-nowrap no-underline",
     "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
     "active:opacity-90",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+    focusRingBase,
   );
 
   return (

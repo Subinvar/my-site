@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import type { Locale } from '@/lib/i18n';
 import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
 
 type LanguageSwitcherProps = {
   currentLocale: Locale;
@@ -49,13 +50,13 @@ export function LanguageSwitcher({
   // Контейнер:
   // - высота как у бургера/темы (h-10)
   // - border только на hover
-  const baseContainerClasses =
-    'relative inline-flex h-10 w-10 items-center justify-center ' +
-    'rounded-xl border border-transparent ' +
-    'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none ' +
-    'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
-    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]';
+  const baseContainerClasses = cn(
+    'relative inline-flex h-10 w-10 items-center justify-center',
+    'rounded-xl border border-transparent',
+    'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',
+    'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    focusRingBase,
+  );
 
   const containerClasses = cn(
     baseContainerClasses,

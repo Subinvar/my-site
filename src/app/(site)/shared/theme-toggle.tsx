@@ -4,6 +4,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
 
 type Theme = 'light' | 'dark';
@@ -113,8 +114,7 @@ export function ThemeToggle({
     'inline-flex h-10 w-10 items-center justify-center rounded-xl',
     'border border-transparent bg-transparent text-muted-foreground transition-colors duration-150',
     'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-    'focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-[var(--background)]',
+    focusRingBase,
     !isMounted && 'cursor-default opacity-60 hover:border-transparent hover:bg-transparent',
   );
 

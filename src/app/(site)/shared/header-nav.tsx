@@ -6,6 +6,7 @@ import { NavigationList } from "@/app/[locale]/navigation-list";
 import type { Locale } from "@/lib/i18n";
 import type { Navigation, NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
+import { focusRingBase } from "@/lib/focus-ring";
 
 import { HeaderCta } from "./header-top-bar";
 
@@ -147,8 +148,7 @@ export const HeaderNav = memo(function HeaderNav({
                   ? "border-[color:var(--header-border)] bg-background/70 text-foreground"
                   : "border-transparent bg-transparent text-muted-foreground",
                 "hover:border-[color:var(--header-border)] hover:text-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]",
-                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                focusRingBase,
               )}
             >
               <span className="relative block h-4 w-5">
