@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { type MouseEvent, type ReactElement, useEffect, useRef, useState } from 'react';
+import { type MouseEvent, type ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowRight,
   BadgeCheck,
@@ -9,6 +9,7 @@ import {
   FileText,
   PaintRoller,
   Sparkles,
+  Star,
   Wrench,
 } from 'lucide-react';
 
@@ -17,47 +18,19 @@ import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
 import { buildPath } from '@/lib/paths';
-
-export type ProductsHubCardKind = 'binders' | 'coatings' | 'auxiliaries';
-
-export type ProductsHubCard = {
-  kind: ProductsHubCardKind;
-  /** raw taxonomy value */
-  value: string;
-  title: string;
-  description: string;
-  image?: {
-    src: string;
-    alt: string;
-  };
-  href: string;
-};
+import type { ProductsHubCard, ProductsHubGroup } from '@/lib/content/products-hub';
 
 type ProductsPageClientProps = {
   locale: Locale;
-  binders: ProductsHubCard[];
-  coatings: ProductsHubCard[];
-  auxiliaries: ProductsHubCard[];
+  groups: ProductsHubGroup[];
 };
 
-type SectionId = 'binders' | 'coatings' | 'auxiliaries';
-
-const SECTION_META: Record<SectionId, { icon: ReactElement; ru: string; en: string }> = {
-  binders: {
-    icon: <Beaker className="h-4 w-4" aria-hidden />,
-    ru: 'Связующие системы',
-    en: 'Binder systems',
-  },
-  coatings: {
-    icon: <PaintRoller className="h-4 w-4" aria-hidden />,
-    ru: 'Противопригарные покрытия',
-    en: 'Coatings',
-  },
-  auxiliaries: {
-    icon: <Sparkles className="h-4 w-4" aria-hidden />,
-    ru: 'Вспомогательные материалы',
-    en: 'Auxiliary materials',
-  },
+const ICONS: Record<string, ReactElement> = {
+  beaker: <Beaker className="h-4 w-4" aria-hidden />,
+  roller: <PaintRoller className="h-4 w-4" aria-hidden />,
+  sparkles: <Sparkles className="h-4 w-4" aria-hidden />,
+  wrench: <Wrench className="h-4 w-4" aria-hidden />,
+  star: <Star className="h-4 w-4" aria-hidden />,
 };
 
 function isModifiedEvent(e: MouseEvent<HTMLAnchorElement>) {
@@ -81,10 +54,11 @@ function InlineWikiLink({ href, children }: { href: string; children: string }) 
 function HubCard({ item }: { item: ProductsHubCard }) {
   const src = item.image?.src ?? '/placeholders/product-card.svg';
   const alt = item.image?.alt ?? '';
+  const href = item.href ?? '#';
 
   return (
     <Link
-      href={item.href}
+      href={href}
       className={cn(
         'group block h-full rounded-2xl',
         focusRingBase,
@@ -143,10 +117,10 @@ function ProductsSection({
   description,
   items,
 }: {
-  id: SectionId;
+  id: string;
   title: string;
   description: string;
-  items: ProductsHubCard[];
+  items: ProductsHubGroup['cards'];
 }) {
   return (
     <section
@@ -165,30 +139,29 @@ function ProductsSection({
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <HubCard key={`${item.kind}:${item.value}`} item={item} />
+          <HubCard key={item.id} item={item} />
         ))}
       </div>
     </section>
   );
 }
 
-export function ProductsPageClient({
-  locale,
-  binders,
-  coatings,
-  auxiliaries,
-}: ProductsPageClientProps) {
+export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) {
   const isRu = locale === 'ru';
 
   const [isNavPinned, setIsNavPinned] = useState(false);
-  const [activeSection, setActiveSection] = useState<SectionId | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
 
-  const counts = {
-    binders: binders.length,
-    coatings: coatings.length,
-    auxiliaries: auxiliaries.length,
-  };
+  const sectionIds = useMemo(() => groups.map((group) => group.id), [groups]);
+
+  const counts = useMemo(() => {
+    const map = new Map<string, number>();
+    groups.forEach((group) => {
+      map.set(group.id, group.cards.length);
+    });
+    return map;
+  }, [groups]);
 
   // Определяем момент «прилипания» липкой полосы.
   // Важно: активная подсветка пунктов появляется ТОЛЬКО после того,
@@ -233,7 +206,7 @@ export function ProductsPageClient({
   useEffect(() => {
     if (!isNavPinned) return;
 
-    const ids: SectionId[] = ['binders', 'coatings', 'auxiliaries'];
+    const ids = sectionIds;
     const nodes = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => Boolean(el));
@@ -248,7 +221,7 @@ export function ProductsPageClient({
 
         const top = visible[0];
         if (!top?.target?.id) return;
-        const id = top.target.id as SectionId;
+        const id = top.target.id;
         if (ids.includes(id)) setActiveSection(id);
       },
       {
@@ -261,7 +234,7 @@ export function ProductsPageClient({
 
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [isNavPinned]);
+  }, [isNavPinned, sectionIds]);
 
   const trustStartTitle = isRu
     ? 'Материалы с предсказуемым результатом'
@@ -412,23 +385,24 @@ export function ProductsPageClient({
           'p-2',
         )}
       >
-        <div className="grid gap-2 sm:grid-cols-3">
-          {(['binders', 'coatings', 'auxiliaries'] as SectionId[]).map((id) => {
-            const meta = SECTION_META[id];
-            const label = isRu ? meta.ru : meta.en;
-            const isActive = isNavPinned && activeSection === id;
-            const count = counts[id];
+        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {groups.map((group) => {
+            const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
+            const label =
+              group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
+            const isActive = isNavPinned && activeSection === group.id;
+            const count = counts.get(group.id) ?? 0;
 
             return (
               <a
-                key={id}
-                href={`#${id}`}
+                key={group.id}
+                href={`#${group.id}`}
                 onClick={(e) => {
                   if (isModifiedEvent(e)) return;
                   e.preventDefault();
                   const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
                   document
-                    .getElementById(id)
+                    .getElementById(group.id)
                     ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                 }}
                 className={cn(
@@ -448,7 +422,7 @@ export function ProductsPageClient({
                   focusRingBase,
                 )}
               >
-                {meta.icon}
+                {icon}
                 <span className="truncate">{label}</span>
                 <span
                   className={cn(
@@ -469,38 +443,49 @@ export function ProductsPageClient({
 
       {/* 6) Секции с карточками */}
       <div className="space-y-10 lg:space-y-12">
-        <ProductsSection
-          id="binders"
-          title={isRu ? 'Связующие системы' : 'Binder systems'}
-          description={
-            isRu
+        {groups.map((group) => {
+          const fallbackTitle = group.id === 'binders'
+            ? isRu
+              ? 'Связующие системы'
+              : 'Binder systems'
+            : group.id === 'coatings'
+              ? isRu
+                ? 'Противопригарные покрытия'
+                : 'Coatings'
+              : group.id === 'auxiliaries'
+                ? isRu
+                  ? 'Вспомогательные материалы'
+                  : 'Auxiliary materials'
+                : isRu
+                  ? 'Раздел продукции'
+                  : 'Product section';
+
+          const fallbackDescription = group.id === 'binders'
+            ? isRu
               ? 'Связующие и отвердители для основных процессов формовки и стержневого производства.'
               : 'Binders and hardeners for the main moulding and core-making processes.'
-          }
-          items={binders}
-        />
+            : group.id === 'coatings'
+              ? isRu
+                ? 'Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.'
+                : 'Alcohol- and water-based coatings with a wide range of fillers.'
+              : group.id === 'auxiliaries'
+                ? isRu
+                  ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
+                  : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.'
+                : isRu
+                  ? 'Подборка продуктов этой категории.'
+                  : 'A curated set of product cards.';
 
-        <ProductsSection
-          id="coatings"
-          title={isRu ? 'Противопригарные покрытия' : 'Coatings'}
-          description={
-            isRu
-              ? 'Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.'
-              : 'Alcohol- and water-based coatings with a wide range of fillers.'
-          }
-          items={coatings}
-        />
-
-        <ProductsSection
-          id="auxiliaries"
-          title={isRu ? 'Вспомогательные материалы' : 'Auxiliary materials'}
-          description={
-            isRu
-              ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
-              : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.'
-          }
-          items={auxiliaries}
-        />
+          return (
+            <ProductsSection
+              key={group.id}
+              id={group.id}
+              title={group.title ?? fallbackTitle}
+              description={group.description ?? fallbackDescription}
+              items={group.cards}
+            />
+          );
+        })}
       </div>
 
       {/* 2) Финальный блок "внедрение" (без CTA-кнопок) */}
