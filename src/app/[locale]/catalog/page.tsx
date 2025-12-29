@@ -30,7 +30,6 @@ import {
   resolveResetLabel,
   resolveSubmitLabel,
 } from '@/app/(site)/shared/catalog-page-messages';
-import { Breadcrumbs } from '@/app/(site)/shared/ui/breadcrumbs';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
@@ -80,7 +79,6 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const requestLabel = resolveRequestLabel(catalogPage, locale);
   const emptyStateMessage = resolveEmptyState(catalogPage, locale);
   const groupLabels = resolveGroupLabels(catalogPage, locale);
-  const homeLabel = locale === 'ru' ? 'Главная' : 'Home';
 
   return (
     <SiteShellLayout
@@ -95,12 +93,6 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
       <main className="page-shell">
         <section className="container py-10 lg:py-12">
           <header className="mb-6 space-y-4 lg:mb-8">
-            <Breadcrumbs
-              items={[
-                { label: homeLabel, href: buildPath(locale) },
-                { label: heading },
-              ]}
-            />
             <SectionHeading title={heading} description={description} as="h1" />
           </header>
 
