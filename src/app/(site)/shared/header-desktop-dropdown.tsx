@@ -73,6 +73,8 @@ export function HeaderDesktopDropdown({
   const wasOpenRef = useRef(false);
   const openRafRef = useRef<number | null>(null);
 
+  const scheduleStateUpdate = (update: () => void) => queueMicrotask(update);
+
   const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
   const shouldBeOpen = Boolean(activeId && activeChildren.length);
 
@@ -82,8 +84,10 @@ export function HeaderDesktopDropdown({
   // Mount / unmount for close animation.
   useEffect(() => {
     if (shouldBeOpen && activeId) {
-      setIsMounted(true);
-      setRenderedId(activeId);
+      scheduleStateUpdate(() => {
+        setIsMounted(true);
+        setRenderedId(activeId);
+      });
 
       // Первый кадр после монтирования: держим закрытое состояние,
       // чтобы самое первое раскрытие анимировалось (иначе оно 'прыгает' мгновенно).
@@ -98,13 +102,13 @@ export function HeaderDesktopDropdown({
       }
 
       if (!isMounted) {
-        setEnterReady(false);
+        scheduleStateUpdate(() => setEnterReady(false));
         openRafRef.current = window.requestAnimationFrame(() => {
           openRafRef.current = null;
           setEnterReady(true);
         });
       } else {
-        setEnterReady(true);
+        scheduleStateUpdate(() => setEnterReady(true));
       }
 
       return;
@@ -134,7 +138,7 @@ export function HeaderDesktopDropdown({
   // When switching between menu items while open — update rendered id immediately.
   useEffect(() => {
     if (!shouldBeOpen || !activeId) return;
-    setRenderedId(activeId);
+    scheduleStateUpdate(() => setRenderedId(activeId));
   }, [activeId, shouldBeOpen]);
 
   // Measure content height (numeric px) so we can animate height (can't animate auto).
@@ -165,14 +169,14 @@ export function HeaderDesktopDropdown({
 
     // When closing — start dissolving immediately.
     if (!shouldBeOpen) {
-      setContentPhase(0);
+      scheduleStateUpdate(() => setContentPhase(0));
       return;
     }
 
-    setContentPhase(0);
+    scheduleStateUpdate(() => setContentPhase(0));
 
     if (prefersReducedMotion) {
-      setContentPhase(1);
+      scheduleStateUpdate(() => setContentPhase(1));
       return;
     }
 

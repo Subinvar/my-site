@@ -4,12 +4,13 @@ export function useScrollElevation() {
   // Начальное значение совпадает на сервере и клиенте, чтобы избежать проблем гидратации
   const [isHeaderElevated, setIsHeaderElevated] = useState(false);
   const scrollSentinelRef = useRef<HTMLDivElement | null>(null);
+  const scheduleStateUpdate = (update: () => void) => queueMicrotask(update);
 
   useLayoutEffect(() => {
     // 1) берём то, что уже выставил ранний скрипт в layout.tsx
     const preset = document.documentElement.dataset.headerElevated;
     if (preset === "1") {
-      setIsHeaderElevated(true);
+      scheduleStateUpdate(() => setIsHeaderElevated(true));
     }
 
     // 2) и уточняем после того, как браузер восстановит scroll (часто это происходит чуть позже)

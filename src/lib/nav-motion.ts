@@ -46,7 +46,7 @@ export const DESKTOP_DROPDOWN_CLOSE_MS = ms(280);
  * - при закрытии — «растворение» быстрее, чем схлопывание панели
  */
 export const DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS = ms(90);
-export const DESKTOP_DROPDOWN_TEXT_STAGGER_MS = ms(34);
+export const DESKTOP_DROPDOWN_TEXT_STAGGER_MS = ms(24);
 export const DESKTOP_DROPDOWN_TEXT_ENTER_MS = ms(240);
 export const DESKTOP_DROPDOWN_TEXT_EXIT_MS = ms(160);
 
