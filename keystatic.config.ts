@@ -494,17 +494,15 @@ export default config({
                 {
                   label: 'Карточки',
                   itemLabel: ({
-                    fields,
+                    value,
                   }: {
-                    fields: {
-                      title: {
-                        value?: {
-                          ru?: string | null;
-                          en?: string | null;
-                        } | null;
-                      };
+                    value?: {
+                      title?: {
+                        ru?: string | null;
+                        en?: string | null;
+                      } | null;
                     };
-                  }) => fields.title.value?.ru || fields.title.value?.en || 'Карточка',
+                  }) => value?.title?.ru || value?.title?.en || 'Без названия',
                 }
               ),
             },
