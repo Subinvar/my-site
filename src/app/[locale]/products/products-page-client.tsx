@@ -152,7 +152,7 @@ function ProductsSection({
     <section
       id={id}
       className={cn(
-        'scroll-mt-[calc(var(--header-height)+4rem)] rounded-3xl border border-[var(--header-border)] bg-muted/20',
+        'scroll-mt-[calc(var(--header-height)+4rem)]',
         'p-5 sm:p-6',
       )}
     >

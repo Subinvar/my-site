@@ -32,6 +32,7 @@ type HeaderCtaProps = {
 
 type HeaderTopBarProps = {
   contacts: SiteContent["contacts"];
+  showBurgerPhone: boolean;
   hasTopContacts: boolean;
   topContactsWidth: number;
   topWagonsCollapsed: boolean;
@@ -175,6 +176,7 @@ export const HeaderCta = memo(function HeaderCta({
 
 export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
+  showBurgerPhone,
   hasTopContacts,
   topContactsWidth,
   topWagonsCollapsed,
@@ -197,6 +199,9 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   classNames,
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
+
+  const showBurgerPhonePill = showBurgerPhone && Boolean(contacts.phone);
+  const rightControlsGapClass = showBurgerPhonePill ? "gap-3" : "gap-9";
 
   return (
     <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
@@ -316,7 +321,35 @@ export const HeaderTopBar = memo(function HeaderTopBar({
         </div>
       </div>
       </div>
-      <div className="flex flex-none items-center gap-9">
+      <div className={cn("flex flex-none items-center", rightControlsGapClass)}>
+        {contacts.phone ? (
+          <div
+            aria-hidden={hasHydrated ? !showBurgerPhonePill : undefined}
+            {...inertProps(hasHydrated ? !showBurgerPhonePill : false)}
+            className={cn(
+              "relative h-10 overflow-hidden",
+              "transition-[width] duration-200 ease-out",
+              "motion-reduce:transition-none motion-reduce:duration-0",
+            )}
+            style={{ width: showBurgerPhonePill ? HEADER_TOP_STABLE_SLOTS.phone : 0 } as CSSProperties}
+          >
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center",
+                slideTransitionClass,
+                "motion-reduce:transition-none motion-reduce:duration-0",
+                showBurgerPhonePill ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+              )}
+            >
+              <HeaderTopPillLink
+                href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                label={contacts.phone}
+                pillBase={pillBase}
+              />
+            </div>
+          </div>
+        ) : null}
+
         <HeaderTopSlot id="theme">
           <ThemeToggle locale={locale} />
         </HeaderTopSlot>

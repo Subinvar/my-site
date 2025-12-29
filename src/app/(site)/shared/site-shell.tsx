@@ -36,6 +36,7 @@ import { useHeaderHeight } from "./hooks/use-header-height";
 import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
+import { HeaderContactLayoutProvider } from "./header-contact-layout-context";
 import { HeaderBrand } from "./header-brand";
 import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
@@ -94,6 +95,7 @@ const pillBase = cn(
 const CONTACT_SLOT_WIDTHS = {
   phone: HEADER_TOP_STABLE_SLOTS.phone,
   email: HEADER_TOP_STABLE_SLOTS.email,
+  telegram: HEADER_TOP_STABLE_SLOTS.email,
 };
 
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
@@ -436,6 +438,31 @@ export function SiteShell({
   }, [locale, site.contacts.email, site.contacts.phone]);
 
   const hasTopContacts = topContactsIds.length > 0;
+
+  const telegramHref = useMemo(
+    () => site.contacts.telegramUrl?.trim() ?? "",
+    [site.contacts.telegramUrl],
+  );
+  const telegramLabel = "@IntemaGroup";
+  const hasTelegram = Boolean(telegramHref);
+
+  // Второй порог: если становится слишком узко для нижней пары (телефон + Telegram),
+  // переносим телефон к ThemeToggle, а Telegram уходит в бургер-меню.
+  const [isBurgerContactsNarrow, setIsBurgerContactsNarrow] = useState(false);
+
+  useEffect(() => {
+    if (!isBurgerMode) {
+      setIsBurgerContactsNarrow(false);
+    }
+  }, [isBurgerMode]);
+
+  const handleBurgerContactsNarrowChange = useCallback((next: boolean) => {
+    setIsBurgerContactsNarrow((prev) => (prev === next ? prev : next));
+  }, []);
+
+  const showBottomContactsPair = isBurgerMode && !isBurgerContactsNarrow;
+  const showTelegramInBurgerMenu = isBurgerMode && isBurgerContactsNarrow;
+  const showTopBarPhone = isBurgerMode && isBurgerContactsNarrow;
   const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
   const { shellRef, headerRef } = useHeaderHeight();
   const handleCloseMenu = useCallback(() => {
@@ -851,6 +878,9 @@ export function SiteShell({
   const nextBurgerMotionIndex = () => burgerMotionIndex++;
 
   return (
+    <HeaderContactLayoutProvider
+      value={{ isBurgerMode, isBurgerContactsNarrow }}
+    >
     <div
       ref={shellRef}
       className={cn(
@@ -914,6 +944,7 @@ export function SiteShell({
               >
                 <HeaderTopBar
                   contacts={site.contacts}
+                  showBurgerPhone={showTopBarPhone}
                   hasTopContacts={hasTopContacts}
                   topContactsWidth={topContactsWidth}
                   topWagonsCollapsed={topWagonsCollapsed}
@@ -944,6 +975,7 @@ export function SiteShell({
                   locale={locale}
                   currentPath={currentPath}
                   isBurgerMode={isBurgerMode}
+                  showBottomContactsPair={showBottomContactsPair}
                   hasHydrated={hasHydrated}
                   isMenuOpen={isMenuOpen}
                   onBurgerClick={handleBurgerClick}
@@ -959,6 +991,11 @@ export function SiteShell({
                   contactsHref={contactsHref}
                   ctaLabel={ctaCompactLabel}
                   headerButtonBase={headerButtonBase}
+                  pillBase={pillBase}
+                  contacts={site.contacts}
+                  telegramHref={telegramHref}
+                  telegramLabel={telegramLabel}
+                  onBurgerContactsNarrowChange={hasTelegram ? handleBurgerContactsNarrowChange : undefined}
                   onDesktopNavEnter={clearDesktopDropdownClose}
                   onDesktopNavLeave={scheduleDesktopDropdownClose}
                   onDesktopNavLinkEnter={handleDesktopNavLinkPointerEnter}
@@ -1229,27 +1266,9 @@ export function SiteShell({
                         );
                       })}
                   </ul>
-                  {site.contacts.phone || site.contacts.email ? (
+                  {site.contacts.email || (showTelegramInBurgerMenu && telegramHref) ? (
                     <div className="mt-6">
                       <div className="flex flex-row flex-wrap items-center gap-2">
-                        {site.contacts.phone
-                          ? (() => {
-                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-                              return (
-                                <div className={motion.className} style={motion.style}>
-                                  <a
-                                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                                    className={cn(pillBase, "justify-start")}
-                                    onClick={handleCloseMenu}
-                                    style={{ width: `${CONTACT_SLOT_WIDTHS.phone}px` }}
-                                  >
-                                    {site.contacts.phone}
-                                  </a>
-                                </div>
-                              );
-                            })()
-                          : null}
-
                         {site.contacts.email
                           ? (() => {
                               const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1262,6 +1281,26 @@ export function SiteShell({
                                     style={{ width: `${CONTACT_SLOT_WIDTHS.email}px` }}
                                   >
                                     {site.contacts.email}
+                                  </a>
+                                </div>
+                              );
+                            })()
+                          : null}
+
+                        {showTelegramInBurgerMenu && telegramHref
+                          ? (() => {
+                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                              return (
+                                <div className={motion.className} style={motion.style}>
+                                  <a
+                                    href={telegramHref}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={cn(pillBase, "justify-start")}
+                                    onClick={handleCloseMenu}
+                                    style={{ width: `${CONTACT_SLOT_WIDTHS.telegram}px` }}
+                                  >
+                                    {telegramLabel}
                                   </a>
                                 </div>
                               );
@@ -1294,5 +1333,6 @@ export function SiteShell({
         {footer}
       </div>
     </div>
+    </HeaderContactLayoutProvider>
   );
 }

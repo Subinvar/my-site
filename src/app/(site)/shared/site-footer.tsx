@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import { cn } from "@/lib/cn";
@@ -5,6 +7,8 @@ import { focusRingBase } from "@/lib/focus-ring";
 import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
+
+import { useHeaderContactLayout } from "./header-contact-layout-context";
 
 export type SiteFooterProps = {
   locale: Locale;
@@ -37,6 +41,8 @@ export function SiteFooter({
   contacts,
   tagline,
 }: SiteFooterProps) {
+  const { isBurgerMode, isBurgerContactsNarrow } = useHeaderContactLayout();
+
   const normalizedCurrent = normalizePathname(currentPath);
 
   const footerLinks = navigation.footer ?? [];
@@ -47,6 +53,14 @@ export function SiteFooter({
   })();
 
   const telegramHref = contacts.telegramUrl?.trim() ?? "";
+  const telegramLabel = "@IntemaGroup";
+
+  // Логика как в шапке:
+  // - Десктоп (без бургера): показываем только Telegram
+  // - Появился бургер: показываем почту
+  // - Стало ещё уже (Stage 2): показываем почту + Telegram
+  const showEmail = isBurgerMode;
+  const showTelegram = !isBurgerMode || isBurgerContactsNarrow;
 
   const currentYear = new Date().getFullYear();
   const resolvedCopyright =
@@ -145,30 +159,21 @@ export function SiteFooter({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                {telegramHref ? (
+                {showTelegram && telegramHref ? (
                   <a
                     href={telegramHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(baseLinkClassName, "hover:text-foreground")}
                   >
-                    Telegram
+                    {telegramLabel}
                   </a>
                 ) : null}
 
-                {contacts.phone ? (
-                  <a
-                    href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
-                  >
-                    {contacts.phone}
-                  </a>
-                ) : null}
-
-                {contacts.email ? (
+                {showEmail && contacts.email ? (
                   <a
                     href={`mailto:${contacts.email}`}
-                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
+                    className={cn(baseLinkClassName, "hover:text-foreground")}
                   >
                     {contacts.email}
                   </a>
