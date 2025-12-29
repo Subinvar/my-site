@@ -30,7 +30,6 @@ export const DESKTOP_DROPDOWN_HOVER_OPEN_DELAY_MS = 240;
  * После клика по пункту шапки (и навигации) мы временно блокируем hover-раскрытие,
  * пока курсор не будет сдвинут хотя бы на несколько пикселей.
  */
-export const DESKTOP_DROPDOWN_HOVER_SUPPRESS_MOVE_PX = 6;
 
 const ms = (base: number) => Math.round(base * NAV_MOTION_TIME_SCALE);
 
@@ -60,6 +59,6 @@ export const BURGER_MENU_OPEN_MS = DESKTOP_DROPDOWN_OPEN_MS;
 export const BURGER_MENU_CLOSE_MS = DESKTOP_DROPDOWN_CLOSE_MS;
 
 export const BURGER_MENU_TEXT_ENTER_DELAY_MS = DESKTOP_DROPDOWN_TEXT_ENTER_DELAY_MS;
-export const BURGER_MENU_TEXT_STAGGER_MS = ms(12);
+export const BURGER_MENU_TEXT_STAGGER_MS = ms(10);
 export const BURGER_MENU_TEXT_ENTER_MS = DESKTOP_DROPDOWN_TEXT_ENTER_MS;
 export const BURGER_MENU_TEXT_EXIT_MS = DESKTOP_DROPDOWN_TEXT_EXIT_MS;

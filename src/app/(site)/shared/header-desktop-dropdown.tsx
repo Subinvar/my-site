@@ -67,27 +67,57 @@ export function HeaderDesktopDropdown({
   const [renderedId, setRenderedId] = useState<string | null>(null);
   const [panelHeight, setPanelHeight] = useState<number>(0);
   const [contentPhase, setContentPhase] = useState<0 | 1>(0);
+  const [enterReady, setEnterReady] = useState(false);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const wasOpenRef = useRef(false);
+  const openRafRef = useRef<number | null>(null);
 
   const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
   const shouldBeOpen = Boolean(activeId && activeChildren.length);
 
   const renderedChildren = meansRenderedChildren(links, renderedId);
-
-  const isOpen = isMounted && shouldBeOpen;
+  const isOpen = isMounted && shouldBeOpen && (prefersReducedMotion || enterReady);
   const isClosing = isMounted && !shouldBeOpen;
-
   // Mount / unmount for close animation.
   useEffect(() => {
     if (shouldBeOpen && activeId) {
       setIsMounted(true);
       setRenderedId(activeId);
+
+      // Первый кадр после монтирования: держим закрытое состояние,
+      // чтобы самое первое раскрытие анимировалось (иначе оно 'прыгает' мгновенно).
+      if (prefersReducedMotion) {
+        setEnterReady(true);
+        return;
+      }
+
+      if (openRafRef.current) {
+        window.cancelAnimationFrame(openRafRef.current);
+        openRafRef.current = null;
+      }
+
+      if (!isMounted) {
+        setEnterReady(false);
+        openRafRef.current = window.requestAnimationFrame(() => {
+          openRafRef.current = null;
+          setEnterReady(true);
+        });
+      } else {
+        setEnterReady(true);
+      }
+
       return;
     }
 
     if (!isMounted) return;
+
+    if (openRafRef.current) {
+      window.cancelAnimationFrame(openRafRef.current);
+      openRafRef.current = null;
+    }
+
+    setEnterReady(false);
 
     const duration = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_CLOSE_MS;
     const timer = window.setTimeout(() => {
@@ -95,6 +125,7 @@ export function HeaderDesktopDropdown({
       setRenderedId(null);
       setPanelHeight(0);
       setContentPhase(0);
+      setEnterReady(false);
     }, duration);
 
     return () => window.clearTimeout(timer);
@@ -183,10 +214,9 @@ export function HeaderDesktopDropdown({
   const overlayDurationMs = panelDurationMs;
 
   const transitionClass = prefersReducedMotion ? "transition-none" : "transition-[height]";
-
   const overlayTransitionClass = prefersReducedMotion
     ? "transition-none"
-    : "transition-[opacity,background-color,backdrop-filter]";
+    : "transition-opacity";
 
   const panelTransitionStyle = prefersReducedMotion
     ? undefined
@@ -224,9 +254,11 @@ export function HeaderDesktopDropdown({
           "absolute inset-0 z-0",
           overlayTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
+
+          "bg-black/15 backdrop-blur-2xl",
           isOpen
-            ? "pointer-events-auto opacity-100 bg-black/15 backdrop-blur-2xl"
-            : "pointer-events-none opacity-0 bg-black/0 backdrop-blur-0",
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0",
         )}
       />
 

@@ -27,7 +27,6 @@ import {
   BURGER_MENU_TEXT_STAGGER_MS,
   DESKTOP_DROPDOWN_CLOSE_MS,
   DESKTOP_DROPDOWN_HOVER_OPEN_DELAY_MS,
-  DESKTOP_DROPDOWN_HOVER_SUPPRESS_MOVE_PX,
 } from "@/lib/nav-motion";
 import { HtmlLangSync } from "./html-lang-sync";
 import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
@@ -84,6 +83,15 @@ const pillBase =
 const contactLinkBase =
   "inline-flex self-start h-10 items-center justify-center rounded-xl border border-transparent bg-transparent px-3 no-underline transition-colors duration-200 ease-out hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground focus-visible:border-[var(--header-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-muted-foreground motion-reduce:transition-none motion-reduce:duration-0";
 
+
+const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
+
+type DesktopHoverSuppressRecord = {
+  id: string;
+  x: number;
+  y: number;
+};
+
 type SkipToContentLinkProps = {
   label: string;
 };
@@ -123,9 +131,25 @@ export function SiteShell({
   const [desktopDropdownId, setDesktopDropdownId] = useState<string | null>(null);
   const [isDesktopDropdownMounted, setIsDesktopDropdownMounted] = useState(false);
   const desktopDropdownCloseTimerRef = useRef<number | null>(null);
+
   const desktopDropdownOpenTimerRef = useRef<number | null>(null);
-  const suppressDesktopHoverRef = useRef(false);
-  const suppressDesktopHoverOriginRef = useRef<{ x: number; y: number } | null>(null);
+
+  const initialDesktopHoverSuppressId = useMemo(() => {
+    if (typeof window === "undefined") return null;
+
+    try {
+      const raw = window.sessionStorage.getItem(DESKTOP_HOVER_SUPPRESS_STORAGE_KEY);
+      if (!raw) return null;
+
+      const record = JSON.parse(raw) as Partial<DesktopHoverSuppressRecord>;
+      return typeof record.id === "string" ? record.id : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const desktopHoverSuppressForIdRef = useRef<string | null>(initialDesktopHoverSuppressId);
+  const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
@@ -188,45 +212,110 @@ export function SiteShell({
 
   // --- Apple-like: hover intent delay + click guard ("предохранитель") ---
 
-  // Снимаем блокировку hover-раскрытия, как только курсор сдвинулся
-  // (Apple делает похожий предохранитель после клика/навигации).
+  // Apple-подобный предохранитель:
+  // после клика по пункту меню с подменю блокируем hover-раскрытие ИМЕННО
+  // для этого пункта, пока курсор не уйдёт с него.
+  const clearDesktopHoverSuppression = useCallback(() => {
+    desktopHoverSuppressForIdRef.current = null;
+    try {
+      window.sessionStorage.removeItem(DESKTOP_HOVER_SUPPRESS_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const restoreDesktopHoverSuppression = useCallback(() => {
+    let record: DesktopHoverSuppressRecord | null = null;
+
+    try {
+      const raw = window.sessionStorage.getItem(DESKTOP_HOVER_SUPPRESS_STORAGE_KEY);
+      if (!raw) return;
+      record = JSON.parse(raw) as DesktopHoverSuppressRecord;
+    } catch {
+      clearDesktopHoverSuppression();
+      return;
+    }
+
+    if (!record || typeof record.id !== "string") {
+      clearDesktopHoverSuppression();
+      return;
+    }
+
+    // По умолчанию включаем предохранитель: лучше лишний раз не раскрыть меню,
+    // чем раскрыть его сразу после клика/навигации.
+    desktopHoverSuppressForIdRef.current = record.id;
+
+    const pt = lastPointerPosRef.current ?? { x: record.x, y: record.y };
+    if (typeof pt?.x !== "number" || typeof pt?.y !== "number") return;
+
+    const el = document.elementFromPoint(pt.x, pt.y) as HTMLElement | null;
+    const trigger = el?.closest("[data-nav-trigger]") as HTMLElement | null;
+    const hoveredId = trigger?.getAttribute("data-nav-trigger");
+
+    if (hoveredId && hoveredId !== record.id) {
+      // Курсор уже не над тем пунктом — снимаем предохранитель.
+      clearDesktopHoverSuppression();
+    }
+  }, [clearDesktopHoverSuppression]);
+
+  // Трекаем координаты курсора + снимаем предохранитель, как только курсор ушёл
+  // с кликнутого пункта меню.
   useEffect(() => {
-    const threshold = DESKTOP_DROPDOWN_HOVER_SUPPRESS_MOVE_PX;
-    const thresholdSq = threshold * threshold;
-
     const onPointerMove = (event: PointerEvent) => {
-      if (!suppressDesktopHoverRef.current) return;
+      lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
 
-      const origin = suppressDesktopHoverOriginRef.current;
-      if (!origin) {
-        suppressDesktopHoverRef.current = false;
-        return;
-      }
+      const suppressedId = desktopHoverSuppressForIdRef.current;
+      if (!suppressedId) return;
 
-      const dx = event.clientX - origin.x;
-      const dy = event.clientY - origin.y;
-      if (dx * dx + dy * dy < thresholdSq) return;
+      const el = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
+      const trigger = el?.closest("[data-nav-trigger]") as HTMLElement | null;
+      const hoveredId = trigger?.getAttribute("data-nav-trigger");
 
-      suppressDesktopHoverRef.current = false;
-      suppressDesktopHoverOriginRef.current = null;
+      if (hoveredId === suppressedId) return;
+
+      clearDesktopHoverSuppression();
     };
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     return () => window.removeEventListener("pointermove", onPointerMove);
-  }, []);
+  }, [clearDesktopHoverSuppression]);
+
+  // После навигации (и после гидрации) восстанавливаем предохранитель,
+  // если курсор всё ещё находится над пунктом меню, по которому кликнули.
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => restoreDesktopHoverSuppression());
+    return () => window.cancelAnimationFrame(frame);
+  }, [currentPath, restoreDesktopHoverSuppression]);
 
   const handleHeaderPointerDownCapture = useCallback(
     (event: React.PointerEvent<HTMLElement>) => {
       if (isBurgerMode || isMenuOpen) return;
 
       const target = event.target as HTMLElement | null;
-      const trigger = target?.closest('[data-nav-trigger][data-nav-has-children="true"]');
+      const trigger = target?.closest(
+        '[data-nav-trigger][data-nav-has-children="true"]',
+      ) as HTMLElement | null;
       if (!trigger) return;
 
-      // Включаем предохранитель: пока курсор не сдвинется, hover не будет повторно
-      // открывать подменю даже если DOM перерисовался под курсором после навигации.
-      suppressDesktopHoverRef.current = true;
-      suppressDesktopHoverOriginRef.current = { x: event.clientX, y: event.clientY };
+      const triggerId = trigger.getAttribute("data-nav-trigger");
+      if (!triggerId) return;
+
+      desktopHoverSuppressForIdRef.current = triggerId;
+      lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
+
+      try {
+        const record: DesktopHoverSuppressRecord = {
+          id: triggerId,
+          x: event.clientX,
+          y: event.clientY,
+        };
+        window.sessionStorage.setItem(
+          DESKTOP_HOVER_SUPPRESS_STORAGE_KEY,
+          JSON.stringify(record),
+        );
+      } catch {
+        // ignore
+      }
 
       closeDesktopDropdown();
     },
@@ -237,8 +326,9 @@ export function SiteShell({
     (link: NavigationLink) => {
       if (isBurgerMode || isMenuOpen) return;
 
-      // Если только что кликнули и страница сменилась — не открываем, пока курсор не сдвинется.
-      if (suppressDesktopHoverRef.current) return;
+      // "Предохранитель" (как у Apple): после клика по пункту меню
+      // его hover-раскрытие заблокировано, пока курсор не уйдёт с него.
+      if (desktopHoverSuppressForIdRef.current === link.id) return;
 
       clearDesktopDropdownClose();
       clearDesktopDropdownOpen();
@@ -259,7 +349,7 @@ export function SiteShell({
       const delay = prefersReducedMotion ? 0 : DESKTOP_DROPDOWN_HOVER_OPEN_DELAY_MS;
       desktopDropdownOpenTimerRef.current = window.setTimeout(() => {
         desktopDropdownOpenTimerRef.current = null;
-        if (suppressDesktopHoverRef.current) return;
+        if (desktopHoverSuppressForIdRef.current === link.id) return;
         setDesktopDropdownId(link.id);
       }, delay);
     },
@@ -456,11 +546,19 @@ export function SiteShell({
     [burgerMenuItemsVisible, isBurgerMenuClosing, isMenuOpen, prefersReducedMotion],
   );
 
-  // We want the same subtle separator line and shadow that appear on scroll,
-  // to also appear when the Apple-like mega menu is opened at the very top
-  // of the page (before any scroll).
-  const isHeaderVisuallyElevated =
+  // Разделительная линия в шапке должна появляться:
+  // - при скролле (как сейчас)
+  // - при открытии mega-menu / бургер-меню даже в верхней точке страницы
+  // При этом тень НЕ должна "лежать" поверх выезжающего меню — меню должно быть поверх.
+  const isHeaderDividerVisible =
     isHeaderElevated || isDesktopDropdownMounted || isMenuModal;
+
+  // Тень показываем только когда шапка "приподнята" скроллом и нет открытых панелей.
+  const shouldShowHeaderShadow =
+    isHeaderElevated && !isDesktopDropdownMounted && !isMenuModal;
+
+  // Линия: мягко появляется, быстро исчезает.
+  const headerDividerDurationMs = isHeaderDividerVisible ? 220 : 120;
 
   useEffect(() => {
     if (isBurgerMode || isMenuOpen) {
@@ -766,13 +864,21 @@ export function SiteShell({
         ref={headerRef}
         data-site-header
         onPointerDownCapture={handleHeaderPointerDownCapture}
+        style={
+          {
+            "--header-divider-duration": `${headerDividerDurationMs}ms`,
+          } as CSSProperties
+        }
         className={cn(
-          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-200 before:ease-out before:content-['']",
+          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-[var(--header-divider-duration)] before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           "min-h-[var(--header-height-initial)]",
-          isHeaderVisuallyElevated
-            ? "bg-background/92 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md before:opacity-100"
+          isHeaderDividerVisible
+            ? cn(
+                "bg-background/92 backdrop-blur-md before:opacity-100",
+                shouldShowHeaderShadow && "shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
+              )
             : "bg-background/80 backdrop-blur",
         )}
       >
