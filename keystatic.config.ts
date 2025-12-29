@@ -65,6 +65,19 @@ const localizedText = (label: string, options: LocalizedFieldOptions = {}) =>
     { label }
   );
 
+const localizedUrl = (label: string) =>
+  fields.object(
+    Object.fromEntries(
+      locales.map((locale) => [
+        locale,
+        fields.text({
+          label: `${label} (${locale.toUpperCase()})`,
+        }),
+      ])
+    ),
+    { label }
+  );
+
 const localizedSlug = (label: string, options: LocalizedFieldOptions = {}) =>
   fields.object(
     Object.fromEntries(
@@ -435,6 +448,62 @@ export default config({
             description: localizedText('Партнёры — описание', { multiline: true }),
           },
           { label: 'Партнёры — вводный блок' }
+        ),
+      },
+    }),
+    productsHub: singleton({
+      label: 'Страница «Продукция» — группы и карточки',
+      path: 'content/products-hub/',
+      format: { data: 'json' },
+      schema: {
+        groups: fields.array(
+          fields.object(
+            {
+              id: fields.text({ label: 'ID группы (латиница без пробелов)', validation: { isRequired: true } }),
+              title: localizedText('Заголовок группы', { isRequired: true }),
+              description: localizedText('Описание группы', { multiline: true }),
+              icon: fields.select({
+                label: 'Иконка',
+                options: [
+                  { label: 'Колба', value: 'beaker' },
+                  { label: 'Валик', value: 'roller' },
+                  { label: 'Искры', value: 'sparkles' },
+                  { label: 'Ключ', value: 'wrench' },
+                  { label: 'Звезда', value: 'star' },
+                ],
+                defaultValue: 'sparkles',
+              }),
+              order: fields.integer({ label: 'Порядок группы', defaultValue: 0 }),
+              cards: fields.array(
+                fields.object(
+                  {
+                    title: localizedText('Заголовок карточки', { isRequired: true }),
+                    description: localizedText('Описание карточки', { multiline: true }),
+                    href: localizedUrl('Ссылка (href)'),
+                    image: fields.object(
+                      {
+                        src: imageField('Изображение'),
+                        alt: localizedText('Alt изображения'),
+                      },
+                      { label: 'Изображение' }
+                    ),
+                    order: fields.integer({ label: 'Порядок карточки', defaultValue: 0 }),
+                  },
+                  { label: 'Карточка' }
+                ),
+                {
+                  label: 'Карточки',
+                  itemLabel: ({ fields }) =>
+                    fields.title.value?.ru || fields.title.value?.en || 'Карточка',
+                }
+              ),
+            },
+            { label: 'Группа карточек' }
+          ),
+          {
+            label: 'Группы',
+            itemLabel: ({ fields }) => fields.title.value?.ru || fields.id.value || 'Группа',
+          }
         ),
       },
     }),
@@ -901,7 +970,7 @@ export default config({
         'catalogAuxiliaries',
         'catalog',
       ],
-      'Контент': ['home', 'pages', 'posts', 'documents'],
+      'Контент': ['home', 'productsHub', 'pages', 'posts', 'documents'],
       'Настройки': [
         'site',
         'navigation',
