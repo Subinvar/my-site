@@ -6,6 +6,7 @@ import { focusRingBase } from "@/lib/focus-ring";
 import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
+import { pillBase } from "./ui-classes";
 
 export type SiteFooterProps = {
   locale: Locale;
@@ -61,28 +62,16 @@ export function SiteFooter({
       : locale === "ru"
         ? `© ${currentYear} Интема Групп. Все права защищены.`
         : `© ${currentYear} Intema Group. All rights reserved.`;
-  const baseLinkClassName = cn(
-    "relative inline-flex items-center no-underline",
-    // та же геометрия, что и в nav-underline
-    "after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:rounded-full",
-    "after:h-[var(--nav-underline-h,1px)]",
-    // underline = currentColor, но по умолчанию скрыт
-    "after:bg-current after:opacity-0 after:origin-left after:scale-x-0",
-    // анимация
-    "after:transition-[transform,opacity] after:duration-200 after:ease-out",
-    // hover/focus → показываем деликатно (тот же токен, что ты уже завёл)
-    "hover:after:opacity-[var(--nav-underline-hover-opacity,0.5)] hover:after:scale-x-100",
-    "focus-visible:after:opacity-[var(--nav-underline-hover-opacity,0.5)] focus-visible:after:scale-x-100",
-    "active:opacity-90",
-    // твой стандартный focus-ring
-    focusRingBase,
-  );
-
   const menuLinkBaseClassName = cn(
     "group inline-flex h-10 items-center gap-1 whitespace-nowrap no-underline",
     "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
     "active:opacity-90",
     focusRingBase,
+  );
+
+  const contactLinkClassName = cn(
+    pillBase,
+    "w-auto text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
   );
 
   return (
@@ -151,13 +140,13 @@ export function SiteFooter({
           {/* Row 2: contacts + copyright */}
           <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <div className="flex flex-wrap items-center gap-2">
                 {telegramHref ? (
                   <a
                     href={telegramHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(baseLinkClassName, "hover:text-foreground")}
+                    className={contactLinkClassName}
                   >
                     {telegramLabel}
                   </a>
@@ -166,7 +155,7 @@ export function SiteFooter({
                 {contacts.phone ? (
                   <a
                     href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
+                    className={cn(contactLinkClassName, "lg:hidden")}
                   >
                     {contacts.phone}
                   </a>
@@ -175,7 +164,7 @@ export function SiteFooter({
                 {contacts.email ? (
                   <a
                     href={`mailto:${contacts.email}`}
-                    className={cn(baseLinkClassName, "hover:text-foreground", "lg:hidden")}
+                    className={cn(contactLinkClassName, "lg:hidden")}
                   >
                     {contacts.email}
                   </a>

@@ -391,7 +391,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
-        <section className="rounded-3xl border border-[var(--header-border)] bg-muted/20 p-5 sm:p-6">
+        <section className="p-5 sm:p-6">
           <header className="space-y-2">
             <h2 className="mt-0 text-lg font-semibold sm:text-xl">{whyTitle}</h2>
             <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
@@ -491,7 +491,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
                         : cn(
                             'border border-[var(--header-border)] text-[var(--muted-foreground)]',
                             'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
-                            'hover:bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,var(--background))] hover:text-foreground',
+                            'hover:text-foreground',
                           ),
                       focusRingBase,
                     )}
