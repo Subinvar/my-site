@@ -714,7 +714,18 @@ export function SiteShell({
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     const prevOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyPosition = document.body.style.position;
+    const prevBodyWidth = document.body.style.width;
+    const prevBodyTop = document.body.style.top;
+
+    const scrollY = window.scrollY;
+
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollY}px`;
 
     const focusFirst = () => {
       const container = menuPanelRef.current;
@@ -771,6 +782,14 @@ export function SiteShell({
 
     return () => {
       document.body.style.overflow = prevOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.position = prevBodyPosition;
+      document.body.style.width = prevBodyWidth;
+      document.body.style.top = prevBodyTop;
+
+      if (scrollY) {
+        window.scrollTo({ top: scrollY });
+      }
       document.removeEventListener("keydown", onKeyDown);
       window.cancelAnimationFrame(raf);
 

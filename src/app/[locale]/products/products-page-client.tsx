@@ -481,17 +481,17 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
                     }}
                     className={cn(
                       'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-medium',
-                      'transition-colors duration-150 ease-out',
+                      'bg-background/80 transition-colors duration-150 ease-out',
                       isActive
                         ? cn(
                             'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
-                            'bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)]',
+                            'bg-[color:color-mix(in_srgb,var(--color-brand-600)_18%,var(--background))]',
                             'text-foreground',
                           )
                         : cn(
-                            'border border-[var(--header-border)] bg-transparent text-[var(--muted-foreground)]',
+                            'border border-[var(--header-border)] text-[var(--muted-foreground)]',
                             'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
-                            'hover:bg-muted/40 hover:text-foreground',
+                            'hover:bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,var(--background))] hover:text-foreground',
                           ),
                       focusRingBase,
                     )}
@@ -503,7 +503,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
                         'ml-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
                         isActive
                           ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
-                          : 'border-[var(--header-border)] bg-muted/60 text-[var(--muted-foreground)]',
+                          : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
                       )}
                       aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
                     >
