@@ -39,7 +39,9 @@ type ProductsPageClientProps = {
 type InsightTile = {
   id: string;
   icon: ReactElement;
-  title: string;  details: string[];
+  title: string;
+  lead: string;
+  details: string[];
 };
 
 const ICONS: Record<string, ReactElement> = {
@@ -126,11 +128,12 @@ function ProductsSection({
     >
       <header className="mb-5 space-y-2">
         <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
-{hasDescription ? (
-  <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-    {description}
-  </p>
-) : null}</header>
+        {hasDescription ? (
+          <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            {description}
+          </p>
+        ) : null}
+      </header>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
@@ -147,7 +150,8 @@ function InsightTilesCarousel({
   isRu,
   onOpen,
 }: {
-  title: string;  tiles: InsightTile[];
+  title: string;
+  tiles: InsightTile[];
   isRu: boolean;
   onOpen: (id: string) => void;
 }) {
@@ -327,25 +331,7 @@ function InsightTilesCarousel({
           ))}
         </div>
 
-        {/* Градиентные подсказки по краям (как у Apple): показываются только когда есть куда скроллить */}
-        <div
-          className={cn(
-            'pointer-events-none absolute inset-y-0 left-0 w-12',
-            'bg-gradient-to-r from-background via-background/80 to-transparent',
-            'transition-opacity duration-200 ease-out',
-            canScroll.left ? 'opacity-100' : 'opacity-0',
-          )}
-          aria-hidden
-        />
-        <div
-          className={cn(
-            'pointer-events-none absolute inset-y-0 right-0 w-12',
-            'bg-gradient-to-l from-background via-background/80 to-transparent',
-            'transition-opacity duration-200 ease-out',
-            canScroll.right ? 'opacity-100' : 'opacity-0',
-          )}
-          aria-hidden
-        />
+        
       </div>
     </div>
   );
@@ -607,7 +593,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     <>
       <div
         ref={pageRef}
-        className="space-y-12 lg:space-y-14 -mt-12 sm:-mt-16 lg:-mt-20"
+        className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}

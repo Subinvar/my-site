@@ -173,15 +173,11 @@ export default async function ProductsPage({ params }: PageProps) {
       currentYear={shell.currentYear}
     >
       <main className="page-shell">
-        <section className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-10 lg:py-12">
-          <header className="mb-6 space-y-4 lg:mb-8">
-            {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
-                но оставляем для семантики/доступности. */}
-            <h1 className="sr-only">{pageTitle}</h1>
-          </header>
+        {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
+            но оставляем для семантики/доступности. */}
+        <h1 className="sr-only">{pageTitle}</h1>
 
-          <ProductsPageClient locale={locale} groups={groups} />
-        </section>
+        <ProductsPageClient locale={locale} groups={groups} />
       </main>
     </SiteShellLayout>
   );
