@@ -84,14 +84,20 @@ export function SiteFooter({
       <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-[clamp(1.5rem,1.2rem+0.8vw,2rem)]">
         <div className="flex flex-col gap-4 text-[13px] leading-[1.35] text-muted-foreground sm:text-[14px]">
           {/* Row 1: secondary navigation + tagline */}
-          <div className="flex flex-col gap-3 sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-3 sm:justify-between">
+            {tagline?.trim() ? (
+              <p className="m-0 text-[15px] font-semibold leading-[1.35] text-foreground sm:text-[16px]">
+                {tagline}
+              </p>
+            ) : null}
+
             {footerLinks.length ? (
               <nav aria-label={navigationLabel}>
-                <div className="flex flex-col gap-2 sm:items-end">
+                <div className="flex flex-col gap-2">
                   {footerLinkRows.map((row, rowIndex) => (
                     <ul
                       key={rowIndex}
-                      className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 p-0 list-none justify-start sm:justify-end"
+                      className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 p-0 list-none justify-start"
                     >
                       {row.map((link) => {
                         const href = resolveHref(link.href);
@@ -134,11 +140,6 @@ export function SiteFooter({
               </nav>
             ) : null}
 
-            {tagline?.trim() ? (
-              <p className="m-0 text-[14px] font-medium leading-[1.35] text-foreground/90 sm:text-right sm:text-[15px]">
-                {tagline}
-              </p>
-            ) : null}
           </div>
 
           {/* Row 2: contacts + copyright */}
