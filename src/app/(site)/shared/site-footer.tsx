@@ -71,7 +71,7 @@ export function SiteFooter({
 
   const contactLinkClassName = cn(
     pillBase,
-    "w-auto text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+    "!w-auto justify-start text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
   );
 
   return (
