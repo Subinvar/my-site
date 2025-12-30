@@ -231,6 +231,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               inertProps={inertProps}
               prefersReducedMotion={prefersReducedMotion}
               durationMs={640}
+              primaryEnterFrom="top"
               panelBaseClassName="flex h-full w-full items-center gap-9"
               primary={
                 <>
@@ -276,6 +277,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
             inertProps={inertProps}
             prefersReducedMotion={prefersReducedMotion}
             durationMs={640}
+            primaryEnterFrom="top"
             panelBaseClassName="flex h-full w-full items-center justify-end"
             primary={
               <HeaderCta

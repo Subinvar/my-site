@@ -49,6 +49,17 @@ type HeaderWagonProps = {
   secondary: ReactNode;
 
   /**
+   * Направления въезда/уезда для каждой панели.
+   * По умолчанию:
+   *  - enter: снизу
+   *  - exit:  вверх
+   */
+  primaryEnterFrom?: "top" | "bottom";
+  primaryExitTo?: "top" | "bottom";
+  secondaryEnterFrom?: "top" | "bottom";
+  secondaryExitTo?: "top" | "bottom";
+
+  /**
    * SSR fallback (пока нет hasHydrated):
    * по умолчанию — как в исходной реализации:
    * - primary видима на lg+, скрыта на mobile
@@ -85,6 +96,10 @@ export const HeaderWagon = memo(function HeaderWagon({
   secondaryClassName,
   primary,
   secondary,
+  primaryEnterFrom = "bottom",
+  primaryExitTo = "top",
+  secondaryEnterFrom = "bottom",
+  secondaryExitTo = "top",
   ssrPrimaryClassName = DEFAULT_SSR_PRIMARY,
   ssrSecondaryClassName = DEFAULT_SSR_SECONDARY,
 }: HeaderWagonProps) {
@@ -141,12 +156,24 @@ export const HeaderWagon = memo(function HeaderWagon({
   );
 
   const visible = "opacity-100 translate-y-0";
-  // Храним неактивную панель снизу — так enter всегда едет вверх «в свой слот».
+  // Неактивную панель держим вне экрана (по умолчанию снизу).
   const hidden = "opacity-0 translate-y-full";
 
-  const panelStyle = {
-    "--wagon-ms": `${durationMs}ms`,
-  } as CSSProperties;
+  const toTranslate = (dir: "top" | "bottom") => (dir === "top" ? "-100%" : "100%");
+
+  const primaryVars =
+    {
+      "--wagon-ms": `${durationMs}ms`,
+      "--wagon-in-from": toTranslate(primaryEnterFrom),
+      "--wagon-out-to": toTranslate(primaryExitTo),
+    } as CSSProperties;
+
+  const secondaryVars =
+    {
+      "--wagon-ms": `${durationMs}ms`,
+      "--wagon-in-from": toTranslate(secondaryEnterFrom),
+      "--wagon-out-to": toTranslate(secondaryExitTo),
+    } as CSSProperties;
 
   const primaryState = (() => {
     if (!hasHydrated) return ssrPrimaryClassName;
@@ -194,7 +221,7 @@ export const HeaderWagon = memo(function HeaderWagon({
         aria-hidden={hasHydrated ? (activePanel === "primary" ? undefined : true) : undefined}
         {...inertProps(hasHydrated ? activePanel !== "primary" : false)}
         className={cn(base, primaryClassName, primaryState)}
-        style={panelStyle}
+        style={primaryVars}
       >
         {primary}
       </div>
@@ -203,7 +230,7 @@ export const HeaderWagon = memo(function HeaderWagon({
         aria-hidden={hasHydrated ? (activePanel === "secondary" ? undefined : true) : undefined}
         {...inertProps(hasHydrated ? activePanel !== "secondary" : false)}
         className={cn(base, secondaryClassName, secondaryState)}
-        style={panelStyle}
+        style={secondaryVars}
       >
         {secondary}
       </div>

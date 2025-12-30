@@ -257,51 +257,56 @@ function InsightTilesCarousel({
   return (
     <div className="mt-0">
       <header className="space-y-3">
-  <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
+        <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
 
-  <div className="flex items-center justify-end gap-2">
-    <button
-      type="button"
-      onClick={() => scrollByDir(-1)}
-      disabled={!canScroll.left}
-      aria-label={isRu ? 'Прокрутить карточки влево' : 'Scroll cards left'}
-      aria-controls="why-tiles-carousel"
-      className={cn(
-        'inline-flex h-10 w-10 items-center justify-center rounded-full',
-        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-        'hover:bg-background/90 hover:text-foreground',
-        'disabled:cursor-not-allowed disabled:opacity-40',
-        focusRingBase,
-      )}
-    >
-      <ChevronLeft className="h-5 w-5" aria-hidden />
-    </button>
+        {/* Стрелки оставляем и на мобильном: они живут строкой под заголовком */}
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => scrollByDir(-1)}
+            disabled={!canScroll.left}
+            aria-label={isRu ? 'Прокрутить карточки влево' : 'Scroll cards left'}
+            aria-controls="why-tiles-carousel"
+            className={cn(
+              'inline-flex h-10 w-10 items-center justify-center rounded-full',
+              'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+              'hover:bg-background/90 hover:text-foreground',
+              'disabled:cursor-not-allowed disabled:opacity-40',
+              focusRingBase,
+            )}
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden />
+          </button>
 
-    <button
-      type="button"
-      onClick={() => scrollByDir(1)}
-      disabled={!canScroll.right}
-      aria-label={isRu ? 'Прокрутить карточки вправо' : 'Scroll cards right'}
-      aria-controls="why-tiles-carousel"
-      className={cn(
-        'inline-flex h-10 w-10 items-center justify-center rounded-full',
-        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-        'hover:bg-background/90 hover:text-foreground',
-        'disabled:cursor-not-allowed disabled:opacity-40',
-        focusRingBase,
-      )}
-    >
-      <ChevronRight className="h-5 w-5" aria-hidden />
-    </button>
-  </div>
-</header>
+          <button
+            type="button"
+            onClick={() => scrollByDir(1)}
+            disabled={!canScroll.right}
+            aria-label={isRu ? 'Прокрутить карточки вправо' : 'Scroll cards right'}
+            aria-controls="why-tiles-carousel"
+            className={cn(
+              'inline-flex h-10 w-10 items-center justify-center rounded-full',
+              'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+              'hover:bg-background/90 hover:text-foreground',
+              'disabled:cursor-not-allowed disabled:opacity-40',
+              focusRingBase,
+            )}
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden />
+          </button>
+        </div>
+      </header>
 
       <div className="relative mt-5">
         <div
           ref={scrollerRef}
           id="why-tiles-carousel"
           className={cn(
-            'no-scrollbar flex gap-4 overflow-x-auto pb-3 pt-[6px] px-[6px] -mx-[6px]',
+            // Важно: НЕ уходим в отрицательные внешние отступы.
+            // На узких экранах (и при overflow-x: hidden на body) это даёт ощущение,
+            // что ряд "поджимает" справа и карточки смещаются влево.
+            // Вместо этого даём небольшой внутренний "safe-area" под hover-scale.
+            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-1 px-1',
             'snap-x snap-mandatory scroll-smooth',
             'touch-pan-x overscroll-x-contain',
           )}
@@ -309,13 +314,25 @@ function InsightTilesCarousel({
         >
           {tiles.map((tile) => (
             <div key={tile.id} data-carousel-item="1" className="w-[280px] sm:w-[320px] shrink-0 snap-start">
-              <AppleHoverLift>
+              {/*
+                Внутри горизонтального скролла трансформ (scale) часто делает текст "мыльным" на hover.
+                Поэтому используем режим surface: масштабируем только подложку (border/bg),
+                а контент остаётся без transform — текст остаётся чётким.
+              */}
+              <AppleHoverLift
+                mode="surface"
+                surfaceClassName={cn(
+                  'rounded-2xl border border-[var(--header-border)]',
+                  'bg-background/45 transition-colors duration-200 ease-out',
+                  'group-hover:bg-background/60',
+                )}
+              >
                 <button
                   type="button"
                   onClick={() => onOpen(tile.id)}
                   className={cn(
-                    'group w-full h-[168px] sm:h-[176px] rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left flex flex-col',
-                    'transition-colors duration-200 ease-out hover:bg-background/60',
+                    'w-full h-[168px] sm:h-[176px] rounded-2xl p-4 text-left flex flex-col',
+                    'bg-transparent',
                     focusRingBase,
                   )}
                 >
@@ -484,6 +501,8 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   const [renderedTile, setRenderedTile] = useState<InsightTile | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
+  const openRaf1Ref = useRef<number | null>(null);
+  const openRaf2Ref = useRef<number | null>(null);
 
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -491,7 +510,17 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   }, []);
 
   const closeTileModal = () => {
+    // Важно: сбрасываем openTileId СРАЗУ, чтобы можно было тут же открыть ту же плитку повторно.
+    // Саму модалку держим в DOM через renderedTile, чтобы анимация закрытия была плавной.
+    setOpenTileId(null);
+
+    if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
+    if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
+    openRaf1Ref.current = null;
+    openRaf2Ref.current = null;
+
     setIsModalVisible(false);
+
     if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
 
     const delay = prefersReducedMotion
@@ -499,27 +528,55 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       : Math.max(TILE_MODAL_MOTION.backdropOutMs, TILE_MODAL_MOTION.dialogOutMs) + 40;
 
     closeTimerRef.current = window.setTimeout(() => {
-      setOpenTileId(null);
       setRenderedTile(null);
     }, delay);
   };
 
   useEffect(() => {
     if (!activeTile) return;
+
+    // Если модалка была в процессе закрытия — отменяем размонтирование.
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
     setRenderedTile(activeTile);
 
-    // Стартуем с "невидимого" состояния и даём браузеру отрисовать layout,
-    // чтобы переходы (opacity/blur/scale) были заметны.
-    setIsModalVisible(prefersReducedMotion);
-    if (prefersReducedMotion) return;
+    // Для reduce-motion просто показываем сразу.
+    if (prefersReducedMotion) {
+      setIsModalVisible(true);
+      return;
+    }
 
-    const raf = window.requestAnimationFrame(() => setIsModalVisible(true));
-    return () => window.cancelAnimationFrame(raf);
+    // Критично: при открытии нельзя включать "visible" в том же кадре,
+    // иначе браузер увидит элемент уже в финальном состоянии и перехода не будет.
+    // Делаем double-rAF: 1-й кадр — монтируем в opacity:0 / blur:0,
+    // 2-й кадр — включаем видимость и запускаем transition.
+    setIsModalVisible(false);
+
+    if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
+    if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
+
+    openRaf1Ref.current = window.requestAnimationFrame(() => {
+      openRaf2Ref.current = window.requestAnimationFrame(() => {
+        setIsModalVisible(true);
+      });
+    });
+
+    return () => {
+      if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
+      if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
+      openRaf1Ref.current = null;
+      openRaf2Ref.current = null;
+    };
   }, [activeTile, prefersReducedMotion]);
 
   useEffect(() => {
     return () => {
       if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+      if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
+      if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
     };
   }, []);
 
@@ -592,14 +649,21 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     const slot = navSlotRef.current;
     if (!slot) return;
 
+    const headerEl = document.querySelector<HTMLElement>('[data-site-header]');
+
     let raf = 0;
 
     const update = () => {
       raf = 0;
 
       // --header-height живёт на SiteShell (не на :root), поэтому читаем переменную у элемента внутри дерева.
-      const headerHeightRaw = window.getComputedStyle(slot).getPropertyValue('--header-height');
-      const headerHeight = Number.parseFloat(headerHeightRaw) || 0;
+      const headerHeight = headerEl
+        ? Math.round(headerEl.getBoundingClientRect().height)
+        : (() => {
+          const headerHeightRaw = window.getComputedStyle(slot).getPropertyValue('--header-height');
+          const parsed = Number.parseFloat(headerHeightRaw);
+          return Number.isFinite(parsed) ? parsed : 0;
+        })();
 
       // Порог с небольшим запасом, чтобы не «дребезжало» на полпикселя.
       const pinned = slot.getBoundingClientRect().top <= headerHeight + 0.5;
@@ -653,7 +717,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     <>
       <div
         ref={pageRef}
-        className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
+        className="space-y-12 lg:space-y-14 mt-[calc(-1*clamp(0.5rem,2vw,2rem))]"
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
@@ -796,7 +860,14 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
 
       {/* Модалка для плиток */}
       {renderedTile ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6">
+        <div
+          className={cn(
+            'fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6',
+            // Пока модалка открывается/закрывается (isModalVisible=false),
+            // не блокируем клики по странице — это позволяет повторно открыть плитку сразу.
+            isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',
+          )}
+        >
           <button
             type="button"
             aria-label={isRu ? 'Закрыть' : 'Close'}
@@ -816,7 +887,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
                     WebkitBackdropFilter: isModalVisible
                       ? `blur(${TILE_MODAL_MOTION.backdropBlurPx}px)`
                       : 'blur(0px)',
-                    transitionProperty: 'opacity, backdrop-filter',
+                    transitionProperty: 'opacity, backdrop-filter, -webkit-backdrop-filter',
                     transitionDuration: `${isModalVisible ? TILE_MODAL_MOTION.backdropInMs : TILE_MODAL_MOTION.backdropOutMs}ms`,
                     transitionTimingFunction: TILE_MODAL_MOTION.easing,
                   }

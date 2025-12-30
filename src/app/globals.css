@@ -39,7 +39,7 @@
 @keyframes header-wagon-in {
   from {
     opacity: 0;
-    transform: translateY(100%);
+    transform: translateY(var(--wagon-in-from, 100%));
   }
 
   to {
@@ -60,7 +60,7 @@
 
   100% {
     opacity: 0;
-    transform: translateY(-100%);
+    transform: translateY(var(--wagon-out-to, -100%));
   }
 }
 
