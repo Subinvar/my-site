@@ -1,16 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { memo, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 
 import type { SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
@@ -29,8 +20,6 @@ type HeaderTopPillLinkProps = {
   href: string;
   label: string;
   pillBase: string;
-  target?: string;
-  rel?: string;
 };
 
 type HeaderCtaProps = {
@@ -43,11 +32,6 @@ type HeaderCtaProps = {
 
 type HeaderTopBarProps = {
   contacts: SiteContent["contacts"];
-  isBurgerMode: boolean;
-  isBurgerContactsNarrow: boolean;
-  telegramHref: string;
-  telegramLabel: string;
-  onBurgerContactsNarrowChange?: (next: boolean) => void;
   hasTopContacts: boolean;
   topContactsWidth: number;
   topWagonsCollapsed: boolean;
@@ -105,14 +89,12 @@ function HeaderTopSlot({
   );
 }
 
-function HeaderTopPillLink({ href, label, pillBase, target, rel }: HeaderTopPillLinkProps) {
+function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
   return (
     <a
       href={href}
       className={cn(pillBase)}
       title={label}
-      target={target}
-      rel={rel}
     >
       {label}
     </a>
@@ -133,7 +115,6 @@ export const HeaderCta = memo(function HeaderCta({
       className={cn(
         headerButtonBase,
         "group h-10 justify-center px-4",
-        "whitespace-nowrap",
         "text-muted-foreground hover:text-foreground",
         "no-underline hover:no-underline",
         "hover:bg-background/80",
@@ -194,11 +175,6 @@ export const HeaderCta = memo(function HeaderCta({
 
 export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
-  isBurgerMode,
-  isBurgerContactsNarrow,
-  telegramHref,
-  telegramLabel,
-  onBurgerContactsNarrowChange,
   hasTopContacts,
   topContactsWidth,
   topWagonsCollapsed,
@@ -222,145 +198,13 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
-  const topBarRef = useRef<HTMLDivElement | null>(null);
-
-  const hasPhone = Boolean(contacts.phone);
-  const hasTelegram = telegramHref.trim().length > 0;
-
-  // В бургер-режиме в первой строке должны появляться контакты слева от ThemeToggle:
-  //  - stage 1: телефон + Telegram
-  //  - stage 2 (если слишком узко): только телефон, Telegram уходит в бургер-меню
-  const telegramSlotWidth = HEADER_TOP_STABLE_SLOTS.email;
-  const burgerPairWidth = HEADER_TOP_STABLE_SLOTS.phone + telegramSlotWidth + 8; // gap-2
-
-  // Чтобы анимация "улёта" пары (телефон + Telegram) не обрезалась по ширине,
-  // ширину слота сужаем ПОСЛЕ завершения вертикального "вагончика".
-  const [isBurgerContactsWidthNarrow, setIsBurgerContactsWidthNarrow] = useState(false);
-
-  useEffect(() => {
-    if (!isBurgerMode || !hasPhone || !hasTelegram) {
-      setIsBurgerContactsWidthNarrow(false);
-      return;
-    }
-
-    if (!isBurgerContactsNarrow) {
-      setIsBurgerContactsWidthNarrow(false);
-      return;
-    }
-
-    const delayMs = wagonTransitionClass === "transition-none" ? 0 : 300;
-    const t = window.setTimeout(() => setIsBurgerContactsWidthNarrow(true), delayMs);
-    return () => window.clearTimeout(t);
-  }, [hasPhone, hasTelegram, isBurgerContactsNarrow, isBurgerMode, wagonTransitionClass]);
-
-  // Контактный блок в правой части должен занимать место только в бургер-режиме.
-  // При уходе обратно в десктоп — сначала "уезжает" вниз, и только затем схлопываем ширину.
-  const [areBurgerContactsCollapsed, setAreBurgerContactsCollapsed] = useState(true);
-
-  useEffect(() => {
-    if (!hasPhone) return;
-
-    let t: number | null = null;
-
-    if (topWagonIsBurger) {
-      setAreBurgerContactsCollapsed(false);
-      return;
-    }
-
-    const delayMs = wagonTransitionClass === "transition-none" ? 0 : 300;
-    t = window.setTimeout(() => setAreBurgerContactsCollapsed(true), delayMs);
-
-    return () => {
-      if (t) window.clearTimeout(t);
-    };
-  }, [hasPhone, topWagonIsBurger, wagonTransitionClass]);
-
-  const burgerContactsWidthPx = hasPhone
-    ? hasTelegram && !isBurgerContactsWidthNarrow
-      ? burgerPairWidth
-      : HEADER_TOP_STABLE_SLOTS.phone
-    : 0;
-
-  const burgerContactsSlotWidth =
-    topWagonIsBurger || !areBurgerContactsCollapsed ? burgerContactsWidthPx : 0;
-
-  const burgerContactsWidthTransitionClass =
-    wagonTransitionClass === "transition-none"
-      ? "transition-none"
-      : "transition-[width] duration-200 ease-out";
-
-  const contactsThemeGapClass = burgerContactsSlotWidth > 0 ? "gap-3" : "gap-0";
-
-
-  // Второй порог: если становится слишком узко для (телефон + Telegram) слева от ThemeToggle,
-  // то Telegram уезжает в бургер-меню, а сверху остаётся только телефон.
-  useLayoutEffect(() => {
-    if (!isBurgerMode) return;
-    if (!hasPhone) return;
-    if (!hasTelegram) {
-      onBurgerContactsNarrowChange?.(false);
-      return;
-    }
-    if (!onBurgerContactsNarrowChange) return;
-
-    const node = topBarRef.current;
-    if (!node) return;
-
-    const RIGHT_GAP_PX = 12; // gap-3 (между блоком контактов и кнопками theme/lang)
-    const pairRightControlsWidth =
-      burgerPairWidth +
-      HEADER_TOP_STABLE_SLOTS.theme +
-      HEADER_TOP_STABLE_SLOTS.lang +
-      RIGHT_GAP_PX * 2;
-
-    const HYSTERESIS_PX = 24;
-
-    const readGapPx = () => {
-      const styles = window.getComputedStyle(node);
-      const raw = styles.columnGap || styles.gap || "0";
-      const value = Number.parseFloat(raw);
-      return Number.isFinite(value) ? value : 0;
-    };
-
-    const recalc = () => {
-      const width = Math.round(node.getBoundingClientRect().width);
-      const rootGapPx = readGapPx();
-      const threshold = Math.round(rootGapPx + pairRightControlsWidth);
-      const nextIsNarrow = isBurgerContactsNarrow
-        ? width < threshold + HYSTERESIS_PX
-        : width < threshold;
-      onBurgerContactsNarrowChange(nextIsNarrow);
-    };
-
-    recalc();
-
-    const ro = new ResizeObserver(recalc);
-    ro.observe(node);
-    return () => ro.disconnect();
-  }, [
-    burgerPairWidth,
-    hasPhone,
-    hasTelegram,
-    isBurgerContactsNarrow,
-    isBurgerMode,
-    onBurgerContactsNarrowChange,
-  ]);
-
   return (
-    <div
-      ref={topBarRef}
-      className={cn(
-        "flex h-full w-full min-w-0 max-w-full items-center rounded-lg",
-        "gap-4 lg:gap-6",
-        !isBurgerMode && "pl-[var(--header-nav-inset-x)] pr-[var(--header-nav-inset-x-end)]",
-        "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-      )}
-    >
-      <div className={cn("flex min-w-0 flex-1 items-center justify-end", "gap-4 lg:gap-6")}>
+    <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-9">
       {hasTopContacts ? (
         <div
           className={cn(
-            "relative hidden h-10 flex-none overflow-hidden lg:block",
+            "relative hidden h-10 overflow-hidden lg:block",
             topWagonWidthTransitionClass,
             "motion-reduce:transition-none motion-reduce:duration-0",
           )}
@@ -424,7 +268,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 
       <div
         className={cn(
-          "relative hidden h-10 flex-none overflow-hidden lg:block",
+          "relative hidden h-10 overflow-hidden lg:block",
           topWagonWidthTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
         )}
@@ -472,114 +316,10 @@ export const HeaderTopBar = memo(function HeaderTopBar({
         </div>
       </div>
       </div>
-            <div className="flex flex-none items-center gap-3">
-        <div className={cn("flex items-center", contactsThemeGapClass)}>
-          {hasPhone ? (
-            <div
-              aria-hidden={hasHydrated ? areBurgerContactsCollapsed : undefined}
-              {...inertProps(hasHydrated ? areBurgerContactsCollapsed : false)}
-              className={cn(
-                "relative h-10 flex-none overflow-hidden",
-                burgerContactsWidthTransitionClass,
-                "motion-reduce:transition-none motion-reduce:duration-0",
-              )}
-              style={{ width: burgerContactsSlotWidth } as CSSProperties}
-            >
-              <div
-                className={cn(
-                  "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
-                  wagonTransitionClass,
-                  "motion-reduce:transition-none motion-reduce:duration-0",
-                  topWagonTransformClass,
-                )}
-              >
-                {/* menu half — пусто намеренно */}
-                <div
-                  aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
-                  {...inertProps(hasHydrated ? topWagonIsBurger : false)}
-                  className={cn(
-                    "flex h-1/2 w-full items-center",
-                    slideTransitionClass,
-                    "motion-reduce:transition-none motion-reduce:duration-0",
-                    menuSlideClass,
-                  )}
-                >
-                  {/* пусто намеренно */}
-                </div>
-
-                {/* burger half — телефон / Telegram */}
-                <div
-                  aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
-                  {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
-                  className={cn(
-                    "flex h-1/2 w-full items-center",
-                    slideTransitionClass,
-                    "motion-reduce:transition-none motion-reduce:duration-0",
-                    burgerSlideClass,
-                  )}
-                >
-                  <div className="relative h-full w-full overflow-hidden">
-                    <div
-                      className={cn(
-                        "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
-                        wagonTransitionClass,
-                        "motion-reduce:transition-none motion-reduce:duration-0",
-                        hasTelegram && isBurgerContactsNarrow ? "-translate-y-1/2" : "translate-y-0",
-                      )}
-                    >
-                      {/* Stage 1: телефон + Telegram */}
-                      <div className="flex h-1/2 w-full items-center gap-2">
-                        <div
-                          className="flex flex-none"
-                          style={{ width: `${HEADER_TOP_STABLE_SLOTS.phone}px` }}
-                        >
-                          <HeaderTopPillLink
-                            href={`tel:${contacts.phone!.replace(/[^+\d]/g, "")}`}
-                            label={contacts.phone!}
-                            pillBase={pillBase}
-                          />
-                        </div>
-
-                        {hasTelegram ? (
-                          <div
-                            className="flex flex-none"
-                            style={{ width: `${telegramSlotWidth}px` }}
-                          >
-                            <HeaderTopPillLink
-                              href={telegramHref}
-                              label={telegramLabel}
-                              pillBase={pillBase}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          </div>
-                        ) : null}
-                      </div>
-
-                      {/* Stage 2: только телефон */}
-                      <div className="flex h-1/2 w-full items-center">
-                        <div
-                          className="flex flex-none"
-                          style={{ width: `${HEADER_TOP_STABLE_SLOTS.phone}px` }}
-                        >
-                          <HeaderTopPillLink
-                            href={`tel:${contacts.phone!.replace(/[^+\d]/g, "")}`}
-                            label={contacts.phone!}
-                            pillBase={pillBase}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          <HeaderTopSlot id="theme">
-            <ThemeToggle locale={locale} />
-          </HeaderTopSlot>
-        </div>
+      <div className="flex flex-none items-center gap-9">
+        <HeaderTopSlot id="theme">
+          <ThemeToggle locale={locale} />
+        </HeaderTopSlot>
 
         <HeaderTopSlot id="lang">
           <LanguageSwitcher

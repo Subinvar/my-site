@@ -36,12 +36,10 @@ import { useHeaderHeight } from "./hooks/use-header-height";
 import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
-import { HeaderContactLayoutProvider } from "./header-contact-layout-context";
 import { HeaderBrand } from "./header-brand";
 import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
-import { headerButtonBase, pillBase } from "./ui-classes";
 
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
@@ -77,10 +75,25 @@ type SiteShellProps = {
   footer?: ReactNode;
 };
 
+const headerButtonBase = cn(
+  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out",
+  "focus-visible:border-[var(--header-border)]",
+  focusRingBase,
+  "motion-reduce:transition-none motion-reduce:duration-0",
+);
+
+const pillBase = cn(
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "text-muted-foreground no-underline transition-colors duration-200 ease-out",
+  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
+  "focus-visible:border-[var(--header-border)]",
+  focusRingBase,
+  "truncate motion-reduce:transition-none motion-reduce:duration-0",
+);
+
 const CONTACT_SLOT_WIDTHS = {
   phone: HEADER_TOP_STABLE_SLOTS.phone,
   email: HEADER_TOP_STABLE_SLOTS.email,
-  telegram: HEADER_TOP_STABLE_SLOTS.email,
 };
 
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
@@ -423,29 +436,6 @@ export function SiteShell({
   }, [locale, site.contacts.email, site.contacts.phone]);
 
   const hasTopContacts = topContactsIds.length > 0;
-
-  const telegramHref = useMemo(
-    () => site.contacts.telegramUrl?.trim() ?? "",
-    [site.contacts.telegramUrl],
-  );
-  const telegramLabel = "@IntemaGroup";
-  const hasTelegram = Boolean(telegramHref);
-
-  // Второй порог: если становится слишком узко для верхней пары (телефон + Telegram)
-  // слева от ThemeToggle — Telegram уходит в бургер-меню, а сверху остаётся только телефон.
-  const [isBurgerContactsNarrow, setIsBurgerContactsNarrow] = useState(false);
-
-  useEffect(() => {
-    if (!isBurgerMode) {
-      setIsBurgerContactsNarrow(false);
-    }
-  }, [isBurgerMode]);
-
-  const handleBurgerContactsNarrowChange = useCallback((next: boolean) => {
-    setIsBurgerContactsNarrow((prev) => (prev === next ? prev : next));
-  }, []);
-
-  const showTelegramInBurgerMenu = isBurgerMode && isBurgerContactsNarrow;
   const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
   const { shellRef, headerRef } = useHeaderHeight();
   const handleCloseMenu = useCallback(() => {
@@ -716,46 +706,6 @@ export function SiteShell({
     return Boolean(activeAboutSubId) || isActiveHref(aboutHrefRoot);
   }, [aboutHrefRoot, aboutLink, activeAboutSubId, isActiveHref]);
 
-  // Детерминированная индексация анимаций пунктов бургер-меню (без сайд-эффектов в render).
-  const burgerMotionPlan = useMemo(() => {
-    let idx = 0;
-
-    const productsRootIndex = idx++;
-    const productsSubIndices = productsSubLinks.map(() => idx++);
-
-    const rootIndexById: Record<string, number> = {};
-    const aboutSubIndices: number[] = [];
-
-    const otherLinks = navigation.header.filter((l) => l.id !== "products");
-    for (const link of otherLinks) {
-      rootIndexById[link.id] = idx++;
-      if (link.id === "about" && aboutSubLinks.length > 0) {
-        for (let i = 0; i < aboutSubLinks.length; i += 1) {
-          aboutSubIndices.push(idx++);
-        }
-      }
-    }
-
-    const emailIndex = site.contacts.email ? idx++ : null;
-    const telegramIndex = showTelegramInBurgerMenu && telegramHref ? idx++ : null;
-
-    return {
-      productsRootIndex,
-      productsSubIndices,
-      rootIndexById,
-      aboutSubIndices,
-      emailIndex,
-      telegramIndex,
-    };
-  }, [
-    aboutSubLinks,
-    navigation.header,
-    productsSubLinks,
-    showTelegramInBurgerMenu,
-    site.contacts.email,
-    telegramHref,
-  ]);
-
   // Модальное меню: блокируем скролл фона, закрываем по Esc и удерживаем фокус внутри панели
   useEffect(() => {
     if (!isMenuModal) return;
@@ -896,10 +846,11 @@ export function SiteShell({
       } as const;
     }, [hasHydrated, isBurgerMode, topWagonIsBurger, transitionsOn],
   );
+
+  let burgerMotionIndex = 0;
+  const nextBurgerMotionIndex = () => burgerMotionIndex++;
+
   return (
-    <HeaderContactLayoutProvider
-      value={{ isBurgerMode, isBurgerContactsNarrow }}
-    >
     <div
       ref={shellRef}
       className={cn(
@@ -963,11 +914,6 @@ export function SiteShell({
               >
                 <HeaderTopBar
                   contacts={site.contacts}
-                  isBurgerMode={isBurgerMode}
-                  isBurgerContactsNarrow={isBurgerContactsNarrow}
-                  telegramHref={telegramHref}
-                  telegramLabel={telegramLabel}
-                  onBurgerContactsNarrowChange={hasTelegram ? handleBurgerContactsNarrowChange : undefined}
                   hasTopContacts={hasTopContacts}
                   topContactsWidth={topContactsWidth}
                   topWagonsCollapsed={topWagonsCollapsed}
@@ -1070,9 +1016,7 @@ export function SiteShell({
                   <ul className="m-0 list-none space-y-4 p-0">
                     <li>
                       {(() => {
-                        const { className, style } = getBurgerItemMotion(
-                          burgerMotionPlan.productsRootIndex,
-                        );
+                        const { className, style } = getBurgerItemMotion(nextBurgerMotionIndex());
                         return (
                           <div className={className} style={style}>
                             <Link
@@ -1080,9 +1024,9 @@ export function SiteShell({
                               onClick={handleCloseMenu}
                               aria-current={isProductsRootActive ? "page" : undefined}
                               className={cn(
-                                "group flex h-10 w-full items-center",
+                                "group block w-full py-2",
                                 "no-underline",
-                                "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
+                                "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                 isProductsRootActive
                                   ? "text-foreground"
                                   : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1098,13 +1042,13 @@ export function SiteShell({
                       })()}
 
                       <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
-                        {productsSubLinks.map((item, itemIndex) => {
+                        {productsSubLinks.map((item) => {
                           const isActive = activeProductsSubId === item.id;
                           const itemHref = (item.href ?? "/").trim() || "/";
                           const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
 
                           const itemClassName = cn(
-                            "group flex h-10 w-full items-center",
+                            "group block w-full py-1.5",
                             "no-underline",
                             "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
                             isActive
@@ -1113,9 +1057,7 @@ export function SiteShell({
                             focusRingBase,
                           );
 
-                          const motion = getBurgerItemMotion(
-                            burgerMotionPlan.productsSubIndices[itemIndex] ?? 0,
-                          );
+                          const motion = getBurgerItemMotion(nextBurgerMotionIndex());
 
                           return (
                             <li key={item.id} className={motion.className} style={motion.style}>
@@ -1155,22 +1097,20 @@ export function SiteShell({
                         if (link.id === "about" && aboutSubLinks.length > 0) {
                           const rootActive = isAboutMenuActive;
 
-                          const rootClassName = cn(
-                            "group flex h-10 w-full items-center",
-                            "no-underline",
-                            "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
-                            rootActive
-                              ? "text-foreground"
-                              : "text-muted-foreground transition-colors hover:text-foreground",
+                            const rootClassName = cn(
+                              "group block w-full py-2",
+                              "no-underline",
+                              "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                              rootActive
+                                ? "text-foreground"
+                                : "text-muted-foreground transition-colors hover:text-foreground",
                             focusRingBase,
-                          );
+                            );
 
                           return (
                             <li key={link.id}>
                               {(() => {
-                                const { className, style } = getBurgerItemMotion(
-                                  burgerMotionPlan.rootIndexById[link.id] ?? 0,
-                                );
+                                const { className, style } = getBurgerItemMotion(nextBurgerMotionIndex());
                                 return (
                                   <div className={className} style={style}>
                                     {isExternal ? (
@@ -1198,13 +1138,13 @@ export function SiteShell({
                               })()}
 
                               <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
-                                {aboutSubLinks.map((item, itemIndex) => {
+                                {aboutSubLinks.map((item) => {
                                   const isSubActive = activeAboutSubId === item.id;
                                   const itemHref = (item.href ?? "/").trim() || "/";
                                   const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
 
                                   const itemClassName = cn(
-                                    "group flex h-10 w-full items-center",
+                                    "group block w-full py-1.5",
                                     "no-underline",
                                     "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
                                     isSubActive
@@ -1213,9 +1153,7 @@ export function SiteShell({
                                     focusRingBase,
                                   );
 
-                                  const motion = getBurgerItemMotion(
-                                    burgerMotionPlan.aboutSubIndices[itemIndex] ?? 0,
-                                  );
+                                  const motion = getBurgerItemMotion(nextBurgerMotionIndex());
 
                                   return (
                                     <li key={item.id} className={motion.className} style={motion.style}>
@@ -1247,9 +1185,7 @@ export function SiteShell({
                           );
                         }
 
-                        const rootMotion = getBurgerItemMotion(
-                          burgerMotionPlan.rootIndexById[link.id] ?? 0,
-                        );
+                        const rootMotion = getBurgerItemMotion(nextBurgerMotionIndex());
 
                         return (
                           <li key={link.id} className={rootMotion.className} style={rootMotion.style}>
@@ -1260,9 +1196,9 @@ export function SiteShell({
                                 rel={link.newTab ? "noopener noreferrer" : undefined}
                                 aria-current={isActive ? "page" : undefined}
                                 className={cn(
-                                  "group flex h-10 w-full items-center",
+                                  "group block w-full py-2",
                                   "no-underline",
-                                  "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
+                                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1277,9 +1213,9 @@ export function SiteShell({
                                 onClick={handleCloseMenu}
                                 aria-current={isActive ? "page" : undefined}
                                 className={cn(
-                                  "group flex h-10 w-full items-center",
+                                  "group block w-full py-2",
                                   "no-underline",
-                                  "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
+                                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1293,12 +1229,30 @@ export function SiteShell({
                         );
                       })}
                   </ul>
-                  {site.contacts.email || (showTelegramInBurgerMenu && telegramHref) ? (
+                  {site.contacts.phone || site.contacts.email ? (
                     <div className="mt-6">
                       <div className="flex flex-row flex-wrap items-center gap-2">
-                        {site.contacts.email && burgerMotionPlan.emailIndex != null
+                        {site.contacts.phone
                           ? (() => {
-                              const motion = getBurgerItemMotion(burgerMotionPlan.emailIndex);
+                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                              return (
+                                <div className={motion.className} style={motion.style}>
+                                  <a
+                                    href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
+                                    className={cn(pillBase, "justify-start")}
+                                    onClick={handleCloseMenu}
+                                    style={{ width: `${CONTACT_SLOT_WIDTHS.phone}px` }}
+                                  >
+                                    {site.contacts.phone}
+                                  </a>
+                                </div>
+                              );
+                            })()
+                          : null}
+
+                        {site.contacts.email
+                          ? (() => {
+                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
                               return (
                                 <div className={motion.className} style={motion.style}>
                                   <a
@@ -1308,26 +1262,6 @@ export function SiteShell({
                                     style={{ width: `${CONTACT_SLOT_WIDTHS.email}px` }}
                                   >
                                     {site.contacts.email}
-                                  </a>
-                                </div>
-                              );
-                            })()
-                          : null}
-
-                        {showTelegramInBurgerMenu && telegramHref && burgerMotionPlan.telegramIndex != null
-                          ? (() => {
-                              const motion = getBurgerItemMotion(burgerMotionPlan.telegramIndex);
-                              return (
-                                <div className={motion.className} style={motion.style}>
-                                  <a
-                                    href={telegramHref}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={cn(pillBase, "justify-start")}
-                                    onClick={handleCloseMenu}
-                                    style={{ width: `${CONTACT_SLOT_WIDTHS.telegram}px` }}
-                                  >
-                                    {telegramLabel}
                                   </a>
                                 </div>
                               );
@@ -1360,6 +1294,5 @@ export function SiteShell({
         {footer}
       </div>
     </div>
-    </HeaderContactLayoutProvider>
   );
 }

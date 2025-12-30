@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  memo,
-  type HTMLAttributes,
-  type RefObject,
-} from "react";
+import { memo, type HTMLAttributes, type RefObject } from "react";
 
 import { NavigationList } from "@/app/[locale]/navigation-list";
 import type { Locale } from "@/lib/i18n";
@@ -124,53 +120,48 @@ export const HeaderNav = memo(function HeaderNav({
           aria-hidden={hasHydrated ? !isBurgerMode : undefined}
           {...inertProps(hasHydrated ? !isBurgerMode : false)}
           className={cn(
-            "flex h-1/2 w-full items-center gap-3",
+            "flex h-1/2 w-full items-center justify-end gap-3",
             slideTransitionClass,
             burgerDelayClass,
             "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
             burgerSlideClass,
           )}
         >
-          <div className="flex h-full flex-1 items-center justify-end">
-            <div data-header-nav-buttons className="flex items-center gap-3">
-              <HeaderCta
-                headerButtonBase={headerButtonBase}
-                href={contactsHref}
-                label={ctaLabel}
-                className={cn(
-                  "h-10 min-w-[180px] max-w-[260px] justify-center",
-                  "whitespace-nowrap",
-                )}
-              />
+          <div className="flex h-full flex-1 items-center justify-end gap-3 ">
+            <HeaderCta
+              headerButtonBase={headerButtonBase}
+              href={contactsHref}
+              label={ctaLabel}
+              className="hidden h-10 min-w-[180px] max-w-[260px] justify-center lg:inline-flex"
+            />
 
-              <button
-                type="button"
-                aria-expanded={isMenuOpen}
-                aria-controls="site-menu"
-                aria-label={burgerAriaLabel}
-                onClick={onBurgerClick}
-                className={cn(
-                  "inline-flex h-10 w-10 items-center justify-center rounded-xl border",
-                  "transition-colors duration-150",
-                  isMenuOpen
-                    ? "border-[color:var(--header-border)] bg-background/70 text-foreground"
-                    : "border-transparent bg-transparent text-muted-foreground",
-                  "hover:border-[color:var(--header-border)] hover:text-foreground",
-                  focusRingBase,
-                )}
-              >
-                <span className="relative block h-4 w-5">
-                  <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                    style={{ transform: topLineTransform }}
-                  />
-                  <span
-                    className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
-                    style={{ transform: bottomLineTransform }}
-                  />
-                </span>
-              </button>
-            </div>
+            <button
+              type="button"
+              aria-expanded={isMenuOpen}
+              aria-controls="site-menu"
+              aria-label={burgerAriaLabel}
+              onClick={onBurgerClick}
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl border",
+                "transition-colors duration-150",
+                isMenuOpen
+                  ? "border-[color:var(--header-border)] bg-background/70 text-foreground"
+                  : "border-transparent bg-transparent text-muted-foreground",
+                "hover:border-[color:var(--header-border)] hover:text-foreground",
+                focusRingBase,
+              )}
+            >
+              <span className="relative block h-4 w-5">
+                <span
+                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                  style={{ transform: topLineTransform }}
+                />
+                <span
+                  className="absolute left-1/2 top-1/2 h-[2px] w-full rounded-full bg-current transition-transform duration-200 motion-reduce:transition-none motion-reduce:duration-0"
+                  style={{ transform: bottomLineTransform }}
+                />
+              </span>
+            </button>
           </div>
         </div>
       </div>
