@@ -1,11 +1,15 @@
 import { cn } from "@/lib/cn";
 
-type NavUnderlineVariant = "header" | "menu";
+type NavUnderlineVariant = "header" | "menu" | "footer";
 
 const VARIANT: Record<NavUnderlineVariant, { wrapper: string; offset: string }> = {
   header: {
     wrapper: "relative inline-flex h-full items-center",
     offset: "after:bottom-0",
+  },
+  footer: {
+    wrapper: "relative inline-flex items-center",
+    offset: "after:-bottom-0.5",
   },
   menu: {
     wrapper: "relative inline-block",

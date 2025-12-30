@@ -474,6 +474,10 @@ export default config({
                 defaultValue: 'sparkles',
               }),
               order: fields.integer({ label: 'Порядок группы', defaultValue: 0 }),
+              hidden: fields.checkbox({
+                label: 'Скрыть группу (не показывать на сайте)',
+                defaultValue: false,
+              }),
               cards: fields.array(
                 fields.object(
                   {
@@ -488,6 +492,10 @@ export default config({
                       { label: 'Изображение' }
                     ),
                     order: fields.integer({ label: 'Порядок карточки', defaultValue: 0 }),
+                    hidden: fields.checkbox({
+                      label: 'Скрыть карточку (не показывать на сайте)',
+                      defaultValue: false,
+                    }),
                   },
                   { label: 'Карточка' }
                 ),

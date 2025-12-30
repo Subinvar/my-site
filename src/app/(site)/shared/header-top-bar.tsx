@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { memo, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+import {
+  memo,
+  useLayoutEffect,
+  useRef,
+  type CSSProperties,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 
 import type { SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
@@ -20,6 +27,8 @@ type HeaderTopPillLinkProps = {
   href: string;
   label: string;
   pillBase: string;
+  target?: string;
+  rel?: string;
 };
 
 type HeaderCtaProps = {
@@ -32,7 +41,11 @@ type HeaderCtaProps = {
 
 type HeaderTopBarProps = {
   contacts: SiteContent["contacts"];
-  showBurgerPhone: boolean;
+  isBurgerMode: boolean;
+  isBurgerContactsNarrow: boolean;
+  telegramHref: string;
+  telegramLabel: string;
+  onBurgerContactsNarrowChange?: (next: boolean) => void;
   hasTopContacts: boolean;
   topContactsWidth: number;
   topWagonsCollapsed: boolean;
@@ -90,12 +103,14 @@ function HeaderTopSlot({
   );
 }
 
-function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
+function HeaderTopPillLink({ href, label, pillBase, target, rel }: HeaderTopPillLinkProps) {
   return (
     <a
       href={href}
       className={cn(pillBase)}
       title={label}
+      target={target}
+      rel={rel}
     >
       {label}
     </a>
@@ -116,6 +131,7 @@ export const HeaderCta = memo(function HeaderCta({
       className={cn(
         headerButtonBase,
         "group h-10 justify-center px-4",
+        "whitespace-nowrap",
         "text-muted-foreground hover:text-foreground",
         "no-underline hover:no-underline",
         "hover:bg-background/80",
@@ -176,7 +192,11 @@ export const HeaderCta = memo(function HeaderCta({
 
 export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
-  showBurgerPhone,
+  isBurgerMode,
+  isBurgerContactsNarrow,
+  telegramHref,
+  telegramLabel,
+  onBurgerContactsNarrowChange,
   hasTopContacts,
   topContactsWidth,
   topWagonsCollapsed,
@@ -200,16 +220,91 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
-  const showBurgerPhonePill = showBurgerPhone && Boolean(contacts.phone);
-  const rightControlsGapClass = showBurgerPhonePill ? "gap-3" : "gap-9";
+  const topBarRef = useRef<HTMLDivElement | null>(null);
+
+  const hasPhone = Boolean(contacts.phone);
+  const hasTelegram = telegramHref.trim().length > 0;
+
+  const burgerContactsVisible = isBurgerMode && hasPhone;
+
+  const telegramSlotWidth = HEADER_TOP_STABLE_SLOTS.email;
+  const burgerPairWidth = HEADER_TOP_STABLE_SLOTS.phone + telegramSlotWidth + 8; // gap-2
+  const burgerContactsSlotWidth = burgerContactsVisible
+    ? hasTelegram && !isBurgerContactsNarrow
+      ? burgerPairWidth
+      : HEADER_TOP_STABLE_SLOTS.phone
+    : 0;
+
+  const rightControlsGapClass = burgerContactsVisible ? "gap-3" : "gap-9";
+
+  // Второй порог: если становится слишком узко для (телефон + Telegram) слева от ThemeToggle,
+  // то Telegram уезжает в бургер-меню, а сверху остаётся только телефон.
+  useLayoutEffect(() => {
+    if (!isBurgerMode) return;
+    if (!hasPhone) return;
+    if (!hasTelegram) {
+      onBurgerContactsNarrowChange?.(false);
+      return;
+    }
+    if (!onBurgerContactsNarrowChange) return;
+
+    const node = topBarRef.current;
+    if (!node) return;
+
+    const RIGHT_GAP_PX = 12; // gap-3 (между блоком контактов и кнопками theme/lang)
+    const pairRightControlsWidth =
+      burgerPairWidth +
+      HEADER_TOP_STABLE_SLOTS.theme +
+      HEADER_TOP_STABLE_SLOTS.lang +
+      RIGHT_GAP_PX * 2;
+
+    const HYSTERESIS_PX = 24;
+
+    const readGapPx = () => {
+      const styles = window.getComputedStyle(node);
+      const raw = styles.columnGap || styles.gap || "0";
+      const value = Number.parseFloat(raw);
+      return Number.isFinite(value) ? value : 0;
+    };
+
+    const recalc = () => {
+      const width = Math.round(node.getBoundingClientRect().width);
+      const rootGapPx = readGapPx();
+      const threshold = Math.round(rootGapPx + pairRightControlsWidth);
+      const nextIsNarrow = isBurgerContactsNarrow
+        ? width < threshold + HYSTERESIS_PX
+        : width < threshold;
+      onBurgerContactsNarrowChange(nextIsNarrow);
+    };
+
+    recalc();
+
+    const ro = new ResizeObserver(recalc);
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [
+    burgerPairWidth,
+    hasPhone,
+    hasTelegram,
+    isBurgerContactsNarrow,
+    isBurgerMode,
+    onBurgerContactsNarrowChange,
+  ]);
 
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
-      <div className="flex min-w-0 flex-1 items-center justify-end gap-9">
+    <div
+      ref={topBarRef}
+      className={cn(
+        "flex h-full w-full min-w-0 max-w-full items-center rounded-lg",
+        "gap-4 lg:gap-9",
+        "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+      )}
+    >
+      <div className={cn("flex min-w-0 flex-1 items-center justify-end", "gap-4 lg:gap-9")}>
       {hasTopContacts ? (
         <div
           className={cn(
-            "relative hidden h-10 overflow-hidden lg:block",
+            "relative hidden h-10 flex-none overflow-hidden lg:block",
             topWagonWidthTransitionClass,
             "motion-reduce:transition-none motion-reduce:duration-0",
           )}
@@ -273,7 +368,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 
       <div
         className={cn(
-          "relative hidden h-10 overflow-hidden lg:block",
+          "relative hidden h-10 flex-none overflow-hidden lg:block",
           topWagonWidthTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
         )}
@@ -322,30 +417,63 @@ export const HeaderTopBar = memo(function HeaderTopBar({
       </div>
       </div>
       <div className={cn("flex flex-none items-center", rightControlsGapClass)}>
-        {contacts.phone ? (
+        {hasPhone ? (
           <div
-            aria-hidden={hasHydrated ? !showBurgerPhonePill : undefined}
-            {...inertProps(hasHydrated ? !showBurgerPhonePill : false)}
-            className={cn(
-              "relative h-10 overflow-hidden",
-              "transition-[width] duration-200 ease-out",
-              "motion-reduce:transition-none motion-reduce:duration-0",
-            )}
-            style={{ width: showBurgerPhonePill ? HEADER_TOP_STABLE_SLOTS.phone : 0 } as CSSProperties}
+            aria-hidden={hasHydrated ? !burgerContactsVisible : undefined}
+            {...inertProps(hasHydrated ? !burgerContactsVisible : false)}
+            className="relative h-10 flex-none overflow-hidden"
+            style={{ width: burgerContactsSlotWidth } as CSSProperties}
           >
             <div
               className={cn(
-                "absolute inset-0 flex items-center",
+                "absolute inset-0",
                 slideTransitionClass,
-                "motion-reduce:transition-none motion-reduce:duration-0",
-                showBurgerPhonePill ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+                burgerDelayClass,
+                "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
+                burgerContactsVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-2",
               )}
             >
-              <HeaderTopPillLink
-                href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                label={contacts.phone}
-                pillBase={pillBase}
-              />
+              <div
+                className={cn(
+                  "h-[200%] w-full will-change-transform transform-gpu",
+                  wagonTransitionClass,
+                  hasTelegram && isBurgerContactsNarrow ? "-translate-y-1/2" : "translate-y-0",
+                )}
+              >
+                {/* Stage 1: телефон + Telegram */}
+                <div className="flex h-1/2 w-full items-center gap-2">
+                  <div className="flex flex-none" style={{ width: `${HEADER_TOP_STABLE_SLOTS.phone}px` }}>
+                    <HeaderTopPillLink
+                      href={`tel:${contacts.phone!.replace(/[^+\d]/g, "")}`}
+                      label={contacts.phone!}
+                      pillBase={pillBase}
+                    />
+                  </div>
+
+                  {hasTelegram ? (
+                    <div className="flex flex-none" style={{ width: `${telegramSlotWidth}px` }}>
+                      <HeaderTopPillLink
+                        href={telegramHref}
+                        label={telegramLabel}
+                        pillBase={pillBase}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Stage 2: только телефон */}
+                <div className="flex h-1/2 w-full items-center">
+                  <HeaderTopPillLink
+                    href={`tel:${contacts.phone!.replace(/[^+\d]/g, "")}`}
+                    label={contacts.phone!}
+                    pillBase={pillBase}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

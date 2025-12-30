@@ -200,6 +200,11 @@
   --header-ui-fs: clamp(0.935rem, 0.858rem + 0.275vw, 1.078rem);
   --header-ui-leading: 1.15;
 
+  /* Подвал — навигация чуть компактнее, чем в шапке */
+  --footer-ui-fs: calc(var(--header-ui-fs) - 0.06rem);
+  /* Основные пункты в раскрытом бургер-меню (уменьшены относительно прежнего huge) */
+  --burger-menu-root-fs: clamp(1.08rem, 0.98rem + 0.6vw, 1.45rem);
+
   --focus-ring: var(--color-brand-600);
 
   /* Толщина подчёркивания навигации (важно: используется в src/lib/nav-underline.ts) */

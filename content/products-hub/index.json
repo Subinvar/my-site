@@ -12,6 +12,7 @@
       },
       "icon": "beaker",
       "order": 0,
+      "hidden": false,
       "cards": [
         {
           "title": {
@@ -29,7 +30,8 @@
           "image": {
             "alt": {}
           },
-          "order": 0
+          "order": 0,
+          "hidden": false
         },
         {
           "title": {
@@ -47,7 +49,8 @@
           "image": {
             "alt": {}
           },
-          "order": 1
+          "order": 1,
+          "hidden": false
         },
         {
           "title": {
@@ -65,7 +68,8 @@
           "image": {
             "alt": {}
           },
-          "order": 2
+          "order": 2,
+          "hidden": false
         },
         {
           "title": {
@@ -83,7 +87,8 @@
           "image": {
             "alt": {}
           },
-          "order": 3
+          "order": 3,
+          "hidden": false
         },
         {
           "title": {
@@ -101,7 +106,8 @@
           "image": {
             "alt": {}
           },
-          "order": 4
+          "order": 4,
+          "hidden": false
         },
         {
           "title": {
@@ -119,7 +125,8 @@
           "image": {
             "alt": {}
           },
-          "order": 5
+          "order": 5,
+          "hidden": false
         },
         {
           "title": {
@@ -137,7 +144,8 @@
           "image": {
             "alt": {}
           },
-          "order": 6
+          "order": 6,
+          "hidden": false
         }
       ]
     },
@@ -153,6 +161,7 @@
       },
       "icon": "roller",
       "order": 1,
+      "hidden": false,
       "cards": [
         {
           "title": {
@@ -170,7 +179,8 @@
           "image": {
             "alt": {}
           },
-          "order": 0
+          "order": 0,
+          "hidden": false
         },
         {
           "title": {
@@ -188,7 +198,8 @@
           "image": {
             "alt": {}
           },
-          "order": 1
+          "order": 1,
+          "hidden": false
         }
       ]
     },
@@ -204,6 +215,7 @@
       },
       "icon": "sparkles",
       "order": 4,
+      "hidden": false,
       "cards": [
         {
           "title": {
@@ -221,7 +233,8 @@
           "image": {
             "alt": {}
           },
-          "order": 0
+          "order": 0,
+          "hidden": false
         },
         {
           "title": {
@@ -239,7 +252,8 @@
           "image": {
             "alt": {}
           },
-          "order": 1
+          "order": 1,
+          "hidden": false
         },
         {
           "title": {
@@ -257,7 +271,8 @@
           "image": {
             "alt": {}
           },
-          "order": 2
+          "order": 2,
+          "hidden": false
         },
         {
           "title": {
@@ -275,7 +290,8 @@
           "image": {
             "alt": {}
           },
-          "order": 3
+          "order": 3,
+          "hidden": false
         },
         {
           "title": {
@@ -293,7 +309,8 @@
           "image": {
             "alt": {}
           },
-          "order": 4
+          "order": 4,
+          "hidden": false
         },
         {
           "title": {
@@ -311,7 +328,8 @@
           "image": {
             "alt": {}
           },
-          "order": 5
+          "order": 5,
+          "hidden": false
         },
         {
           "title": {
@@ -329,7 +347,8 @@
           "image": {
             "alt": {}
           },
-          "order": 6
+          "order": 6,
+          "hidden": false
         }
       ]
     }
