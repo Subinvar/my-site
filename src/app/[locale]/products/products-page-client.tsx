@@ -11,7 +11,19 @@ import {
   useRef,
   useState,
 } from 'react';
-import { ArrowRight, BadgeCheck, Beaker, FileText, PaintRoller, Sparkles, Star, Wrench, X } from 'lucide-react';
+import {
+  ArrowRight,
+  BadgeCheck,
+  Beaker,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  PaintRoller,
+  Sparkles,
+  Star,
+  Wrench,
+  X,
+} from 'lucide-react';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { cn } from '@/lib/cn';
@@ -27,9 +39,7 @@ type ProductsPageClientProps = {
 type InsightTile = {
   id: string;
   icon: ReactElement;
-  title: string;
-  lead: string;
-  details: string[];
+  title: string;  details: string[];
 };
 
 const ICONS: Record<string, ReactElement> = {
@@ -106,18 +116,21 @@ function ProductsSection({
   description: string;
   items: ProductsHubGroup['cards'];
 }) {
+  const hasDescription = description.trim().length > 0;
+
   return (
     <section
       id={id}
-      className={cn('p-5 sm:p-6')}
+      className={cn('py-5 sm:py-6')}
       style={{ scrollMarginTop: 'calc(var(--header-height) + var(--products-nav-height, 0px) + 1.5rem)' }}
     >
       <header className="mb-5 space-y-2">
         <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
-        <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-          {description}
-        </p>
-      </header>
+{hasDescription ? (
+  <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+    {description}
+  </p>
+) : null}</header>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
@@ -125,6 +138,216 @@ function ProductsSection({
         ))}
       </div>
     </section>
+  );
+}
+
+function InsightTilesCarousel({
+  title,
+  tiles,
+  isRu,
+  onOpen,
+}: {
+  title: string;  tiles: InsightTile[];
+  isRu: boolean;
+  onOpen: (id: string) => void;
+}) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+
+  const stepRef = useRef(0);
+  const perPageRef = useRef(1);
+
+  const [canScroll, setCanScroll] = useState({ left: false, right: false });
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let scrollRaf = 0;
+    let measureRaf = 0;
+
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setCanScroll({
+        left: el.scrollLeft > 1,
+        right: el.scrollLeft < max - 1,
+      });
+    };
+
+    const measure = () => {
+      const items = Array.from(el.querySelectorAll<HTMLElement>('[data-carousel-item="1"]'));
+
+      if (items.length >= 2) stepRef.current = items[1].offsetLeft - items[0].offsetLeft;
+      else if (items.length === 1) stepRef.current = items[0].offsetWidth;
+      else stepRef.current = 0;
+
+      const step = stepRef.current || 1;
+
+      const styles = window.getComputedStyle(el);
+      const padLeft = Number.parseFloat(styles.paddingLeft) || 0;
+      const padRight = Number.parseFloat(styles.paddingRight) || 0;
+      const innerWidth = Math.max(0, el.clientWidth - padLeft - padRight);
+
+      perPageRef.current = Math.max(1, Math.floor((innerWidth + 1) / step));
+      update();
+    };
+
+    const scheduleUpdate = () => {
+      if (scrollRaf) return;
+      scrollRaf = window.requestAnimationFrame(() => {
+        scrollRaf = 0;
+        update();
+      });
+    };
+
+    const scheduleMeasure = () => {
+      if (measureRaf) return;
+      measureRaf = window.requestAnimationFrame(() => {
+        measureRaf = 0;
+        measure();
+      });
+    };
+
+    measure();
+    el.addEventListener('scroll', scheduleUpdate, { passive: true });
+
+    const ro = new ResizeObserver(scheduleMeasure);
+    ro.observe(el);
+
+    return () => {
+      el.removeEventListener('scroll', scheduleUpdate);
+      ro.disconnect();
+      if (scrollRaf) window.cancelAnimationFrame(scrollRaf);
+      if (measureRaf) window.cancelAnimationFrame(measureRaf);
+    };
+  }, [tiles.length]);
+
+  const scrollByDir = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const step = stepRef.current || el.clientWidth;
+    const perPage = perPageRef.current || 1;
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollBy({
+      left: dir * Math.round(step * perPage),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    });
+  };
+
+  return (
+    <div className="mt-0">
+      <header className="space-y-3">
+  <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
+
+  <div className="flex items-center justify-end gap-2">
+    <button
+      type="button"
+      onClick={() => scrollByDir(-1)}
+      disabled={!canScroll.left}
+      aria-label={isRu ? 'Прокрутить карточки влево' : 'Scroll cards left'}
+      aria-controls="why-tiles-carousel"
+      className={cn(
+        'inline-flex h-10 w-10 items-center justify-center rounded-full',
+        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+        'hover:bg-background/90 hover:text-foreground',
+        'disabled:cursor-not-allowed disabled:opacity-40',
+        focusRingBase,
+      )}
+    >
+      <ChevronLeft className="h-5 w-5" aria-hidden />
+    </button>
+
+    <button
+      type="button"
+      onClick={() => scrollByDir(1)}
+      disabled={!canScroll.right}
+      aria-label={isRu ? 'Прокрутить карточки вправо' : 'Scroll cards right'}
+      aria-controls="why-tiles-carousel"
+      className={cn(
+        'inline-flex h-10 w-10 items-center justify-center rounded-full',
+        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+        'hover:bg-background/90 hover:text-foreground',
+        'disabled:cursor-not-allowed disabled:opacity-40',
+        focusRingBase,
+      )}
+    >
+      <ChevronRight className="h-5 w-5" aria-hidden />
+    </button>
+  </div>
+</header>
+
+      <div className="relative mt-5">
+        <div
+          ref={scrollerRef}
+          id="why-tiles-carousel"
+          className={cn(
+            'no-scrollbar flex gap-4 overflow-x-auto pb-3',
+            'snap-x snap-mandatory scroll-smooth',
+            'touch-pan-x overscroll-x-contain',
+          )}
+          aria-label={isRu ? 'Преимущества работы с «Интема Групп»' : 'Why work with InTema Group'}
+        >
+          {tiles.map((tile) => (
+            <button
+              key={tile.id}
+              data-carousel-item="1"
+              type="button"
+              onClick={() => onOpen(tile.id)}
+              className={cn(
+                'group w-[280px] sm:w-[320px] shrink-0 snap-start',
+                'rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left',
+                'transition-[transform,background-color,box-shadow] duration-200 ease-out',
+                'hover:-translate-y-0.5 hover:bg-background/60 hover:shadow-md',
+                focusRingBase,
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={cn(
+                    'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                    'border border-[var(--header-border)] bg-muted/60 text-foreground',
+                  )}
+                  aria-hidden
+                >
+                  {tile.icon}
+                </span>
+
+                <div className="min-w-0">
+                  <p className="m-0 text-sm font-semibold leading-snug">{tile.title}</p>
+                  <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{tile.lead}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
+                <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Градиентные подсказки по краям (как у Apple): показываются только когда есть куда скроллить */}
+        <div
+          className={cn(
+            'pointer-events-none absolute inset-y-0 left-0 w-12',
+            'bg-gradient-to-r from-background via-background/80 to-transparent',
+            'transition-opacity duration-200 ease-out',
+            canScroll.left ? 'opacity-100' : 'opacity-0',
+          )}
+          aria-hidden
+        />
+        <div
+          className={cn(
+            'pointer-events-none absolute inset-y-0 right-0 w-12',
+            'bg-gradient-to-l from-background via-background/80 to-transparent',
+            'transition-opacity duration-200 ease-out',
+            canScroll.right ? 'opacity-100' : 'opacity-0',
+          )}
+          aria-hidden
+        />
+      </div>
+    </div>
   );
 }
 
@@ -158,9 +381,6 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   }, [groups]);
 
   const whyTitle = isRu ? 'Почему удобно работать с «Интема Групп»' : 'Why work with InTema Group';
-  const whyLead = isRu
-    ? 'Как и у Apple, здесь плитки — это короткие тезисы. Нажмите, чтобы открыть подробности.'
-    : 'Like Apple’s tiles, these are short claims. Click to open details.';
 
   const whyTiles: InsightTile[] = useMemo(
     () =>
@@ -387,55 +607,17 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     <>
       <div
         ref={pageRef}
-        className="space-y-12 lg:space-y-14"
+        className="space-y-12 lg:space-y-14 -mt-12 sm:-mt-16 lg:-mt-20"
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
-        <section className="p-5 sm:p-6">
-          <header className="space-y-2">
-            <h2 className="mt-0 text-lg font-semibold sm:text-xl">{whyTitle}</h2>
-            <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-              {whyLead}
-            </p>
-          </header>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {whyTiles.map((tile) => (
-              <button
-                key={tile.id}
-                type="button"
-                onClick={() => setOpenTileId(tile.id)}
-                className={cn(
-                  'group w-full rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left',
-                  'transition-[transform,background-color,box-shadow] duration-200 ease-out',
-                  'hover:-translate-y-0.5 hover:bg-background/60 hover:shadow-md',
-                  focusRingBase,
-                )}
-              >
-                <div className="flex items-start gap-3">
-                  <span
-                    className={cn(
-                      'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-                      'border border-[var(--header-border)] bg-muted/60 text-foreground',
-                    )}
-                    aria-hidden
-                  >
-                    {tile.icon}
-                  </span>
-
-                  <div className="min-w-0">
-                    <p className="m-0 text-sm font-semibold leading-snug">{tile.title}</p>
-                    <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{tile.lead}</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
-                  <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                </div>
-              </button>
-            ))}
-          </div>
+        <section className="py-5 sm:py-6">
+          <InsightTilesCarousel
+            title={whyTitle}
+            tiles={whyTiles}
+            isRu={isRu}
+            onOpen={setOpenTileId}
+          />
         </section>
 
         {/* Навигация по секциям (JS-fixed вместо sticky, чтобы работало в любой разметке) */}
@@ -448,7 +630,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
           <nav
             ref={navRef}
             aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
-            className={cn('z-50 p-2')}
+            className={cn('z-50 py-2')}
             style={
               (isNavPinned
                 ? {
@@ -539,16 +721,16 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
             const fallbackDescription =
               group.id === 'binders'
                 ? isRu
-                  ? 'Связующие и отвердители для основных процессов формовки и стержневого производства.'
-                  : 'Binders and hardeners for the main moulding and core-making processes.'
+                  ? ''
+                  : ''
                 : group.id === 'coatings'
                   ? isRu
-                    ? 'Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.'
-                    : 'Alcohol- and water-based coatings with a wide range of fillers.'
+                    ? ''
+                    : ''
                   : group.id === 'auxiliaries'
                     ? isRu
-                      ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
-                      : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.'
+                      ? ''
+                      : ''
                     : isRu
                       ? 'Подборка продуктов этой категории.'
                       : 'A curated set of product cards.';

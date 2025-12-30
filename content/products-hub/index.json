@@ -6,10 +6,7 @@
         "ru": "Связующие системы",
         "en": "Binder systems"
       },
-      "description": {
-        "ru": "Связующие и отвердители для основных процессов формовки и стержневого производства.",
-        "en": "Binders and hardeners for core-making and moulding processes."
-      },
+      "description": {},
       "icon": "beaker",
       "order": 0,
       "hidden": false,
@@ -155,10 +152,7 @@
         "ru": "Противопригарные покрытия",
         "en": "Coatings"
       },
-      "description": {
-        "ru": "Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.",
-        "en": "Alcohol- and water-based coatings with a wide range of fillers."
-      },
+      "description": {},
       "icon": "roller",
       "order": 1,
       "hidden": false,
@@ -209,10 +203,7 @@
         "ru": "Вспомогательные материалы",
         "en": "Auxiliary materials"
       },
-      "description": {
-        "ru": "Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.",
-        "en": "Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers."
-      },
+      "description": {},
       "icon": "sparkles",
       "order": 4,
       "hidden": false,

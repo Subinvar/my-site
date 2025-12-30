@@ -61,13 +61,13 @@ export default async function Page({ params }: PageProps) {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <div className="space-y-12">
-        <article className="max-w-none space-y-6">
+      <article className="space-y-12">
+        <div className="max-w-none space-y-6">
           <div className="space-y-4">
             <SectionHeading title={page.title} description={summary ?? undefined} as="h1" />
           </div>
           <div className="prose-markdoc">{content}</div>
-        </article>
+        </div>
 
         {isPartnersPage ? (
           <>
@@ -78,7 +78,7 @@ export default async function Page({ params }: PageProps) {
         ) : null}
         {isProductsPage ? <ProductCategoriesSection locale={locale} /> : null}
         {isNewsPage ? <PostsList locale={locale} /> : null}
-      </div>
+      </article>
     </SiteShellLayout>
   );
 }

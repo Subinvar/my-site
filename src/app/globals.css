@@ -541,6 +541,19 @@ html[data-theme="dark"] {
   }
 }
 
+
+
+@layer utilities {
+  /* Скрываем горизонтальный скроллбар, но сохраняем скролл (для Apple-style каруселей) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
