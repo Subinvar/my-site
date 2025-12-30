@@ -117,7 +117,6 @@ export const HeaderCta = memo(function HeaderCta({
         "group h-10 justify-center px-4",
         "text-muted-foreground hover:text-foreground",
         "no-underline hover:no-underline",
-        "hover:bg-background/80",
         "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
         className,
       )}

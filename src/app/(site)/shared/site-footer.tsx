@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/cn";
+import { formatTelegramHandle } from "@/lib/contacts";
 import { focusRingBase } from "@/lib/focus-ring";
 import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
@@ -51,6 +52,7 @@ export function SiteFooter({
   })();
 
   const telegramHref = contacts.telegramUrl?.trim() ?? "";
+  const telegramLabel = formatTelegramHandle(contacts.telegramUrl) ?? "@IntemaGroup";
 
   const currentYear = new Date().getFullYear();
   const resolvedCopyright =
@@ -157,7 +159,7 @@ export function SiteFooter({
                     rel="noopener noreferrer"
                     className={cn(baseLinkClassName, "hover:text-foreground")}
                   >
-                    Telegram
+                    {telegramLabel}
                   </a>
                 ) : null}
 
@@ -181,7 +183,9 @@ export function SiteFooter({
               </div>
             </div>
 
-            <p className="m-0 text-[12px] leading-[1.4] sm:text-[13px]">{resolvedCopyright}</p>
+            <p className="m-0 self-end text-right text-[12px] leading-[1.4] sm:text-[13px]">
+              {resolvedCopyright}
+            </p>
           </div>
         </div>
       </div>

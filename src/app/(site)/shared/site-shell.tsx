@@ -1239,7 +1239,7 @@ export function SiteShell({
                                 <div className={motion.className} style={motion.style}>
                                   <a
                                     href={`tel:${site.contacts.phone.replace(/[^+\d]/g, "")}`}
-                                    className={cn(pillBase, "justify-start")}
+                                    className={pillBase}
                                     onClick={handleCloseMenu}
                                     style={{ width: `${CONTACT_SLOT_WIDTHS.phone}px` }}
                                   >
@@ -1257,7 +1257,7 @@ export function SiteShell({
                                 <div className={motion.className} style={motion.style}>
                                   <a
                                     href={`mailto:${site.contacts.email}`}
-                                    className={cn(pillBase, "justify-start")}
+                                    className={pillBase}
                                     onClick={handleCloseMenu}
                                     style={{ width: `${CONTACT_SLOT_WIDTHS.email}px` }}
                                   >
