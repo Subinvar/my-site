@@ -90,7 +90,7 @@ export function SiteFooter({
           {/* Row 1: secondary navigation + tagline */}
           <div className="flex flex-col gap-3 sm:justify-between">
             {tagline?.trim() ? (
-              <p className="m-0 text-[15px] font-semibold leading-[1.35] text-foreground sm:text-[16px]">
+              <p className="m-0 text-[16px] font-semibold leading-[1.35] text-foreground sm:text-[17px]">
                 {tagline}
               </p>
             ) : null}
@@ -147,7 +147,7 @@ export function SiteFooter({
           </div>
 
           {/* Row 2: contacts + copyright */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 {telegramHref ? (

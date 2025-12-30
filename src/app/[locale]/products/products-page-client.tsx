@@ -11,7 +11,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
 import { ArrowRight, BadgeCheck, Beaker, FileText, PaintRoller, Sparkles, Star, Wrench, X } from 'lucide-react';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
@@ -137,9 +136,18 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   const pageRef = useRef<HTMLDivElement | null>(null);
   const navSlotRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
   const [navLayout, setNavLayout] = useState<{ height: number; width: number; left: number } | null>(null);
 
   const sectionIds = useMemo(() => groups.map((group) => group.id), [groups]);
+
+  // Список DOM-узлов секций нужен для быстрого и предсказуемого подсчёта активной вкладки.
+  // (IntersectionObserver по ratio здесь плохо подходит: короткая секция может «перебивать» длинную.)
+  useEffect(() => {
+    sectionsRef.current = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+  }, [sectionIds]);
 
   const counts = useMemo(() => {
     const map = new Map<string, number>();
@@ -312,37 +320,59 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     };
   }, []);
 
+  // Пин + активная секция: считаем по положению заголовков относительно «линии якоря».
+  // Это стабильнее IO по intersectionRatio (короткие секции иначе часто остаются «активными» слишком долго).
   useEffect(() => {
     const slot = navSlotRef.current;
-    const nav = navRef.current;
-    if (!slot || !nav) return;
+    if (!slot) return;
 
     let raf = 0;
 
-    const updatePinned = () => {
+    const update = () => {
       raf = 0;
 
-      // --header-height живёт на SiteShell (не на :root), поэтому читаем
-      // переменную у элемента внутри дерева.
+      // --header-height живёт на SiteShell (не на :root), поэтому читаем переменную у элемента внутри дерева.
       const headerHeightRaw = window.getComputedStyle(slot).getPropertyValue('--header-height');
       const headerHeight = Number.parseFloat(headerHeightRaw) || 0;
-      const top = slot.getBoundingClientRect().top;
 
       // Порог с небольшим запасом, чтобы не «дребезжало» на полпикселя.
-      const pinned = top <= headerHeight + 0.5;
+      const pinned = slot.getBoundingClientRect().top <= headerHeight + 0.5;
 
-      setIsNavPinned((prev) => {
-        if (prev && !pinned) setActiveSection(null);
-        return pinned;
-      });
+      setIsNavPinned((prev) => (prev === pinned ? prev : pinned));
+
+      if (!pinned) {
+        setActiveSection((prev) => (prev === null ? prev : null));
+        return;
+      }
+
+      const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+      const extraOffset = rootFontSize * 1.5; // соответствует +1.5rem в scrollMarginTop у секций
+      const navHeight = navLayout?.height ?? navRef.current?.getBoundingClientRect().height ?? 0;
+      const anchorLine = headerHeight + navHeight + extraOffset + 0.5;
+
+      const nodes = sectionsRef.current;
+      if (!nodes.length) return;
+
+      let nextActive: string | null = null;
+      let bestTop = -Infinity;
+
+      for (const node of nodes) {
+        const top = node.getBoundingClientRect().top;
+        if (top <= anchorLine && top > bestTop) {
+          bestTop = top;
+          nextActive = node.id;
+        }
+      }
+
+      setActiveSection((prev) => (prev === nextActive ? prev : nextActive));
     };
 
     const schedule = () => {
       if (raf) return;
-      raf = window.requestAnimationFrame(updatePinned);
+      raf = window.requestAnimationFrame(update);
     };
 
-    updatePinned();
+    update();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
 
@@ -351,40 +381,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       window.removeEventListener('resize', schedule);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, []);
-
-  // Активная секция — только когда навбар уже прилип.
-  useEffect(() => {
-    if (!isNavPinned) return;
-
-    const ids = sectionIds;
-    const nodes = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-
-    if (!nodes.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
-
-        const top = visible[0];
-        if (!top?.target?.id) return;
-        const id = top.target.id;
-        if (ids.includes(id)) setActiveSection(id);
-      },
-      {
-        root: null,
-        rootMargin: '-32% 0px -58% 0px',
-        threshold: [0.12, 0.2, 0.35, 0.55],
-      },
-    );
-
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, [isNavPinned, sectionIds]);
+  }, [navLayout?.height]);
 
   return (
     <>
@@ -451,11 +448,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
           <nav
             ref={navRef}
             aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
-            className={cn(
-              'z-50 p-2',
-              isNavPinned &&
-                'border-b border-[var(--header-border)] bg-background/85 backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.06)]',
-            )}
+            className={cn('z-50 p-2')}
             style={
               (isNavPinned
                 ? {
