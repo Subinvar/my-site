@@ -1080,7 +1080,7 @@ export function SiteShell({
                               onClick={handleCloseMenu}
                               aria-current={isProductsRootActive ? "page" : undefined}
                               className={cn(
-                                "group block w-full py-2",
+                                "group flex h-10 w-full items-center",
                                 "no-underline",
                                 "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
                                 isProductsRootActive
@@ -1104,7 +1104,7 @@ export function SiteShell({
                           const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
 
                           const itemClassName = cn(
-                            "group block w-full py-1.5",
+                            "group flex h-10 w-full items-center",
                             "no-underline",
                             "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
                             isActive
@@ -1156,7 +1156,7 @@ export function SiteShell({
                           const rootActive = isAboutMenuActive;
 
                           const rootClassName = cn(
-                            "group block w-full py-2",
+                            "group flex h-10 w-full items-center",
                             "no-underline",
                             "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
                             rootActive
@@ -1204,7 +1204,7 @@ export function SiteShell({
                                   const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
 
                                   const itemClassName = cn(
-                                    "group block w-full py-1.5",
+                                    "group flex h-10 w-full items-center",
                                     "no-underline",
                                     "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
                                     isSubActive
@@ -1260,7 +1260,7 @@ export function SiteShell({
                                 rel={link.newTab ? "noopener noreferrer" : undefined}
                                 aria-current={isActive ? "page" : undefined}
                                 className={cn(
-                                  "group block w-full py-2",
+                                  "group flex h-10 w-full items-center",
                                   "no-underline",
                                   "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
                                   isActive
@@ -1277,7 +1277,7 @@ export function SiteShell({
                                 onClick={handleCloseMenu}
                                 aria-current={isActive ? "page" : undefined}
                                 className={cn(
-                                  "group block w-full py-2",
+                                  "group flex h-10 w-full items-center",
                                   "no-underline",
                                   "text-[length:var(--burger-menu-root-fs)] font-medium leading-[1.15]",
                                   isActive

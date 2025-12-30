@@ -378,10 +378,6 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
         className={cn(
           'sticky z-10',
           'top-[var(--header-height)]',
-          'rounded-2xl border border-[var(--header-border)] backdrop-blur',
-          isNavPinned
-            ? 'bg-background/92 shadow-sm'
-            : 'bg-background/55',
           'p-2',
         )}
       >

@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 import Link from "next/link";
 
 import { cn } from "@/lib/cn";
@@ -20,6 +22,10 @@ export type SiteFooterProps = {
   contacts: SiteContent["contacts"];
   tagline: string | null;
 };
+
+const FOOTER_CONTACT_SLOT_WIDTH = 140;
+
+const footerUiFs = "calc(var(--nav-ui-fs) - 0.06rem)";
 
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
@@ -48,10 +54,24 @@ export function SiteFooter({
 
   const footerLinks = navigation.footer ?? [];
 
-  const footerLinkRows = (() => {
-    if (footerLinks.length <= 3) return [footerLinks];
-    return [footerLinks.slice(0, 3), footerLinks.slice(3)];
-  })();
+  // Два аккуратных столбика как в ТЗ.
+  const linkById = new Map(footerLinks.map((link) => [link.id, link] as const));
+
+  const columnAOrder = ["footer-binders", "footer-coatings", "footer-auxiliaries"];
+  const columnBOrder = ["privacy", "footer-documents", "footer-catalog"];
+
+  const columnA = columnAOrder
+    .map((id) => linkById.get(id))
+    .filter((link): link is (typeof footerLinks)[number] => Boolean(link));
+
+  const columnB = columnBOrder
+    .map((id) => linkById.get(id))
+    .filter((link): link is (typeof footerLinks)[number] => Boolean(link));
+
+  const usedIds = new Set([...columnAOrder, ...columnBOrder]);
+  const rest = footerLinks.filter((link) => !usedIds.has(link.id));
+
+  const footerColumns = [columnA, columnB.concat(rest)];
 
   const telegramHref = contacts.telegramUrl?.trim() ?? "";
   const telegramLabel = "@IntemaGroup";
@@ -70,6 +90,7 @@ export function SiteFooter({
       : locale === "ru"
         ? `© ${currentYear} Интема Групп. Все права защищены.`
         : `© ${currentYear} Intema Group. All rights reserved.`;
+
   const menuLinkBaseClassName = cn(
     "group inline-flex h-10 items-center gap-1 whitespace-nowrap no-underline",
     // в подвале навигация чуть меньше, чем в шапке
@@ -81,7 +102,10 @@ export function SiteFooter({
   return (
     <footer className="border-t border-border bg-muted">
       <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)] py-[clamp(1.5rem,1.2rem+0.8vw,2rem)]">
-        <div className="flex flex-col gap-5 text-muted-foreground">
+        <div
+          style={{ "--footer-ui-fs": footerUiFs } as CSSProperties}
+          className="flex flex-col gap-5 text-muted-foreground"
+        >
           {/* Tagline — первая строка, слева, размер как у меню */}
           {tagline?.trim() ? (
             <p
@@ -98,13 +122,13 @@ export function SiteFooter({
           {/* Secondary navigation */}
           {footerLinks.length ? (
             <nav aria-label={navigationLabel}>
-              <div className="flex flex-col gap-2 sm:items-end">
-                {footerLinkRows.map((row, rowIndex) => (
+              <div className="grid gap-x-10 gap-y-2 sm:grid-cols-2">
+                {footerColumns.map((column, columnIndex) => (
                   <ul
-                    key={rowIndex}
-                    className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 p-0 list-none justify-start sm:justify-end"
+                    key={columnIndex}
+                    className="m-0 flex flex-col gap-2 p-0 list-none items-start"
                   >
-                    {row.map((link) => {
+                    {column.map((link) => {
                       const href = resolveHref(link.href);
                       const normalizedHref = normalizePathname(href);
                       const isActive =
@@ -153,7 +177,7 @@ export function SiteFooter({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div
               className={cn(
-                "flex flex-wrap items-center gap-2",
+                "flex flex-nowrap items-center gap-2",
                 // типографика «кнопок» как в десктопных контактах шапки
                 "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
               )}
@@ -161,7 +185,8 @@ export function SiteFooter({
               {showEmail && contacts.email ? (
                 <a
                   href={`mailto:${contacts.email}`}
-                  className={cn("group", pillBase, "w-auto")}
+                  className={cn("group flex-none", pillBase)}
+                  style={{ width: `${FOOTER_CONTACT_SLOT_WIDTH}px` }}
                 >
                   <span className={navUnderlineSpanClass(false, "footer")}>
                     {contacts.email}
@@ -174,7 +199,8 @@ export function SiteFooter({
                   href={telegramHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn("group", pillBase, "w-auto")}
+                  className={cn("group flex-none", pillBase)}
+                  style={{ width: `${FOOTER_CONTACT_SLOT_WIDTH}px` }}
                 >
                   <span className={navUnderlineSpanClass(false, "footer")}>
                     {telegramLabel}

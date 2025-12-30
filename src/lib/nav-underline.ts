@@ -8,12 +8,12 @@ const VARIANT: Record<NavUnderlineVariant, { wrapper: string; offset: string }> 
     offset: "after:bottom-0",
   },
   footer: {
-    wrapper: "relative inline-flex items-center",
-    offset: "after:-bottom-0.5",
+    wrapper: "relative inline-flex h-full items-center",
+    offset: "after:bottom-0",
   },
   menu: {
-    wrapper: "relative inline-block",
-    offset: "after:-bottom-1",
+    wrapper: "relative inline-flex h-full items-center",
+    offset: "after:bottom-0",
   },
 };
 
