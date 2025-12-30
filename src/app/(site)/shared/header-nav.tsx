@@ -8,6 +8,7 @@ import type { Navigation, NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
 import { focusRingBase } from "@/lib/focus-ring";
 
+import { HeaderWagon } from "./header-wagon";
 import { HeaderCta } from "./header-top-bar";
 
 type HeaderNavProps = {
@@ -17,22 +18,23 @@ type HeaderNavProps = {
   navigationLabel: string;
   locale: Locale;
   currentPath: string;
+
   isBurgerMode: boolean;
+  prefersReducedMotion: boolean;
   hasHydrated: boolean;
+
   isMenuOpen: boolean;
   onBurgerClick: () => void;
+
   topLineTransform: string;
   bottomLineTransform: string;
-  wagonTransitionClass: string;
-  wagonTransformClass: string;
-  slideTransitionClass: string;
-  menuSlideClass: string;
-  burgerSlideClass: string;
-  burgerDelayClass: string;
+
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
+
   contactsHref: string;
   ctaLabel: string;
   headerButtonBase: string;
+
   onDesktopNavEnter?: () => void;
   onDesktopNavLeave?: () => void;
   onDesktopNavLinkEnter?: (link: NavigationLink) => void;
@@ -47,17 +49,12 @@ export const HeaderNav = memo(function HeaderNav({
   locale,
   currentPath,
   isBurgerMode,
+  prefersReducedMotion,
   hasHydrated,
   isMenuOpen,
   onBurgerClick,
   topLineTransform,
   bottomLineTransform,
-  wagonTransitionClass,
-  wagonTransformClass,
-  slideTransitionClass,
-  menuSlideClass,
-  burgerSlideClass,
-  burgerDelayClass,
   inertProps,
   contactsHref,
   ctaLabel,
@@ -84,24 +81,16 @@ export const HeaderNav = memo(function HeaderNav({
         "lg:h-full lg:min-h-[var(--header-row-bottom-h)]",
       )}
     >
-      <div
-        className={cn(
-          "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
-          wagonTransitionClass,
-          "motion-reduce:transition-none motion-reduce:duration-0",
-          wagonTransformClass,
-        )}
-      >
-        <div
-          aria-hidden={hasHydrated ? isBurgerMode : undefined}
-          {...inertProps(hasHydrated ? isBurgerMode : false)}
-          className={cn(
-            "flex h-1/2 w-full items-center justify-end",
-            slideTransitionClass,
-            "motion-reduce:transition-none motion-reduce:duration-0",
-            menuSlideClass,
-          )}
-        >
+      <HeaderWagon
+        showSecondary={isBurgerMode}
+        hasHydrated={hasHydrated}
+        inertProps={inertProps}
+        prefersReducedMotion={prefersReducedMotion}
+        durationMs={320}
+        panelBaseClassName="flex h-full w-full items-center"
+        primaryClassName="justify-end"
+        secondaryClassName="justify-end gap-3"
+        primary={
           <NavigationList
             links={navigation.header}
             ariaLabel={navigationLabel}
@@ -114,20 +103,9 @@ export const HeaderNav = memo(function HeaderNav({
             onLinkEnter={onDesktopNavLinkEnter}
             onLinkFocus={onDesktopNavLinkFocus}
           />
-        </div>
-
-        <div
-          aria-hidden={hasHydrated ? !isBurgerMode : undefined}
-          {...inertProps(hasHydrated ? !isBurgerMode : false)}
-          className={cn(
-            "flex h-1/2 w-full items-center justify-end gap-3",
-            slideTransitionClass,
-            burgerDelayClass,
-            "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
-            burgerSlideClass,
-          )}
-        >
-          <div className="flex h-full flex-1 items-center justify-end gap-3 ">
+        }
+        secondary={
+          <div className="flex h-full flex-1 items-center justify-end gap-3">
             <HeaderCta
               headerButtonBase={headerButtonBase}
               href={contactsHref}
@@ -163,8 +141,8 @@ export const HeaderNav = memo(function HeaderNav({
               </span>
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {navMeasureRef ? (
         <div
@@ -186,4 +164,3 @@ export const HeaderNav = memo(function HeaderNav({
     </div>
   );
 });
-

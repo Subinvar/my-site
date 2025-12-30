@@ -6,6 +6,8 @@ import { memo, type CSSProperties, type HTMLAttributes, type ReactNode } from "r
 import type { SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
+
+import { HeaderWagon, useDelayedCollapse } from "./header-wagon";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -34,23 +36,21 @@ type HeaderTopBarProps = {
   contacts: SiteContent["contacts"];
   hasTopContacts: boolean;
   topContactsWidth: number;
-  topWagonsCollapsed: boolean;
-  topWagonIsBurger: boolean;
-  topWagonTransformClass: string;
-  topWagonWidthTransitionClass: string;
-  wagonTransitionClass: string;
-  slideTransitionClass: string;
-  burgerDelayClass: string;
-  menuSlideClass: string;
-  burgerSlideClass: string;
+
+  isBurgerMode: boolean;
+  prefersReducedMotion: boolean;
+
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
   hasHydrated: boolean;
+
   contactsHref: string;
   ctaLabel: string;
+
   locale: Locale;
   targetLocale: Locale;
   switcherHref: string | null;
   switchToLabels: Record<string, string>;
+
   classNames: {
     headerButtonBase: string;
     pillBase: string;
@@ -91,11 +91,7 @@ function HeaderTopSlot({
 
 function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
   return (
-    <a
-      href={href}
-      className={cn(pillBase)}
-      title={label}
-    >
+    <a href={href} className={cn(pillBase)} title={label}>
       {label}
     </a>
   );
@@ -121,10 +117,7 @@ export const HeaderCta = memo(function HeaderCta({
         className,
       )}
     >
-      <span
-        aria-hidden="true"
-        className="relative mr-2.5 inline-flex h-3.5 w-3.5 items-center justify-center"
-      >
+      <span aria-hidden="true" className="relative mr-2.5 inline-flex h-3.5 w-3.5 items-center justify-center">
         <span
           className={cn(
             "absolute inset-0 rounded-full",
@@ -176,15 +169,8 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
   hasTopContacts,
   topContactsWidth,
-  topWagonsCollapsed,
-  topWagonIsBurger,
-  topWagonTransformClass,
-  topWagonWidthTransitionClass,
-  wagonTransitionClass,
-  slideTransitionClass,
-  burgerDelayClass,
-  menuSlideClass,
-  burgerSlideClass,
+  isBurgerMode,
+  prefersReducedMotion,
   inertProps,
   hasHydrated,
   contactsHref,
@@ -197,124 +183,113 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
+  // На SSR/до гидрации мы не знаем точный isBurgerMode (он может зависеть от измерений).
+  // Но сам HeaderWagon имеет SSR-fallback через media-классы, поэтому
+  // showSecondary можно прокидывать всегда, а вот «схлопывание ширины»
+  // контролируем только после гидрации (в useDelayedCollapse).
+  const shouldHideTopWagons = isBurgerMode;
+
+  // Схлопываем ширину ПОСЛЕ завершения exit-анимации (иначе будет «моментальное исчезновение»).
+  const topWagonsCollapsed = useDelayedCollapse(shouldHideTopWagons, {
+    delayMs: 320,
+    hasHydrated,
+    prefersReducedMotion,
+  });
+
+  // Ширину анимируем только при *схлопывании* (desktop -> burger),
+  // а при обратном переходе (burger -> desktop) делаем мгновенно,
+  // чтобы вагоны не «вылетали из правого нижнего угла».
+  const widthTransitionClass =
+    hasHydrated && !prefersReducedMotion && shouldHideTopWagons
+      ? "transition-[width] duration-200 ease-out"
+      : "transition-none";
+
+  const topContactsSsrWidthStyle =
+    hasHydrated ? undefined : ({ "--top-contacts-w": `${topContactsWidth}px` } as CSSProperties);
+
   return (
     <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
       <div className="flex min-w-0 flex-1 items-center justify-end gap-9">
-      {hasTopContacts ? (
-        <div
-          className={cn(
-            "relative hidden h-10 overflow-hidden lg:block",
-            topWagonWidthTransitionClass,
-            "motion-reduce:transition-none motion-reduce:duration-0",
-          )}
-          style={{ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties}
-        >
+        {hasTopContacts ? (
           <div
             className={cn(
-              "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
-              wagonTransitionClass,
+              "relative h-10 overflow-hidden",
+              // SSR: на mobile ширина 0, на lg+ — вычисленная ширина.
+              hasHydrated ? "" : "w-0 lg:w-[var(--top-contacts-w)]",
+              widthTransitionClass,
               "motion-reduce:transition-none motion-reduce:duration-0",
-              topWagonTransformClass,
             )}
+            style={
+              hasHydrated
+                ? ({ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties)
+                : topContactsSsrWidthStyle
+            }
           >
-            <div
-              aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
-              {...inertProps(hasHydrated ? topWagonIsBurger : false)}
-              className={cn(
-                "flex h-1/2 w-full items-center gap-9",
-                slideTransitionClass,
-                "motion-reduce:transition-none motion-reduce:duration-0",
-                menuSlideClass,
-              )}
-            >
-              {contacts.phone ? (
-                <HeaderTopSlot id="phone" className="hidden lg:inline-flex">
-                  <HeaderTopPillLink
-                    href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                    label={contacts.phone}
-                    pillBase={pillBase}
-                  />
-                </HeaderTopSlot>
-              ) : null}
+            <HeaderWagon
+              showSecondary={shouldHideTopWagons}
+              hasHydrated={hasHydrated}
+              inertProps={inertProps}
+              prefersReducedMotion={prefersReducedMotion}
+              durationMs={320}
+              panelBaseClassName="flex h-full w-full items-center gap-9"
+              primary={
+                <>
+                  {contacts.phone ? (
+                    <HeaderTopSlot id="phone">
+                      <HeaderTopPillLink
+                        href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                        label={contacts.phone}
+                        pillBase={pillBase}
+                      />
+                    </HeaderTopSlot>
+                  ) : null}
 
-              {contacts.email ? (
-                <HeaderTopSlot id="email" className="hidden lg:inline-flex">
-                  <HeaderTopPillLink
-                    href={`mailto:${contacts.email}`}
-                    label={contacts.email}
-                    pillBase={pillBase}
-                  />
-                </HeaderTopSlot>
-              ) : null}
-            </div>
-
-            <div
-              aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
-              {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
-              className={cn(
-                "flex h-1/2 w-full items-center gap-9",
-                slideTransitionClass,
-                burgerDelayClass,
-                "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
-                burgerSlideClass,
-              )}
-            >
-              {/* пусто намеренно */}
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      <div
-        className={cn(
-          "relative hidden h-10 overflow-hidden lg:block",
-          topWagonWidthTransitionClass,
-          "motion-reduce:transition-none motion-reduce:duration-0",
-        )}
-        style={{ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties}
-      >
-        <div
-          className={cn(
-            "absolute inset-0 h-[200%] w-full will-change-transform transform-gpu",
-            wagonTransitionClass,
-            "motion-reduce:transition-none motion-reduce:duration-0",
-            topWagonTransformClass,
-          )}
-        >
-          <div
-            aria-hidden={hasHydrated ? topWagonIsBurger : undefined}
-            {...inertProps(hasHydrated ? topWagonIsBurger : false)}
-            className={cn(
-              "flex h-1/2 w-full items-center justify-end",
-              slideTransitionClass,
-              "motion-reduce:transition-none motion-reduce:duration-0",
-              menuSlideClass,
-            )}
-          >
-            <HeaderCta
-              headerButtonBase={headerButtonBase}
-              href={contactsHref}
-              label={ctaLabel}
-              className="w-full"
+                  {contacts.email ? (
+                    <HeaderTopSlot id="email">
+                      <HeaderTopPillLink href={`mailto:${contacts.email}`} label={contacts.email} pillBase={pillBase} />
+                    </HeaderTopSlot>
+                  ) : null}
+                </>
+              }
+              secondary={null}
             />
           </div>
+        ) : null}
 
-          <div
-            aria-hidden={hasHydrated ? !topWagonIsBurger : undefined}
-            {...inertProps(hasHydrated ? !topWagonIsBurger : false)}
-            className={cn(
-              "flex h-1/2 w-full items-center justify-end",
-              slideTransitionClass,
-              burgerDelayClass,
-              "motion-reduce:transition-none motion-reduce:duration-0 motion-reduce:delay-0",
-              burgerSlideClass,
-            )}
-          >
-            {/* пусто намеренно */}
-          </div>
+        <div
+          className={cn(
+            "relative h-10 overflow-hidden",
+            // SSR: на mobile ширина 0, на lg+ — фиксированная.
+            hasHydrated ? "" : "w-0 lg:w-[200px]",
+            widthTransitionClass,
+            "motion-reduce:transition-none motion-reduce:duration-0",
+          )}
+          style={
+            hasHydrated
+              ? ({ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties)
+              : undefined
+          }
+        >
+          <HeaderWagon
+            showSecondary={shouldHideTopWagons}
+            hasHydrated={hasHydrated}
+            inertProps={inertProps}
+            prefersReducedMotion={prefersReducedMotion}
+            durationMs={320}
+            panelBaseClassName="flex h-full w-full items-center justify-end"
+            primary={
+              <HeaderCta
+                headerButtonBase={headerButtonBase}
+                href={contactsHref}
+                label={ctaLabel}
+                className="w-full"
+              />
+            }
+            secondary={null}
+          />
         </div>
       </div>
-      </div>
+
       <div className="flex flex-none items-center gap-9">
         <HeaderTopSlot id="theme">
           <ThemeToggle locale={locale} />
@@ -332,4 +307,3 @@ export const HeaderTopBar = memo(function HeaderTopBar({
     </div>
   );
 });
-

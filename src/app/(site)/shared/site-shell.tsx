@@ -446,16 +446,10 @@ export function SiteShell({
     setIsMenuOpen((prev) => !prev);
   }, []);
 
-  const {
-    topWagonIsBurger,
-    topWagonsCollapsed,
-    topLineTransform,
-    bottomLineTransform,
-  } = useBurgerAnimation({
+  const { topLineTransform, bottomLineTransform } = useBurgerAnimation({
     isMenuOpen,
     isBurgerMode,
     prefersReducedMotion,
-    hasHydrated,
     onRequestClose: handleCloseMenu,
   });
 
@@ -800,71 +794,9 @@ export function SiteShell({
     };
   }, [isMenuModal, handleCloseMenu]);
 
-  const {
-    shellTransitionClass,
-    wagonTransitionClass,
-    slideTransitionClass,
-    burgerDelayClass,
-    topWagonWidthTransitionClass,
-    wagonTransformClass,
-    topWagonTransformClass,
-    menuSlideClass,
-    burgerSlideClass,
-  } = useMemo(
-    () => {
-      const shellTransitionClass = transitionsOn
-        ? "transition-[padding-top] duration-200 ease-out"
-        : "transition-none";
-      const wagonTransitionClass = transitionsOn
-        ? "transition-transform duration-300 ease-out"
-        : "transition-none";
-      const slideTransitionClass = transitionsOn
-        ? "transition-[opacity,transform] duration-200 ease-out"
-        : "transition-none";
-      const burgerDelayClass = transitionsOn ? "delay-75" : "delay-0";
-
-      const topWagonWidthTransitionClass =
-        transitionsOn && topWagonIsBurger
-          ? "transition-[width] duration-200 ease-out"
-          : "transition-none";
-
-      const wagonTransformClass = hasHydrated
-        ? isBurgerMode
-          ? "-translate-y-1/2"
-          : "translate-y-0"
-        : "-translate-y-1/2 lg:translate-y-0";
-
-      const topWagonTransformClass = hasHydrated
-        ? topWagonIsBurger
-          ? "-translate-y-1/2"
-          : "translate-y-0"
-        : "-translate-y-1/2 lg:translate-y-0";
-
-      const menuSlideClass = hasHydrated
-        ? isBurgerMode
-          ? "opacity-0 pointer-events-none -translate-y-1"
-          : "opacity-100 pointer-events-auto translate-y-0"
-        : "opacity-0 pointer-events-none -translate-y-1 lg:opacity-100 lg:pointer-events-auto lg:translate-y-0";
-
-      const burgerSlideClass = hasHydrated
-        ? isBurgerMode
-          ? "opacity-100 pointer-events-auto translate-y-0"
-          : "opacity-0 pointer-events-none translate-y-1"
-        : "opacity-100 pointer-events-auto translate-y-0 lg:opacity-0 lg:pointer-events-none lg:translate-y-1";
-
-      return {
-        shellTransitionClass,
-        wagonTransitionClass,
-        slideTransitionClass,
-        burgerDelayClass,
-        topWagonWidthTransitionClass,
-        wagonTransformClass,
-        topWagonTransformClass,
-        menuSlideClass,
-        burgerSlideClass,
-      } as const;
-    }, [hasHydrated, isBurgerMode, topWagonIsBurger, transitionsOn],
-  );
+  const shellTransitionClass = transitionsOn
+    ? "transition-[padding-top] duration-200 ease-out"
+    : "transition-none";
 
   let burgerMotionIndex = 0;
   const nextBurgerMotionIndex = () => burgerMotionIndex++;
@@ -927,7 +859,9 @@ export function SiteShell({
               <div
                 className={cn(
                   "w-full min-w-0",
-                  "grid grid-rows-[minmax(var(--header-row-top-h),auto)_minmax(var(--header-row-bottom-h),auto)] gap-y-[var(--header-rows-gap)]",
+            // Фиксируем высоты строк, чтобы при переключении wagons
+            // не происходило скачков высоты хедера и контента.
+            "grid grid-rows-[var(--header-row-top-h)_var(--header-row-bottom-h)] gap-y-[var(--header-rows-gap)]",
                   "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
                 )}
               >
@@ -935,15 +869,8 @@ export function SiteShell({
                   contacts={site.contacts}
                   hasTopContacts={hasTopContacts}
                   topContactsWidth={topContactsWidth}
-                  topWagonsCollapsed={topWagonsCollapsed}
-                  topWagonIsBurger={topWagonIsBurger}
-                  topWagonTransformClass={topWagonTransformClass}
-                  topWagonWidthTransitionClass={topWagonWidthTransitionClass}
-                  wagonTransitionClass={wagonTransitionClass}
-                  slideTransitionClass={slideTransitionClass}
-                  burgerDelayClass={burgerDelayClass}
-                  menuSlideClass={menuSlideClass}
-                  burgerSlideClass={burgerSlideClass}
+                  isBurgerMode={isBurgerMode}
+                  prefersReducedMotion={prefersReducedMotion}
                   inertProps={inertProps}
                   hasHydrated={hasHydrated}
                   contactsHref={contactsHref}
@@ -968,12 +895,7 @@ export function SiteShell({
                   onBurgerClick={handleBurgerClick}
                   topLineTransform={topLineTransform}
                   bottomLineTransform={bottomLineTransform}
-                  wagonTransitionClass={wagonTransitionClass}
-                  wagonTransformClass={wagonTransformClass}
-                  slideTransitionClass={slideTransitionClass}
-                  menuSlideClass={menuSlideClass}
-                  burgerSlideClass={burgerSlideClass}
-                  burgerDelayClass={burgerDelayClass}
+                  prefersReducedMotion={prefersReducedMotion}
                   inertProps={inertProps}
                   contactsHref={contactsHref}
                   ctaLabel={ctaCompactLabel}

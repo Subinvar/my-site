@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react';
 
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
@@ -62,48 +63,50 @@ function HubCard({ item }: { item: ProductsHubCard }) {
   const href = item.href ?? '#';
 
   return (
-    <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
-      <Card
-        as="article"
-        className={cn(
-          'h-full overflow-hidden p-0',
-          'border-[var(--header-border)] bg-background/40 shadow-none',
-          'transform-none hover:-translate-y-0 hover:shadow-none',
-          'hover:bg-background/55',
-        )}
-      >
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
-          {/* eslint-disable-next-line @next/next/no-img-element -- Используем <img>, чтобы при необходимости легко менять источники без дополнительных конфигов */}
-          <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
-          <div
-            className={cn(
-              'pointer-events-none absolute inset-0',
-              'bg-gradient-to-t from-background/55 via-transparent to-transparent',
-              'opacity-0 transition-opacity duration-200 ease-out',
-              'group-hover:opacity-100',
-            )}
-            aria-hidden
-          />
-        </div>
+    <AppleHoverLift>
+      <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+        <Card
+          as="article"
+          className={cn(
+            'h-full overflow-hidden p-0',
+            'border-[var(--header-border)] bg-background/40 shadow-none',
+            'transform-none hover:shadow-none hover:-translate-y-0',
+            'transition-colors duration-200 ease-out hover:bg-background/55',
+          )}
+        >
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
+            {/* eslint-disable-next-line @next/next/no-img-element -- Используем <img>, чтобы при необходимости легко менять источники без дополнительных конфигов */}
+            <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
+            <div
+              className={cn(
+                'pointer-events-none absolute inset-0',
+                'bg-gradient-to-t from-background/55 via-transparent to-transparent',
+                'opacity-0 transition-opacity duration-200 ease-out',
+                'group-hover:opacity-100',
+              )}
+              aria-hidden
+            />
+          </div>
 
-        <div className="p-5 sm:p-6">
-          <CardHeader className="mb-0 gap-2">
-            <CardTitle className="m-0 flex items-start justify-between gap-3 text-base font-semibold sm:text-lg">
-              <span className="line-clamp-2 leading-snug">{item.title}</span>
-              <ArrowRight
-                className={cn(
-                  'mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]',
-                  'transition-transform duration-200 ease-out',
-                  'group-hover:translate-x-0.5',
-                )}
-                aria-hidden
-              />
-            </CardTitle>
-            <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
-          </CardHeader>
-        </div>
-      </Card>
-    </Link>
+          <div className="p-5 sm:p-6">
+            <CardHeader className="mb-0 gap-2">
+              <CardTitle className="m-0 flex items-start justify-between gap-3 text-base font-semibold sm:text-lg">
+                <span className="line-clamp-2 leading-snug">{item.title}</span>
+                <ArrowRight
+                  className={cn(
+                    'mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]',
+                    'transition-transform duration-200 ease-out',
+                    'group-hover:translate-x-0.5',
+                  )}
+                  aria-hidden
+                />
+              </CardTitle>
+              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
+            </CardHeader>
+          </div>
+        </Card>
+      </Link>
+    </AppleHoverLift>
   );
 }
 
@@ -293,41 +296,44 @@ function InsightTilesCarousel({
           aria-label={isRu ? 'Преимущества работы с «Интема Групп»' : 'Why work with InTema Group'}
         >
           {tiles.map((tile) => (
-            <button
-              key={tile.id}
-              data-carousel-item="1"
-              type="button"
-              onClick={() => onOpen(tile.id)}
-              className={cn(
-                'group w-[280px] sm:w-[320px] shrink-0 snap-start',
-                'rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left',
-                'transition-[transform,background-color,box-shadow] duration-200 ease-out',
-                'hover:-translate-y-0.5 hover:bg-background/60 hover:shadow-md',
-                focusRingBase,
-              )}
-            >
-              <div className="flex items-start gap-3">
-                <span
+            <div key={tile.id} data-carousel-item="1" className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+              <AppleHoverLift>
+                <button
+                  type="button"
+                  onClick={() => onOpen(tile.id)}
                   className={cn(
-                    'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-                    'border border-[var(--header-border)] bg-muted/60 text-foreground',
+                    'group w-full rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left',
+                    'transition-colors duration-200 ease-out hover:bg-background/60',
+                    focusRingBase,
                   )}
-                  aria-hidden
                 >
-                  {tile.icon}
-                </span>
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={cn(
+                        'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                        'border border-[var(--header-border)] bg-muted/60 text-foreground',
+                      )}
+                      aria-hidden
+                    >
+                      {tile.icon}
+                    </span>
 
-                <div className="min-w-0">
-                  <p className="m-0 text-sm font-semibold leading-snug">{tile.title}</p>
-                  <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{tile.lead}</p>
-                </div>
-              </div>
+                    <div className="min-w-0">
+                      <p className="m-0 text-sm font-semibold leading-snug">{tile.title}</p>
+                      <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{tile.lead}</p>
+                    </div>
+                  </div>
 
-              <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
-                <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-              </div>
-            </button>
+                  <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
+                    <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
+                    <ArrowRight
+                      className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                      aria-hidden
+                    />
+                  </div>
+                </button>
+              </AppleHoverLift>
+            </div>
           ))}
         </div>
 
@@ -463,15 +469,55 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   const [openTileId, setOpenTileId] = useState<string | null>(null);
   const activeTile = whyTiles.find((t) => t.id === openTileId) ?? null;
 
+  const [renderedTile, setRenderedTile] = useState<InsightTile | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
+
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  }, []);
+
+  const closeTileModal = () => {
+    setIsModalVisible(false);
+    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(
+      () => {
+        setOpenTileId(null);
+        setRenderedTile(null);
+      },
+      prefersReducedMotion ? 0 : 300,
+    );
+  };
+
+  useEffect(() => {
+    if (!activeTile) return;
+    setRenderedTile(activeTile);
+
+    // Стартуем с "невидимого" состояния и даём браузеру отрисовать layout,
+    // чтобы переходы (opacity/blur/scale) были заметны.
+    setIsModalVisible(prefersReducedMotion);
+    if (prefersReducedMotion) return;
+
+    const raf = window.requestAnimationFrame(() => setIsModalVisible(true));
+    return () => window.cancelAnimationFrame(raf);
+  }, [activeTile, prefersReducedMotion]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
   // Блокируем прокрутку фона и закрываем по ESC, пока открыта модалка плитки.
   useEffect(() => {
-    if (!openTileId) return;
+    if (!renderedTile) return;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenTileId(null);
+      if (e.key === 'Escape') closeTileModal();
     };
 
     document.addEventListener('keydown', onKeyDown);
@@ -480,7 +526,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       document.body.style.overflow = prevOverflow;
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [openTileId]);
+  }, [renderedTile]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
@@ -735,20 +781,29 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       </div>
 
       {/* Модалка для плиток */}
-      {activeTile ? (
+      {renderedTile ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6">
           <button
             type="button"
             aria-label={isRu ? 'Закрыть' : 'Close'}
-            className="absolute inset-0 bg-background/60 backdrop-blur-sm"
-            onClick={() => setOpenTileId(null)}
+            className={cn(
+              'absolute inset-0',
+              'transition-[opacity,background-color,backdrop-filter] duration-300 ease-out',
+              isModalVisible
+                ? 'bg-background/55 opacity-100 backdrop-blur-md'
+                : 'bg-background/0 opacity-0 backdrop-blur-none',
+            )}
+            onClick={closeTileModal}
           />
+
           <div
             role="dialog"
             aria-modal="true"
-            aria-label={activeTile.title}
+            aria-label={renderedTile.title}
             className={cn(
-              'relative w-full max-w-2xl rounded-3xl border border-[var(--header-border)] bg-background p-5 shadow-lg',
+              'relative w-full max-w-2xl rounded-3xl border border-[var(--header-border)] bg-background p-5 shadow-none',
+              'transition-[opacity,transform] duration-[220ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
+              isModalVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]',
               'sm:p-6',
             )}
           >
@@ -757,12 +812,12 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
                 <p className="m-0 text-xs font-semibold text-[var(--muted-foreground)]">
                   {isRu ? 'Подробности' : 'Details'}
                 </p>
-                <h3 className="mt-1 text-lg font-semibold leading-snug sm:text-xl">{activeTile.title}</h3>
+                <h3 className="mt-1 text-lg font-semibold leading-snug sm:text-xl">{renderedTile.title}</h3>
               </div>
 
               <button
                 type="button"
-                onClick={() => setOpenTileId(null)}
+                onClick={closeTileModal}
                 className={cn(
                   'inline-flex h-10 w-10 items-center justify-center rounded-xl',
                   'border border-[var(--header-border)] bg-muted/20 text-foreground',
@@ -776,7 +831,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
             </div>
 
             <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-              {activeTile.details.map((p) => (
+              {renderedTile.details.map((p) => (
                 <p key={p} className="m-0">
                   {p}
                 </p>
