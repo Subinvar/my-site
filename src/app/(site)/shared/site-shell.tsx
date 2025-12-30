@@ -32,7 +32,6 @@ import {
 import { HtmlLangSync } from "./html-lang-sync";
 import { useMediaBreakpoints } from "./hooks/use-media-breakpoints";
 import { useResizeTransitions } from "./hooks/use-resize-transitions";
-import { useHeaderHeight } from "./hooks/use-header-height";
 import { useBurgerAnimation } from "./hooks/use-burger-animation";
 import { useScrollElevation } from "./hooks/use-scroll-elevation";
 import { useWindowResize } from "./hooks/use-window-resize";
@@ -437,7 +436,8 @@ export function SiteShell({
 
   const hasTopContacts = topContactsIds.length > 0;
   const { scrollSentinelRef, isHeaderElevated } = useScrollElevation();
-  const { shellRef, headerRef } = useHeaderHeight();
+  // Высоту шапки держим стабильной через CSS-токен --header-height-initial,
+  // чтобы контент под ней (и панели меню) не "прыгали" при смене режимов.
   const handleCloseMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
@@ -803,7 +803,6 @@ export function SiteShell({
 
   return (
     <div
-      ref={shellRef}
       className={cn(
         "theme-transition relative flex min-h-screen flex-col bg-background text-foreground",
         shellTransitionClass,
@@ -824,7 +823,6 @@ export function SiteShell({
       />
 
       <header
-        ref={headerRef}
         data-site-header
         onPointerDownCapture={handleHeaderPointerDownCapture}
         style={
@@ -836,7 +834,7 @@ export function SiteShell({
           "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-[var(--header-divider-duration)] before:ease-out before:content-['']",
           "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
-          "min-h-[var(--header-height-initial)]",
+          "h-[var(--header-height-initial)]",
           isHeaderDividerVisible
             ? cn(
                 "bg-background/92 backdrop-blur-md before:opacity-100",

@@ -53,6 +53,18 @@ const ICONS: Record<string, ReactElement> = {
   star: <Star className="h-4 w-4" aria-hidden />,
 };
 
+// Motion tuning for the tile modal (feel free to tweak values).
+const TILE_MODAL_MOTION = {
+  backdropInMs: 650,
+  backdropOutMs: 520,
+  dialogInMs: 420,
+  dialogOutMs: 320,
+  backdropBlurPx: 18,
+  dialogTranslateYPx: 12,
+  dialogScaleFrom: 0.96,
+  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+} as const;
+
 function isModifiedEvent(e: MouseEvent<HTMLAnchorElement>) {
   return e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || e.button !== 0;
 }
@@ -91,7 +103,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
           <div className="p-5 sm:p-6">
             <CardHeader className="mb-0 gap-2">
               <CardTitle className="m-0 flex items-start justify-between gap-3 text-base font-semibold sm:text-lg">
-                <span className="line-clamp-2 leading-snug">{item.title}</span>
+                <span className="line-clamp-2 min-h-[2.75rem] leading-snug sm:min-h-[3.1rem]">{item.title}</span>
                 <ArrowRight
                   className={cn(
                     'mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]',
@@ -101,7 +113,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
                   aria-hidden
                 />
               </CardTitle>
-              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
+              <CardDescription className="line-clamp-4 min-h-[5.2rem]">{item.description}</CardDescription>
             </CardHeader>
           </div>
         </Card>
@@ -289,7 +301,7 @@ function InsightTilesCarousel({
           ref={scrollerRef}
           id="why-tiles-carousel"
           className={cn(
-            'no-scrollbar flex gap-4 overflow-x-auto pb-3',
+            'no-scrollbar flex gap-4 overflow-x-auto pb-3 pt-[6px] px-[6px] -mx-[6px]',
             'snap-x snap-mandatory scroll-smooth',
             'touch-pan-x overscroll-x-contain',
           )}
@@ -302,7 +314,7 @@ function InsightTilesCarousel({
                   type="button"
                   onClick={() => onOpen(tile.id)}
                   className={cn(
-                    'group w-full rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left',
+                    'group w-full h-[168px] sm:h-[176px] rounded-2xl border border-[var(--header-border)] bg-background/45 p-4 text-left flex flex-col',
                     'transition-colors duration-200 ease-out hover:bg-background/60',
                     focusRingBase,
                   )}
@@ -319,12 +331,12 @@ function InsightTilesCarousel({
                     </span>
 
                     <div className="min-w-0">
-                      <p className="m-0 text-sm font-semibold leading-snug">{tile.title}</p>
-                      <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{tile.lead}</p>
+                      <p className="m-0 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.4rem]">{tile.title}</p>
+                      <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)] line-clamp-2 min-h-[2.9rem]">{tile.lead}</p>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
+                  <div className="mt-auto flex items-center gap-2 pt-4 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
                     <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
                     <ArrowRight
                       className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
@@ -481,13 +493,15 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
   const closeTileModal = () => {
     setIsModalVisible(false);
     if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
-    closeTimerRef.current = window.setTimeout(
-      () => {
-        setOpenTileId(null);
-        setRenderedTile(null);
-      },
-      prefersReducedMotion ? 0 : 300,
-    );
+
+    const delay = prefersReducedMotion
+      ? 0
+      : Math.max(TILE_MODAL_MOTION.backdropOutMs, TILE_MODAL_MOTION.dialogOutMs) + 40;
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpenTileId(null);
+      setRenderedTile(null);
+    }, delay);
   };
 
   useEffect(() => {
@@ -786,13 +800,27 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
           <button
             type="button"
             aria-label={isRu ? 'Закрыть' : 'Close'}
-            className={cn(
-              'absolute inset-0',
-              'transition-[opacity,background-color,backdrop-filter] duration-300 ease-out',
-              isModalVisible
-                ? 'bg-background/55 opacity-100 backdrop-blur-md'
-                : 'bg-background/0 opacity-0 backdrop-blur-none',
-            )}
+            className="absolute inset-0 bg-background/55"
+            style={
+              prefersReducedMotion
+                ? {
+                    opacity: 1,
+                    backdropFilter: `blur(${TILE_MODAL_MOTION.backdropBlurPx}px)`,
+                    WebkitBackdropFilter: `blur(${TILE_MODAL_MOTION.backdropBlurPx}px)`,
+                  }
+                : {
+                    opacity: isModalVisible ? 1 : 0,
+                    backdropFilter: isModalVisible
+                      ? `blur(${TILE_MODAL_MOTION.backdropBlurPx}px)`
+                      : 'blur(0px)',
+                    WebkitBackdropFilter: isModalVisible
+                      ? `blur(${TILE_MODAL_MOTION.backdropBlurPx}px)`
+                      : 'blur(0px)',
+                    transitionProperty: 'opacity, backdrop-filter',
+                    transitionDuration: `${isModalVisible ? TILE_MODAL_MOTION.backdropInMs : TILE_MODAL_MOTION.backdropOutMs}ms`,
+                    transitionTimingFunction: TILE_MODAL_MOTION.easing,
+                  }
+            }
             onClick={closeTileModal}
           />
 
@@ -800,12 +828,23 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
             role="dialog"
             aria-modal="true"
             aria-label={renderedTile.title}
-            className={cn(
-              'relative w-full max-w-2xl rounded-3xl border border-[var(--header-border)] bg-background p-5 shadow-none',
-              'transition-[opacity,transform] duration-[220ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
-              isModalVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]',
-              'sm:p-6',
-            )}
+            className="relative w-full max-w-2xl rounded-3xl border border-[var(--header-border)] bg-background p-5 shadow-none sm:p-6"
+            style={
+              prefersReducedMotion
+                ? {
+                    opacity: 1,
+                    transform: 'translateY(0px) scale(1)',
+                  }
+                : {
+                    opacity: isModalVisible ? 1 : 0,
+                    transform: isModalVisible
+                      ? 'translateY(0px) scale(1)'
+                      : `translateY(${TILE_MODAL_MOTION.dialogTranslateYPx}px) scale(${TILE_MODAL_MOTION.dialogScaleFrom})`,
+                    transitionProperty: 'opacity, transform',
+                    transitionDuration: `${isModalVisible ? TILE_MODAL_MOTION.dialogInMs : TILE_MODAL_MOTION.dialogOutMs}ms`,
+                    transitionTimingFunction: TILE_MODAL_MOTION.easing,
+                  }
+            }
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">

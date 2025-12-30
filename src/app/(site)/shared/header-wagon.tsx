@@ -79,7 +79,7 @@ export const HeaderWagon = memo(function HeaderWagon({
   hasHydrated,
   inertProps,
   prefersReducedMotion,
-  durationMs = 320,
+  durationMs = 640,
   panelBaseClassName,
   primaryClassName,
   secondaryClassName,
@@ -223,7 +223,7 @@ type UseDelayedCollapseOptions = {
  */
 export function useDelayedCollapse(
   shouldCollapse: boolean,
-  { delayMs = 320, hasHydrated, prefersReducedMotion }: UseDelayedCollapseOptions,
+  { delayMs = 640, hasHydrated, prefersReducedMotion }: UseDelayedCollapseOptions,
 ) {
   const [collapsed, setCollapsed] = useState(false);
 

@@ -191,7 +191,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 
   // Схлопываем ширину ПОСЛЕ завершения exit-анимации (иначе будет «моментальное исчезновение»).
   const topWagonsCollapsed = useDelayedCollapse(shouldHideTopWagons, {
-    delayMs: 320,
+    delayMs: 640,
     hasHydrated,
     prefersReducedMotion,
   });
@@ -201,7 +201,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   // чтобы вагоны не «вылетали из правого нижнего угла».
   const widthTransitionClass =
     hasHydrated && !prefersReducedMotion && shouldHideTopWagons
-      ? "transition-[width] duration-200 ease-out"
+      ? "transition-[width] duration-400 ease-out"
       : "transition-none";
 
   const topContactsSsrWidthStyle =
@@ -230,7 +230,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
               hasHydrated={hasHydrated}
               inertProps={inertProps}
               prefersReducedMotion={prefersReducedMotion}
-              durationMs={320}
+              durationMs={640}
               panelBaseClassName="flex h-full w-full items-center gap-9"
               primary={
                 <>
@@ -275,7 +275,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
             hasHydrated={hasHydrated}
             inertProps={inertProps}
             prefersReducedMotion={prefersReducedMotion}
-            durationMs={320}
+            durationMs={640}
             panelBaseClassName="flex h-full w-full items-center justify-end"
             primary={
               <HeaderCta

@@ -14,6 +14,8 @@ type AppleHoverLiftProps = HTMLAttributes<HTMLDivElement> & {
  * Notes:
  * - Uses both hover: and group-hover: so it works either standalone or inside a `group` parent.
  * - Adds z-index on hover to prevent the scaled card from being visually clipped by neighbors.
+ * - We intentionally DON'T force GPU compositing in the idle state (e.g. via `transform-gpu`),
+ *   because it can make text look blurry. We only hint `will-change` during the hover.
  */
 export function AppleHoverLift({ className, strength = 'sm', ...props }: AppleHoverLiftProps) {
   const scale =
@@ -25,10 +27,10 @@ export function AppleHoverLift({ className, strength = 'sm', ...props }: AppleHo
     <div
       className={cn(
         'relative h-full',
-        'transform-gpu will-change-transform',
         'transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+        'hover:will-change-transform group-hover:will-change-transform',
         scale,
-        'hover:z-10 focus-within:z-10',
+        'hover:z-20 focus-within:z-20',
         'motion-reduce:transition-none motion-reduce:hover:scale-100',
         className,
       )}
