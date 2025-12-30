@@ -1026,7 +1026,7 @@ export function SiteShell({
                               className={cn(
                                 "group block w-full py-2",
                                 "no-underline",
-                                "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                 isProductsRootActive
                                   ? "text-foreground"
                                   : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1100,11 +1100,11 @@ export function SiteShell({
                             const rootClassName = cn(
                               "group block w-full py-2",
                               "no-underline",
-                              "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                              "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                               rootActive
                                 ? "text-foreground"
                                 : "text-muted-foreground transition-colors hover:text-foreground",
-                            focusRingBase,
+                              focusRingBase,
                             );
 
                           return (
@@ -1198,7 +1198,7 @@ export function SiteShell({
                                 className={cn(
                                   "group block w-full py-2",
                                   "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1215,7 +1215,7 @@ export function SiteShell({
                                 className={cn(
                                   "group block w-full py-2",
                                   "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.35rem,1.05rem+1.2vw,2.05rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",

@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { type MouseEvent, type ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  type MouseEvent,
+  type ReactElement,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowRight, BadgeCheck, Beaker, FileText, PaintRoller, Sparkles, Star, Wrench, X } from 'lucide-react';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
@@ -98,7 +108,11 @@ function ProductsSection({
   items: ProductsHubGroup['cards'];
 }) {
   return (
-    <section id={id} className={cn('scroll-mt-[calc(var(--header-height)+4rem)]', 'p-5 sm:p-6')}>
+    <section
+      id={id}
+      className={cn('p-5 sm:p-6')}
+      style={{ scrollMarginTop: 'calc(var(--header-height) + var(--products-nav-height, 0px) + 1.5rem)' }}
+    >
       <header className="mb-5 space-y-2">
         <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
         <p className="m-0 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
@@ -120,7 +134,10 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
 
   const [isNavPinned, setIsNavPinned] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const navSlotRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+  const [navLayout, setNavLayout] = useState<{ height: number; width: number; left: number } | null>(null);
 
   const sectionIds = useMemo(() => groups.map((group) => group.id), [groups]);
 
@@ -251,35 +268,81 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     };
   }, [openTileId]);
 
-  // Определяем момент «прилипания» липкой полосы.
-  // Важно: активная подсветка пунктов появляется ТОЛЬКО после того,
-  // как полоса реально стала sticky (и уже виден соответствующий блок).
-  useEffect(() => {
+  // --- Полностью переписанная логика «липкой» навигации ---
+  // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
+  // (например overflow-x: hidden/clip) или если скролл идёт не по viewport.
+  // Поэтому делаем предсказуемый вариант: обычная навигация в потоке +
+  // переключение на position: fixed, когда её слот доезжает до шапки.
+  useLayoutEffect(() => {
+    const page = pageRef.current;
+    const slot = navSlotRef.current;
     const nav = navRef.current;
-    if (!nav) return;
+    if (!slot || !nav) return;
 
     let raf = 0;
 
-    const update = () => {
+    const measure = () => {
       raf = 0;
-      const rectTop = nav.getBoundingClientRect().top;
-      const stickyTop = Number.parseFloat(window.getComputedStyle(nav).top || '0');
-      const pinned = rectTop <= stickyTop + 0.5;
+      const slotRect = slot.getBoundingClientRect();
+      const navRect = nav.getBoundingClientRect();
+      const height = Math.max(0, Math.round(navRect.height));
+
+      // CSS-переменная нужна для корректного scroll-margin-top у секций.
+      // Задаём на корневом контейнере страницы, чтобы наследовалась.
+      page?.style.setProperty('--products-nav-height', `${height}px`);
+
+      setNavLayout({
+        height,
+        width: Math.max(0, Math.round(slotRect.width)),
+        left: Math.round(slotRect.left),
+      });
+    };
+
+    const schedule = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('resize', schedule);
+
+    return () => {
+      window.removeEventListener('resize', schedule);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  useEffect(() => {
+    const slot = navSlotRef.current;
+    const nav = navRef.current;
+    if (!slot || !nav) return;
+
+    let raf = 0;
+
+    const updatePinned = () => {
+      raf = 0;
+
+      // --header-height живёт на SiteShell (не на :root), поэтому читаем
+      // переменную у элемента внутри дерева.
+      const headerHeightRaw = window.getComputedStyle(slot).getPropertyValue('--header-height');
+      const headerHeight = Number.parseFloat(headerHeightRaw) || 0;
+      const top = slot.getBoundingClientRect().top;
+
+      // Порог с небольшим запасом, чтобы не «дребезжало» на полпикселя.
+      const pinned = top <= headerHeight + 0.5;
 
       setIsNavPinned((prev) => {
-        if (prev && !pinned) {
-          setActiveSection(null);
-        }
+        if (prev && !pinned) setActiveSection(null);
         return pinned;
       });
     };
 
     const schedule = () => {
       if (raf) return;
-      raf = window.requestAnimationFrame(update);
+      raf = window.requestAnimationFrame(updatePinned);
     };
 
-    update();
+    updatePinned();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
 
@@ -325,7 +388,11 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
 
   return (
     <>
-      <div className="space-y-12 lg:space-y-14">
+      <div
+        ref={pageRef}
+        className="space-y-12 lg:space-y-14"
+        style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
+      >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
         <section className="rounded-3xl border border-[var(--header-border)] bg-muted/20 p-5 sm:p-6">
           <header className="space-y-2">
@@ -374,66 +441,87 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
           </div>
         </section>
 
-        {/* Липкая навигация по секциям */}
-        <nav
-          ref={navRef}
-          aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
-          className={cn('sticky z-10', 'top-[var(--header-height)]', 'p-2')}
-        >
-          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            {groups.map((group) => {
-              const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
-              const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
-              const isActive = isNavPinned && activeSection === group.id;
-              const count = counts.get(group.id) ?? 0;
+        {/* Навигация по секциям (JS-fixed вместо sticky, чтобы работало в любой разметке) */}
+        <div ref={navSlotRef} className="relative">
+          {/* Плейсхолдер — удерживает место, когда навигация становится fixed */}
+          {isNavPinned ? (
+            <div aria-hidden style={{ height: navLayout?.height ?? 0 }} />
+          ) : null}
 
-              return (
-                <a
-                  key={group.id}
-                  href={`#${group.id}`}
-                  onClick={(e) => {
-                    if (isModifiedEvent(e)) return;
-                    e.preventDefault();
-                    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-                    document
-                      .getElementById(group.id)
-                      ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-                  }}
-                  className={cn(
-                    'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-medium',
-                    'transition-colors duration-150 ease-out',
-                    isActive
-                      ? cn(
-                          'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
-                          'bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)]',
-                          'text-foreground',
-                        )
-                      : cn(
-                          'border border-[var(--header-border)] bg-transparent text-[var(--muted-foreground)]',
-                          'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
-                          'hover:bg-muted/40 hover:text-foreground',
-                        ),
-                    focusRingBase,
-                  )}
-                >
-                  {icon}
-                  <span className="truncate">{label}</span>
-                  <span
+          <nav
+            ref={navRef}
+            aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
+            className={cn(
+              'z-50 p-2',
+              isNavPinned &&
+                'border-b border-[var(--header-border)] bg-background/85 backdrop-blur-md shadow-[0_6px_18px_rgba(0,0,0,0.06)]',
+            )}
+            style={
+              (isNavPinned
+                ? {
+                    position: 'fixed',
+                    top: 'var(--header-height)',
+                    left: navLayout?.left ?? 0,
+                    width: navLayout?.width ?? '100%',
+                  }
+                : undefined) as CSSProperties
+            }
+          >
+            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              {groups.map((group) => {
+                const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
+                const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
+                const isActive = isNavPinned && activeSection === group.id;
+                const count = counts.get(group.id) ?? 0;
+
+                return (
+                  <a
+                    key={group.id}
+                    href={`#${group.id}`}
+                    onClick={(e) => {
+                      if (isModifiedEvent(e)) return;
+                      e.preventDefault();
+                      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+                      document
+                        .getElementById(group.id)
+                        ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+                    }}
                     className={cn(
-                      'ml-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
+                      'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-medium',
+                      'transition-colors duration-150 ease-out',
                       isActive
-                        ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
-                        : 'border-[var(--header-border)] bg-muted/60 text-[var(--muted-foreground)]',
+                        ? cn(
+                            'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+                            'bg-[color:color-mix(in_srgb,var(--color-brand-600)_12%,transparent)]',
+                            'text-foreground',
+                          )
+                        : cn(
+                            'border border-[var(--header-border)] bg-transparent text-[var(--muted-foreground)]',
+                            'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
+                            'hover:bg-muted/40 hover:text-foreground',
+                          ),
+                      focusRingBase,
                     )}
-                    aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
                   >
-                    {count}
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-        </nav>
+                    {icon}
+                    <span className="truncate">{label}</span>
+                    <span
+                      className={cn(
+                        'ml-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
+                        isActive
+                          ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
+                          : 'border-[var(--header-border)] bg-muted/60 text-[var(--muted-foreground)]',
+                      )}
+                      aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
+                    >
+                      {count}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
 
         {/* Секции с карточками */}
         <div className="space-y-10 lg:space-y-12">

@@ -41,9 +41,13 @@ export function SiteFooter({
 
   const footerLinks = navigation.footer ?? [];
 
-  const footerLinkRows = (() => {
+  const footerLinkColumns = (() => {
+    if (!footerLinks.length) return [];
+
     if (footerLinks.length <= 3) return [footerLinks];
-    return [footerLinks.slice(0, 3), footerLinks.slice(3)];
+
+    const midpoint = Math.ceil(footerLinks.length / 2);
+    return [footerLinks.slice(0, midpoint), footerLinks.slice(midpoint)];
   })();
 
   const telegramHref = contacts.telegramUrl?.trim() ?? "";
@@ -93,13 +97,13 @@ export function SiteFooter({
 
             {footerLinks.length ? (
               <nav aria-label={navigationLabel}>
-                <div className="flex flex-col gap-2">
-                  {footerLinkRows.map((row, rowIndex) => (
+                <div className="grid grid-cols-2 gap-x-8 gap-y-3 max-[520px]:grid-cols-1">
+                  {footerLinkColumns.map((column, columnIndex) => (
                     <ul
-                      key={rowIndex}
-                      className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 p-0 list-none justify-start"
+                      key={columnIndex}
+                      className="m-0 flex flex-col items-start gap-1 p-0 list-none"
                     >
-                      {row.map((link) => {
+                      {column.map((link) => {
                         const href = resolveHref(link.href);
                         const normalizedHref = normalizePathname(href);
                         const isActive =

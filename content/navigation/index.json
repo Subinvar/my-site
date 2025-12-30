@@ -173,19 +173,6 @@
       "order": 5
     },
     {
-      "id": "footer-documents",
-      "label": {
-        "ru": "Документы",
-        "en": "Documents"
-      },
-      "path": {
-        "ru": "documents",
-        "en": "documents"
-      },
-      "newTab": false,
-      "order": 10
-    },
-    {
       "id": "footer-coatings",
       "label": {
         "ru": "Противопригарные покрытия",
@@ -194,6 +181,19 @@
       "path": {
         "ru": "products/coatings",
         "en": "products/coatings"
+      },
+      "newTab": false,
+      "order": 10
+    },
+    {
+      "id": "footer-auxiliaries",
+      "label": {
+        "ru": "Вспомогательные материалы",
+        "en": "Auxiliary materials"
+      },
+      "path": {
+        "ru": "products/auxiliaries",
+        "en": "products/auxiliaries"
       },
       "newTab": false,
       "order": 15
@@ -212,14 +212,14 @@
       "order": 20
     },
     {
-      "id": "footer-auxiliaries",
+      "id": "footer-documents",
       "label": {
-        "ru": "Вспомогательные материалы",
-        "en": "Auxiliary materials"
+        "ru": "Документы",
+        "en": "Documents"
       },
       "path": {
-        "ru": "products/auxiliaries",
-        "en": "products/auxiliaries"
+        "ru": "documents",
+        "en": "documents"
       },
       "newTab": false,
       "order": 25
