@@ -139,7 +139,10 @@ function ProductsSection({
     <section
       id={id}
       className={cn('py-5 sm:py-6')}
-      style={{ scrollMarginTop: 'calc(var(--header-height) + var(--products-nav-height, 0px) + 1.5rem)' }}
+      style={{
+        scrollMarginTop:
+          'calc(var(--header-height, var(--header-height-initial)) + var(--products-nav-height, 0px) + 1.5rem)',
+      }}
     >
       <header className="mb-5 space-y-2">
         <h2 className="mt-0 text-lg font-semibold sm:text-xl">{title}</h2>
@@ -184,11 +187,19 @@ function InsightTilesCarousel({
     let scrollRaf = 0;
     let measureRaf = 0;
 
+    const getPads = () => {
+      const styles = window.getComputedStyle(el);
+      const padLeft = Number.parseFloat(styles.paddingLeft) || 0;
+      const padRight = Number.parseFloat(styles.paddingRight) || 0;
+      return { padLeft, padRight };
+    };
+
     const update = () => {
+      const { padLeft, padRight } = getPads();
       const max = el.scrollWidth - el.clientWidth;
       setCanScroll({
-        left: el.scrollLeft > 1,
-        right: el.scrollLeft < max - 1,
+        left: el.scrollLeft > padLeft + 2,
+        right: el.scrollLeft < max - padRight - 2,
       });
     };
 
@@ -204,6 +215,11 @@ function InsightTilesCarousel({
       const styles = window.getComputedStyle(el);
       const padLeft = Number.parseFloat(styles.paddingLeft) || 0;
       const padRight = Number.parseFloat(styles.paddingRight) || 0;
+
+      // IMPORTANT: scroll-padding is set via static Tailwind classes on the scroller
+      // (scroll-px-3 / sm:scroll-px-4). This avoids a hydration "jump" where the browser
+      // initially snap-aligns the first card to the very edge and only later shifts it.
+
       const innerWidth = Math.max(0, el.clientWidth - padLeft - padRight);
 
       perPageRef.current = Math.max(1, Math.floor((innerWidth + 1) / step));
@@ -306,7 +322,11 @@ function InsightTilesCarousel({
             // На узких экранах (и при overflow-x: hidden на body) это даёт ощущение,
             // что ряд "поджимает" справа и карточки смещаются влево.
             // Вместо этого даём небольшой внутренний "safe-area" под hover-scale.
-            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-1 px-1',
+            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-2 px-1 sm:px-1',
+            // Keep scroll-snap aligned with the visual padding from the very first paint.
+            // This prevents a hydration "jump" where the browser initially snap-aligns
+            // the first card to the edge and then shifts it after hydration.
+            'scroll-px-3 sm:scroll-px-4',
             'snap-x snap-mandatory scroll-smooth',
             'touch-pan-x overscroll-x-contain',
           )}
@@ -314,25 +334,14 @@ function InsightTilesCarousel({
         >
           {tiles.map((tile) => (
             <div key={tile.id} data-carousel-item="1" className="w-[280px] sm:w-[320px] shrink-0 snap-start">
-              {/*
-                Внутри горизонтального скролла трансформ (scale) часто делает текст "мыльным" на hover.
-                Поэтому используем режим surface: масштабируем только подложку (border/bg),
-                а контент остаётся без transform — текст остаётся чётким.
-              */}
-              <AppleHoverLift
-                mode="surface"
-                surfaceClassName={cn(
-                  'rounded-2xl border border-[var(--header-border)]',
-                  'bg-background/45 transition-colors duration-200 ease-out',
-                  'group-hover:bg-background/60',
-                )}
-              >
+              <AppleHoverLift strength="xs" optimizeForScroll>
                 <button
                   type="button"
                   onClick={() => onOpen(tile.id)}
                   className={cn(
-                    'w-full h-[168px] sm:h-[176px] rounded-2xl p-4 text-left flex flex-col',
-                    'bg-transparent',
+                    'group w-full h-[168px] sm:h-[176px] rounded-2xl border border-[var(--header-border)]',
+                    'bg-background/45 p-4 text-left flex flex-col',
+                    'transition-colors duration-200 ease-out hover:bg-background/60',
                     focusRingBase,
                   )}
                 >
@@ -541,7 +550,25 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       closeTimerRef.current = null;
     }
 
-    setRenderedTile(activeTile);
+    // Отменяем любые запланированные кадры открытия.
+    if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
+    if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
+    openRaf1Ref.current = null;
+    openRaf2Ref.current = null;
+
+    // Стартуем из "скрытого" состояния.
+    setIsModalVisible(false);
+
+    // Важно: создаём новый объект, чтобы анимация открытия сработала даже если
+    // пользователь повторно открывает ту же плитку, пока предыдущая ещё не размонтировалась (состояние closing).
+    setRenderedTile({
+      ...activeTile,
+      details: [...activeTile.details],
+    });
+  }, [activeTile]);
+
+  useEffect(() => {
+    if (!renderedTile) return;
 
     // Для reduce-motion просто показываем сразу.
     if (prefersReducedMotion) {
@@ -551,10 +578,8 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
 
     // Критично: при открытии нельзя включать "visible" в том же кадре,
     // иначе браузер увидит элемент уже в финальном состоянии и перехода не будет.
-    // Делаем double-rAF: 1-й кадр — монтируем в opacity:0 / blur:0,
+    // Делаем double-rAF: 1-й кадр — элемент уже в DOM в opacity:0 / blur:0,
     // 2-й кадр — включаем видимость и запускаем transition.
-    setIsModalVisible(false);
-
     if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
     if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
 
@@ -570,7 +595,8 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       openRaf1Ref.current = null;
       openRaf2Ref.current = null;
     };
-  }, [activeTile, prefersReducedMotion]);
+  }, [renderedTile, prefersReducedMotion]);
+
 
   useEffect(() => {
     return () => {
@@ -649,21 +675,27 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     const slot = navSlotRef.current;
     if (!slot) return;
 
-    const headerEl = document.querySelector<HTMLElement>('[data-site-header]');
-
     let raf = 0;
 
     const update = () => {
       raf = 0;
 
-      // --header-height живёт на SiteShell (не на :root), поэтому читаем переменную у элемента внутри дерева.
-      const headerHeight = headerEl
-        ? Math.round(headerEl.getBoundingClientRect().height)
-        : (() => {
-          const headerHeightRaw = window.getComputedStyle(slot).getPropertyValue('--header-height');
-          const parsed = Number.parseFloat(headerHeightRaw);
-          return Number.isFinite(parsed) ? parsed : 0;
-        })();
+      // --header-height живёт на SiteShell (не на :root). На первом скролле
+      // переменная может ещё не быть проставлена, из-за чего навигация успевает
+      // «заехать» под шапку перед тем как стать фиксированной.
+      //
+      // Поэтому:
+      // 1) читаем --header-height
+      // 2) если пусто — берём --header-height-initial
+      // 3) если и он не доступен — меряем фактический DOM-элемент шапки.
+      const slotStyles = window.getComputedStyle(slot);
+      const headerHeightVar = Number.parseFloat(slotStyles.getPropertyValue('--header-height')) || 0;
+      const headerHeightInitial = Number.parseFloat(slotStyles.getPropertyValue('--header-height-initial')) || 0;
+
+      const headerEl = document.querySelector<HTMLElement>('[data-site-header]');
+      const headerHeightMeasured = headerEl ? headerEl.getBoundingClientRect().height : 0;
+
+      const headerHeight = headerHeightVar || headerHeightInitial || headerHeightMeasured || 0;
 
       // Порог с небольшим запасом, чтобы не «дребезжало» на полпикселя.
       const pinned = slot.getBoundingClientRect().top <= headerHeight + 0.5;
@@ -676,9 +708,13 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       }
 
       const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
-      const extraOffset = rootFontSize * 1.5; // соответствует +1.5rem в scrollMarginTop у секций
+      // Более отзывчивое переключение «активного» раздела.
+      // Слишком большая линия якоря (header + nav + 1.5rem) даёт заметную задержку при прокрутке вниз.
+      const extraOffset = rootFontSize * 0.5; // 0.5rem
       const navHeight = navLayout?.height ?? navRef.current?.getBoundingClientRect().height ?? 0;
-      const anchorLine = headerHeight + navHeight + extraOffset + 0.5;
+      // Навигация может быть высокой (3 плитки в ряд). Берём не весь navHeight,
+      // а его долю, чтобы активный пункт обновлялся раньше.
+      const anchorLine = headerHeight + navHeight * 0.55 + extraOffset + 0.5;
 
       const nodes = sectionsRef.current;
       if (!nodes.length) return;
@@ -717,7 +753,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
     <>
       <div
         ref={pageRef}
-        className="space-y-12 lg:space-y-14 mt-[calc(-1*clamp(0.5rem,2vw,2rem))]"
+        className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
@@ -745,7 +781,7 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
               (isNavPinned
                 ? {
                     position: 'fixed',
-                    top: 'var(--header-height)',
+                    top: 'var(--header-height, var(--header-height-initial))',
                     left: navLayout?.left ?? 0,
                     width: navLayout?.width ?? '100%',
                   }
@@ -862,7 +898,8 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       {renderedTile ? (
         <div
           className={cn(
-            'fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6',
+            // Always center the dialog — including the smallest mobile breakpoints.
+            'fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6',
             // Пока модалка открывается/закрывается (isModalVisible=false),
             // не блокируем клики по странице — это позволяет повторно открыть плитку сразу.
             isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',

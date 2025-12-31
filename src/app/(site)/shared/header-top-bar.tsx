@@ -6,8 +6,9 @@ import { memo, type CSSProperties, type HTMLAttributes, type ReactNode } from "r
 import type { SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
+import { formatTelegramHandle } from "@/lib/contacts";
 
-import { HeaderWagon, useDelayedCollapse } from "./header-wagon";
+import { HeaderWagon } from "./header-wagon";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -16,6 +17,13 @@ type HeaderTopSlotProps = {
   className?: string;
   children: ReactNode;
   stableSlots?: Record<string, number>;
+};
+
+type HeaderTopFlexSlotProps = {
+  id: string;
+  basisPx: number;
+  className?: string;
+  children: ReactNode;
 };
 
 type HeaderTopPillLinkProps = {
@@ -38,6 +46,7 @@ type HeaderTopBarProps = {
   topContactsWidth: number;
 
   isBurgerMode: boolean;
+  isMenuOpen: boolean;
   prefersReducedMotion: boolean;
 
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
@@ -60,6 +69,7 @@ type HeaderTopBarProps = {
 export const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
   phone: 156,
   email: 140,
+  telegram: 140,
   theme: 40,
   lang: 40,
   cta: 200,
@@ -83,6 +93,20 @@ function HeaderTopSlot({
         className,
       )}
       style={slotWidth ? ({ width: `${slotWidth}px` } as CSSProperties) : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
+// Mobile-слот: как обычный HeaderTopSlot, но вместо фиксированного width
+// используем flex-basis + shrink, чтобы элементы могли сжиматься и не "врезались" в логотип.
+function HeaderTopFlexSlot({ id, basisPx, className, children }: HeaderTopFlexSlotProps) {
+  return (
+    <div
+      data-header-top-slot={id}
+      className={cn("flex h-10 min-w-0 items-center overflow-hidden", className)}
+      style={{ flex: `0 1 ${basisPx}px` } as CSSProperties}
     >
       {children}
     </div>
@@ -168,8 +192,11 @@ export const HeaderCta = memo(function HeaderCta({
 export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
   hasTopContacts,
-  topContactsWidth,
+  // topContactsWidth оставляем в пропсах для совместимости с site-shell,
+  // но в новой схеме он не нужен (оба layout'а в absolute-панелях).
+  topContactsWidth: _topContactsWidth,
   isBurgerMode,
+  isMenuOpen,
   prefersReducedMotion,
   inertProps,
   hasHydrated,
@@ -183,129 +210,157 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
-  // На SSR/до гидрации мы не знаем точный isBurgerMode (он может зависеть от измерений).
-  // Но сам HeaderWagon имеет SSR-fallback через media-классы, поэтому
-  // showSecondary можно прокидывать всегда, а вот «схлопывание ширины»
-  // контролируем только после гидрации (в useDelayedCollapse).
-  const shouldHideTopWagons = isBurgerMode;
+  const telegramHref = (contacts.telegramUrl?.trim() || "https://t.me/IntemaGroup").trim();
+  const telegramLabel = formatTelegramHandle(telegramHref) ?? "@IntemaGroup";
 
-  // Схлопываем ширину ПОСЛЕ завершения exit-анимации (иначе будет «моментальное исчезновение»).
-  const topWagonsCollapsed = useDelayedCollapse(shouldHideTopWagons, {
-    delayMs: 640,
-    hasHydrated,
-    prefersReducedMotion,
-  });
-
-  // Ширину анимируем только при *схлопывании* (desktop -> burger),
-  // а при обратном переходе (burger -> desktop) делаем мгновенно,
-  // чтобы вагоны не «вылетали из правого нижнего угла».
-  const widthTransitionClass =
-    hasHydrated && !prefersReducedMotion && shouldHideTopWagons
-      ? "transition-[width] duration-400 ease-out"
-      : "transition-none";
-
-  const topContactsSsrWidthStyle =
-    hasHydrated ? undefined : ({ "--top-contacts-w": `${topContactsWidth}px` } as CSSProperties);
+  // Мобильная "пара" (телефон + телеграм) и phone-only используют те же ширины,
+  // но в mobile мы позволяем shrink через flex-basis, чтобы элементы не упирались в логотип.
+  const mobilePhoneBasis = HEADER_TOP_STABLE_SLOTS.phone;
+  const mobileTelegramBasis = HEADER_TOP_STABLE_SLOTS.telegram;
 
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full items-center gap-9 rounded-lg text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
-      <div className="flex min-w-0 flex-1 items-center justify-end gap-9">
-        {hasTopContacts ? (
-          <div
-            className={cn(
-              "relative h-10 overflow-hidden",
-              // SSR: на mobile ширина 0, на lg+ — вычисленная ширина.
-              hasHydrated ? "" : "w-0 lg:w-[var(--top-contacts-w)]",
-              widthTransitionClass,
-              "motion-reduce:transition-none motion-reduce:duration-0",
-            )}
-            style={
-              hasHydrated
-                ? ({ width: topWagonsCollapsed ? 0 : `${topContactsWidth}px` } as CSSProperties)
-                : topContactsSsrWidthStyle
-            }
-          >
-            <HeaderWagon
-              showSecondary={shouldHideTopWagons}
-              hasHydrated={hasHydrated}
-              inertProps={inertProps}
-              prefersReducedMotion={prefersReducedMotion}
-              durationMs={640}
-              primaryEnterFrom="top"
-              panelBaseClassName="flex h-full w-full items-center gap-9"
-              primary={
-                <>
-                  {contacts.phone ? (
-                    <HeaderTopSlot id="phone">
-                      <HeaderTopPillLink
-                        href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                        label={contacts.phone}
-                        pillBase={pillBase}
-                      />
-                    </HeaderTopSlot>
-                  ) : null}
+    <div
+      className={cn(
+        "relative h-full w-full min-w-0 max-w-full overflow-hidden rounded-lg",
+        "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+      )}
+    >
+      <HeaderWagon
+        // desktop -> mobile (burger): primary уезжает вверх, secondary въезжает снизу
+        // mobile -> desktop: secondary уезжает вниз, primary въезжает сверху
+        showSecondary={isBurgerMode}
+        hasHydrated={hasHydrated}
+        inertProps={inertProps}
+        prefersReducedMotion={prefersReducedMotion}
+        durationMs={640}
+        primaryEnterFrom="top"
+        secondaryExitTo="bottom"
+        panelBaseClassName="flex h-full w-full min-w-0 items-center justify-end"
+        primaryClassName="gap-9"
+        secondaryClassName="gap-3"
+        primary={
+          <>
+            {/* Desktop: телефон + почта + CTA + theme + lang */}
+            {hasTopContacts ? (
+              <>
+                {contacts.phone ? (
+                  <HeaderTopSlot id="phone">
+                    <HeaderTopPillLink
+                      href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                      label={contacts.phone}
+                      pillBase={pillBase}
+                    />
+                  </HeaderTopSlot>
+                ) : null}
 
-                  {contacts.email ? (
-                    <HeaderTopSlot id="email">
-                      <HeaderTopPillLink href={`mailto:${contacts.email}`} label={contacts.email} pillBase={pillBase} />
-                    </HeaderTopSlot>
-                  ) : null}
-                </>
-              }
-              secondary={null}
-            />
-          </div>
-        ) : null}
+                {contacts.email ? (
+                  <HeaderTopSlot id="email">
+                    <HeaderTopPillLink
+                      href={`mailto:${contacts.email}`}
+                      label={contacts.email}
+                      pillBase={pillBase}
+                    />
+                  </HeaderTopSlot>
+                ) : null}
+              </>
+            ) : null}
 
-        <div
-          className={cn(
-            "relative h-10 overflow-hidden",
-            // SSR: на mobile ширина 0, на lg+ — фиксированная.
-            hasHydrated ? "" : "w-0 lg:w-[200px]",
-            widthTransitionClass,
-            "motion-reduce:transition-none motion-reduce:duration-0",
-          )}
-          style={
-            hasHydrated
-              ? ({ width: topWagonsCollapsed ? 0 : HEADER_TOP_STABLE_SLOTS.cta } as CSSProperties)
-              : undefined
-          }
-        >
-          <HeaderWagon
-            showSecondary={shouldHideTopWagons}
-            hasHydrated={hasHydrated}
-            inertProps={inertProps}
-            prefersReducedMotion={prefersReducedMotion}
-            durationMs={640}
-            primaryEnterFrom="top"
-            panelBaseClassName="flex h-full w-full items-center justify-end"
-            primary={
+            <HeaderTopSlot id="cta">
               <HeaderCta
                 headerButtonBase={headerButtonBase}
                 href={contactsHref}
                 label={ctaLabel}
                 className="w-full"
               />
-            }
-            secondary={null}
-          />
-        </div>
-      </div>
+            </HeaderTopSlot>
 
-      <div className="flex flex-none items-center gap-9">
-        <HeaderTopSlot id="theme">
-          <ThemeToggle locale={locale} />
-        </HeaderTopSlot>
+            <HeaderTopSlot id="theme">
+              <ThemeToggle locale={locale} />
+            </HeaderTopSlot>
 
-        <HeaderTopSlot id="lang">
-          <LanguageSwitcher
-            currentLocale={locale}
-            targetLocale={targetLocale}
-            href={switcherHref}
-            switchToLabels={switchToLabels}
-          />
-        </HeaderTopSlot>
-      </div>
+            <HeaderTopSlot id="lang">
+              <LanguageSwitcher
+                currentLocale={locale}
+                targetLocale={targetLocale}
+                href={switcherHref}
+                switchToLabels={switchToLabels}
+              />
+            </HeaderTopSlot>
+          </>
+        }
+        secondary={
+          <>
+            {/* Mobile: (телефон + телеграм) <-> (только телефон) + theme + lang */}
+            <div className="relative h-10 min-w-0 flex-1 overflow-hidden">
+              <HeaderWagon
+                // mobile (обычное) -> mobile (полноценное): пара уезжает вверх, phone-only въезжает снизу
+                // обратно: пара въезжает сверху, phone-only уезжает вниз
+                showSecondary={isMenuOpen}
+                hasHydrated={hasHydrated}
+                inertProps={inertProps}
+                prefersReducedMotion={prefersReducedMotion}
+                durationMs={640}
+                primaryEnterFrom="top"
+                secondaryExitTo="bottom"
+                ssrPrimaryClassName="flex"
+                ssrSecondaryClassName="hidden"
+                panelBaseClassName="flex h-full w-full min-w-0 items-center justify-end gap-3"
+                primary={
+                  <>
+                    {contacts.phone ? (
+                      <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
+                        <HeaderTopPillLink
+                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                          label={contacts.phone}
+                          pillBase={pillBase}
+                        />
+                      </HeaderTopFlexSlot>
+                    ) : null}
+
+                    <HeaderTopFlexSlot id="telegram" basisPx={mobileTelegramBasis}>
+                      <a
+                        href={telegramHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(pillBase)}
+                        title={telegramLabel}
+                      >
+                        {telegramLabel}
+                      </a>
+                    </HeaderTopFlexSlot>
+                  </>
+                }
+                secondary={
+                  <>
+                    {contacts.phone ? (
+                      <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
+                        <HeaderTopPillLink
+                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                          label={contacts.phone}
+                          pillBase={pillBase}
+                        />
+                      </HeaderTopFlexSlot>
+                    ) : null}
+                  </>
+                }
+              />
+            </div>
+
+            <HeaderTopSlot id="theme">
+              <ThemeToggle locale={locale} />
+            </HeaderTopSlot>
+
+            <HeaderTopSlot id="lang">
+              <LanguageSwitcher
+                currentLocale={locale}
+                targetLocale={targetLocale}
+                href={switcherHref}
+                switchToLabels={switchToLabels}
+              />
+            </HeaderTopSlot>
+          </>
+        }
+      />
     </div>
   );
 });

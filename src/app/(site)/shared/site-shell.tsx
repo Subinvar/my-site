@@ -868,6 +868,7 @@ export function SiteShell({
                   hasTopContacts={hasTopContacts}
                   topContactsWidth={topContactsWidth}
                   isBurgerMode={isBurgerMode}
+                  isMenuOpen={isMenuOpen}
                   prefersReducedMotion={prefersReducedMotion}
                   inertProps={inertProps}
                   hasHydrated={hasHydrated}
