@@ -72,6 +72,11 @@ export function HeaderDesktopDropdown({
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const wasOpenRef = useRef(false);
+  // Нужно для стабильного начала анимации открытия:
+  // если меню было закрыто (или уже закрывается), то при новом hover-open
+  // обязательно делаем один "закрытый" кадр и только потом раскрываем,
+  // иначе иногда браузер не успевает применить transition и панель "прыгает" мгновенно.
+  const prevShouldBeOpenRef = useRef(false);
   const openRafRef = useRef<number | null>(null);
 
   const scheduleStateUpdate = (update: () => void) => queueMicrotask(update);
@@ -84,6 +89,9 @@ export function HeaderDesktopDropdown({
   const isClosing = isMounted && !shouldBeOpen;
   // Mount / unmount for close animation.
   useEffect(() => {
+    const wasOpen = prevShouldBeOpenRef.current;
+    prevShouldBeOpenRef.current = shouldBeOpen;
+
     if (shouldBeOpen && activeId) {
       scheduleStateUpdate(() => {
         setIsMounted(true);
@@ -102,7 +110,11 @@ export function HeaderDesktopDropdown({
         openRafRef.current = null;
       }
 
-      if (!isMounted) {
+      // Если открываемся из закрытого/закрывающегося состояния —
+      // форсим rAF, чтобы transition гарантированно сработал.
+      // Если же мы просто переключаемся между пунктами в уже открытом меню —
+      // открываем сразу, без лишнего кадра.
+      if (!wasOpen) {
         scheduleStateUpdate(() => setEnterReady(false));
         openRafRef.current = window.requestAnimationFrame(() => {
           openRafRef.current = null;

@@ -370,7 +370,7 @@
           "en": "If needed, we agree on control points for stable results."
         }
       ],
-      "order": 0,
+      "order": 1,
       "hidden": false
     },
     {
@@ -394,7 +394,7 @@
           "en": "We highlight key shop-floor parameters: viscosity, density, curing/drying modes, etc."
         }
       ],
-      "order": 1,
+      "order": 2,
       "hidden": false
     },
     {
@@ -418,7 +418,7 @@
           "en": "We discuss typical risks (drying, gassing, application, storage, mixing) upfront."
         }
       ],
-      "order": 2,
+      "order": 3,
       "hidden": false
     },
     {
@@ -442,7 +442,7 @@
           "en": "We provide shop-floor “quick rules”: what is critical and what is secondary."
         }
       ],
-      "order": 3,
+      "order": 4,
       "hidden": false
     }
   ]

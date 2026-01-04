@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 export function useMediaBreakpoints() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isLgUp, setIsLgUp] = useState(false);
+  const [isSmUp, setIsSmUp] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
   const [isCompactNav, setIsCompactNav] = useState(false);
 
@@ -17,20 +18,24 @@ export function useMediaBreakpoints() {
 
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
     const lg = window.matchMedia("(min-width: 1024px)");
+    const sm = window.matchMedia("(min-width: 640px)");
 
     const update = () => {
       setPrefersReducedMotion(rm.matches);
       setIsLgUp(lg.matches);
+      setIsSmUp(sm.matches);
     };
 
     update();
 
     rm.addEventListener("change", update);
     lg.addEventListener("change", update);
+    sm.addEventListener("change", update);
 
     return () => {
       rm.removeEventListener("change", update);
       lg.removeEventListener("change", update);
+      sm.removeEventListener("change", update);
     };
   }, []);
 
@@ -76,6 +81,7 @@ export function useMediaBreakpoints() {
   return {
     prefersReducedMotion,
     isLgUp,
+    isSmUp,
     hasHydrated,
     isCompactNav,
     isBurgerMode: !isLgUp || isCompactNav,

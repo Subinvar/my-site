@@ -46,6 +46,8 @@ type HeaderTopBarProps = {
   topContactsWidth: number;
 
   isBurgerMode: boolean;
+  /** >= sm (640px). Ниже sm включаем сверх-узкий режим top-bar (phone-only). */
+  isSmUp: boolean;
   prefersReducedMotion: boolean;
 
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
@@ -195,6 +197,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   // но в новой схеме он не нужен (оба layout'а в absolute-панелях).
   topContactsWidth: _topContactsWidth,
   isBurgerMode,
+  isSmUp,
   prefersReducedMotion,
   inertProps,
   hasHydrated,
@@ -207,6 +210,11 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   classNames,
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
+
+  // Сверх-узкий режим верхней строки (ниже sm):
+  // телефон+телеграм уезжают вверх, снизу въезжает phone-only (слева от ThemeToggle).
+  // ВАЖНО: не привязываем к клику по бургеру — только к смене плотной mobile-вёрстки.
+  const isTightTopBar = isBurgerMode && !isSmUp;
 
   const telegramHref = (contacts.telegramUrl?.trim() || "https://t.me/IntemaGroup").trim();
   const telegramLabel = formatTelegramHandle(telegramHref) ?? "@IntemaGroup";
@@ -288,30 +296,64 @@ export const HeaderTopBar = memo(function HeaderTopBar({
         }
         secondary={
           <>
-            {/* Mobile: телефон + телеграм + theme + lang.
-                Важно: это НЕ должно анимироваться при клике по бургеру.
-                Переходы должны срабатывать только при входе/выходе из mobile-first (isBurgerMode). */}
-            {contacts.phone ? (
-              <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
-                <HeaderTopPillLink
-                  href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                  label={contacts.phone}
-                  pillBase={pillBase}
-                />
-              </HeaderTopFlexSlot>
-            ) : null}
+            {/* Mobile (>=sm): телефон + телеграм.
+                Tight mobile (<sm): телефон+телеграм уезжают вверх, phone-only въезжает снизу.
+                Важно: НЕ привязано к клику по бургеру — только к смене mobile-first/плотной mobile-вёрстки. */}
+            <div className="relative h-full flex-1 min-w-0">
+              <HeaderWagon
+                showSecondary={isTightTopBar}
+                hasHydrated={hasHydrated}
+                inertProps={inertProps}
+                prefersReducedMotion={prefersReducedMotion}
+                durationMs={640}
+                // normal -> tight: primary (pair) уезжает вверх, secondary (phone-only) въезжает снизу
+                // tight -> normal: secondary уезжает вниз, primary въезжает сверху
+                primaryEnterFrom="top"
+                secondaryExitTo="bottom"
+                panelBaseClassName="flex h-full w-full min-w-0 items-center justify-end"
+                primaryClassName="gap-3"
+                secondaryClassName="gap-3"
+                // SSR: на >=sm показываем пару, на <sm — phone-only
+                ssrPrimaryClassName="hidden sm:flex"
+                ssrSecondaryClassName="flex sm:hidden"
+                primary={
+                  <>
+                    {contacts.phone ? (
+                      <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
+                        <HeaderTopPillLink
+                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                          label={contacts.phone}
+                          pillBase={pillBase}
+                        />
+                      </HeaderTopFlexSlot>
+                    ) : null}
 
-            <HeaderTopFlexSlot id="telegram" basisPx={mobileTelegramBasis}>
-              <a
-                href={telegramHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(pillBase)}
-                title={telegramLabel}
-              >
-                {telegramLabel}
-              </a>
-            </HeaderTopFlexSlot>
+                    <HeaderTopFlexSlot id="telegram" basisPx={mobileTelegramBasis}>
+                      <a
+                        href={telegramHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(pillBase)}
+                        title={telegramLabel}
+                      >
+                        {telegramLabel}
+                      </a>
+                    </HeaderTopFlexSlot>
+                  </>
+                }
+                secondary={
+                  contacts.phone ? (
+                    <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
+                      <HeaderTopPillLink
+                        href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                        label={contacts.phone}
+                        pillBase={pillBase}
+                      />
+                    </HeaderTopFlexSlot>
+                  ) : null
+                }
+              />
+            </div>
 
             <HeaderTopSlot id="theme">
               <ThemeToggle locale={locale} />

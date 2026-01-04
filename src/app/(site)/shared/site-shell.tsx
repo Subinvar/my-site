@@ -169,6 +169,7 @@ export function SiteShell({
     prefersReducedMotion,
     hasHydrated,
     isBurgerMode,
+    isSmUp,
     navHostRef,
     navMeasureRef,
   } = useMediaBreakpoints();
@@ -476,6 +477,11 @@ export function SiteShell({
 
   const [isMenuMounted, setIsMenuMounted] = useState(false);
 
+  // ВАЖНО: чтобы первое раскрытие бургер-меню не было "мгновенным",
+  // держим панель закрытой на первом кадре после монтирования,
+  // а затем (в rAF) переводим в открытое состояние — так transition по height гарантированно сработает.
+  const [menuPanelOpenReady, setMenuPanelOpenReady] = useState(false);
+
   const [menuContentPhase, setMenuContentPhase] = useState<0 | 1>(0);
 
   useEffect(() => {
@@ -497,6 +503,31 @@ export function SiteShell({
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
 
   const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+
+  // Подготавливаем height-анимацию панели бургер-меню:
+  // при открытии сначала монтируем/показываем панель в закрытом состоянии,
+  // затем в следующем кадре включаем открытое — чтобы transition сработал даже при первом открытии.
+  useEffect(() => {
+    if (!isBurgerMode) {
+      setMenuPanelOpenReady(false);
+      return;
+    }
+
+    if (!isMenuOpen) {
+      setMenuPanelOpenReady(false);
+      return;
+    }
+
+    setMenuPanelOpenReady(false);
+
+    if (prefersReducedMotion) {
+      setMenuPanelOpenReady(true);
+      return;
+    }
+
+    const raf = window.requestAnimationFrame(() => setMenuPanelOpenReady(true));
+    return () => window.cancelAnimationFrame(raf);
+  }, [isBurgerMode, isMenuOpen, prefersReducedMotion]);
 
 
   // Фаза контента бургер-меню: сначала раскрываем панель, затем (чуть позже) запускаем
@@ -868,6 +899,7 @@ export function SiteShell({
                   hasTopContacts={hasTopContacts}
                   topContactsWidth={topContactsWidth}
                   isBurgerMode={isBurgerMode}
+                  isSmUp={isSmUp}
                   prefersReducedMotion={prefersReducedMotion}
                   inertProps={inertProps}
                   hasHydrated={hasHydrated}
@@ -943,7 +975,10 @@ export function SiteShell({
           style={
             {
               top: "var(--header-height)",
-              height: isMenuOpen ? "calc(100dvh - var(--header-height))" : "0px",
+              height:
+                isMenuOpen && (prefersReducedMotion || menuPanelOpenReady)
+                  ? "calc(100dvh - var(--header-height))"
+                  : "0px",
               transitionDuration: `${prefersReducedMotion ? 0 : isMenuOpen ? BURGER_MENU_OPEN_MS : BURGER_MENU_CLOSE_MS}ms`,
             } as CSSProperties
           }
