@@ -211,16 +211,10 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
-<<<<<<< HEAD
   // Сверх-узкий режим верхней строки (ниже sm):
   // телефон+телеграм уезжают вверх, снизу въезжает phone-only (слева от ThemeToggle).
   // ВАЖНО: не привязываем к клику по бургеру — только к смене плотной mobile-вёрстки.
   const isTightTopBar = isBurgerMode && !isSmUp;
-=======
-  // Сохраняем пропс для совместимости, но явным образом помечаем как использованный,
-  // чтобы линтер не ругался на неиспользуемую переменную.
-  void _topContactsWidth;
->>>>>>> 2b1ed1757e00240de2318dbe7893d5eb63a11b9d
 
   const telegramHref = (contacts.telegramUrl?.trim() || "https://t.me/IntemaGroup").trim();
   const telegramLabel = formatTelegramHandle(telegramHref) ?? "@IntemaGroup";
