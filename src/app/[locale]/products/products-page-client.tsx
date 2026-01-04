@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type MouseEvent,
   type ReactElement,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -441,7 +442,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   }, []);
 
-  const closeTileModal = () => {
+  const closeTileModal = useCallback(() => {
     // Важно: сбрасываем openTileId СРАЗУ, чтобы можно было тут же открыть ту же плитку повторно.
     // Саму модалку держим в DOM через renderedTile, чтобы анимация закрытия была плавной.
     setOpenTileId(null);
@@ -462,7 +463,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     closeTimerRef.current = window.setTimeout(() => {
       setRenderedTile(null);
     }, delay);
-  };
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (!activeTile) return;
@@ -479,15 +480,22 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     openRaf1Ref.current = null;
     openRaf2Ref.current = null;
 
-    // Стартуем из "скрытого" состояния.
-    setIsModalVisible(false);
+    // Стартуем из "скрытого" состояния (асинхронно, чтобы избежать sync setState в эффекте).
+    const hideTimer = window.setTimeout(() => setIsModalVisible(false), 0);
 
     // Важно: создаём новый объект, чтобы анимация открытия сработала даже если
     // пользователь повторно открывает ту же плитку, пока предыдущая ещё не размонтировалась (состояние closing).
-    setRenderedTile({
-      ...activeTile,
-      details: [...activeTile.details],
-    });
+    const renderTimer = window.setTimeout(() => {
+      setRenderedTile({
+        ...activeTile,
+        details: [...activeTile.details],
+      });
+    }, 0);
+
+    return () => {
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(renderTimer);
+    };
   }, [activeTile]);
 
   useEffect(() => {
@@ -495,8 +503,8 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
 
     // Для reduce-motion просто показываем сразу.
     if (prefersReducedMotion) {
-      setIsModalVisible(true);
-      return;
+      const instantShowTimer = window.setTimeout(() => setIsModalVisible(true), 0);
+      return () => window.clearTimeout(instantShowTimer);
     }
 
     // Критично: при открытии нельзя включать "visible" в том же кадре,
@@ -546,7 +554,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       document.body.style.overflow = prevOverflow;
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [renderedTile]);
+  }, [renderedTile, closeTileModal, prefersReducedMotion]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow

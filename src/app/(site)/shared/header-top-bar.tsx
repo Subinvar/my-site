@@ -208,6 +208,10 @@ export const HeaderTopBar = memo(function HeaderTopBar({
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
 
+  // Сохраняем пропс для совместимости, но явным образом помечаем как использованный,
+  // чтобы линтер не ругался на неиспользуемую переменную.
+  void _topContactsWidth;
+
   const telegramHref = (contacts.telegramUrl?.trim() || "https://t.me/IntemaGroup").trim();
   const telegramLabel = formatTelegramHandle(telegramHref) ?? "@IntemaGroup";
 
