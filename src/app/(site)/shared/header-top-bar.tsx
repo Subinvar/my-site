@@ -46,7 +46,6 @@ type HeaderTopBarProps = {
   topContactsWidth: number;
 
   isBurgerMode: boolean;
-  isMenuOpen: boolean;
   prefersReducedMotion: boolean;
 
   inertProps: (enabled: boolean) => HTMLAttributes<HTMLElement>;
@@ -196,7 +195,6 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   // но в новой схеме он не нужен (оба layout'а в absolute-панелях).
   topContactsWidth: _topContactsWidth,
   isBurgerMode,
-  isMenuOpen,
   prefersReducedMotion,
   inertProps,
   hasHydrated,
@@ -290,61 +288,30 @@ export const HeaderTopBar = memo(function HeaderTopBar({
         }
         secondary={
           <>
-            {/* Mobile: (телефон + телеграм) <-> (только телефон) + theme + lang */}
-            <div className="relative h-10 min-w-0 flex-1 overflow-hidden">
-              <HeaderWagon
-                // mobile (обычное) -> mobile (полноценное): пара уезжает вверх, phone-only въезжает снизу
-                // обратно: пара въезжает сверху, phone-only уезжает вниз
-                showSecondary={isMenuOpen}
-                hasHydrated={hasHydrated}
-                inertProps={inertProps}
-                prefersReducedMotion={prefersReducedMotion}
-                durationMs={640}
-                primaryEnterFrom="top"
-                secondaryExitTo="bottom"
-                ssrPrimaryClassName="flex"
-                ssrSecondaryClassName="hidden"
-                panelBaseClassName="flex h-full w-full min-w-0 items-center justify-end gap-3"
-                primary={
-                  <>
-                    {contacts.phone ? (
-                      <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
-                        <HeaderTopPillLink
-                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                          label={contacts.phone}
-                          pillBase={pillBase}
-                        />
-                      </HeaderTopFlexSlot>
-                    ) : null}
+            {/* Mobile: телефон + телеграм + theme + lang.
+                Важно: это НЕ должно анимироваться при клике по бургеру.
+                Переходы должны срабатывать только при входе/выходе из mobile-first (isBurgerMode). */}
+            {contacts.phone ? (
+              <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
+                <HeaderTopPillLink
+                  href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+                  label={contacts.phone}
+                  pillBase={pillBase}
+                />
+              </HeaderTopFlexSlot>
+            ) : null}
 
-                    <HeaderTopFlexSlot id="telegram" basisPx={mobileTelegramBasis}>
-                      <a
-                        href={telegramHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(pillBase)}
-                        title={telegramLabel}
-                      >
-                        {telegramLabel}
-                      </a>
-                    </HeaderTopFlexSlot>
-                  </>
-                }
-                secondary={
-                  <>
-                    {contacts.phone ? (
-                      <HeaderTopFlexSlot id="phone" basisPx={mobilePhoneBasis}>
-                        <HeaderTopPillLink
-                          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                          label={contacts.phone}
-                          pillBase={pillBase}
-                        />
-                      </HeaderTopFlexSlot>
-                    ) : null}
-                  </>
-                }
-              />
-            </div>
+            <HeaderTopFlexSlot id="telegram" basisPx={mobileTelegramBasis}>
+              <a
+                href={telegramHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(pillBase)}
+                title={telegramLabel}
+              >
+                {telegramLabel}
+              </a>
+            </HeaderTopFlexSlot>
 
             <HeaderTopSlot id="theme">
               <ThemeToggle locale={locale} />

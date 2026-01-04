@@ -141,7 +141,7 @@ function ProductsSection({
       className={cn('py-5 sm:py-6')}
       style={{
         scrollMarginTop:
-          'calc(var(--header-height, var(--header-height-initial)) + var(--products-nav-height, 0px) + 1.5rem)',
+          'calc(var(--header-height, var(--header-height-initial)) + var(--products-nav-height, 0px) + 1rem)',
       }}
     >
       <header className="mb-5 space-y-2">
@@ -322,7 +322,7 @@ function InsightTilesCarousel({
             // На узких экранах (и при overflow-x: hidden на body) это даёт ощущение,
             // что ряд "поджимает" справа и карточки смещаются влево.
             // Вместо этого даём небольшой внутренний "safe-area" под hover-scale.
-            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-2 px-1 sm:px-1',
+            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-2 px-3 sm:px-4',
             // Keep scroll-snap aligned with the visual padding from the very first paint.
             // This prevents a hydration "jump" where the browser initially snap-aligns
             // the first card to the edge and then shifts it after hydration.
@@ -334,7 +334,7 @@ function InsightTilesCarousel({
         >
           {tiles.map((tile) => (
             <div key={tile.id} data-carousel-item="1" className="w-[280px] sm:w-[320px] shrink-0 snap-start">
-              <AppleHoverLift strength="xs" optimizeForScroll>
+              <AppleHoverLift strength="xs">
                 <button
                   type="button"
                   onClick={() => onOpen(tile.id)}
@@ -708,13 +708,12 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
       }
 
       const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
-      // Более отзывчивое переключение «активного» раздела.
-      // Слишком большая линия якоря (header + nav + 1.5rem) даёт заметную задержку при прокрутке вниз.
-      const extraOffset = rootFontSize * 0.5; // 0.5rem
+      // Делаем "линию якоря" согласованной с scroll-margin-top у секций.
+      // Это даёт корректную активную вкладку сразу после клика по навигации
+      // (scrollIntoView учитывает scroll-margin) и убирает расхождения.
+      const extraOffset = rootFontSize * 1; // 1rem
       const navHeight = navLayout?.height ?? navRef.current?.getBoundingClientRect().height ?? 0;
-      // Навигация может быть высокой (3 плитки в ряд). Берём не весь navHeight,
-      // а его долю, чтобы активный пункт обновлялся раньше.
-      const anchorLine = headerHeight + navHeight * 0.55 + extraOffset + 0.5;
+      const anchorLine = headerHeight + navHeight + extraOffset + 0.5;
 
       const nodes = sectionsRef.current;
       if (!nodes.length) return;

@@ -26,11 +26,6 @@ type AppleHoverLiftProps = HTMLAttributes<HTMLDivElement> & {
    */
   surfaceClassName?: string;
 
-  /**
-   * Helps keep the scaled element crisp inside scrollable containers.
-   * Applies GPU compositing + will-change only on hover/focus (not in idle state).
-   */
-  optimizeForScroll?: boolean;
 };
 
 /**
@@ -41,7 +36,6 @@ export function AppleHoverLift({
   strength = 'sm',
   mode = 'scale',
   surfaceClassName,
-  optimizeForScroll = false,
   children,
   ...props
 }: AppleHoverLiftProps) {
@@ -71,11 +65,9 @@ export function AppleHoverLift({
         className={cn(
           'relative h-full',
           // Helps with transform rendering quality on some platforms.
+          // IMPORTANT: avoid forcing GPU compositing / will-change — on Windows/Chrome it often
+          // makes text look softer in the hovered state.
           '[backface-visibility:hidden] [transform-style:preserve-3d]',
-          // Inside scrollable containers (overflow-x-auto), some browsers rasterize transformed children
-          // aggressively which can make text look blurry in the *hovered* state.
-          // Opt-in: promote only on hover/focus to keep the idle state crisp.
-          optimizeForScroll ? 'hover:transform-gpu focus-within:transform-gpu hover:will-change-transform focus-within:will-change-transform' : null,
           'transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
           scale,
           'hover:z-20 focus-within:z-20',
