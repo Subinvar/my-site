@@ -161,7 +161,7 @@ export const getProductsHubContent = cache(async (
   const insights = Array.isArray(data.insights)
     ? data.insights
         .map((insight, index) => mapInsight(insight, locale, index))
-        .filter((insight): insight is ProductsHubInsight => Boolean(insight) && !insight.hidden)
+        .filter((insight): insight is ProductsHubInsight => Boolean(insight) && !insight?.hidden)
         .sort((a, b) => a.order - b.order)
     : null;
 

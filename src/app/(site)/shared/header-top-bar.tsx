@@ -210,6 +210,7 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   classNames,
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
+  void _topContactsWidth;
 
   // Сверх-узкий режим верхней строки (ниже sm):
   // телефон+телеграм уезжают вверх, снизу въезжает phone-only (слева от ThemeToggle).
