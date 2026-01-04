@@ -360,6 +360,8 @@ function InsightTilesCarousel({
                 <button
                   type="button"
                   onClick={() => onOpen(tile.id)}
+                  aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
+                  aria-haspopup="dialog"
                   className={cn(
                     'group w-full h-[168px] sm:h-[176px] rounded-2xl border border-[var(--header-border)]',
                     'bg-background/45 p-4 text-left flex flex-col',
@@ -384,19 +386,26 @@ function InsightTilesCarousel({
                     </div>
                   </div>
 
-                  <div className="mt-auto flex items-center gap-2 pt-4 text-sm font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
-                    <span>{isRu ? 'Подробнее' : 'Learn more'}</span>
-                    <ArrowRight
-                      className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                  <div className="mt-auto flex items-center justify-end pt-4">
+                    <span
+                      className={cn(
+                        'inline-flex h-9 w-9 items-center justify-center rounded-full',
+                        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+                        'transition-[background-color,color,transform] duration-200 ease-out',
+                        'group-hover:bg-background/90 group-hover:text-foreground',
+                        'group-hover:scale-[1.03]',
+                        'motion-reduce:transition-none motion-reduce:transform-none',
+                      )}
                       aria-hidden
-                    />
+                    >
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </span>
                   </div>
                 </button>
               </AppleHoverLift>
             </div>
           ))}
         </div>
-
         
       </div>
     </div>
