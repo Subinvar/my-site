@@ -121,12 +121,20 @@ export const HeaderWagon = memo(function HeaderWagon({
   useLayoutEffect(() => {
     if (!hasHydrated) return;
 
+    let cleanupTimer: ReturnType<typeof window.setTimeout> | undefined;
+
     // На первом кадре после гидрации (и при reduced-motion) не запускаем анимации.
     if (!motionReady || prefersReducedMotion) {
       prevShowSecondaryRef.current = showSecondary;
-      setEntering(null);
-      setExiting(null);
-      return;
+
+      cleanupTimer = window.setTimeout(() => {
+        setEntering(null);
+        setExiting(null);
+      }, 0);
+
+      return () => {
+        if (cleanupTimer) window.clearTimeout(cleanupTimer);
+      };
     }
 
     const prev = prevShowSecondaryRef.current;
@@ -136,15 +144,21 @@ export const HeaderWagon = memo(function HeaderWagon({
     const incoming: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
 
     prevShowSecondaryRef.current = showSecondary;
-    setExiting(outgoing);
-    setEntering(incoming);
 
-    const t = window.setTimeout(() => {
+    const startTimer = window.setTimeout(() => {
+      setExiting(outgoing);
+      setEntering(incoming);
+    }, 0);
+
+    cleanupTimer = window.setTimeout(() => {
       setExiting(null);
       setEntering(null);
     }, durationMs);
 
-    return () => window.clearTimeout(t);
+    return () => {
+      window.clearTimeout(startTimer);
+      if (cleanupTimer) window.clearTimeout(cleanupTimer);
+    };
   }, [showSecondary, hasHydrated, motionReady, prefersReducedMotion, durationMs]);
 
   const activePanel: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
@@ -260,30 +274,47 @@ export function useDelayedCollapse(
   const didInitRef = useRef(false);
 
   useLayoutEffect(() => {
+    let timer: ReturnType<typeof window.setTimeout> | undefined;
+
+    const schedule = (fn: () => void, delay = 0) => {
+      timer = window.setTimeout(fn, delay);
+    };
+
     if (!hasHydrated) {
-      setCollapsed(false);
+      schedule(() => setCollapsed(false));
       didInitRef.current = false;
-      return;
+      return () => {
+        if (timer) window.clearTimeout(timer);
+      };
     }
 
     if (!didInitRef.current) {
       didInitRef.current = true;
-      setCollapsed(shouldCollapse);
-      return;
+      schedule(() => setCollapsed(shouldCollapse));
+      return () => {
+        if (timer) window.clearTimeout(timer);
+      };
     }
 
     if (!shouldCollapse) {
-      setCollapsed(false);
-      return;
+      schedule(() => setCollapsed(false));
+      return () => {
+        if (timer) window.clearTimeout(timer);
+      };
     }
 
     if (prefersReducedMotion) {
-      setCollapsed(true);
-      return;
+      schedule(() => setCollapsed(true));
+      return () => {
+        if (timer) window.clearTimeout(timer);
+      };
     }
 
-    const t = window.setTimeout(() => setCollapsed(true), delayMs);
-    return () => window.clearTimeout(t);
+    schedule(() => setCollapsed(true), delayMs);
+
+    return () => {
+      if (timer) window.clearTimeout(timer);
+    };
   }, [shouldCollapse, delayMs, hasHydrated, prefersReducedMotion]);
 
   return collapsed;
