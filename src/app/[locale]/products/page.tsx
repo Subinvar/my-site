@@ -66,7 +66,7 @@ const AUXILIARY_CARD_DESCRIPTIONS_RU: Record<string, string> = {
 const WHY_TILES_RU: ProductsHubInsight[] = [
   {
     id: 'process',
-    icon: 'beaker',
+    icon: 'target',
     title: 'Подбор под процесс',
     lead: 'Отталкиваемся от технологии, а не от “любимого продукта”.',
     details: [
@@ -91,7 +91,7 @@ const WHY_TILES_RU: ProductsHubInsight[] = [
   },
   {
     id: 'stability',
-    icon: 'badge-check',
+    icon: 'repeat-2',
     title: 'Повторяемость на производстве',
     lead: 'Цель — стабильность в партии, а не разовый “идеальный” тест.',
     details: [
@@ -103,7 +103,7 @@ const WHY_TILES_RU: ProductsHubInsight[] = [
   },
   {
     id: 'support',
-    icon: 'wrench',
+    icon: 'hand-helping',
     title: 'Сопровождение внедрения',
     lead: 'Помогаем перейти на новый материал или процесс без хаоса.',
     details: [
@@ -118,7 +118,7 @@ const WHY_TILES_RU: ProductsHubInsight[] = [
 const WHY_TILES_EN: ProductsHubInsight[] = [
   {
     id: 'process',
-    icon: 'beaker',
+    icon: 'target',
     title: 'Process-first selection',
     lead: 'We start from your technology, not from a “favorite product”.',
     details: [
@@ -143,7 +143,7 @@ const WHY_TILES_EN: ProductsHubInsight[] = [
   },
   {
     id: 'stability',
-    icon: 'badge-check',
+    icon: 'repeat-2',
     title: 'Production repeatability',
     lead: 'Stable batches matter more than a one-off perfect trial.',
     details: [
@@ -155,7 +155,7 @@ const WHY_TILES_EN: ProductsHubInsight[] = [
   },
   {
     id: 'support',
-    icon: 'wrench',
+    icon: 'hand-helping',
     title: 'Implementation support',
     lead: 'A controlled transition to a new material or process.',
     details: [
