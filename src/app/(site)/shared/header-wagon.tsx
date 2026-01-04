@@ -2,6 +2,7 @@
 
 import {
   memo,
+  startTransition,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -124,8 +125,10 @@ export const HeaderWagon = memo(function HeaderWagon({
     // На первом кадре после гидрации (и при reduced-motion) не запускаем анимации.
     if (!motionReady || prefersReducedMotion) {
       prevShowSecondaryRef.current = showSecondary;
-      setEntering(null);
-      setExiting(null);
+      startTransition(() => {
+        setEntering(null);
+        setExiting(null);
+      });
       return;
     }
 
@@ -136,12 +139,16 @@ export const HeaderWagon = memo(function HeaderWagon({
     const incoming: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
 
     prevShowSecondaryRef.current = showSecondary;
-    setExiting(outgoing);
-    setEntering(incoming);
+    startTransition(() => {
+      setExiting(outgoing);
+      setEntering(incoming);
+    });
 
     const t = window.setTimeout(() => {
-      setExiting(null);
-      setEntering(null);
+      startTransition(() => {
+        setExiting(null);
+        setEntering(null);
+      });
     }, durationMs);
 
     return () => window.clearTimeout(t);
@@ -261,28 +268,28 @@ export function useDelayedCollapse(
 
   useLayoutEffect(() => {
     if (!hasHydrated) {
-      setCollapsed(false);
+      startTransition(() => setCollapsed(false));
       didInitRef.current = false;
       return;
     }
 
     if (!didInitRef.current) {
       didInitRef.current = true;
-      setCollapsed(shouldCollapse);
+      startTransition(() => setCollapsed(shouldCollapse));
       return;
     }
 
     if (!shouldCollapse) {
-      setCollapsed(false);
+      startTransition(() => setCollapsed(false));
       return;
     }
 
     if (prefersReducedMotion) {
-      setCollapsed(true);
+      startTransition(() => setCollapsed(true));
       return;
     }
 
-    const t = window.setTimeout(() => setCollapsed(true), delayMs);
+    const t = window.setTimeout(() => startTransition(() => setCollapsed(true)), delayMs);
     return () => window.clearTimeout(t);
   }, [shouldCollapse, delayMs, hasHydrated, prefersReducedMotion]);
 
