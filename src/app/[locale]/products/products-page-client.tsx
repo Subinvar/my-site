@@ -30,11 +30,12 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/share
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
-import type { ProductsHubCard, ProductsHubGroup } from '@/lib/content/products-hub';
+import type { ProductsHubCard, ProductsHubGroup, ProductsHubInsight } from '@/lib/content/products-hub';
 
 type ProductsPageClientProps = {
   locale: Locale;
   groups: ProductsHubGroup[];
+  insights: ProductsHubInsight[];
 };
 
 type InsightTile = {
@@ -47,6 +48,8 @@ type InsightTile = {
 
 const ICONS: Record<string, ReactElement> = {
   beaker: <Beaker className="h-4 w-4" aria-hidden />,
+  'file-text': <FileText className="h-4 w-4" aria-hidden />,
+  'badge-check': <BadgeCheck className="h-4 w-4" aria-hidden />,
   roller: <PaintRoller className="h-4 w-4" aria-hidden />,
   sparkles: <Sparkles className="h-4 w-4" aria-hidden />,
   wrench: <Wrench className="h-4 w-4" aria-hidden />,
@@ -381,7 +384,7 @@ function InsightTilesCarousel({
   );
 }
 
-export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) {
+export function ProductsPageClient({ locale, groups, insights }: ProductsPageClientProps) {
   const isRu = locale === 'ru';
 
   const [isNavPinned, setIsNavPinned] = useState(false);
@@ -412,97 +415,17 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
 
   const whyTitle = isRu ? 'Почему удобно работать с «Интема Групп»' : 'Why work with InTema Group';
 
-  const whyTiles: InsightTile[] = useMemo(
-    () =>
-      isRu
-        ? [
-            {
-              id: 'process',
-              icon: <Beaker className="h-4 w-4" aria-hidden />,
-              title: 'Подбор под процесс',
-              lead: 'Отталкиваемся от технологии, а не от “любимого продукта”.',
-              details: [
-                'Учитываем процесс формовки/стержневой, тип смеси, режимы, требования к поверхности и прочности.',
-                'Помогаем сузить выбор до рабочих вариантов и объясняем, почему они подходят.',
-                'Если нужно — согласуем контрольные параметры для стабильного результата.',
-              ],
-            },
-            {
-              id: 'docs',
-              icon: <FileText className="h-4 w-4" aria-hidden />,
-              title: 'Документы и рекомендации',
-              lead: 'Техданные и безопасное применение — без лишней бюрократии.',
-              details: [
-                'По запросу предоставим технические данные (TDS) и паспорт безопасности (SDS), а также рекомендации по применению.',
-                'Подскажем, какие параметры важны на участке (вязкость, плотность, режимы сушки/отверждения и т.д.).',
-              ],
-            },
-            {
-              id: 'stability',
-              icon: <BadgeCheck className="h-4 w-4" aria-hidden />,
-              title: 'Повторяемость на производстве',
-              lead: 'Цель — стабильность в партии, а не разовый “идеальный” тест.',
-              details: [
-                'Смотрим на внедрение как на процесс: проба → корректировки → закрепление режима.',
-                'Обсуждаем типовые риски (сушка, газование, нанесение, хранение, смешивание) заранее.',
-              ],
-            },
-            {
-              id: 'support',
-              icon: <Wrench className="h-4 w-4" aria-hidden />,
-              title: 'Сопровождение внедрения',
-              lead: 'Помогаем перейти на новый материал или процесс без хаоса.',
-              details: [
-                'Согласуем план внедрения: что замеряем, какие критерии “успеха”, в каком порядке меняем параметры.',
-                'На старте даём “короткие правила” для участка: что критично, а что вторично.',
-              ],
-            },
-          ]
-        : [
-            {
-              id: 'process',
-              icon: <Beaker className="h-4 w-4" aria-hidden />,
-              title: 'Process-first selection',
-              lead: 'We start from your technology, not from a “favorite product”.',
-              details: [
-                'We consider the process, sand mix, modes, surface requirements and strength targets.',
-                'We help narrow down options and explain why they fit.',
-                'If needed, we agree on control points for stable results.',
-              ],
-            },
-            {
-              id: 'docs',
-              icon: <FileText className="h-4 w-4" aria-hidden />,
-              title: 'Documents & guidance',
-              lead: 'Technical and safe application without extra friction.',
-              details: [
-                'On request, we provide TDS/SDS and practical application recommendations.',
-                'We highlight key shop-floor parameters: viscosity, density, curing/drying modes, etc.',
-              ],
-            },
-            {
-              id: 'stability',
-              icon: <BadgeCheck className="h-4 w-4" aria-hidden />,
-              title: 'Production repeatability',
-              lead: 'Stable batches matter more than a one-off perfect trial.',
-              details: [
-                'We treat implementation as a process: trial → adjustments → stabilized modes.',
-                'We discuss typical risks (drying, gassing, application, storage, mixing) upfront.',
-              ],
-            },
-            {
-              id: 'support',
-              icon: <Wrench className="h-4 w-4" aria-hidden />,
-              title: 'Implementation support',
-              lead: 'A controlled transition to a new material or process.',
-              details: [
-                'We align the plan: what to measure, success criteria, and the order of changes.',
-                'We provide shop-floor “quick rules”: what is critical and what is secondary.',
-              ],
-            },
-          ],
-    [isRu],
-  );
+  const whyTiles: InsightTile[] = useMemo(() => {
+    const fallbackTitle = isRu ? 'Без названия' : 'Untitled';
+
+    return insights.map((tile) => ({
+      id: tile.id,
+      icon: ICONS[tile.icon ?? 'sparkles'] ?? ICONS.sparkles,
+      title: tile.title ?? fallbackTitle,
+      lead: tile.lead ?? '',
+      details: tile.details ?? [],
+    }));
+  }, [insights, isRu]);
 
   const [openTileId, setOpenTileId] = useState<string | null>(null);
   const activeTile = whyTiles.find((t) => t.id === openTileId) ?? null;

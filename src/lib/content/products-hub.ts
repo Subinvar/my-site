@@ -32,6 +32,17 @@ type RawGroup = {
 
 type RawProductsHub = {
   groups?: RawGroup[] | null;
+  insights?: RawInsight[] | null;
+};
+
+type RawInsight = {
+  id?: string | null;
+  icon?: string | null;
+  title?: Localized<string>;
+  lead?: Localized<string>;
+  details?: Localized<string>[] | null;
+  order?: number | null;
+  hidden?: boolean | null;
 };
 
 export type ProductsHubCard = {
@@ -50,6 +61,16 @@ export type ProductsHubGroup = {
   icon?: string;
   order: number;
   cards: ProductsHubCard[];
+};
+
+export type ProductsHubInsight = {
+  id: string;
+  icon?: string;
+  title?: string;
+  lead?: string;
+  details: string[];
+  order: number;
+  hidden: boolean;
 };
 
 const pickLocalized = <T>(value: Localized<T> | undefined, locale: Locale): T | undefined => {
@@ -104,20 +125,54 @@ const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): Produ
   } satisfies ProductsHubGroup;
 };
 
+const mapInsight = (insight: RawInsight, locale: Locale, fallbackIndex: number): ProductsHubInsight | null => {
+  const details = Array.isArray(insight.details)
+    ? insight.details
+        .map((detail) => pickLocalized(detail, locale))
+        .filter((detail): detail is string => Boolean(detail))
+    : [];
+
+  const title = pickLocalized(insight.title, locale);
+  const lead = pickLocalized(insight.lead, locale);
+
+  if (!title && !lead && !details.length) {
+    return null;
+  }
+
+  return {
+    id: insight.id?.trim() || `insight-${fallbackIndex}`,
+    icon: insight.icon ?? undefined,
+    title,
+    lead,
+    details,
+    order: normalizeOrder(insight.order, fallbackIndex),
+    hidden: Boolean(insight.hidden),
+  } satisfies ProductsHubInsight;
+};
+
 export const getProductsHubContent = cache(async (
   locale: Locale
-): Promise<ProductsHubGroup[] | null> => {
+): Promise<{ groups: ProductsHubGroup[] | null; insights: ProductsHubInsight[] | null }> => {
   const reader = getReader();
   const data = (await reader.singletons.productsHub.read()) as RawProductsHub | null;
 
-  if (!data || !Array.isArray(data.groups)) return null;
+  if (!data) return { groups: null, insights: null };
+
+  const insights = Array.isArray(data.insights)
+    ? data.insights
+        .map((insight, index) => mapInsight(insight, locale, index))
+        .filter((insight): insight is ProductsHubInsight => Boolean(insight) && !insight.hidden)
+        .sort((a, b) => a.order - b.order)
+    : null;
+
+  if (!Array.isArray(data.groups)) return { groups: null, insights };
 
   const groups = data.groups
     .map((group, index) => mapGroup(group, locale, index))
     .filter((group): group is ProductsHubGroup => Boolean(group))
     .sort((a, b) => a.order - b.order);
 
-  if (!groups.length) return null;
+  if (!groups.length) return { groups: null, insights };
 
-  return groups;
+  return { groups, insights };
 });
