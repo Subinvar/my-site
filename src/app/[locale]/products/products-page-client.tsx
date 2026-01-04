@@ -363,30 +363,32 @@ function InsightTilesCarousel({
                   aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
                   aria-haspopup="dialog"
                   className={cn(
-                    'group w-full h-[168px] sm:h-[176px] rounded-2xl border border-[var(--header-border)]',
+                    'group w-full h-[208px] sm:h-[216px] rounded-2xl border border-[var(--header-border)]',
                     'bg-background/45 p-4 text-left flex flex-col',
                     'transition-colors duration-200 ease-out hover:bg-background/60',
                     focusRingBase,
                   )}
                 >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={cn(
-                        'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-                        'border border-[var(--header-border)] bg-muted/60 text-foreground',
-                      )}
-                      aria-hidden
-                    >
-                      {tile.icon}
-                    </span>
+                  <span
+                    className={cn(
+                      'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                      'border border-[var(--header-border)] bg-muted/60 text-foreground',
+                    )}
+                    aria-hidden
+                  >
+                    {tile.icon}
+                  </span>
 
-                    <div className="min-w-0">
-                      <p className="m-0 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.4rem]">{tile.title}</p>
-                      <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)] line-clamp-2 min-h-[2.9rem]">{tile.lead}</p>
-                    </div>
+                  <div className="mt-3 min-w-0">
+                    <p className="m-0 text-sm font-semibold leading-snug line-clamp-2">{tile.title}</p>
+                    <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)] line-clamp-2">{tile.lead}</p>
                   </div>
 
-                  <div className="mt-auto flex items-center justify-end pt-4">
+                  <div className="mt-auto flex items-center justify-between pt-3">
+                    <p className="m-0 text-xs font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
+                      {isRu ? 'Открыть детали' : 'View details'}
+                    </p>
+
                     <span
                       className={cn(
                         'inline-flex h-9 w-9 items-center justify-center rounded-full',
@@ -401,42 +403,6 @@ function InsightTilesCarousel({
                       <ArrowRight className="h-4 w-4" aria-hidden />
                     </span>
                   </div>
-                </button>
-              </AppleHoverLift>
-            </div>
-          ))}
-        </div>
-
-        {/* Edge fade hints: subtle “there is more” signal (Apple-like). */}
-        <div
-          aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-10',
-            'bg-[#F5F2F3]',
-            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
-            canScroll.left ? 'opacity-100' : 'opacity-0',
-          )}
-          style={{
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
-            maskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
-          } as CSSProperties}
-        />
-        <div
-          aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-10',
-            'bg-[#F5F2F3]',
-            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
-            canScroll.right ? 'opacity-100' : 'opacity-0',
-          )}
-          style={{
-            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
-            maskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
-          } as CSSProperties}
-        />
-
-      </div>
-    </div>
   );
 }
 
