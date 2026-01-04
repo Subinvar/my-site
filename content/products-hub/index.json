@@ -7,7 +7,7 @@
         "en": "Binder systems"
       },
       "description": {},
-      "icon": "target",
+      "icon": "beaker",
       "order": 0,
       "hidden": false,
       "cards": [
@@ -347,7 +347,7 @@
   "insights": [
     {
       "id": "solution-selection",
-      "icon": "target",
+      "icon": "badge-check",
       "title": {
         "ru": "Подбор решения под ваши задачи",
         "en": "Solution Selection for Your Application"
@@ -375,7 +375,7 @@
     },
     {
       "id": "startup-support",
-      "icon": "hand-helping",
+      "icon": "sparkles",
       "title": {
         "ru": "Сопровождение, внедрение и запуск",
         "en": "Support, Implementation, and Start-Up"
@@ -403,7 +403,7 @@
     },
     {
       "id": "stability",
-      "icon": "repeat-2",
+      "icon": "wrench",
       "title": {
         "ru": "Стабильность продукции и результата",
         "en": "Product and Process Stability"
@@ -431,7 +431,7 @@
     },
     {
       "id": "defect-economics",
-      "icon": "hand-coins",
+      "icon": "file-text",
       "title": {
         "ru": "Снижение брака и экономика процесса",
         "en": "Defect Reduction and Process Economics"
@@ -459,7 +459,7 @@
     },
     {
       "id": "partnerships",
-      "icon": "handshake",
+      "icon": "badge-check",
       "title": {
         "ru": "Партнёрства и компетенция",
         "en": "Partnerships and Expertise"
@@ -487,7 +487,7 @@
     },
     {
       "id": "safety",
-      "icon": "leaf",
+      "icon": "sparkles",
       "title": {
         "ru": "Экология и безопасность",
         "en": "Environmental and Occupational Safety"
@@ -515,7 +515,7 @@
     },
     {
       "id": "product-range",
-      "icon": "boxes",
+      "icon": "beaker",
       "title": {
         "ru": "Полный спектр продукции и индивидуальный подход",
         "en": "Full Product Range and a Tailored Approach"
@@ -543,7 +543,7 @@
     },
     {
       "id": "supply",
-      "icon": "truck",
+      "icon": "wrench",
       "title": {
         "ru": "Поставка по всей России и странам ЕАЭС",
         "en": "Supply Across Russia and the EAEU"
@@ -571,7 +571,7 @@
     },
     {
       "id": "reliability",
-      "icon": "file-lock",
+      "icon": "badge-check",
       "title": {
         "ru": "Надёжность и работа с ГОЗ",
         "en": "Reliability and GOZ Projects"
