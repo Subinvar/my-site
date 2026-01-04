@@ -406,7 +406,35 @@ function InsightTilesCarousel({
             </div>
           ))}
         </div>
-        
+
+        {/* Edge fade hints: subtle “there is more” signal (Apple-like). */}
+        <div
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-10',
+            'bg-[#F5F2F3]',
+            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
+            canScroll.left ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
+          } as CSSProperties}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-10',
+            'bg-[#F5F2F3]',
+            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
+            canScroll.right ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
+          } as CSSProperties}
+        />
+
       </div>
     </div>
   );
