@@ -343,5 +343,107 @@
         }
       ]
     }
+  ],
+  "insights": [
+    {
+      "id": "process",
+      "icon": "beaker",
+      "title": {
+        "ru": "Подбор под процесс",
+        "en": "Process-first selection"
+      },
+      "lead": {
+        "ru": "Отталкиваемся от технологии, а не от “любимого продукта”.",
+        "en": "We start from your technology, not from a “favorite product”."
+      },
+      "details": [
+        {
+          "ru": "Учитываем процесс формовки/стержневой, тип смеси, режимы, требования к поверхности и прочности.",
+          "en": "We consider the process, sand mix, modes, surface requirements and strength targets."
+        },
+        {
+          "ru": "Помогаем сузить выбор до рабочих вариантов и объясняем, почему они подходят.",
+          "en": "We help narrow down options and explain why they fit."
+        },
+        {
+          "ru": "Если нужно — согласуем контрольные параметры для стабильного результата.",
+          "en": "If needed, we agree on control points for stable results."
+        }
+      ],
+      "order": 0,
+      "hidden": false
+    },
+    {
+      "id": "docs",
+      "icon": "file-text",
+      "title": {
+        "ru": "Документы и рекомендации",
+        "en": "Documents & guidance"
+      },
+      "lead": {
+        "ru": "Техданные и безопасное применение — без лишней бюрократии.",
+        "en": "Technical and safe application without extra friction."
+      },
+      "details": [
+        {
+          "ru": "По запросу предоставим технические данные (TDS) и паспорт безопасности (SDS), а также рекомендации по применению.",
+          "en": "On request, we provide TDS/SDS and practical application recommendations."
+        },
+        {
+          "ru": "Подскажем, какие параметры важны на участке (вязкость, плотность, режимы сушки/отверждения и т.д.).",
+          "en": "We highlight key shop-floor parameters: viscosity, density, curing/drying modes, etc."
+        }
+      ],
+      "order": 1,
+      "hidden": false
+    },
+    {
+      "id": "stability",
+      "icon": "badge-check",
+      "title": {
+        "ru": "Повторяемость на производстве",
+        "en": "Production repeatability"
+      },
+      "lead": {
+        "ru": "Цель — стабильность в партии, а не разовый “идеальный” тест.",
+        "en": "Stable batches matter more than a one-off perfect trial."
+      },
+      "details": [
+        {
+          "ru": "Смотрим на внедрение как на процесс: проба → корректировки → закрепление режима.",
+          "en": "We treat implementation as a process: trial → adjustments → stabilized modes."
+        },
+        {
+          "ru": "Обсуждаем типовые риски (сушка, газование, нанесение, хранение, смешивание) заранее.",
+          "en": "We discuss typical risks (drying, gassing, application, storage, mixing) upfront."
+        }
+      ],
+      "order": 2,
+      "hidden": false
+    },
+    {
+      "id": "support",
+      "icon": "wrench",
+      "title": {
+        "ru": "Сопровождение внедрения",
+        "en": "Implementation support"
+      },
+      "lead": {
+        "ru": "Помогаем перейти на новый материал или процесс без хаоса.",
+        "en": "A controlled transition to a new material or process."
+      },
+      "details": [
+        {
+          "ru": "Согласуем план внедрения: что замеряем, какие критерии “успеха”, в каком порядке меняем параметры.",
+          "en": "We align the plan: what to measure, success criteria, and the order of changes."
+        },
+        {
+          "ru": "На старте даём “короткие правила” для участка: что критично, а что вторично.",
+          "en": "We provide shop-floor “quick rules”: what is critical and what is secondary."
+        }
+      ],
+      "order": 3,
+      "hidden": false
+    }
   ]
 }

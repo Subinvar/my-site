@@ -513,21 +513,68 @@ export default config({
                   }) => value?.title?.ru || value?.title?.en || 'Без названия',
                 }
               ),
+              },
+              { label: 'Группа карточек' }
+            ),
+            {
+              label: 'Группы',
+              itemLabel: ({
+                fields,
+              }: {
+                fields: {
+                  title: {
+                    value?: { ru?: string | null; en?: string | null } | null;
+                  };
+                  id: { value?: string | null };
+                };
+              }) => fields.title.value?.ru || fields.id.value || 'Группа',
+            }
+          ),
+        insights: fields.array(
+          fields.object(
+            {
+              id: fields.text({
+                label: 'ID карточки (латиница без пробелов)',
+                validation: { isRequired: true },
+              }),
+              icon: fields.select({
+                label: 'Иконка',
+                options: [
+                  { label: 'Колба', value: 'beaker' },
+                  { label: 'Документ', value: 'file-text' },
+                  { label: 'Галочка', value: 'badge-check' },
+                  { label: 'Ключ', value: 'wrench' },
+                  { label: 'Искры', value: 'sparkles' },
+                ],
+                defaultValue: 'sparkles',
+              }),
+              title: localizedText('Заголовок карточки', { isRequired: true }),
+              lead: localizedText('Короткое описание карточки', { multiline: true }),
+              details: fields.array(localizedText('Пункт модалки', { multiline: true, isRequired: true }), {
+                label: 'Пункты модалки',
+                itemLabel: ({ value }: { value?: { ru?: string | null; en?: string | null } | null }) =>
+                  value?.ru || value?.en || 'Пункт',
+              }),
+              order: fields.integer({ label: 'Порядок карточки', defaultValue: 0 }),
+              hidden: fields.checkbox({
+                label: 'Скрыть карточку (не показывать на сайте)',
+                defaultValue: false,
+              }),
             },
-            { label: 'Группа карточек' }
+            { label: 'Карточка модалки' }
           ),
           {
-            label: 'Группы',
+            label: 'Модальные карточки «Почему удобно работать с Интема Групп»',
             itemLabel: ({
-              fields,
+              value,
             }: {
-              fields: {
-                title: {
-                  value?: { ru?: string | null; en?: string | null } | null;
-                };
-                id: { value?: string | null };
-              };
-            }) => fields.title.value?.ru || fields.id.value || 'Группа',
+              value?: {
+                title?: {
+                  ru?: string | null;
+                  en?: string | null;
+                } | null;
+              } | null;
+            }) => value?.title?.ru || value?.title?.en || 'Карточка',
           }
         ),
       },

@@ -7,7 +7,12 @@ import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
 import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { buildPath, findTargetLocale } from '@/lib/paths';
-import { getProductsHubContent, type ProductsHubCard, type ProductsHubGroup } from '@/lib/content/products-hub';
+import {
+  getProductsHubContent,
+  type ProductsHubCard,
+  type ProductsHubGroup,
+  type ProductsHubInsight,
+} from '@/lib/content/products-hub';
 
 import { ALLOWED_AUXILIARIES, ALLOWED_BINDER_PROCESSES, ALLOWED_COATING_BASES } from './constants';
 import { sortByOrderAndLabel, toSlug } from './helpers';
@@ -57,6 +62,110 @@ const AUXILIARY_CARD_DESCRIPTIONS_RU: Record<string, string> = {
     'Экзотермические смеси для питания отливок и узлов; формы поставки под конкретную задачу.',
   Модификатор: 'Модификаторы для корректировки свойств смеси и качества поверхности; подбор под рецептуру.',
 };
+
+const WHY_TILES_RU: ProductsHubInsight[] = [
+  {
+    id: 'process',
+    icon: 'beaker',
+    title: 'Подбор под процесс',
+    lead: 'Отталкиваемся от технологии, а не от “любимого продукта”.',
+    details: [
+      'Учитываем процесс формовки/стержневой, тип смеси, режимы, требования к поверхности и прочности.',
+      'Помогаем сузить выбор до рабочих вариантов и объясняем, почему они подходят.',
+      'Если нужно — согласуем контрольные параметры для стабильного результата.',
+    ],
+    order: 0,
+    hidden: false,
+  },
+  {
+    id: 'docs',
+    icon: 'file-text',
+    title: 'Документы и рекомендации',
+    lead: 'Техданные и безопасное применение — без лишней бюрократии.',
+    details: [
+      'По запросу предоставим технические данные (TDS) и паспорт безопасности (SDS), а также рекомендации по применению.',
+      'Подскажем, какие параметры важны на участке (вязкость, плотность, режимы сушки/отверждения и т.д.).',
+    ],
+    order: 1,
+    hidden: false,
+  },
+  {
+    id: 'stability',
+    icon: 'badge-check',
+    title: 'Повторяемость на производстве',
+    lead: 'Цель — стабильность в партии, а не разовый “идеальный” тест.',
+    details: [
+      'Смотрим на внедрение как на процесс: проба → корректировки → закрепление режима.',
+      'Обсуждаем типовые риски (сушка, газование, нанесение, хранение, смешивание) заранее.',
+    ],
+    order: 2,
+    hidden: false,
+  },
+  {
+    id: 'support',
+    icon: 'wrench',
+    title: 'Сопровождение внедрения',
+    lead: 'Помогаем перейти на новый материал или процесс без хаоса.',
+    details: [
+      'Согласуем план внедрения: что замеряем, какие критерии “успеха”, в каком порядке меняем параметры.',
+      'На старте даём “короткие правила” для участка: что критично, а что вторично.',
+    ],
+    order: 3,
+    hidden: false,
+  },
+];
+
+const WHY_TILES_EN: ProductsHubInsight[] = [
+  {
+    id: 'process',
+    icon: 'beaker',
+    title: 'Process-first selection',
+    lead: 'We start from your technology, not from a “favorite product”.',
+    details: [
+      'We consider the process, sand mix, modes, surface requirements and strength targets.',
+      'We help narrow down options and explain why they fit.',
+      'If needed, we agree on control points for stable results.',
+    ],
+    order: 0,
+    hidden: false,
+  },
+  {
+    id: 'docs',
+    icon: 'file-text',
+    title: 'Documents & guidance',
+    lead: 'Technical and safe application without extra friction.',
+    details: [
+      'On request, we provide TDS/SDS and practical application recommendations.',
+      'We highlight key shop-floor parameters: viscosity, density, curing/drying modes, etc.',
+    ],
+    order: 1,
+    hidden: false,
+  },
+  {
+    id: 'stability',
+    icon: 'badge-check',
+    title: 'Production repeatability',
+    lead: 'Stable batches matter more than a one-off perfect trial.',
+    details: [
+      'We treat implementation as a process: trial → adjustments → stabilized modes.',
+      'We discuss typical risks (drying, gassing, application, storage, mixing) upfront.',
+    ],
+    order: 2,
+    hidden: false,
+  },
+  {
+    id: 'support',
+    icon: 'wrench',
+    title: 'Implementation support',
+    lead: 'A controlled transition to a new material or process.',
+    details: [
+      'We align the plan: what to measure, success criteria, and the order of changes.',
+      'We provide shop-floor “quick rules”: what is critical and what is secondary.',
+    ],
+    order: 3,
+    hidden: false,
+  },
+];
 
 export default async function ProductsPage({ params }: PageProps) {
   const { locale: rawLocale } = await params;
@@ -159,8 +268,12 @@ export default async function ProductsPage({ params }: PageProps) {
     },
   ];
 
-  const hubGroups = await getProductsHubContent(locale);
-  const groups = hubGroups?.length ? hubGroups : fallbackGroups;
+  const hubContent = await getProductsHubContent(locale);
+  const groups = hubContent.groups?.length ? hubContent.groups : fallbackGroups;
+
+  const insightsFallback = locale === 'ru' ? WHY_TILES_RU : WHY_TILES_EN;
+  const insights = hubContent.insights?.length ? hubContent.insights : insightsFallback;
+  const sortedInsights = [...insights].sort((a, b) => a.order - b.order);
 
   return (
     <SiteShellLayout
@@ -177,7 +290,7 @@ export default async function ProductsPage({ params }: PageProps) {
             но оставляем для семантики/доступности. */}
         <h1 className="sr-only">{pageTitle}</h1>
 
-        <ProductsPageClient locale={locale} groups={groups} />
+        <ProductsPageClient locale={locale} groups={groups} insights={sortedInsights} />
       </main>
     </SiteShellLayout>
   );
