@@ -756,7 +756,13 @@ export function ProductsPageClient({ locale, groups }: ProductsPageClientProps) 
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
-        <section className="py-5 sm:py-6">
+        <section
+          className={cn(
+            'py-5 sm:py-6',
+            'bg-[#F5F2F3]',
+            '-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8',
+          )}
+        >
           <InsightTilesCarousel
             title={whyTitle}
             tiles={whyTiles}
