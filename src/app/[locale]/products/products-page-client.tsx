@@ -308,8 +308,9 @@ function InsightTilesCarousel({
             className={cn(
               'inline-flex h-10 w-10 items-center justify-center rounded-full',
               'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+                        'cursor-pointer',
               'hover:bg-background/90 hover:text-foreground',
-              'disabled:cursor-not-allowed disabled:opacity-40',
+              'cursor-pointer disabled:cursor-default disabled:opacity-40',
               focusRingBase,
             )}
           >
@@ -326,7 +327,7 @@ function InsightTilesCarousel({
               'inline-flex h-10 w-10 items-center justify-center rounded-full',
               'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
               'hover:bg-background/90 hover:text-foreground',
-              'disabled:cursor-not-allowed disabled:opacity-40',
+              'cursor-pointer disabled:cursor-default disabled:opacity-40',
               focusRingBase,
             )}
           >
@@ -363,46 +364,83 @@ function InsightTilesCarousel({
                   aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
                   aria-haspopup="dialog"
                   className={cn(
-                    'group w-full h-[208px] sm:h-[216px] rounded-2xl border border-[var(--header-border)]',
+                    'group relative w-full h-[240px] sm:h-[248px] cursor-pointer rounded-2xl border border-[var(--header-border)]',
                     'bg-background/45 p-4 text-left flex flex-col',
                     'transition-colors duration-200 ease-out hover:bg-background/60',
                     focusRingBase,
                   )}
                 >
-                  <span
-                    className={cn(
-                      'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
-                      'border border-[var(--header-border)] bg-muted/60 text-foreground',
-                    )}
-                    aria-hidden
-                  >
-                    {tile.icon}
-                  </span>
-
-                  <div className="mt-3 min-w-0">
-                    <p className="m-0 text-sm font-semibold leading-snug line-clamp-2">{tile.title}</p>
-                    <p className="m-0 mt-1 text-sm leading-relaxed text-[var(--muted-foreground)] line-clamp-2">{tile.lead}</p>
-                  </div>
-
-                  <div className="mt-auto flex items-center justify-between pt-3">
-                    <p className="m-0 text-xs font-medium text-[var(--muted-foreground)] transition-colors group-hover:text-foreground">
-                      {isRu ? 'Открыть детали' : 'View details'}
-                    </p>
-
+                  <div className="flex items-start">
                     <span
                       className={cn(
-                        'inline-flex h-9 w-9 items-center justify-center rounded-full',
-                        'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-                        'transition-[background-color,color,transform] duration-200 ease-out',
-                        'group-hover:bg-background/90 group-hover:text-foreground',
-                        'group-hover:scale-[1.03]',
-                        'motion-reduce:transition-none motion-reduce:transform-none',
+                        'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                        'border border-[var(--header-border)] bg-muted/60 text-foreground',
                       )}
                       aria-hidden
                     >
-                      <ArrowRight className="h-4 w-4" aria-hidden />
+                      {tile.icon}
                     </span>
                   </div>
+
+                  <div className="mt-1.5 min-w-0 pr-12">
+                    <p className="m-0 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.6rem]">
+                      {tile.title}
+                    </p>
+                    <p className="m-0 mt-1 text-sm leading-normal text-[var(--muted-foreground)] line-clamp-4">
+                      {tile.lead}
+                    </p>
+                  </div>
+
+                  <span
+                    className={cn(
+                      'absolute bottom-4 right-4 inline-flex h-8 w-8 items-center justify-center rounded-full',
+                      'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
+                      'transition-[background-color,color,transform] duration-200 ease-out',
+                      'group-hover:bg-background/90 group-hover:text-foreground',
+                      'group-hover:scale-[1.03]',
+                      'cursor-pointer',
+                      'motion-reduce:transition-none motion-reduce:transform-none',
+                    )}
+                    aria-hidden
+                  >
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </button>
+              </AppleHoverLift>
+            </div>
+          ))}
+        </div>
+
+        {/* Edge fade hints: subtle “there is more” signal (Apple-like). */}
+        <div
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-10',
+            'bg-[#F5F2F3]',
+            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
+            canScroll.left ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0))',
+          } as CSSProperties}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-10',
+            'bg-[#F5F2F3]',
+            'transition-opacity duration-200 ease-out motion-reduce:transition-none',
+            canScroll.right ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0))',
+          } as CSSProperties}
+        />
+
+      </div>
+    </div>
   );
 }
 
@@ -925,6 +963,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                 className={cn(
                   'inline-flex h-10 w-10 items-center justify-center rounded-xl',
                   'border border-[var(--header-border)] bg-muted/20 text-foreground',
+                  'cursor-pointer',
                   'transition-colors duration-150 ease-out hover:bg-muted/35',
                   focusRingBase,
                 )}
