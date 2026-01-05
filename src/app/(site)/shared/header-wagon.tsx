@@ -158,11 +158,11 @@ export const HeaderWagon = memo(function HeaderWagon({
 
   const base = cn(
     "absolute inset-0 h-full w-full",
-    "will-change-[transform,opacity] transform-gpu",
+    "will-change-[transform,opacity]",
     panelBaseClassName,
   );
 
-  const visible = "opacity-100 translate-y-0";
+  const visible = "opacity-100";
   // Неактивную панель держим вне экрана (по умолчанию снизу).
   const hidden = "opacity-0 translate-y-full";
 

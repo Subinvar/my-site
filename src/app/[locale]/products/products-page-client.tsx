@@ -167,7 +167,7 @@ function ProductsSection({
         ) : null}
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
           <HubCard key={item.id} item={item} />
         ))}
@@ -230,9 +230,9 @@ function InsightTilesCarousel({
       const padLeft = Number.parseFloat(styles.paddingLeft) || 0;
       const padRight = Number.parseFloat(styles.paddingRight) || 0;
 
-      // IMPORTANT: scroll-padding is set via static Tailwind classes on the scroller
-      // (scroll-px-3 / sm:scroll-px-4). This avoids a hydration "jump" where the browser
-      // initially snap-aligns the first card to the very edge and only later shifts it.
+      // IMPORTANT: we intentionally keep scroller padding = 0,
+      // so the cards align with the main content container from the first paint
+      // (no hydration "jump" caused by late-applied padding).
 
       const innerWidth = Math.max(0, el.clientWidth - padLeft - padRight);
 
@@ -337,11 +337,8 @@ function InsightTilesCarousel({
             // На узких экранах (и при overflow-x: hidden на body) это даёт ощущение,
             // что ряд "поджимает" справа и карточки смещаются влево.
             // Вместо этого даём небольшой внутренний "safe-area" под hover-scale.
-            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-2 px-3 sm:px-4',
-            // Keep scroll-snap aligned with the visual padding from the very first paint.
-            // This prevents a hydration "jump" where the browser initially snap-aligns
-            // the first card to the edge and then shifts it after hydration.
-            'scroll-px-3 sm:scroll-px-4',
+            // Горизонтальные паддинги НЕ добавляем — карточки должны совпадать с краями контентного контейнера.
+            'no-scrollbar flex w-full gap-4 overflow-x-auto pb-3 pt-2',
             'snap-x snap-mandatory scroll-smooth',
             'touch-pan-x overscroll-x-contain',
           )}
@@ -349,7 +346,7 @@ function InsightTilesCarousel({
         >
           {tiles.map((tile) => (
             <div key={tile.id} data-carousel-item="1" className="w-[280px] sm:w-[320px] shrink-0 snap-start">
-              <AppleHoverLift strength="xs">
+              <AppleHoverLift strength="xs" className="hover:z-40 focus-within:z-40">
                 <button
                   type="button"
                   onClick={() => onOpen(tile.id)}
@@ -737,7 +734,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           className={cn(
             // Full-bleed background (like the footer), while keeping the content aligned
             // to the global max-width container.
-            'relative left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]',
+            'relative z-20 left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]',
             'overflow-x-clip',
             'bg-muted py-5 sm:py-6',
           )}

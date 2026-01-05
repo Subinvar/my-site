@@ -141,26 +141,6 @@ export function SiteFooter({
           <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               <div className="flex flex-wrap items-center gap-2">
-                {telegramHref ? (
-                  <a
-                    href={telegramHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={contactLinkClassName}
-                  >
-                    {telegramLabel}
-                  </a>
-                ) : null}
-
-                {contacts.phone ? (
-                  <a
-                    href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                    className={cn(contactLinkClassName, "lg:hidden")}
-                  >
-                    {contacts.phone}
-                  </a>
-                ) : null}
-
                 {contacts.email ? (
                   <a
                     href={`mailto:${contacts.email}`}
@@ -169,6 +149,18 @@ export function SiteFooter({
                     {contacts.email}
                   </a>
                 ) : null}
+
+                {telegramHref ? (
+                  <a
+                    href={telegramHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(contactLinkClassName, "sm:hidden lg:inline-flex")}
+                  >
+                    {telegramLabel}
+                  </a>
+                ) : null}
+
               </div>
             </div>
 
