@@ -403,7 +403,7 @@ function InsightTilesCarousel({
           aria-hidden
           className={cn(
             'pointer-events-none absolute inset-y-0 left-0 z-10 w-8 sm:w-10',
-            'bg-[#F5F2F3]',
+            'bg-muted',
             'transition-opacity duration-200 ease-out motion-reduce:transition-none',
             canScroll.left ? 'opacity-100' : 'opacity-0',
           )}
@@ -416,7 +416,7 @@ function InsightTilesCarousel({
           aria-hidden
           className={cn(
             'pointer-events-none absolute inset-y-0 right-0 z-10 w-8 sm:w-10',
-            'bg-[#F5F2F3]',
+            'bg-muted',
             'transition-opacity duration-200 ease-out motion-reduce:transition-none',
             canScroll.right ? 'opacity-100' : 'opacity-0',
           )}
@@ -735,17 +735,21 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
         {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
         <section
           className={cn(
-            'py-5 sm:py-6',
-            'bg-[#F5F2F3]',
-            '-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8',
+            // Full-bleed background (like the footer), while keeping the content aligned
+            // to the global max-width container.
+            'relative left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]',
+            'overflow-x-clip',
+            'bg-muted py-5 sm:py-6',
           )}
         >
-          <InsightTilesCarousel
-            title={whyTitle}
-            tiles={whyTiles}
-            isRu={isRu}
-            onOpen={setOpenTileId}
-          />
+          <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)]">
+            <InsightTilesCarousel
+              title={whyTitle}
+              tiles={whyTiles}
+              isRu={isRu}
+              onOpen={setOpenTileId}
+            />
+          </div>
         </section>
 
         {/* Навигация по секциям (JS-fixed вместо sticky, чтобы работало в любой разметке) */}

@@ -27,7 +27,6 @@ export function LanguageSwitcher({
   const ariaLabel =
     ariaLabelValue && ariaLabelValue.trim().length ? ariaLabelValue : undefined;
 
-  // Локальное состояние для "вагончиков" RU/EN
   const [animLocale, setAnimLocale] = useState<Locale>(currentLocale);
 
   useEffect(() => {
@@ -36,36 +35,30 @@ export function LanguageSwitcher({
 
   const isRuActive = animLocale === 'ru';
 
-  // Управляем анимацией hover-бордера:
-  // пока isHoverAnimated === false → НЕТ transition-colors,
-  // включаем его только после первого real pointerenter.
   const [isHoverAnimated, setIsHoverAnimated] = useState(false);
 
   const handlePointerEnter = () => {
-    if (!isHoverAnimated) {
-      setIsHoverAnimated(true);
-    }
+    if (!isHoverAnimated) setIsHoverAnimated(true);
   };
 
-  // Контейнер:
-  // - высота как у бургера/темы (h-10)
-  // - border только на hover
+  // ✅ Ключ: обводка через ring-inset, а не border / внешнюю тень
   const baseContainerClasses = cn(
-    'relative inline-flex h-10 w-10 items-center justify-center',
-    'rounded-xl border border-transparent',
+    'relative z-0 inline-flex h-10 w-10 items-center justify-center',
+    'rounded-xl',
+    // inset-обводка: не режется контейнерами сверху/снизу
+    'ring-1 ring-inset ring-transparent',
     'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',
-    'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    'hover:ring-[var(--header-border)] hover:bg-transparent hover:text-foreground',
     focusRingBase,
   );
 
   const containerClasses = cn(
     baseContainerClasses,
-    // До первого pointerenter не анимируем цвет → нет "мигания" на смене страницы
     isHoverAnimated ? 'transition-colors duration-150' : 'transition-none',
-    isDisabled && 'cursor-default opacity-50 hover:border-transparent hover:bg-transparent',
+    isDisabled &&
+      'cursor-default opacity-50 hover:ring-transparent hover:bg-transparent',
   );
 
-  // Вагончики RU / EN
   const wagonBaseClasses =
     'absolute inset-0 flex items-center justify-center px-2 ' +
     'text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] ' +
@@ -102,10 +95,7 @@ export function LanguageSwitcher({
     );
   }
 
-  const handleClick = () => {
-    // Даём локальную анимацию "вагончиков"
-    setAnimLocale(targetLocale);
-  };
+  const handleClick = () => setAnimLocale(targetLocale);
 
   return (
     <Link

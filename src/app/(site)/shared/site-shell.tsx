@@ -82,9 +82,9 @@ const headerButtonBase = cn(
 );
 
 const pillBase = cn(
-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 + ring-1 ring-inset ring-transparent bg-transparent",
   "text-muted-foreground no-underline transition-colors duration-200 ease-out",
-  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
+  "hover:ring-[var(--header-border)] hover:bg-transparent hover:text-foreground",
   "focus-visible:border-[var(--header-border)]",
   focusRingBase,
   "truncate motion-reduce:transition-none motion-reduce:duration-0",
