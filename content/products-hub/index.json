@@ -14,11 +14,11 @@
         {
           "title": {
             "ru": "Альфа-cет",
-            "en": "Альфа-cет"
+            "en": "Alpha-set"
           },
           "description": {
-            "ru": "Щелочные фенолформальдегидные связующие, отверждаемые сложными эфирами (различная живучесть).",
-            "en": "Alkaline phenolic binders cured with esters; tuned for different bench lives."
+            "ru": "Щелочные фенолформальдегидные смолы и эфирные отвердители.",
+            "en": "Alkaline phenolic resins and ester hardeners."
           },
           "href": {
             "ru": "/products/binders/Альфа-cет",
@@ -33,11 +33,11 @@
         {
           "title": {
             "ru": "ЖСС",
-            "en": "ЖСС"
+            "en": "Sodium silicate"
           },
           "description": {
-            "ru": "Жидкостекольные системы: жидкое стекло, добавки и отвердители под режимы участка.",
-            "en": "Sodium silicate systems with additives and hardeners tuned to your process."
+            "ru": "Эфирные отвердители для жидкостекольных смесей.",
+            "en": "Ester hardeners for sodium silicate sand mixes."
           },
           "href": {
             "ru": "/products/binders/ЖСС",
@@ -52,11 +52,11 @@
         {
           "title": {
             "ru": "Колд-Бокс",
-            "en": "Колд-Бокс"
+            "en": "Cold-Box"
           },
           "description": {
-            "ru": "Полиуретановые cold-box системы: смола/изоцианат и отверждение газообразным амином.",
-            "en": "Polyurethane cold-box systems with amine gassing."
+            "ru": "Полиуретановые системы: фенольная смола, изоцианат, газообразный амин.",
+            "en": "Polyurethane systems: phenolic resin, isocyanate, gaseous amine."
           },
           "href": {
             "ru": "/products/binders/Колд-Бокс",
@@ -70,16 +70,16 @@
         },
         {
           "title": {
-            "ru": "Кронинг",
-            "en": "Кронинг"
+            "ru": "Фуран",
+            "en": "Furan"
           },
           "description": {
-            "ru": "Термореактивные смолы и добавки для оболочковых форм и стержней (процесс Кронинга).",
-            "en": "Thermosetting resins and additives for shell moulds and cores."
+            "ru": "Смолы на основе фурфурилового спирта и кислотные катализаторы.",
+            "en": "Furfuryl alcohol–based resins and acid catalysts."
           },
           "href": {
-            "ru": "/products/binders/Кронинг",
-            "en": "/en/products/binders/Кронинг"
+            "ru": "/products/binders/Фуран",
+            "en": "/en/products/binders/Фуран"
           },
           "image": {
             "alt": {}
@@ -89,16 +89,16 @@
         },
         {
           "title": {
-            "ru": "Пеп-сет",
-            "en": "Пеп-сет"
+            "ru": "Резол-CO₂",
+            "en": "Resol-CO₂"
           },
           "description": {
-            "ru": "Кислотно-отверждаемые системы (PEP-SET): связующие и катализаторы для форм и стержней.",
-            "en": "Acid-cured PEP-SET systems: binders and catalysts for moulds and cores."
+            "ru": "Фенольные смолы резольного типа, отверждаемые продувкой CO₂.",
+            "en": "Resol-type phenolic resins cured by CO₂ gassing."
           },
           "href": {
-            "ru": "/products/binders/Пеп-сет",
-            "en": "/en/products/binders/Пеп-сет"
+            "ru": "/products/binders/Резол-CO₂",
+            "en": "/en/products/binders/Резол-CO₂"
           },
           "image": {
             "alt": {}
@@ -108,16 +108,16 @@
         },
         {
           "title": {
-            "ru": "Резол-CO₂",
-            "en": "Резол-CO₂"
+            "ru": "Кронинг",
+            "en": "Shell (Croning)"
           },
           "description": {
-            "ru": "Резольные (щелочные фенольные) связующие, отверждаемые CO₂; материалы под стабильную прочность.",
-            "en": "Alkaline phenolic resol binders cured with CO₂; focused on consistent strength."
+            "ru": "Термореактивные фенолформальдегидные смолы для оболочковых форм и стержней.",
+            "en": "Thermosetting phenol-formaldehyde resins for shell moulds and cores."
           },
           "href": {
-            "ru": "/products/binders/Резол-CO₂",
-            "en": "/en/products/binders/Резол-CO₂"
+            "ru": "/products/binders/Кронинг",
+            "en": "/en/products/binders/Кронинг"
           },
           "image": {
             "alt": {}
@@ -127,16 +127,16 @@
         },
         {
           "title": {
-            "ru": "Фуран",
-            "en": "Фуран"
+            "ru": "Пеп-сет",
+            "en": "PEP-SET"
           },
           "description": {
-            "ru": "Фурановые смолы и кислотные отвердители для форм и стержней; настройка под требования литья.",
-            "en": "Furan resins and acid hardeners for moulds and cores; tuned to casting requirements."
+            "ru": "Фенол-уретановые системы: фенольная смола, полиизоцианат, жидкий амин.",
+            "en": "Phenolic-urethane systems: phenolic resin, polyisocyanate, liquid amine."
           },
           "href": {
-            "ru": "/products/binders/Фуран",
-            "en": "/en/products/binders/Фуран"
+            "ru": "/products/binders/Пеп-сет",
+            "en": "/en/products/binders/Пеп-сет"
           },
           "image": {
             "alt": {}
@@ -159,16 +159,16 @@
       "cards": [
         {
           "title": {
-            "ru": "Водное",
-            "en": "Water-based"
+            "ru": "Спиртовое",
+            "en": "Alcohol-based"
           },
           "description": {
-            "ru": "Покрытия на водной основе; подбор по наполнителю, вязкости и условиям сушки.",
-            "en": "Water-based coatings tuned by filler, viscosity and drying conditions."
+            "ru": "Быстросохнущие противопригарные покрытия для форм и стержней с различными наполнителями.",
+            "en": "Fast-drying alcohol-based refractory coatings for moulds and cores with various fillers."
           },
           "href": {
-            "ru": "/products/coatings/Водное",
-            "en": "/en/products/coatings/Водное"
+            "ru": "/products/coatings/Спиртовое",
+            "en": "/en/products/coatings/Спиртовое"
           },
           "image": {
             "alt": {}
@@ -178,21 +178,40 @@
         },
         {
           "title": {
-            "ru": "Спиртовое",
-            "en": "Alcohol-based"
+            "ru": "Водное",
+            "en": "Water-based"
           },
           "description": {
-            "ru": "Быстросохнущие покрытия для форм и стержней; выбираются по наполнителю и условиям нанесения.",
-            "en": "Fast-drying alcohol coatings selected by filler and application method."
+            "ru": "Водные противопригарные покрытия для форм, стержней и кокиля с различными наполнителями.",
+            "en": "Water-based refractory coatings for moulds, cores, and permanent moulds with various fillers."
           },
           "href": {
-            "ru": "/products/coatings/Спиртовое",
-            "en": "/en/products/coatings/Спиртовое"
+            "ru": "/products/coatings/Водное",
+            "en": "/en/products/coatings/Водное"
           },
           "image": {
             "alt": {}
           },
           "order": 1,
+          "hidden": false
+        },
+        {
+          "title": {
+            "ru": "АИПС",
+            "en": "AIPS"
+          },
+          "description": {
+            "ru": "Абсолютированный изопропиловый спирт.",
+            "en": "Anhydrous isopropyl alcohol (IPA)."
+          },
+          "href": {
+            "ru": "/products/coatings/АИПС",
+            "en": "/en/products/coatings/АИПС"
+          },
+          "image": {
+            "alt": {}
+          },
+          "order": 2,
           "hidden": false
         }
       ]
@@ -214,8 +233,8 @@
             "en": "Release compound"
           },
           "description": {
-            "ru": "Разделительные составы для оснастки и поверхностей: стабильный съём и защита в процессе работы.",
-            "en": "Release agents for tooling and surfaces to ensure clean stripping and protection."
+            "ru": "Разделительные составы для модельной оснастки для процессов ХТС, Колд-Бокс и ПГС.",
+            "en": "Release agents for pattern equipment used in no-bake, cold-box, and green sand processes."
           },
           "href": {
             "ru": "/products/auxiliaries/Разделительный состав",
@@ -233,8 +252,8 @@
             "en": "Glue"
           },
           "description": {
-            "ru": "Клеи для сборки стержней и ремонта форм; подбор по вязкости и скорости схватывания.",
-            "en": "Adhesives for assembling cores and repairing moulds; chosen by viscosity and set time."
+            "ru": "Клеи для сборки и ремонта форм и стержней.",
+            "en": "Adhesives for assembling and repairing moulds and cores."
           },
           "href": {
             "ru": "/products/auxiliaries/Клей",
@@ -252,8 +271,8 @@
             "en": "Repair paste"
           },
           "description": {
-            "ru": "Пасты для локального ремонта форм/стержней: заделка сколов, раковин и дефектов.",
-            "en": "Pastes for localized mould/core repairs: chips, blowholes, and defects."
+            "ru": "Пасты для заделки сколов, трещин и иных дефектов форм и стержней.",
+            "en": "Repair pastes for chips, cracks, and other mould and core defects."
           },
           "href": {
             "ru": "/products/auxiliaries/Ремонтная паста",
@@ -271,8 +290,8 @@
             "en": "Sealing cord"
           },
           "description": {
-            "ru": "Шнуры для герметизации разъёмов и стыков; стойкость к температуре и газам.",
-            "en": "Cords for sealing joints and parting lines; resistant to heat and gases."
+            "ru": "Уплотнительные шнуры для герметизации полуформ при их сборке.",
+            "en": "Sealing cords for mould half joints during assembly."
           },
           "href": {
             "ru": "/products/auxiliaries/Уплотнительный шнур",
@@ -290,8 +309,8 @@
             "en": "Cleaning agent"
           },
           "description": {
-            "ru": "Составы для очистки инструмента и оборудования от смол и покрытий; выбор по загрязнению.",
-            "en": "Cleaners for tools and equipment; selected by contamination type."
+            "ru": "Составы для очистки оборудования и инструмента от застывшей отработанной смеси.",
+            "en": "Cleaning compounds for removing hardened spent sand mix from tools and equipment."
           },
           "href": {
             "ru": "/products/auxiliaries/Отмывающий состав",
@@ -309,8 +328,8 @@
             "en": "Exothermic mix"
           },
           "description": {
-            "ru": "Экзотермические смеси для питания отливок и узлов; формы поставки под конкретную задачу.",
-            "en": "Exothermic compounds for feeding castings; supplied in formats for your task."
+            "ru": "Экзотермические смеси для прибылей и узлов питания отливок.",
+            "en": "Exothermic compounds for risers and feeding elements."
           },
           "href": {
             "ru": "/products/auxiliaries/Экзотермическая смесь",
@@ -328,8 +347,8 @@
             "en": "Modifier"
           },
           "description": {
-            "ru": "Модификаторы для корректировки свойств смеси и качества поверхности; подбор под рецептуру.",
-            "en": "Modifiers to adjust sand mix properties and surface quality."
+            "ru": "Графитизирующие и сфероидизирующие модификаторы для чугуна марок СЧ и ВЧ.",
+            "en": "Graphitizing and spheroidizing modifiers for grey and ductile iron."
           },
           "href": {
             "ru": "/products/auxiliaries/Модификатор",
