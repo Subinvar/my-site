@@ -616,8 +616,6 @@ export function SiteShell({
     return () => window.clearTimeout(t);
   }, [isBurgerMode, isMenuOpen, isMenuMounted, prefersReducedMotion]);
 
-  const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
-
   // Подготавливаем height-анимацию панели бургер-меню:
   // при открытии сначала монтируем/показываем панель в закрытом состоянии,
   // затем в следующем кадре включаем открытое — чтобы transition сработал даже при первом открытии.
