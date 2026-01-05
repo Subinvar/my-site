@@ -130,13 +130,17 @@ export const HeaderNav = memo(function HeaderNav({
               aria-label={burgerAriaLabel}
               onClick={onBurgerClick}
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-lg border",
+                // ✅ Фикс "съеденных 1px": border прозрачный, обводка внутри через after:inset-px.
+                "relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-transparent bg-transparent",
+                "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
                 "cursor-pointer",
-                "transition-colors duration-150",
+                "text-muted-foreground transition-colors duration-150",
+                "after:transition-colors after:duration-150 after:ease-out",
                 isMenuOpen
-                  ? "border-[color:var(--header-border)] bg-background/70 text-foreground"
-                  : "border-transparent bg-transparent text-muted-foreground",
-                "hover:border-[color:var(--header-border)] hover:text-foreground",
+                  ? "bg-background/70 text-foreground after:border-[var(--header-border)]"
+                  : "bg-transparent",
+                "hover:bg-transparent hover:text-foreground hover:after:border-[var(--header-border)]",
+                "focus-visible:after:border-[var(--header-border)]",
                 focusRingBase,
               )}
             >
