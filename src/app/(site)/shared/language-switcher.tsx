@@ -41,14 +41,14 @@ export function LanguageSwitcher({
     if (!isHoverAnimated) setIsHoverAnimated(true);
   };
 
-  // ✅ Ключ: обводка через ring-inset, а не border / внешнюю тень
   const baseContainerClasses = cn(
-    'relative z-0 inline-flex h-10 w-10 items-center justify-center',
-    'rounded-lg',
-    // inset-обводка: не режется контейнерами сверху/снизу
-    'ring-1 ring-inset ring-transparent',
-    'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',
-    'hover:ring-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    // ✅ Фикс "съеденных 1px": border прозрачный, обводка внутри через after:inset-px.
+    'relative z-0 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-transparent bg-transparent',
+    "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
+    'after:transition-colors after:duration-150 after:ease-out',
+    'text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',
+    'hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    'focus-visible:after:border-[var(--header-border)]',
     focusRingBase,
   );
 
@@ -56,7 +56,7 @@ export function LanguageSwitcher({
     baseContainerClasses,
     isHoverAnimated ? 'transition-colors duration-150' : 'transition-none',
     isDisabled &&
-      'cursor-default opacity-50 hover:ring-transparent hover:bg-transparent',
+      'cursor-default opacity-50 hover:after:border-transparent hover:bg-transparent hover:text-muted-foreground',
   );
 
   const wagonBaseClasses =

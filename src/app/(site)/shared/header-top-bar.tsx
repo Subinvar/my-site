@@ -170,57 +170,24 @@ export const HeaderCta = memo(function HeaderCta({
         className,
       )}
     >
+      {/*
+        ⚠️ Важный фикс: на некоторых масштабах браузера (например, 90%) многослойная
+        конструкция из нескольких absolute-слоёв может «разъезжаться» из‑за дробного
+        пиксельного округления. Оставляем один центрирующий элемент — так ореол и центр
+        всегда соосны.
+      */}
       <span aria-hidden="true" className="relative mr-2.5 inline-flex h-3.5 w-3.5 items-center justify-center">
         <span
           className={cn(
-            "absolute inset-0 rounded-full",
-            "bg-[rgba(148,27,32,0.12)] blur-[0.5px]",
-            "opacity-0 scale-100",
-            "transition-[opacity,transform] duration-200 ease-out",
-            "group-hover:opacity-100 group-hover:scale-110",
-            "group-focus-visible:opacity-100 group-focus-visible:scale-110",
-            "motion-reduce:transition-none motion-reduce:duration-0",
-          )}
-        />
-        <span
-          className={cn(
-            "absolute inset-0 rounded-full",
-            "border border-[rgba(148,27,32,0.35)]",
-            "opacity-70",
-            "transition-[opacity,transform] duration-200 ease-out",
-            "group-hover:opacity-100 group-hover:scale-110",
-            "group-focus-visible:opacity-100 group-focus-visible:scale-110",
-            "motion-reduce:transition-none motion-reduce:duration-0",
-          )}
-        />
-        <span
-          className={cn(
-            "relative h-2.5 w-2.5 overflow-hidden rounded-full",
-            "shadow-[0_0_0_1.5px_rgba(148,27,32,0.20),0_0_10px_rgba(148,27,32,0.16)]",
+            "relative h-2.5 w-2.5 rounded-full",
+            "bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_54%,#a8242c_74%,#d88993_86%,#f7d5dc_100%)]",
+            "shadow-[0_0_0_1px_rgba(148,27,32,0.35),0_0_0_3px_rgba(148,27,32,0.12),0_0_10px_rgba(148,27,32,0.16)]",
             "transition-transform duration-200 ease-out",
             "group-hover:scale-110 group-focus-visible:scale-110",
             "motion-reduce:transition-none motion-reduce:duration-0",
+            "after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.08)_72%,transparent_100%)] after:content-['']",
           )}
-        >
-          <span
-            className={cn(
-              "absolute inset-0 rounded-full",
-              "bg-[radial-gradient(circle_at_center,var(--color-brand-600)_0%,var(--color-brand-600)_54%,#a8242c_74%,#d88993_86%,#f7d5dc_100%)]",
-              "after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.26)_0%,rgba(255,255,255,0.08)_72%,transparent_100%)] after:content-['']",
-            )}
-          />
-          <span
-            className={cn(
-              "absolute inset-0 rounded-full",
-              "bg-[radial-gradient(circle_at_center,transparent_0%,transparent_66%,rgba(247,213,220,0.00)_70%,rgba(247,213,220,0.40)_82%,rgba(247,213,220,0.78)_96%,transparent_100%)]",
-              "blur-[0.2px]",
-              "opacity-0",
-              "transition-opacity duration-200 ease-out",
-              "group-hover:opacity-100 group-focus-visible:opacity-100",
-              "motion-reduce:transition-none motion-reduce:duration-0",
-            )}
-          />
-        </span>
+        />
       </span>
       {children ?? label}
     </Link>

@@ -125,8 +125,10 @@ function HubCard({ item }: { item: ProductsHubCard }) {
 
           <div className="p-4 sm:p-5">
             <CardHeader className="mb-0 gap-1.5">
-              <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">{item.title}</CardTitle>
-              <CardDescription>{item.description}</CardDescription>
+              <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
+                <span className="line-clamp-2 min-h-[2.4rem] sm:min-h-[2.7rem]">{item.title}</span>
+              </CardTitle>
+              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
             </CardHeader>
           </div>
         </Card>

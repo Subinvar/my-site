@@ -33,7 +33,8 @@ const isClient = typeof document !== 'undefined';
 const resolveStoredTheme = (): Theme | null => {
   if (!isClient) return null;
 
-  const match = document.cookie.match(/(?:^|\s*)theme=(light|dark)/);
+  // cookie обычно выглядит как "a=1; theme=dark; b=2" — нужен поиск по `;`.
+  const match = document.cookie.match(/(?:^|;\s*)theme=(light|dark)/);
   if (match) {
     return match[1] as Theme;
   }
@@ -111,13 +112,17 @@ export function ThemeToggle({
   // - бордер только на hover
   // - никаких translate/scale → кнопка не "прыгает"
   const containerClasses = cn(
-    'inline-flex h-10 w-10 items-center justify-center rounded-lg',
-    'border border-transparent bg-transparent text-muted-foreground transition-colors duration-150',
-    'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    // ✅ Фикс "съеденных 1px": border прозрачный, обводка внутри через after:inset-px.
+    'relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-transparent bg-transparent',
+    "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
+    'text-muted-foreground transition-colors duration-150',
+    'after:transition-colors after:duration-150 after:ease-out',
+    'hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
+    'focus-visible:after:border-[var(--header-border)]',
     focusRingBase,
     isMounted
       ? 'cursor-pointer'
-      : 'cursor-default opacity-60 hover:border-transparent hover:bg-transparent',
+      : 'cursor-default opacity-60 hover:after:border-transparent hover:bg-transparent hover:text-muted-foreground',
   );
 
   return (

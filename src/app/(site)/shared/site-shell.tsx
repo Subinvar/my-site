@@ -1317,7 +1317,7 @@ export function SiteShell({
                   </ul>
 
                   {site.contacts.email || (!isSmUp && telegramHref) ? (
-                    <div className="mt-6">
+                    <div className="mt-6 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
                       {/* ✅ Оптическое выравнивание контактов по видимому тексту */}
                       <div className="flex flex-row flex-wrap items-center gap-2 -ml-3">
                         {site.contacts.email
