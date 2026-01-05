@@ -19,6 +19,12 @@ type HeaderNavProps = {
   locale: Locale;
   currentPath: string;
 
+  /**
+   * ID пункта десктопного меню, для которого сейчас открыто подменю.
+   * Нужен для корректных aria-expanded/aria-controls у триггеров.
+   */
+  desktopDropdownId?: string | null;
+
   isBurgerMode: boolean;
   prefersReducedMotion: boolean;
   hasHydrated: boolean;
@@ -48,6 +54,7 @@ export const HeaderNav = memo(function HeaderNav({
   navigationLabel,
   locale,
   currentPath,
+  desktopDropdownId,
   isBurgerMode,
   prefersReducedMotion,
   hasHydrated,
@@ -97,6 +104,7 @@ export const HeaderNav = memo(function HeaderNav({
             links={navigation.header}
             ariaLabel={navigationLabel}
             currentPath={currentPath}
+            expandedId={desktopDropdownId}
             className="w-full max-w-[var(--header-rail-w)]"
             density="compact"
             distribution="between"
@@ -157,6 +165,7 @@ export const HeaderNav = memo(function HeaderNav({
             links={navigation.header}
             ariaLabel={navigationLabel}
             currentPath={currentPath}
+            expandedId={desktopDropdownId}
             className="inline-block w-max"
             density="compact"
             distribution="between"

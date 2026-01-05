@@ -16,6 +16,17 @@ type NavigationListProps = {
   layout?: "header" | "panel";
   distribution?: "end" | "between";
   measureMode?: boolean;
+  /**
+   * ID пункта, чьё подменю сейчас раскрыто (для aria-expanded).
+   * Передавайте null/undefined, если подменю не используется.
+   */
+  expandedId?: string | null;
+
+  /**
+   * ID DOM-узла панели подменю (для aria-controls).
+   * Должен совпадать с id на компоненте, который рендерит панель.
+   */
+  submenuPanelId?: string;
   onNavEnter?: () => void;
   onNavLeave?: () => void;
   onLinkEnter?: (link: NavigationLink) => void;
@@ -44,6 +55,8 @@ export function NavigationList({
   layout = "header",
   distribution = "end",
   measureMode = false,
+  expandedId,
+  submenuPanelId,
   onNavEnter,
   onNavLeave,
   onLinkEnter,
@@ -59,6 +72,11 @@ export function NavigationList({
 
   const isPanel = layout === "panel";
   const isInteractive = !isPanel && !measureMode;
+
+  const resolvedSubmenuPanelId = (submenuPanelId ?? "header-desktop-dropdown-panel").trim();
+  const submenuPanelIdOrUndefined = resolvedSubmenuPanelId.length > 0
+    ? resolvedSubmenuPanelId
+    : undefined;
 
   const handleBlurCapture = isInteractive && onNavLeave
     ? (event: React.FocusEvent<HTMLElement>) => {
@@ -167,6 +185,18 @@ export function NavigationList({
           const triggerId = isInteractive ? link.id : undefined;
           const hasChildren = Boolean(link.children?.length);
 
+          const isExpanded = Boolean(
+            isInteractive &&
+              hasChildren &&
+              expandedId &&
+              expandedId === link.id,
+          );
+
+          const ariaHasPopup = isInteractive && hasChildren ? ("menu" as const) : undefined;
+          const ariaExpanded = isInteractive && hasChildren ? isExpanded : undefined;
+          const ariaControls =
+            isInteractive && hasChildren ? submenuPanelIdOrUndefined : undefined;
+
           if (link.isExternal) {
             return (
               <li key={link.id} className={liClassName} style={liStyle}>
@@ -175,6 +205,9 @@ export function NavigationList({
                   target={link.newTab ? "_blank" : undefined}
                   rel={link.newTab ? "noopener noreferrer" : undefined}
                   className={linkClassName}
+                  aria-haspopup={ariaHasPopup}
+                  aria-expanded={ariaExpanded}
+                  aria-controls={ariaControls}
                   data-nav-trigger={triggerId}
                   data-nav-has-children={hasChildren ? "true" : undefined}
                   onPointerEnter={isInteractive ? () => onLinkEnter?.(link) : undefined}
@@ -200,6 +233,9 @@ export function NavigationList({
                 href={href}
                 className={linkClassName}
                 aria-current={isActive ? "page" : undefined}
+                aria-haspopup={ariaHasPopup}
+                aria-expanded={ariaExpanded}
+                aria-controls={ariaControls}
                 data-nav-trigger={triggerId}
                 data-nav-has-children={hasChildren ? "true" : undefined}
                 onPointerEnter={isInteractive ? () => onLinkEnter?.(link) : undefined}

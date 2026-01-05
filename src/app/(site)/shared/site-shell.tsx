@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -103,6 +104,60 @@ const CONTACT_SLOT_WIDTHS = {
 };
 
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
+
+const INERT_FALLBACK_ATTR = "data-inert-fallback";
+const INERT_FALLBACK_PREV_TABINDEX_ATTR = "data-inert-prev-tabindex";
+const INERT_FALLBACK_PREV_TABINDEX_MISSING = "__missing__";
+
+const INERT_FOCUSABLE_SELECTOR =
+  'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [contenteditable], [tabindex]:not([tabindex="-1"])';
+
+function applyInertFallback(root: HTMLElement) {
+  const focusables = Array.from(
+    root.querySelectorAll<HTMLElement>(INERT_FOCUSABLE_SELECTOR),
+  );
+
+  for (const el of focusables) {
+    if (el.hasAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR)) continue;
+
+    const prevTabindex = el.getAttribute("tabindex");
+    el.setAttribute(
+      INERT_FALLBACK_PREV_TABINDEX_ATTR,
+      prevTabindex === null ? INERT_FALLBACK_PREV_TABINDEX_MISSING : prevTabindex,
+    );
+    el.setAttribute("tabindex", "-1");
+  }
+
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && root.contains(active)) {
+    active.blur();
+  }
+}
+
+function removeInertFallback(root: HTMLElement) {
+  const processed = Array.from(
+    root.querySelectorAll<HTMLElement>(`[${INERT_FALLBACK_PREV_TABINDEX_ATTR}]`),
+  );
+
+  for (const el of processed) {
+    const currentTabindex = el.getAttribute("tabindex");
+    const prevTabindex = el.getAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR);
+
+    el.removeAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR);
+
+    // Если tabindex был изменён кем-то ещё, пока элемент был "инертным",
+    // не перетираем актуальное значение.
+    if (currentTabindex !== "-1") {
+      continue;
+    }
+
+    if (prevTabindex === null || prevTabindex === INERT_FALLBACK_PREV_TABINDEX_MISSING) {
+      el.removeAttribute("tabindex");
+    } else {
+      el.setAttribute("tabindex", prevTabindex);
+    }
+  }
+}
 
 type DesktopHoverSuppressRecord = {
   id: string;
@@ -399,9 +454,56 @@ export function SiteShell({
   );
 
   const inertProps = useCallback(
-    (enabled: boolean): HTMLAttributes<HTMLElement> => (enabled ? { inert: true } : {}),
+    (enabled: boolean): HTMLAttributes<HTMLElement> =>
+      enabled
+        ? ({
+            inert: true,
+            [INERT_FALLBACK_ATTR]: "true",
+          } as HTMLAttributes<HTMLElement>)
+        : {},
     [],
   );
+
+  const inertFallbackRegistryRef = useRef(new Map<HTMLElement, MutationObserver>());
+
+  // Fallback для inert: гарантируем, что "инертные" области не попадают в tab-order
+  // даже в окружениях, где inert ведёт себя неоднородно.
+  useLayoutEffect(() => {
+    if (typeof document === "undefined") return;
+    if (typeof MutationObserver === "undefined") return;
+
+    const registry = inertFallbackRegistryRef.current;
+    const inertRoots = new Set(
+      Array.from(document.querySelectorAll<HTMLElement>(`[${INERT_FALLBACK_ATTR}]`)),
+    );
+
+    for (const root of inertRoots) {
+      applyInertFallback(root);
+
+      if (registry.has(root)) continue;
+      const observer = new MutationObserver(() => applyInertFallback(root));
+      observer.observe(root, { subtree: true, childList: true });
+      registry.set(root, observer);
+    }
+
+    for (const [root, observer] of Array.from(registry.entries())) {
+      if (root.isConnected && inertRoots.has(root)) continue;
+      observer.disconnect();
+      registry.delete(root);
+      removeInertFallback(root);
+    }
+  }, [hasHydrated, isBurgerMode, isMenuModal, isMenuOpen]);
+
+  useEffect(() => {
+    return () => {
+      const registry = inertFallbackRegistryRef.current;
+      for (const [root, observer] of Array.from(registry.entries())) {
+        observer.disconnect();
+        removeInertFallback(root);
+      }
+      registry.clear();
+    };
+  }, []);
 
   const {
     basePath,
@@ -927,6 +1029,7 @@ export function SiteShell({
                   navigationLabel={navigationLabels.headerLabel}
                   locale={locale}
                   currentPath={currentPath}
+                  desktopDropdownId={isBurgerMode || isMenuOpen ? null : desktopDropdownId}
                   isBurgerMode={isBurgerMode}
                   hasHydrated={hasHydrated}
                   isMenuOpen={isMenuOpen}

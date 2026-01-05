@@ -28,6 +28,8 @@ type HeaderDesktopDropdownProps = {
   onRequestClose?: () => void;
 };
 
+const DESKTOP_DROPDOWN_PANEL_ID = "header-desktop-dropdown-panel";
+
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
   const [path] = (pathWithoutQuery ?? "").split("#");
@@ -85,6 +87,19 @@ export function HeaderDesktopDropdown({
   const shouldBeOpen = Boolean(activeId && activeChildren.length);
 
   const renderedChildren = meansRenderedChildren(links, renderedId);
+
+  const renderedLinkLabel = useMemo(() => {
+    if (!renderedId) return undefined;
+    const link = links.find((item) => item.id === renderedId);
+    const label = link?.label?.trim() ?? "";
+    return label.length ? label : undefined;
+  }, [links, renderedId]);
+
+  const renderedNavLabel = useMemo(() => {
+    if (renderedLinkLabel) return renderedLinkLabel;
+    const normalizedClose = closeLabel.trim().toLowerCase();
+    return normalizedClose.includes("закрыть") ? "Подменю" : "Submenu";
+  }, [closeLabel, renderedLinkLabel]);
   const isOpen = isMounted && shouldBeOpen && (prefersReducedMotion || enterReady);
   const isClosing = isMounted && !shouldBeOpen;
   // Mount / unmount for close animation.
@@ -219,8 +234,10 @@ export function HeaderDesktopDropdown({
       }
     : undefined;
 
+  // Важно для доступности: aria-controls у триггеров должно ссылаться
+  // на существующий DOM-узел. Даже когда меню закрыто, держим «якорь» панели.
   if (!isMounted || !renderedId || renderedChildren.length === 0) {
-    return null;
+    return <div id={DESKTOP_DROPDOWN_PANEL_ID} aria-hidden="true" hidden />;
   }
   const panelDurationMs = prefersReducedMotion
     ? 0
@@ -281,6 +298,7 @@ export function HeaderDesktopDropdown({
 
       {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
       <div
+        id={DESKTOP_DROPDOWN_PANEL_ID}
         onPointerEnter={onPanelEnter}
         onPointerLeave={onPanelLeave}
         onFocusCapture={onPanelEnter}
@@ -313,7 +331,7 @@ export function HeaderDesktopDropdown({
             itemsVisible ? "pointer-events-auto" : "pointer-events-none",
           )}
         >
-          <nav aria-label={renderedId}>
+          <nav aria-label={renderedNavLabel}>
             <ul className="m-0 grid list-none gap-x-12 gap-y-2 p-0 md:max-w-[520px]">
               {renderedChildren.map((item, index) => {
                 const href = resolveHref(item.href);

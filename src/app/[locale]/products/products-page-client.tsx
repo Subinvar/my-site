@@ -300,7 +300,7 @@ function InsightTilesCarousel({
             className={cn(
               'inline-flex h-10 w-10 items-center justify-center rounded-full',
               'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-                        'cursor-pointer',
+              'cursor-pointer',
               'hover:bg-background/90 hover:text-foreground',
               'cursor-pointer disabled:cursor-default disabled:opacity-40',
               focusRingBase,
@@ -785,6 +785,15 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                     onClick={(e) => {
                       if (isModifiedEvent(e)) return;
                       e.preventDefault();
+
+                      const hash = `#${group.id}`;
+                      // Preserve native anchor semantics: deep links, share/copy, and back/forward navigation.
+                      if (window.location.hash !== hash) {
+                        window.history.pushState(null, '', hash);
+                      } else {
+                        window.history.replaceState(null, '', hash);
+                      }
+
                       const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
                       document
                         .getElementById(group.id)

@@ -19,6 +19,7 @@ type RawCard = {
   href?: Localized<string>;
   image?: RawImage | null;
   order?: number | null;
+  hidden?: boolean | null;
 };
 
 type RawGroup = {
@@ -27,6 +28,7 @@ type RawGroup = {
   description?: Localized<string>;
   icon?: string | null;
   order?: number | null;
+  hidden?: boolean | null;
   cards?: RawCard[] | null;
 };
 
@@ -86,7 +88,9 @@ const pickLocalized = <T>(value: Localized<T> | undefined, locale: Locale): T | 
 const normalizeOrder = (value: number | null | undefined, fallback: number): number =>
   typeof value === 'number' ? value : fallback;
 
-const mapCard = (card: RawCard, locale: Locale, fallbackOrder: number): ProductsHubCard => {
+const mapCard = (card: RawCard, locale: Locale, fallbackOrder: number): ProductsHubCard | null => {
+  if (card.hidden) return null;
+
   const idBase = pickLocalized(card.title, locale) ?? pickLocalized(card.href, locale) ?? `card-${fallbackOrder}`;
 
   return {
@@ -105,8 +109,13 @@ const mapCard = (card: RawCard, locale: Locale, fallbackOrder: number): Products
 };
 
 const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): ProductsHubGroup | null => {
+  if (group.hidden) return null;
+
   const cards = Array.isArray(group.cards)
-    ? group.cards.map((card, index) => mapCard(card, locale, index)).sort((a, b) => a.order - b.order)
+    ? group.cards
+        .map((card, index) => mapCard(card, locale, index))
+        .filter((card): card is ProductsHubCard => Boolean(card))
+        .sort((a, b) => a.order - b.order)
     : [];
 
   const id = group.id?.trim() || `group-${fallbackIndex}`;
