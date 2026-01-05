@@ -64,14 +64,14 @@ export function SiteFooter({
         : `© ${currentYear} Intema Group. All rights reserved.`;
   const menuLinkBaseClassName = cn(
     "group inline-flex h-10 items-center gap-1 whitespace-nowrap no-underline",
-    "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+    "font-medium",
     "active:opacity-90",
     focusRingBase,
   );
 
   const contactLinkClassName = cn(
     pillBase,
-    "!w-auto justify-start text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+    "!w-auto justify-start font-medium",
   );
 
   return (

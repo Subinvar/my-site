@@ -220,9 +220,13 @@
   --header-gap-x: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
 
   --safe-area-top: env(safe-area-inset-top, 0px);
-  --header-row-top-h: 40px; /* верхняя строка: контакты/переключатели */
-  --header-row-bottom-h: 44px; /* нижняя строка: навигация (у тебя h-11) */
-  --header-rows-gap: 8px; /* gap-y-2 */
+
+  /* Важно: высоты строк задаём в rem, чтобы шапка масштабировалась вместе с базовым
+     font-size (accessibility / "увеличенный текст"). Иначе фикс-пиксельные значения
+     легко приводят к клиппированию, потому что Tailwind h-10/h-11 привязан к rem. */
+  --header-row-top-h: 2.5rem; /* верхняя строка: контакты/переключатели (40px @ 16px) */
+  --header-row-bottom-h: 2.75rem; /* нижняя строка: навигация (44px @ 16px) */
+  --header-rows-gap: 0.5rem; /* gap-y-2 (8px @ 16px) */
 
   /* Совпадение длины строк (от "+" до "RU" и от "Продукция" до "Контакты") */
   --header-nav-inset-x: 0.75rem;
@@ -436,7 +440,13 @@ html[data-theme="dark"] {
     scrollbar-gutter: stable;
   }
 
-  html[data-header-elevated='1'] [data-site-header] {
+  /*
+   * Важно: тень у шапки должна зависеть не только от скролла, но и от открытых панелей
+   * (mega-menu / бургер). Иначе тень «ложится» поверх выезжающего меню и ломает задумку.
+   *
+   * data-header-overlay выставляется в SiteShell.
+   */
+  html[data-header-elevated='1']:not([data-header-overlay='1']) [data-site-header] {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 

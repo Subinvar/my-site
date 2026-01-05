@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type MouseEvent,
   type ReactElement,
+  useId,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -185,7 +186,7 @@ function InsightTilesCarousel({
   title: string;
   tiles: InsightTile[];
   isRu: boolean;
-  onOpen: (id: string) => void;
+  onOpen: (id: string, trigger: HTMLElement) => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
 
@@ -349,7 +350,7 @@ function InsightTilesCarousel({
               <AppleHoverLift strength="xs" className="hover:z-40 focus-within:z-40">
                 <button
                   type="button"
-                  onClick={() => onOpen(tile.id)}
+                  onClick={(e) => onOpen(tile.id, e.currentTarget)}
                   aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
                   aria-haspopup="dialog"
                   className={cn(
@@ -476,6 +477,11 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
 
   const [renderedTile, setRenderedTile] = useState<InsightTile | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const modalTitleId = useId();
+  const modalBodyId = useId();
   const closeTimerRef = useRef<number | null>(null);
   const openRaf1Ref = useRef<number | null>(null);
   const openRaf2Ref = useRef<number | null>(null);
@@ -483,6 +489,11 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  }, []);
+
+  const openTileModal = useCallback((id: string, trigger: HTMLElement) => {
+    restoreFocusRef.current = trigger;
+    setOpenTileId(id);
   }, []);
 
   const closeTileModal = useCallback(() => {
@@ -505,6 +516,13 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
 
     closeTimerRef.current = window.setTimeout(() => {
       setRenderedTile(null);
+
+      const target = restoreFocusRef.current;
+      if (target && document.contains(target)) {
+        // Restore focus back to the tile that opened the dialog.
+        // Doing it after unmount avoids focusing "behind" the overlay.
+        window.requestAnimationFrame(() => target.focus());
+      }
     }, delay);
   }, [prefersReducedMotion]);
 
@@ -540,6 +558,18 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       window.clearTimeout(renderTimer);
     };
   }, [activeTile]);
+
+  // When the dialog becomes visible, move focus inside it.
+  useEffect(() => {
+    if (!renderedTile) return;
+    if (!isModalVisible) return;
+
+    const t = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 0);
+
+    return () => window.clearTimeout(t);
+  }, [renderedTile, isModalVisible]);
 
   useEffect(() => {
     if (!renderedTile) return;
@@ -584,20 +614,71 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
   useEffect(() => {
     if (!renderedTile) return;
 
+    // Make the background inert for both pointer and assistive tech navigation.
+    const page = pageRef.current;
+    if (page) {
+      page.setAttribute('aria-hidden', 'true');
+      page.setAttribute('inert', '');
+      (page as unknown as { inert?: boolean }).inert = true;
+    }
+
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeTileModal();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeTileModal();
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href],area[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),iframe,object,embed,[contenteditable="true"],[tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.offsetParent !== null || el.getClientRects().length > 0);
+
+      if (focusable.length === 0) {
+        e.preventDefault();
+        dialog.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const isInside = active ? dialog.contains(active) : false;
+
+      if (e.shiftKey) {
+        if (!isInside || active === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (!isInside || active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
 
     document.addEventListener('keydown', onKeyDown);
 
     return () => {
       document.body.style.overflow = prevOverflow;
+      if (page) {
+        page.removeAttribute('aria-hidden');
+        page.removeAttribute('inert');
+        (page as unknown as { inert?: boolean }).inert = false;
+      }
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [renderedTile, closeTileModal, prefersReducedMotion]);
+  }, [renderedTile, closeTileModal]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
@@ -744,7 +825,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
               title={whyTitle}
               tiles={whyTiles}
               isRu={isRu}
-              onOpen={setOpenTileId}
+              onOpen={openTileModal}
             />
           </div>
         </section>
@@ -892,14 +973,14 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           className={cn(
             // Always center the dialog — including the smallest mobile breakpoints.
             'fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6',
-            // Пока модалка открывается/закрывается (isModalVisible=false),
-            // не блокируем клики по странице — это позволяет повторно открыть плитку сразу.
-            isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',
+            // Keep pointer events enabled during close animation to prevent "click-through".
+            'pointer-events-auto',
           )}
         >
           <button
             type="button"
             aria-label={isRu ? 'Закрыть' : 'Close'}
+            tabIndex={-1}
             className="absolute inset-0 bg-background/55"
             style={
               prefersReducedMotion
@@ -925,9 +1006,12 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           />
 
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label={renderedTile.title}
+            aria-labelledby={modalTitleId}
+            aria-describedby={modalBodyId}
+            tabIndex={-1}
             className="relative w-full max-w-2xl rounded-3xl border border-[var(--header-border)] bg-background p-5 shadow-none sm:p-6"
             style={
               prefersReducedMotion
@@ -951,10 +1035,13 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                 <p className="m-0 text-xs font-semibold text-[var(--muted-foreground)]">
                   {isRu ? 'Подробности' : 'Details'}
                 </p>
-                <h3 className="mt-1 text-lg font-semibold leading-snug sm:text-xl">{renderedTile.title}</h3>
+                <h3 id={modalTitleId} className="mt-1 text-lg font-semibold leading-snug sm:text-xl">
+                  {renderedTile.title}
+                </h3>
               </div>
 
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={closeTileModal}
                 className={cn(
@@ -970,7 +1057,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
               </button>
             </div>
 
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            <div
+              id={modalBodyId}
+              className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base"
+            >
               {renderedTile.details.map((p) => (
                 <p key={p} className="m-0">
                   {p}

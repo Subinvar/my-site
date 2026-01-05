@@ -63,7 +63,7 @@ export default async function AuxiliaryTypesPage({ params }: PageProps) {
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
-          <SectionHeading title={pageTitle} description={pageDescription} />
+          <SectionHeading as="h1" title={pageTitle} description={pageDescription} />
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (

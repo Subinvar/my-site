@@ -97,12 +97,6 @@ const pillBase = cn(
   "truncate motion-reduce:transition-none motion-reduce:duration-0",
 );
 
-const CONTACT_SLOT_WIDTHS = {
-  phone: HEADER_TOP_STABLE_SLOTS.phone,
-  email: HEADER_TOP_STABLE_SLOTS.email,
-  telegram: HEADER_TOP_STABLE_SLOTS.telegram,
-};
-
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
 
 const INERT_FALLBACK_ATTR = "data-inert-fallback";
@@ -551,6 +545,15 @@ export function SiteShell({
   const [isMenuMounted, setIsMenuMounted] = useState(false);
 
   const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+
+  // Важно для CSS-логики тени шапки:
+  // при открытых панелях (mega-menu / бургер) глобальная тень должна быть подавлена,
+  // иначе она визуально ложится поверх выезжающего меню.
+  useLayoutEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.dataset.headerOverlay =
+      isDesktopDropdownMounted || isMenuModal ? "1" : "0";
+  }, [isDesktopDropdownMounted, isMenuModal]);
 
   // Fallback для inert: гарантируем, что "инертные" области не попадают в tab-order
   // даже в окружениях, где inert ведёт себя неоднородно.
@@ -1109,7 +1112,7 @@ export function SiteShell({
                               className={cn(
                                 "group block w-full py-2",
                                 "no-underline",
-                                "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
                                 isProductsRootActive
                                   ? "text-foreground"
                                   : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1183,7 +1186,7 @@ export function SiteShell({
                           const rootClassName = cn(
                             "group block w-full py-2",
                             "no-underline",
-                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
                             rootActive
                               ? "text-foreground"
                               : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1281,7 +1284,7 @@ export function SiteShell({
                                 className={cn(
                                   "group block w-full py-2",
                                   "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1298,7 +1301,7 @@ export function SiteShell({
                                 className={cn(
                                   "group block w-full py-2",
                                   "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
                                   isActive
                                     ? "text-foreground"
                                     : "text-muted-foreground transition-colors hover:text-foreground",
@@ -1324,9 +1327,8 @@ export function SiteShell({
                                 <div className={motion.className} style={motion.style}>
                                   <a
                                     href={`mailto:${site.contacts.email}`}
-                                    className={pillBase}
+                                    className={cn(pillBase, "w-auto max-w-full")}
                                     onClick={handleCloseMenu}
-                                    style={{ width: `${CONTACT_SLOT_WIDTHS.email}px` }}
                                   >
                                     {site.contacts.email}
                                   </a>
@@ -1344,9 +1346,8 @@ export function SiteShell({
                                     href={telegramHref}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={pillBase}
+                                    className={cn(pillBase, "w-auto max-w-full")}
                                     onClick={handleCloseMenu}
-                                    style={{ width: `${CONTACT_SLOT_WIDTHS.telegram}px` }}
                                   >
                                     {telegramLabel}
                                   </a>

@@ -80,7 +80,7 @@ export default async function AuxiliaryTypeCatalogPage({ params }: PageProps) {
     >
       <main className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
-          <SectionHeading title={heading} description={description} />
+          <SectionHeading as="h1" title={heading} description={description} />
 
           <CatalogList
             items={filteredItems}
