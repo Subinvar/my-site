@@ -466,45 +466,6 @@ export function SiteShell({
 
   const inertFallbackRegistryRef = useRef(new Map<HTMLElement, MutationObserver>());
 
-  // Fallback для inert: гарантируем, что "инертные" области не попадают в tab-order
-  // даже в окружениях, где inert ведёт себя неоднородно.
-  useLayoutEffect(() => {
-    if (typeof document === "undefined") return;
-    if (typeof MutationObserver === "undefined") return;
-
-    const registry = inertFallbackRegistryRef.current;
-    const inertRoots = new Set(
-      Array.from(document.querySelectorAll<HTMLElement>(`[${INERT_FALLBACK_ATTR}]`)),
-    );
-
-    for (const root of inertRoots) {
-      applyInertFallback(root);
-
-      if (registry.has(root)) continue;
-      const observer = new MutationObserver(() => applyInertFallback(root));
-      observer.observe(root, { subtree: true, childList: true });
-      registry.set(root, observer);
-    }
-
-    for (const [root, observer] of Array.from(registry.entries())) {
-      if (root.isConnected && inertRoots.has(root)) continue;
-      observer.disconnect();
-      registry.delete(root);
-      removeInertFallback(root);
-    }
-  }, [hasHydrated, isBurgerMode, isMenuModal, isMenuOpen]);
-
-  useEffect(() => {
-    return () => {
-      const registry = inertFallbackRegistryRef.current;
-      for (const [root, observer] of Array.from(registry.entries())) {
-        observer.disconnect();
-        removeInertFallback(root);
-      }
-      registry.clear();
-    };
-  }, []);
-
   const {
     basePath,
     contactsHref,
@@ -588,6 +549,47 @@ export function SiteShell({
   );
 
   const [isMenuMounted, setIsMenuMounted] = useState(false);
+
+  const isMenuModal = isBurgerMode && (isMenuOpen || isMenuMounted);
+
+  // Fallback для inert: гарантируем, что "инертные" области не попадают в tab-order
+  // даже в окружениях, где inert ведёт себя неоднородно.
+  useLayoutEffect(() => {
+    if (typeof document === "undefined") return;
+    if (typeof MutationObserver === "undefined") return;
+
+    const registry = inertFallbackRegistryRef.current;
+    const inertRoots = new Set(
+      Array.from(document.querySelectorAll<HTMLElement>(`[${INERT_FALLBACK_ATTR}]`)),
+    );
+
+    for (const root of inertRoots) {
+      applyInertFallback(root);
+
+      if (registry.has(root)) continue;
+      const observer = new MutationObserver(() => applyInertFallback(root));
+      observer.observe(root, { subtree: true, childList: true });
+      registry.set(root, observer);
+    }
+
+    for (const [root, observer] of Array.from(registry.entries())) {
+      if (root.isConnected && inertRoots.has(root)) continue;
+      observer.disconnect();
+      registry.delete(root);
+      removeInertFallback(root);
+    }
+  }, [hasHydrated, isBurgerMode, isMenuModal, isMenuOpen]);
+
+  useEffect(() => {
+    return () => {
+      const registry = inertFallbackRegistryRef.current;
+      for (const [root, observer] of Array.from(registry.entries())) {
+        observer.disconnect();
+        removeInertFallback(root);
+      }
+      registry.clear();
+    };
+  }, []);
 
   // ВАЖНО: чтобы первое раскрытие бургер-меню не было "мгновенным",
   // держим панель закрытой на первом кадре после монтирования,
