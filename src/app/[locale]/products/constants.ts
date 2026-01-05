@@ -24,7 +24,7 @@ export const ALLOWED_AUXILIARIES: CatalogAuxiliary[] = [
   'Экзотермическая смесь',
 ];
 
-export const ALLOWED_COATING_BASES: CatalogBase[] = ['Водное', 'Спиртовое'];
+export const ALLOWED_COATING_BASES: CatalogBase[] = ['Водное', 'Спиртовое', 'АИПС'];
 
 export const ALLOWED_BINDER_PROCESSES: CatalogProcess[] = [
   'Альфа-cет',

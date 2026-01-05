@@ -14,13 +14,13 @@
     "en": "High-purity absolute isopropyl alcohol according to GOST. Used as a diluent for alcohol-based foundry coatings and as a universal cleaner and degreaser for moulds and equipment."
   },
   "content": {},
-  "category": "Вспомогательные материалы",
+  "category": "Противопригарные покрытия",
   "process": [],
-  "base": [],
+  "base": [
+    "АИПС"
+  ],
   "filler": [],
   "metals": [],
-  "auxiliary": [
-    "Вспомогательный материал"
-  ],
+  "auxiliary": [],
   "updatedAt": "2025-03-14T00:00"
 }
