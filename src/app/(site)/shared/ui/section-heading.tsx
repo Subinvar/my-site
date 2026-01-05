@@ -14,7 +14,7 @@ export function SectionHeading({ eyebrow, title, description, as = 'h2', classNa
   return (
     <div className={cn('space-y-2', className)} {...rest}>
       {eyebrow ? (
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted-foreground)]">{eyebrow}</p>
+        <p className="text-xs font-semibold tracking-wide text-[var(--muted-foreground)] sm:text-sm">{eyebrow}</p>
       ) : null}
       <HeadingTag className="text-xl font-semibold text-[var(--foreground)] sm:text-2xl">
         {title}

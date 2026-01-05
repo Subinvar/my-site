@@ -79,7 +79,7 @@ type SiteShellProps = {
 // ✅ Фикс "съеденных 1px": оставляем border прозрачным (чтобы НЕ менять геометрию),
 // а видимую обводку рисуем на 1px ВНУТРИ через after:inset-px.
 const headerButtonBase = cn(
-  "relative inline-flex items-center rounded-xl border border-transparent bg-transparent transition-colors duration-200 ease-out",
+  "relative inline-flex items-center rounded-lg border border-transparent bg-transparent transition-colors duration-200 ease-out",
   "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-[var(--header-border)] after:content-['']",
   "after:transition-colors after:duration-200 after:ease-out",
   focusRingBase,
@@ -87,7 +87,7 @@ const headerButtonBase = cn(
 );
 
 const pillBase = cn(
-  "relative inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "relative inline-flex h-10 w-full items-center justify-center rounded-lg px-3 border border-transparent bg-transparent",
   "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
   "after:transition-colors after:duration-200 after:ease-out",
   "text-muted-foreground no-underline transition-colors duration-200 ease-out",
@@ -975,16 +975,16 @@ export function SiteShell({
           } as CSSProperties
         }
         className={cn(
-          "fixed inset-x-0 top-0 z-[60] backdrop-blur before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-[var(--header-divider-duration)] before:ease-out before:content-['']",
-          "transition-[box-shadow,background-color,backdrop-filter] duration-200 ease-out",
+          "fixed inset-x-0 top-0 z-[60] before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:block before:h-px before:bg-[color:var(--header-border)] before:opacity-0 before:transition-opacity before:duration-[var(--header-divider-duration)] before:ease-out before:content-['']",
+          "transition-[box-shadow,background-color] duration-200 ease-out",
           "motion-reduce:transition-none motion-reduce:duration-0",
           "h-[var(--header-height-initial)]",
           isHeaderDividerVisible
             ? cn(
-                "bg-background/92 backdrop-blur-md before:opacity-100",
+                "bg-background/92 before:opacity-100",
                 shouldShowHeaderShadow && "shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
               )
-            : "bg-background/80 backdrop-blur",
+            : "bg-background/90",
         )}
       >
         <div className="relative pt-[var(--safe-area-top)]">
@@ -1076,7 +1076,7 @@ export function SiteShell({
           className={cn(
             // Apple-like: "шторка" на весь экран под шапкой
             "fixed inset-x-0 z-[59] overflow-hidden",
-            isHeaderElevated ? "bg-background/95 backdrop-blur-md" : "bg-background/90 backdrop-blur",
+            isHeaderElevated ? "bg-background/97" : "bg-background/95",
             "will-change-[height]",
             prefersReducedMotion
               ? "transition-none"

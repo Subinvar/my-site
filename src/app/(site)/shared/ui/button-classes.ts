@@ -6,7 +6,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const baseClasses =
   [
-    'inline-flex items-center justify-center rounded-xl font-medium select-none',
+    'inline-flex items-center justify-center rounded-lg font-medium select-none',
     'transition-colors transition-shadow transition-transform duration-200 ease-out',
     focusRingBase,
     'disabled:opacity-60 disabled:cursor-not-allowed',

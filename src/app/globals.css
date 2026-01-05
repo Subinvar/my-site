@@ -64,110 +64,6 @@
   }
 }
 
-@keyframes cta-ripple {
-  0%,
-  52% {
-    transform: scale(1);
-    opacity: 0;
-  }
-  56% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  78% {
-    transform: scale(2.4);
-    opacity: 0.25;
-  }
-  100% {
-    transform: scale(3.1);
-    opacity: 0;
-  }
-}
-
-@keyframes cta-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0;
-    filter: blur(0px);
-  }
-  12% {
-    opacity: 0.34;
-    filter: blur(0px);
-  }
-  55% {
-    opacity: 0.14;
-    filter: blur(0.6px);
-  }
-  85% {
-    opacity: 0.06;
-    filter: blur(1.2px);
-  }
-  100% {
-    transform: scale(2.7);
-    opacity: 0;
-    filter: blur(1.6px);
-  }
-}
-
-@keyframes cta-glow {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.12;
-  }
-  12% {
-    transform: scale(1.35);
-    opacity: 0.22;
-  }
-  60% {
-    transform: scale(1);
-    opacity: 0.12;
-  }
-}
-
-@keyframes cta-inner-ring {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.46;
-  }
-  /* В момент выброса ореола — кольцо заметно расширяется */
-  10% {
-    transform: scale(1.22);
-    opacity: 0.78;
-  }
-  /* Возврат в базу — чуть медленнее, пока ореол растворяется */
-  78% {
-    transform: scale(1);
-    opacity: 0.46;
-  }
-}
-
-
-
-@keyframes cta-dot {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  /* Быстрый “удар” синхронно с выбросом ореола */
-  10% {
-    transform: scale(1.17);
-    opacity: 1;
-  }
-  /* Держим чуть больше объёма, пока ореол уходит наружу */
-  55% {
-    transform: scale(1.07);
-    opacity: 1;
-  }
-  /* Возврат в базу — чуть медленнее */
-  82% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
 @layer utilities {
   .animate-wagon-in {
     animation: header-wagon-in var(--wagon-ms, 640ms) cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -178,31 +74,6 @@
   }
 }
 
-@layer utilities {
-  .animate-cta-ripple {
-    animation: cta-ripple 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-  }
-
-  .animate-cta-ring {
-    animation: cta-ring 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
-
-  .animate-cta-ring-delay {
-    animation-delay: 1.4s;
-  }
-
-  .animate-cta-glow {
-    animation: cta-glow 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
-
-  .animate-cta-inner-ring {
-    animation: cta-inner-ring 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
-
-  .animate-cta-dot {
-    animation: cta-dot 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
-}
 
 .animate-fade-in-up {
   animation: fade-in-up 220ms ease-out forwards;
@@ -251,7 +122,7 @@
 
   /* Desktop mega-menu overlay (без “дешёвого тумана”) */
   --mega-menu-scrim: rgba(17, 24, 39, 0.08); /* лёгкое затемнение в светлой теме */
-  --mega-menu-blur: 16px; /* вместо 2xl-ки */
+  --mega-menu-blur: 8px; /* мягкий blur, только для desktop mega-menu */
 
   /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
   --header-height-initial: calc(
@@ -379,7 +250,7 @@ html[data-theme="dark"] {
 
   /* Desktop mega-menu overlay (тёплый scrim, чтобы не уходить в холодный чёрный) */
   --mega-menu-scrim: rgba(25, 22, 19, 0.38); /* тон в тон вашего dark background */
-  --mega-menu-blur: 12px;
+  --mega-menu-blur: 8px;
 
   --focus-ring: color-mix(in srgb, var(--color-brand-200) 65%, var(--color-brand-600));
 }
@@ -403,13 +274,14 @@ html[data-theme="dark"] {
   --color-brand-700: #7b141a;
 
   /* Радиусы */
-  --radius-ui: 0.75rem; /* 12px — единый радиус для кнопок/пиллов/переключателей */
-  --radius-surface: 1rem; /* 16px — для крупных поверхностей (панели/карточки) */
+  --radius-ui: 0.75rem; /* 12px — контролы: кнопки/пиллы/переключатели */
+  --radius-surface-md: 0.875rem; /* 14px — панели/контейнеры среднего уровня */
+  --radius-surface: 1rem; /* 16px — крупные поверхности (карточки/секции) */
 
-  /* Маппинг в Tailwind scale: делаем rounded-lg и rounded-xl одинаковыми */
+  /* Маппинг в Tailwind scale (семантический) */
   --radius-md: var(--radius-ui);
   --radius-lg: var(--radius-ui);
-  --radius-xl: var(--radius-ui);
+  --radius-xl: var(--radius-surface-md);
   --radius-2xl: var(--radius-surface);
 
   /* Шрифты */

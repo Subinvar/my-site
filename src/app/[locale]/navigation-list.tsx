@@ -157,7 +157,7 @@ export function NavigationList({
 
           const linkClassName = isPanel
             ? cn(
-                "group flex w-full items-center justify-between rounded-xl px-3",
+                "group flex w-full items-center justify-between rounded-lg px-3",
                 linkHeightClass,
                 densityClass,
                 "no-underline transition-colors",

@@ -130,7 +130,7 @@ export const HeaderNav = memo(function HeaderNav({
               aria-label={burgerAriaLabel}
               onClick={onBurgerClick}
               className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-xl border",
+                "inline-flex h-10 w-10 items-center justify-center rounded-lg border",
                 "cursor-pointer",
                 "transition-colors duration-150",
                 isMenuOpen

@@ -44,7 +44,7 @@ export function LanguageSwitcher({
   // ✅ Ключ: обводка через ring-inset, а не border / внешнюю тень
   const baseContainerClasses = cn(
     'relative z-0 inline-flex h-10 w-10 items-center justify-center',
-    'rounded-xl',
+    'rounded-lg',
     // inset-обводка: не режется контейнерами сверху/снизу
     'ring-1 ring-inset ring-transparent',
     'bg-transparent text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',

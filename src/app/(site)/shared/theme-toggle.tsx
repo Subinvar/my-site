@@ -107,11 +107,11 @@ export function ThemeToggle({
 
   // Капсула — по геометрии и поведению как у бургера / языка:
   // - квадрат 40×40
-  // - rounded-xl
+  // - rounded-lg
   // - бордер только на hover
   // - никаких translate/scale → кнопка не "прыгает"
   const containerClasses = cn(
-    'inline-flex h-10 w-10 items-center justify-center rounded-xl',
+    'inline-flex h-10 w-10 items-center justify-center rounded-lg',
     'border border-transparent bg-transparent text-muted-foreground transition-colors duration-150',
     'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
     focusRingBase,

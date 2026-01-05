@@ -10,7 +10,7 @@ import { focusRingBase } from "@/lib/focus-ring";
  */
 
 export const headerButtonBase = cn(
-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent",
+  "inline-flex items-center rounded-lg border border-[var(--header-border)] bg-transparent",
   "transition-colors duration-200 ease-out",
   "focus-visible:border-[var(--header-border)]",
   focusRingBase,
@@ -18,7 +18,7 @@ export const headerButtonBase = cn(
 );
 
 export const pillBase = cn(
-  "inline-flex h-10 w-full items-center justify-center rounded-xl",
+  "inline-flex h-10 w-full items-center justify-center rounded-lg",
   "px-3 border border-transparent bg-transparent",
   "text-muted-foreground no-underline",
   "transition-colors duration-200 ease-out",

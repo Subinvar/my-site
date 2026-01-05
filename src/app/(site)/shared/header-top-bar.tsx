@@ -175,24 +175,31 @@ export const HeaderCta = memo(function HeaderCta({
           className={cn(
             "absolute inset-0 rounded-full",
             "bg-[rgba(148,27,32,0.12)] blur-[0.5px]",
-            "will-change-[transform,opacity,filter]",
-            "animate-cta-glow motion-reduce:animate-none",
+            "opacity-0 scale-100",
+            "transition-[opacity,transform] duration-200 ease-out",
+            "group-hover:opacity-100 group-hover:scale-110",
+            "group-focus-visible:opacity-100 group-focus-visible:scale-110",
+            "motion-reduce:transition-none motion-reduce:duration-0",
           )}
         />
         <span
           className={cn(
             "absolute inset-0 rounded-full",
             "border border-[rgba(148,27,32,0.35)]",
-            "will-change-[transform,opacity,filter]",
-            "animate-cta-ring motion-reduce:animate-none",
+            "opacity-70",
+            "transition-[opacity,transform] duration-200 ease-out",
+            "group-hover:opacity-100 group-hover:scale-110",
+            "group-focus-visible:opacity-100 group-focus-visible:scale-110",
+            "motion-reduce:transition-none motion-reduce:duration-0",
           )}
         />
         <span
           className={cn(
             "relative h-2.5 w-2.5 overflow-hidden rounded-full",
             "shadow-[0_0_0_1.5px_rgba(148,27,32,0.20),0_0_10px_rgba(148,27,32,0.16)]",
-            "will-change-[transform,opacity,filter]",
-            "animate-cta-dot motion-reduce:animate-none",
+            "transition-transform duration-200 ease-out",
+            "group-hover:scale-110 group-focus-visible:scale-110",
+            "motion-reduce:transition-none motion-reduce:duration-0",
           )}
         >
           <span
@@ -207,8 +214,10 @@ export const HeaderCta = memo(function HeaderCta({
               "absolute inset-0 rounded-full",
               "bg-[radial-gradient(circle_at_center,transparent_0%,transparent_66%,rgba(247,213,220,0.00)_70%,rgba(247,213,220,0.40)_82%,rgba(247,213,220,0.78)_96%,transparent_100%)]",
               "blur-[0.2px]",
-              "will-change-[transform,opacity,filter]",
-              "animate-cta-inner-ring motion-reduce:animate-none",
+              "opacity-0",
+              "transition-opacity duration-200 ease-out",
+              "group-hover:opacity-100 group-focus-visible:opacity-100",
+              "motion-reduce:transition-none motion-reduce:duration-0",
             )}
           />
         </span>

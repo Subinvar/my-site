@@ -125,10 +125,8 @@ function HubCard({ item }: { item: ProductsHubCard }) {
 
           <div className="p-4 sm:p-5">
             <CardHeader className="mb-0 gap-1.5">
-              <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
-                <span className="line-clamp-2 min-h-[2.4rem] sm:min-h-[2.7rem]">{item.title}</span>
-              </CardTitle>
-              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
+              <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">{item.title}</CardTitle>
+              <CardDescription>{item.description}</CardDescription>
             </CardHeader>
           </div>
         </Card>
@@ -810,26 +808,6 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
         className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
         style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
-        {/* Apple-style: интерактивные плитки + модалка (перенесены вверх страницы) */}
-        <section
-          className={cn(
-            // Full-bleed background (like the footer), while keeping the content aligned
-            // to the global max-width container.
-            'relative z-20 left-1/2 right-1/2 w-screen -ml-[50vw] -mr-[50vw]',
-            'overflow-x-clip',
-            'bg-muted py-5 sm:py-6',
-          )}
-        >
-          <div className="mx-auto w-full max-w-screen-2xl px-[var(--header-pad-x)]">
-            <InsightTilesCarousel
-              title={whyTitle}
-              tiles={whyTiles}
-              isRu={isRu}
-              onOpen={openTileModal}
-            />
-          </div>
-        </section>
-
         {/* Навигация по секциям (JS-fixed вместо sticky, чтобы работало в любой разметке) */}
         <div ref={navSlotRef} className="relative">
           {/* Плейсхолдер — удерживает место, когда навигация становится fixed */}
@@ -881,7 +859,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                         ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                     }}
                     className={cn(
-                      'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-medium',
+                      'flex w-full items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
                       'bg-background/80 transition-colors duration-150 ease-out',
                       isActive
                         ? cn(
@@ -897,11 +875,14 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                       focusRingBase,
                     )}
                   >
-                    {icon}
-                    <span className="truncate">{label}</span>
+                    <span className="mt-0.5 shrink-0" aria-hidden>
+                      {icon}
+                    </span>
+
+                    <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">{label}</span>
                     <span
                       className={cn(
-                        'ml-1 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
+                        'ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
                         isActive
                           ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
                           : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
@@ -965,6 +946,11 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
             );
           })}
         </div>
+
+        {/* Блок с преимуществами — ниже каталога, чтобы не мешать поиску раздела */}
+        <section className="rounded-3xl border border-[var(--header-border)] bg-muted p-5 sm:p-6">
+          <InsightTilesCarousel title={whyTitle} tiles={whyTiles} isRu={isRu} onOpen={openTileModal} />
+        </section>
       </div>
 
       {/* Модалка для плиток */}
@@ -1032,7 +1018,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="m-0 text-xs font-semibold text-[var(--muted-foreground)]">
+                <p className="m-0 text-sm font-medium text-[var(--muted-foreground)]">
                   {isRu ? 'Подробности' : 'Details'}
                 </p>
                 <h3 id={modalTitleId} className="mt-1 text-lg font-semibold leading-snug sm:text-xl">
