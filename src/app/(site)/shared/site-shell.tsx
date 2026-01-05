@@ -75,18 +75,23 @@ type SiteShellProps = {
   footer?: ReactNode;
 };
 
+// ✅ Фикс "съеденных 1px": оставляем border прозрачным (чтобы НЕ менять геометрию),
+// а видимую обводку рисуем на 1px ВНУТРИ через after:inset-px.
 const headerButtonBase = cn(
-  "inline-flex items-center rounded-xl border border-[var(--header-border)] bg-transparent transition-colors duration-200 ease-out",
-  "focus-visible:border-[var(--header-border)]",
+  "relative inline-flex items-center rounded-xl border border-transparent bg-transparent transition-colors duration-200 ease-out",
+  "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-[var(--header-border)] after:content-['']",
+  "after:transition-colors after:duration-200 after:ease-out",
   focusRingBase,
   "motion-reduce:transition-none motion-reduce:duration-0",
 );
 
 const pillBase = cn(
-  "inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "relative inline-flex h-10 w-full items-center justify-center rounded-xl px-3 border border-transparent bg-transparent",
+  "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
+  "after:transition-colors after:duration-200 after:ease-out",
   "text-muted-foreground no-underline transition-colors duration-200 ease-out",
-  "hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
-  "focus-visible:border-[var(--header-border)]",
+  "hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
+  "focus-visible:after:border-[var(--header-border)]",
   focusRingBase,
   "truncate motion-reduce:transition-none motion-reduce:duration-0",
 );
@@ -222,7 +227,6 @@ export function SiteShell({
     const t = window.setTimeout(() => setIsDesktopDropdownMounted(false), duration);
     return () => window.clearTimeout(t);
   }, [desktopDropdownId, isDesktopDropdownMounted, prefersReducedMotion]);
-
 
   // --- Apple-like: hover intent delay + click guard ("предохранитель") ---
 
@@ -535,7 +539,6 @@ export function SiteShell({
     return () => window.cancelAnimationFrame(raf);
   }, [isBurgerMode, isMenuOpen, prefersReducedMotion]);
 
-
   // Фаза контента бургер-меню: сначала раскрываем панель, затем (чуть позже) запускаем
   // появление текста — как в mega-menu на десктопе.
   useEffect(() => {
@@ -557,7 +560,6 @@ export function SiteShell({
 
   const burgerMenuItemsVisible = isMenuOpen && menuContentPhase === 1;
   const isBurgerMenuClosing = isMenuMounted && !isMenuOpen;
-
 
   const getBurgerItemMotion = useCallback(
     (index: number): { className: string; style: CSSProperties } => {
@@ -894,9 +896,9 @@ export function SiteShell({
               <div
                 className={cn(
                   "w-full min-w-0",
-            // Фиксируем высоты строк, чтобы при переключении wagons
-            // не происходило скачков высоты хедера и контента.
-            "grid grid-rows-[var(--header-row-top-h)_var(--header-row-bottom-h)] gap-y-[var(--header-rows-gap)]",
+                  // Фиксируем высоты строк, чтобы при переключении wagons
+                  // не происходило скачков высоты хедера и контента.
+                  "grid grid-rows-[var(--header-row-top-h)_var(--header-row-bottom-h)] gap-y-[var(--header-rows-gap)]",
                   "lg:justify-self-end lg:max-w-[var(--header-rail-w)]",
                 )}
               >
@@ -945,8 +947,6 @@ export function SiteShell({
             </div>
           </div>
         </div>
-
-
       </header>
 
       <HeaderDesktopDropdown
@@ -1077,15 +1077,15 @@ export function SiteShell({
                         if (link.id === "about" && aboutSubLinks.length > 0) {
                           const rootActive = isAboutMenuActive;
 
-                            const rootClassName = cn(
-                              "group block w-full py-2",
-                              "no-underline",
-                              "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
-                              rootActive
-                                ? "text-foreground"
-                                : "text-muted-foreground transition-colors hover:text-foreground",
-                              focusRingBase,
-                            );
+                          const rootClassName = cn(
+                            "group block w-full py-2",
+                            "no-underline",
+                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.12] tracking-[-0.01em]",
+                            rootActive
+                              ? "text-foreground"
+                              : "text-muted-foreground transition-colors hover:text-foreground",
+                            focusRingBase,
+                          );
 
                           return (
                             <li key={link.id}>
@@ -1209,9 +1209,11 @@ export function SiteShell({
                         );
                       })}
                   </ul>
+
                   {site.contacts.email || (!isSmUp && telegramHref) ? (
                     <div className="mt-6">
-                      <div className="flex flex-row flex-wrap items-center gap-2">
+                      {/* ✅ Оптическое выравнивание контактов по видимому тексту */}
+                      <div className="flex flex-row flex-wrap items-center gap-2 -ml-3">
                         {site.contacts.email
                           ? (() => {
                               const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1258,7 +1260,6 @@ export function SiteShell({
           </nav>
         </aside>
       ) : null}
-
 
       <section
         id="main"

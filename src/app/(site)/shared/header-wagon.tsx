@@ -2,7 +2,6 @@
 
 import {
   memo,
-  startTransition,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -125,10 +124,10 @@ export const HeaderWagon = memo(function HeaderWagon({
     // На первом кадре после гидрации (и при reduced-motion) не запускаем анимации.
     if (!motionReady || prefersReducedMotion) {
       prevShowSecondaryRef.current = showSecondary;
-      startTransition(() => {
-        setEntering(null);
-        setExiting(null);
-      });
+      // Важно: обновляем состояние синхронно (без startTransition),
+      // чтобы не было «промежуточного кадра» с резким свопом панелей.
+      setEntering(null);
+      setExiting(null);
       return;
     }
 
@@ -139,16 +138,14 @@ export const HeaderWagon = memo(function HeaderWagon({
     const incoming: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
 
     prevShowSecondaryRef.current = showSecondary;
-    startTransition(() => {
-      setExiting(outgoing);
-      setEntering(incoming);
-    });
+    // Синхронно выставляем entering/exiting в layout-effect:
+    // так браузер не успевает нарисовать кадр без анимации.
+    setExiting(outgoing);
+    setEntering(incoming);
 
     const t = window.setTimeout(() => {
-      startTransition(() => {
-        setExiting(null);
-        setEntering(null);
-      });
+      setExiting(null);
+      setEntering(null);
     }, durationMs);
 
     return () => window.clearTimeout(t);
@@ -268,28 +265,28 @@ export function useDelayedCollapse(
 
   useLayoutEffect(() => {
     if (!hasHydrated) {
-      startTransition(() => setCollapsed(false));
+      setCollapsed(false);
       didInitRef.current = false;
       return;
     }
 
     if (!didInitRef.current) {
       didInitRef.current = true;
-      startTransition(() => setCollapsed(shouldCollapse));
+      setCollapsed(shouldCollapse);
       return;
     }
 
     if (!shouldCollapse) {
-      startTransition(() => setCollapsed(false));
+      setCollapsed(false);
       return;
     }
 
     if (prefersReducedMotion) {
-      startTransition(() => setCollapsed(true));
+      setCollapsed(true);
       return;
     }
 
-    const t = window.setTimeout(() => startTransition(() => setCollapsed(true)), delayMs);
+    const t = window.setTimeout(() => setCollapsed(true), delayMs);
     return () => window.clearTimeout(t);
   }, [shouldCollapse, delayMs, hasHydrated, prefersReducedMotion]);
 
