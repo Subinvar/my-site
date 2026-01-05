@@ -13,7 +13,6 @@ import {
   useState,
 } from 'react';
 import {
-  ArrowRight,
   BadgeCheck,
   Beaker,
   ChevronLeft,
@@ -33,6 +32,7 @@ import {
   Truck,
   Wrench,
   X,
+  Plus,
 } from 'lucide-react';
 
 import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
@@ -108,7 +108,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
             'transition-colors duration-200 ease-out hover:bg-background/55',
           )}
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted/40">
+          <div className="relative aspect-[16/6] w-full overflow-hidden bg-muted/40">
             {/* eslint-disable-next-line @next/next/no-img-element -- Используем <img>, чтобы при необходимости легко менять источники без дополнительных конфигов */}
             <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
             <div
@@ -122,20 +122,12 @@ function HubCard({ item }: { item: ProductsHubCard }) {
             />
           </div>
 
-          <div className="p-5 sm:p-6">
-            <CardHeader className="mb-0 gap-2">
-              <CardTitle className="m-0 flex items-start justify-between gap-3 text-base font-semibold sm:text-lg">
-                <span className="line-clamp-2 min-h-[2.75rem] leading-snug sm:min-h-[3.1rem]">{item.title}</span>
-                <ArrowRight
-                  className={cn(
-                    'mt-0.5 h-4 w-4 shrink-0 text-[var(--muted-foreground)]',
-                    'transition-transform duration-200 ease-out',
-                    'group-hover:translate-x-0.5',
-                  )}
-                  aria-hidden
-                />
+          <div className="p-4 sm:p-5">
+            <CardHeader className="mb-0 gap-1.5">
+              <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
+                <span className="line-clamp-2 min-h-[2.4rem] sm:min-h-[2.7rem]">{item.title}</span>
               </CardTitle>
-              <CardDescription className="line-clamp-4 min-h-[5.2rem]">{item.description}</CardDescription>
+              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
             </CardHeader>
           </div>
         </Card>
@@ -382,7 +374,7 @@ function InsightTilesCarousel({
                     </span>
                   </div>
 
-                  <div className="mt-1.5 min-w-0 pr-12">
+                  <div className="mt-1.5 min-w-0 pr-8">
                     <p className="m-0 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.6rem]">
                       {tile.title}
                     </p>
@@ -391,20 +383,15 @@ function InsightTilesCarousel({
                     </p>
                   </div>
 
-                  <span
+                  <Plus
                     className={cn(
-                      'absolute bottom-4 right-4 inline-flex h-8 w-8 items-center justify-center rounded-full',
-                      'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-                      'transition-[background-color,color,transform] duration-200 ease-out',
-                      'group-hover:bg-background/90 group-hover:text-foreground',
-                      'group-hover:scale-[1.03]',
-                      'cursor-pointer',
+                      'absolute bottom-4 right-4 h-4 w-4 text-[var(--muted-foreground)]',
+                      'transition-[color,transform] duration-200 ease-out',
+                      'group-hover:text-foreground group-hover:scale-[1.06]',
                       'motion-reduce:transition-none motion-reduce:transform-none',
                     )}
                     aria-hidden
-                  >
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </span>
+                  />
                 </button>
               </AppleHoverLift>
             </div>
