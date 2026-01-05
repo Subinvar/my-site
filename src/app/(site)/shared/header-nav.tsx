@@ -123,6 +123,7 @@ export const HeaderNav = memo(function HeaderNav({
               onClick={onBurgerClick}
               className={cn(
                 "inline-flex h-10 w-10 items-center justify-center rounded-xl border",
+                "cursor-pointer",
                 "transition-colors duration-150",
                 isMenuOpen
                   ? "border-[color:var(--header-border)] bg-background/70 text-foreground"

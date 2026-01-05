@@ -115,7 +115,9 @@ export function ThemeToggle({
     'border border-transparent bg-transparent text-muted-foreground transition-colors duration-150',
     'hover:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
     focusRingBase,
-    !isMounted && 'cursor-default opacity-60 hover:border-transparent hover:bg-transparent',
+    isMounted
+      ? 'cursor-pointer'
+      : 'cursor-default opacity-60 hover:border-transparent hover:bg-transparent',
   );
 
   return (

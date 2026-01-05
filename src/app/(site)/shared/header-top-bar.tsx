@@ -30,6 +30,7 @@ type HeaderTopPillLinkProps = {
   href: string;
   label: string;
   pillBase: string;
+  className?: string;
 };
 
 type HeaderCtaProps = {
@@ -114,12 +115,39 @@ function HeaderTopFlexSlot({ id, basisPx, className, children }: HeaderTopFlexSl
   );
 }
 
-function HeaderTopPillLink({ href, label, pillBase }: HeaderTopPillLinkProps) {
+function HeaderTopPillLink({ href, label, pillBase, className }: HeaderTopPillLinkProps) {
   return (
-    <a href={href} className={cn(pillBase)} title={label}>
+    <a href={href} className={cn(pillBase, className)} title={label}>
       {label}
     </a>
   );
+}
+
+const DESKTOP_TOP_GAP_PX = 36; // соответствует tailwind gap-9 (2.25rem)
+const DESKTOP_TOP_TARGET_INSET_SUM_PX = 24;
+
+const DESKTOP_TOP_EDGE_INSETS: Record<
+  string,
+  {
+    left: number;
+    right: number;
+  }
+> = {
+  phone: { left: 12, right: 12 },
+  email: { left: 12, right: 12 },
+  cta: { left: 0, right: 0 },
+  theme: { left: 12, right: 12 },
+  lang: { left: 12, right: 12 },
+};
+
+type HeaderTopElasticSpacerProps = {
+  extraPx: number;
+};
+
+function HeaderTopElasticSpacer({ extraPx }: HeaderTopElasticSpacerProps) {
+  const basisClass = extraPx >= 24 ? "basis-6" : extraPx >= 12 ? "basis-3" : "basis-0";
+
+  return <div aria-hidden="true" className={cn("grow shrink", basisClass)} />;
 }
 
 export const HeaderCta = memo(function HeaderCta({
@@ -225,6 +253,104 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   const mobilePhoneBasis = HEADER_TOP_STABLE_SLOTS.phone;
   const mobileTelegramBasis = HEADER_TOP_STABLE_SLOTS.telegram;
 
+  // Desktop: сохраняем прежнюю общую длину строки (как было с fixed-slots + gap-9),
+  // но выравниваем расстояния МЕЖДУ видимыми элементами.
+  const showDesktopPhone = hasTopContacts && Boolean(contacts.phone?.trim());
+  const showDesktopEmail = hasTopContacts && Boolean(contacts.email?.trim());
+
+  const desktopSlotIds = [
+    ...(showDesktopPhone ? ["phone"] : []),
+    ...(showDesktopEmail ? ["email"] : []),
+    "cta",
+    "theme",
+    "lang",
+  ];
+
+  const desktopRowWidthPx =
+    desktopSlotIds.reduce((sum, id) => sum + (HEADER_TOP_STABLE_SLOTS[id] ?? 0), 0) +
+    Math.max(0, desktopSlotIds.length - 1) * DESKTOP_TOP_GAP_PX;
+
+  const desktopItems: Array<{ id: string; node: ReactNode }> = [];
+
+  if (showDesktopPhone && contacts.phone) {
+    desktopItems.push({
+      id: "phone",
+      node: (
+        <HeaderTopPillLink
+          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+          label={contacts.phone}
+          pillBase={pillBase}
+          className="w-fit"
+        />
+      ),
+    });
+  }
+
+  if (showDesktopEmail && contacts.email) {
+    desktopItems.push({
+      id: "email",
+      node: (
+        <HeaderTopPillLink
+          href={`mailto:${contacts.email}`}
+          label={contacts.email}
+          pillBase={pillBase}
+          className="w-fit"
+        />
+      ),
+    });
+  }
+
+  desktopItems.push(
+    {
+      id: "cta",
+      node: (
+        <HeaderTopSlot id="cta">
+          <HeaderCta
+            headerButtonBase={headerButtonBase}
+            href={contactsHref}
+            label={ctaLabel}
+            className="w-full"
+          />
+        </HeaderTopSlot>
+      ),
+    },
+    { id: "theme", node: <ThemeToggle locale={locale} /> },
+    {
+      id: "lang",
+      node: (
+        <LanguageSwitcher
+          currentLocale={locale}
+          targetLocale={targetLocale}
+          href={switcherHref}
+          switchToLabels={switchToLabels}
+        />
+      ),
+    },
+  );
+
+  const desktopRow: ReactNode[] = [];
+  for (let i = 0; i < desktopItems.length; i += 1) {
+    const current = desktopItems[i];
+    const next = desktopItems[i + 1];
+
+    desktopRow.push(
+      <div key={`item-${current.id}`} className="flex-none min-w-0">
+        {current.node}
+      </div>,
+    );
+
+    if (next) {
+      const currentInsets = DESKTOP_TOP_EDGE_INSETS[current.id] ?? { left: 0, right: 0 };
+      const nextInsets = DESKTOP_TOP_EDGE_INSETS[next.id] ?? { left: 0, right: 0 };
+      const insetSum = currentInsets.right + nextInsets.left;
+      const extraPx = Math.max(0, DESKTOP_TOP_TARGET_INSET_SUM_PX - insetSum);
+
+      desktopRow.push(
+        <HeaderTopElasticSpacer key={`spacer-${current.id}-${next.id}`} extraPx={extraPx} />,
+      );
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -243,57 +369,14 @@ export const HeaderTopBar = memo(function HeaderTopBar({
         primaryEnterFrom="top"
         secondaryExitTo="bottom"
         panelBaseClassName="flex h-full w-full min-w-0 items-center justify-end"
-        primaryClassName="gap-9"
         secondaryClassName="gap-3"
         primary={
-          <>
-            {/* Desktop: телефон + почта + CTA + theme + lang */}
-            {hasTopContacts ? (
-              <>
-                {contacts.phone ? (
-                  <HeaderTopSlot id="phone">
-                    <HeaderTopPillLink
-                      href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-                      label={contacts.phone}
-                      pillBase={pillBase}
-                    />
-                  </HeaderTopSlot>
-                ) : null}
-
-                {contacts.email ? (
-                  <HeaderTopSlot id="email">
-                    <HeaderTopPillLink
-                      href={`mailto:${contacts.email}`}
-                      label={contacts.email}
-                      pillBase={pillBase}
-                    />
-                  </HeaderTopSlot>
-                ) : null}
-              </>
-            ) : null}
-
-            <HeaderTopSlot id="cta">
-              <HeaderCta
-                headerButtonBase={headerButtonBase}
-                href={contactsHref}
-                label={ctaLabel}
-                className="w-full"
-              />
-            </HeaderTopSlot>
-
-            <HeaderTopSlot id="theme">
-              <ThemeToggle locale={locale} />
-            </HeaderTopSlot>
-
-            <HeaderTopSlot id="lang">
-              <LanguageSwitcher
-                currentLocale={locale}
-                targetLocale={targetLocale}
-                href={switcherHref}
-                switchToLabels={switchToLabels}
-              />
-            </HeaderTopSlot>
-          </>
+          <div
+            className="flex h-full min-w-0 items-center"
+            style={{ width: `${desktopRowWidthPx}px` } as CSSProperties}
+          >
+            {desktopRow}
+          </div>
         }
         secondary={
           <>
