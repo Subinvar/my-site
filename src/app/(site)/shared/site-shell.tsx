@@ -40,7 +40,8 @@ import { useWindowResize } from "./hooks/use-window-resize";
 import { HeaderBrand } from "./header-brand";
 import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
-import { HeaderTopBar, HEADER_TOP_STABLE_SLOTS } from "./header-top-bar";
+import { HeaderTopBar } from "./header-top-bar";
+import { headerButtonBase, pillBase } from "./ui-classes";
 
 const normalizePathname = (value: string): string => {
   const [pathWithoutQuery] = value.split("?");
@@ -75,27 +76,6 @@ type SiteShellProps = {
   children: ReactNode;
   footer?: ReactNode;
 };
-
-// ✅ Фикс "съеденных 1px": оставляем border прозрачным (чтобы НЕ менять геометрию),
-// а видимую обводку рисуем на 1px ВНУТРИ через after:inset-px.
-const headerButtonBase = cn(
-  "relative inline-flex items-center rounded-lg border border-transparent bg-transparent transition-colors duration-200 ease-out",
-  "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-[var(--header-border)] after:content-['']",
-  "after:transition-colors after:duration-200 after:ease-out",
-  focusRingBase,
-  "motion-reduce:transition-none motion-reduce:duration-0",
-);
-
-const pillBase = cn(
-  "relative inline-flex h-10 w-full items-center justify-center rounded-lg px-3 border border-transparent bg-transparent",
-  "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
-  "after:transition-colors after:duration-200 after:ease-out",
-  "text-muted-foreground no-underline transition-colors duration-200 ease-out",
-  "hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground",
-  "focus-visible:after:border-[var(--header-border)]",
-  focusRingBase,
-  "truncate motion-reduce:transition-none motion-reduce:duration-0",
-);
 
 const DESKTOP_HOVER_SUPPRESS_STORAGE_KEY = "intema_desktop_hover_suppress_v2";
 
@@ -466,7 +446,6 @@ export function SiteShell({
     ctaLabel,
     ctaCompactLabel,
     topContactsIds,
-    topContactsWidth,
   } = useMemo(() => {
     const basePathRaw = buildPath(locale);
     const basePath =
@@ -482,19 +461,12 @@ export function SiteShell({
       site.contacts.email ? ("email" as const) : null,
     ].filter(Boolean) as Array<"phone" | "email">;
 
-    const topContactsWidth =
-      topContactsIds.reduce(
-        (acc, id) => acc + (HEADER_TOP_STABLE_SLOTS[id] ?? 0),
-        0,
-      ) + (topContactsIds.length > 1 ? 36 : 0);
-
     return {
       basePath,
       contactsHref,
       ctaLabel,
       ctaCompactLabel,
       topContactsIds,
-      topContactsWidth,
     } as const;
   }, [locale, site.contacts.email, site.contacts.phone]);
 
@@ -1011,7 +983,6 @@ export function SiteShell({
                 <HeaderTopBar
                   contacts={site.contacts}
                   hasTopContacts={hasTopContacts}
-                  topContactsWidth={topContactsWidth}
                   isBurgerMode={isBurgerMode}
                   isSmUp={isSmUp}
                   prefersReducedMotion={prefersReducedMotion}

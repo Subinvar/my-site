@@ -115,14 +115,19 @@ export function SiteFooter({
                             {link.isExternal ? (
                               <a
                                 href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                target={link.newTab ? "_blank" : undefined}
+                                rel={link.newTab ? "noopener noreferrer" : undefined}
                                 className={linkClassName}
                               >
                                 <span className={navUnderlineSpanClass(isActive, "header")}>{link.label}</span>
                               </a>
                             ) : (
-                              <Link href={href} className={linkClassName}>
+                              <Link
+                                href={href}
+                                target={link.newTab ? "_blank" : undefined}
+                                rel={link.newTab ? "noopener noreferrer" : undefined}
+                                className={linkClassName}
+                              >
                                 <span className={navUnderlineSpanClass(isActive, "header")}>{link.label}</span>
                               </Link>
                             )}

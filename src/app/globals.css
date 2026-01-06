@@ -124,7 +124,7 @@
   --mega-menu-scrim: rgba(17, 24, 39, 0.08); /* лёгкое затемнение в светлой теме */
   --mega-menu-blur: 8px; /* мягкий blur, только для desktop mega-menu */
 
-  /* Стартовая оценка высоты шапки (чтобы контент не “прыгал” до ResizeObserver) */
+  /* Стартовая высота шапки (токен), чтобы контент не “прыгал” при первой отрисовке */
   --header-height-initial: calc(
     var(--header-row-top-h) + var(--header-row-bottom-h) + var(--header-rows-gap)
     + var(--header-pad-y) + var(--header-pad-y)

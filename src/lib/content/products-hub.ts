@@ -14,6 +14,7 @@ type RawImage = {
 };
 
 type RawCard = {
+  id?: string | null;
   title?: Localized<string>;
   description?: Localized<string>;
   href?: Localized<string>;
@@ -88,13 +89,24 @@ const pickLocalized = <T>(value: Localized<T> | undefined, locale: Locale): T | 
 const normalizeOrder = (value: number | null | undefined, fallback: number): number =>
   typeof value === 'number' ? value : fallback;
 
-const mapCard = (card: RawCard, locale: Locale, fallbackOrder: number): ProductsHubCard | null => {
+const mapCard = (
+  card: RawCard,
+  locale: Locale,
+  fallbackOrder: number,
+  groupId: string
+): ProductsHubCard | null => {
   if (card.hidden) return null;
 
-  const idBase = pickLocalized(card.title, locale) ?? pickLocalized(card.href, locale) ?? `card-${fallbackOrder}`;
+  const explicitId = card.id?.trim();
+  const idBase =
+    explicitId ??
+    pickLocalized(card.href, locale) ??
+    pickLocalized(card.title, locale) ??
+    `card-${fallbackOrder}`;
+  const normalizedBase = idBase.trim() || `card-${fallbackOrder}`;
 
   return {
-    id: idBase,
+    id: `${groupId}:${normalizedBase}`,
     title: pickLocalized(card.title, locale),
     description: pickLocalized(card.description, locale),
     href: pickLocalized(card.href, locale),
@@ -111,16 +123,35 @@ const mapCard = (card: RawCard, locale: Locale, fallbackOrder: number): Products
 const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): ProductsHubGroup | null => {
   if (group.hidden) return null;
 
+  const id = group.id?.trim() || `group-${fallbackIndex}`;
+
   const cards = Array.isArray(group.cards)
     ? group.cards
-        .map((card, index) => mapCard(card, locale, index))
+        .map((card, index) => mapCard(card, locale, index, id))
         .filter((card): card is ProductsHubCard => Boolean(card))
         .sort((a, b) => a.order - b.order)
     : [];
 
-  const id = group.id?.trim() || `group-${fallbackIndex}`;
+  // Ensure stable uniqueness even if editors accidentally duplicate card IDs.
+  const seen = new Set<string>();
+  const uniqueCards = cards.map((card) => {
+    if (!seen.has(card.id)) {
+      seen.add(card.id);
+      return card;
+    }
 
-  if (!cards.length) {
+    let suffix = 2;
+    let nextId = `${card.id}-${suffix}`;
+    while (seen.has(nextId)) {
+      suffix += 1;
+      nextId = `${card.id}-${suffix}`;
+    }
+    seen.add(nextId);
+
+    return { ...card, id: nextId } satisfies ProductsHubCard;
+  });
+
+  if (!uniqueCards.length) {
     return null;
   }
 
@@ -130,7 +161,7 @@ const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): Produ
     description: pickLocalized(group.description, locale),
     icon: group.icon ?? undefined,
     order: normalizeOrder(group.order, fallbackIndex),
-    cards,
+    cards: uniqueCards,
   } satisfies ProductsHubGroup;
 };
 

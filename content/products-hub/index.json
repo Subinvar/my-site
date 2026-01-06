@@ -12,8 +12,9 @@
       "hidden": false,
       "cards": [
         {
+          "id": "alfa-set",
           "title": {
-            "ru": "Альфа-cет",
+            "ru": "Альфа-сет",
             "en": "Alpha-set"
           },
           "description": {
@@ -31,6 +32,7 @@
           "hidden": false
         },
         {
+          "id": "zhss",
           "title": {
             "ru": "ЖСС",
             "en": "Sodium silicate"
@@ -50,6 +52,7 @@
           "hidden": false
         },
         {
+          "id": "kold-boks",
           "title": {
             "ru": "Колд-Бокс",
             "en": "Cold-Box"
@@ -69,6 +72,7 @@
           "hidden": false
         },
         {
+          "id": "furan",
           "title": {
             "ru": "Фуран",
             "en": "Furan"
@@ -88,6 +92,7 @@
           "hidden": false
         },
         {
+          "id": "rezol-co2",
           "title": {
             "ru": "Резол-CO₂",
             "en": "Resol-CO₂"
@@ -107,6 +112,7 @@
           "hidden": false
         },
         {
+          "id": "kroning",
           "title": {
             "ru": "Кронинг",
             "en": "Shell (Croning)"
@@ -126,6 +132,7 @@
           "hidden": false
         },
         {
+          "id": "pep-set",
           "title": {
             "ru": "Пеп-сет",
             "en": "PEP-SET"
@@ -158,6 +165,7 @@
       "hidden": false,
       "cards": [
         {
+          "id": "spirtovoe",
           "title": {
             "ru": "Спиртовое",
             "en": "Alcohol-based"
@@ -177,6 +185,7 @@
           "hidden": false
         },
         {
+          "id": "vodnoe",
           "title": {
             "ru": "Водное",
             "en": "Water-based"
@@ -196,6 +205,7 @@
           "hidden": false
         },
         {
+          "id": "aips",
           "title": {
             "ru": "АИПС",
             "en": "AIPS"
@@ -228,6 +238,7 @@
       "hidden": false,
       "cards": [
         {
+          "id": "razdelitelnyy-sostav",
           "title": {
             "ru": "Разделительный состав",
             "en": "Release compound"
@@ -247,6 +258,7 @@
           "hidden": false
         },
         {
+          "id": "kley",
           "title": {
             "ru": "Клей",
             "en": "Glue"
@@ -266,6 +278,7 @@
           "hidden": false
         },
         {
+          "id": "remontnaya-pasta",
           "title": {
             "ru": "Ремонтная паста",
             "en": "Repair paste"
@@ -285,6 +298,7 @@
           "hidden": false
         },
         {
+          "id": "uplotnitelnyy-shnur",
           "title": {
             "ru": "Уплотнительный шнур",
             "en": "Sealing cord"
@@ -304,6 +318,7 @@
           "hidden": false
         },
         {
+          "id": "otmyvayushchiy-sostav",
           "title": {
             "ru": "Отмывающий состав",
             "en": "Cleaning agent"
@@ -323,6 +338,7 @@
           "hidden": false
         },
         {
+          "id": "ekzotermicheskaya-smes",
           "title": {
             "ru": "Экзотермическая смесь",
             "en": "Exothermic mix"
@@ -342,6 +358,7 @@
           "hidden": false
         },
         {
+          "id": "modifikator",
           "title": {
             "ru": "Модификатор",
             "en": "Modifier"

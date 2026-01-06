@@ -1,3 +1,10 @@
+/**
+ * ⚠️ Legacy hook.
+ * Раньше использовался для синхронизации CSS-переменной `--header-height` через ResizeObserver.
+ * Сейчас высота шапки держится стабильной токеном `--header-height-initial` в `src/app/globals.css`,
+ * поэтому хук не используется и оставлен только как справочный.
+ */
+
 import { useLayoutEffect, useRef } from "react";
 
 export function useHeaderHeight() {

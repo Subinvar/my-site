@@ -24,10 +24,8 @@ export default async function CoatingTypesPage({ params }: PageProps) {
   }
 
   const locale = rawLocale;
-  const [shell, taxonomyOptions] = await Promise.all([
-    getSiteShellData(locale),
-    Promise.resolve(getCatalogTaxonomyOptions(locale)),
-  ]);
+  const shell = await getSiteShellData(locale);
+  const taxonomyOptions = getCatalogTaxonomyOptions(locale);
   const dictionary = getInterfaceDictionary(locale);
   const targetLocale = findTargetLocale(locale);
   const pageTitle = dictionary.productDirections.categories.coatings.title;
@@ -65,7 +63,7 @@ export default async function CoatingTypesPage({ params }: PageProps) {
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
-              <ProductCategoryCard key={card.title} {...card} />
+              <ProductCategoryCard key={card.href} {...card} />
             ))}
           </div>
         </section>

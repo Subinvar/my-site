@@ -481,6 +481,10 @@ export default config({
               cards: fields.array(
                 fields.object(
                   {
+                    id: fields.text({
+                      label: 'ID карточки (латиница без пробелов)',
+                      validation: { isRequired: true },
+                    }),
                     title: localizedText('Заголовок карточки', { isRequired: true }),
                     description: localizedText('Описание карточки', { multiline: true }),
                     href: localizedUrl('Ссылка (href)'),

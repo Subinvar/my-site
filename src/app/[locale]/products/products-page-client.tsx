@@ -301,7 +301,6 @@ function InsightTilesCarousel({
             className={cn(
               'inline-flex h-10 w-10 items-center justify-center rounded-full',
               'border border-[var(--header-border)] bg-background/70 text-[var(--muted-foreground)]',
-              'cursor-pointer',
               'hover:bg-background/90 hover:text-foreground',
               'cursor-pointer disabled:cursor-default disabled:opacity-40',
               focusRingBase,
@@ -627,13 +626,19 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     if (!renderedTile) return;
 
     const body = document.body;
+    const html = document.documentElement;
     const prevOverflow = body.style.overflow;
     const prevPaddingRight = body.style.paddingRight;
 
     // Компенсируем исчезновение scrollbar, чтобы модалка не выглядела «дёрганой»
     // из‑за микро‑layout shift на десктопе.
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    if (scrollbarWidth > 0) {
+    // Но: если браузер поддерживает scrollbar-gutter: stable, то место под скроллбар
+    // уже зарезервировано и добавление paddingRight приведёт к видимому «сжатию».
+    const gutter = window.getComputedStyle(html).getPropertyValue('scrollbar-gutter');
+    const hasStableGutter = gutter.includes('stable');
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
+
+    if (scrollbarWidth > 0 && !hasStableGutter) {
       const computedPaddingRight = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
       body.style.paddingRight = `${computedPaddingRight + scrollbarWidth}px`;
     }

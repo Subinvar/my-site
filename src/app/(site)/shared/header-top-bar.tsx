@@ -44,8 +44,6 @@ type HeaderCtaProps = {
 type HeaderTopBarProps = {
   contacts: SiteContent["contacts"];
   hasTopContacts: boolean;
-  topContactsWidth: number;
-
   isBurgerMode: boolean;
   /** >= sm (640px). Ниже sm включаем сверх-узкий режим top-bar (phone-only). */
   isSmUp: boolean;
@@ -197,9 +195,6 @@ export const HeaderCta = memo(function HeaderCta({
 export const HeaderTopBar = memo(function HeaderTopBar({
   contacts,
   hasTopContacts,
-  // topContactsWidth оставляем в пропсах для совместимости с site-shell,
-  // но в новой схеме он не нужен (оба layout'а в absolute-панелях).
-  topContactsWidth: _topContactsWidth,
   isBurgerMode,
   isSmUp,
   prefersReducedMotion,
@@ -214,8 +209,6 @@ export const HeaderTopBar = memo(function HeaderTopBar({
   classNames,
 }: HeaderTopBarProps) {
   const { headerButtonBase, pillBase } = classNames;
-  void _topContactsWidth;
-
   // Сверх-узкий режим верхней строки (ниже sm):
   // телефон+телеграм уезжают вверх, снизу въезжает phone-only (слева от ThemeToggle).
   // ВАЖНО: не привязываем к клику по бургеру — только к смене плотной mobile-вёрстки.

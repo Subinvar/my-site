@@ -176,10 +176,8 @@ export default async function ProductsPage({ params }: PageProps) {
 
   const locale = rawLocale;
 
-  const [shell, taxonomyOptions] = await Promise.all([
-    getSiteShellData(locale),
-    Promise.resolve(getCatalogTaxonomyOptions(locale)),
-  ]);
+  const shell = await getSiteShellData(locale);
+  const taxonomyOptions = getCatalogTaxonomyOptions(locale);
 
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['products']);
