@@ -1,13 +1,18 @@
 import type { FilterState } from '@/app/(site)/shared/catalog-filtering';
 
-export function toSlug(value: string): string {
+function toSlugInternal(value: string, { preserveIShort }: { preserveIShort: boolean }): string {
   const input = value.trim();
   if (!input) return '';
 
   // Normalize unicode (e.g. CO₂ subscript digits) and keep URLs stable.
+  // NOTE: NFKD decomposes "й" → "и" + combining breve. If we remove combining marks blindly,
+  // we lose the distinction between "и" and "й" which breaks URL slugs (e.g. "клей" → "klei").
   let s = input
     .normalize('NFKD')
-    // Remove combining marks produced by NFKD (e.g. "ё" → "е" + diaeresis).
+    // Restore decomposed "й"/"Й" BEFORE stripping combining marks.
+    .replace(/И\u0306/g, 'Й')
+    .replace(/и\u0306/g, 'й')
+    // Remove remaining combining marks produced by NFKD (e.g. accents).
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, (match) => {
       const map: Record<string, string> = {
@@ -24,6 +29,12 @@ export function toSlug(value: string): string {
       };
       return map[match] ?? '';
     });
+
+  if (!preserveIShort) {
+    // Legacy behaviour (kept for backwards-compatible slug matching):
+    // treat "й" the same as "и".
+    s = s.replace(/Й/g, 'И').replace(/й/g, 'и');
+  }
 
   // Lowercase early.
   s = s.toLowerCase();
@@ -78,6 +89,14 @@ export function toSlug(value: string): string {
   return s;
 }
 
+export function toSlug(value: string): string {
+  return toSlugInternal(value, { preserveIShort: true });
+}
+
+function toSlugLegacy(value: string): string {
+  return toSlugInternal(value, { preserveIShort: false });
+}
+
 function safeDecodeURIComponent(value: string): string {
   try {
     return decodeURIComponent(value);
@@ -97,7 +116,12 @@ export function matchOptionBySlug<T extends { value: string }>(
   const normalizedSlug = toSlug(decodedSlug || slug);
   if (!normalizedSlug) return null;
 
-  return options.find((option) => toSlug(option.value) === normalizedSlug) ?? null;
+  const canonicalMatch = options.find((option) => toSlug(option.value) === normalizedSlug);
+  if (canonicalMatch) return canonicalMatch;
+
+  // Backwards-compatibility: accept legacy slugs that were generated when "й" was
+  // incorrectly collapsed into "и" during NFKD + combining-mark stripping.
+  return options.find((option) => toSlugLegacy(option.value) === normalizedSlug) ?? null;
 }
 
 export function sortByOrderAndLabel<T extends { order?: number | null; label: string }>(

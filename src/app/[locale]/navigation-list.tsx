@@ -192,7 +192,9 @@ export function NavigationList({
               expandedId === link.id,
           );
 
-          const ariaHasPopup = isInteractive && hasChildren ? ("menu" as const) : undefined;
+          // Mega-menu в шапке — это обычная навигация (<nav>/<ul>), а не ARIA menu widget.
+          // Поэтому используем boolean aria-haspopup ("есть попап") вместо aria-haspopup="menu".
+          const ariaHasPopup = isInteractive && hasChildren ? true : undefined;
           const ariaExpanded = isInteractive && hasChildren ? isExpanded : undefined;
           const ariaControls =
             isInteractive && hasChildren ? submenuPanelIdOrUndefined : undefined;

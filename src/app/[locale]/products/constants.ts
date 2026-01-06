@@ -27,7 +27,7 @@ export const ALLOWED_AUXILIARIES: CatalogAuxiliary[] = [
 export const ALLOWED_COATING_BASES: CatalogBase[] = ['Водное', 'Спиртовое', 'АИПС'];
 
 export const ALLOWED_BINDER_PROCESSES: CatalogProcess[] = [
-  'Альфа-cет',
+  'Альфа-сет',
   'ЖСС',
   'Колд-Бокс',
   'Кронинг',

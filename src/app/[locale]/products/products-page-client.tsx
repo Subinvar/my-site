@@ -126,9 +126,9 @@ function HubCard({ item }: { item: ProductsHubCard }) {
           <div className="p-4 sm:p-5">
             <CardHeader className="mb-0 gap-1.5">
               <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
-                <span className="line-clamp-2 min-h-[2.4rem] sm:min-h-[2.7rem]">{item.title}</span>
+                <span className="break-words">{item.title}</span>
               </CardTitle>
-              <CardDescription className="line-clamp-3 min-h-[3.9rem]">{item.description}</CardDescription>
+              <CardDescription className="break-words">{item.description}</CardDescription>
             </CardHeader>
           </div>
         </Card>
@@ -502,15 +502,6 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     // Саму модалку держим в DOM через renderedTile, чтобы анимация закрытия была плавной.
     setOpenTileId(null);
 
-    // Снимаем инертность фона сразу же при закрытии.
-    // Иначе страница остаётся некликабельной на время fade-out.
-    const page = pageRef.current;
-    if (page) {
-      page.removeAttribute('aria-hidden');
-      page.removeAttribute('inert');
-      (page as unknown as { inert?: boolean }).inert = false;
-    }
-
     if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
     if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
     openRaf1Ref.current = null;
@@ -573,14 +564,13 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
   // When the dialog becomes visible, move focus inside it.
   useEffect(() => {
     if (!renderedTile) return;
-    if (!isModalVisible) return;
 
     const t = window.setTimeout(() => {
       closeButtonRef.current?.focus();
     }, 0);
 
     return () => window.clearTimeout(t);
-  }, [renderedTile, isModalVisible]);
+  }, [renderedTile]);
 
   useEffect(() => {
     if (!renderedTile) return;
@@ -651,12 +641,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     };
   }, [renderedTile]);
 
-  // Делаем фон инертным и ловим ESC/Tab только пока модалка ВИДИМА.
-  // В момент закрытия сразу снимаем блокировку фона, чтобы можно было
-  // мгновенно повторно кликнуть по плитке (не ждать завершения fade-out).
+  // Делаем фон инертным и ловим ESC/Tab, пока модалка находится в DOM
+  // (включая fade-out). Это убирает «клик-сквозь» во время закрытия.
   useEffect(() => {
     if (!renderedTile) return;
-    if (!isModalVisible) return;
 
     // Make the background inert for both pointer and assistive tech navigation.
     const page = pageRef.current;
@@ -718,7 +706,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       }
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [renderedTile, isModalVisible, closeTileModal]);
+  }, [renderedTile, closeTileModal]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
@@ -1001,10 +989,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           className={cn(
             // Always center the dialog — including the smallest mobile breakpoints.
             'fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6',
-            // While the dialog is visible, we block interaction with the page.
-            // On close we immediately release pointer events so the user can
-            // re-open the same tile without waiting for the fade-out to finish.
-            isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',
+            // While the modal exists in the DOM (including fade-out), we block
+            // interaction with the page. This avoids accidental “click-through”
+            // on close.
+            'pointer-events-auto',
           )}
         >
           <button

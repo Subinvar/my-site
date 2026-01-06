@@ -59,17 +59,6 @@ export function useBurgerAnimation({
   /* eslint-enable react-hooks/set-state-in-effect -- возвращаем правило после анимации */
 
   useEffect(() => {
-    if (!isMenuOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onRequestClose();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isMenuOpen, onRequestClose]);
-
-  useEffect(() => {
     // Если мы вышли из burger-режима (например, расширили окно),
     // а меню было открыто — закрываем его.
     if (!isBurgerMode && isMenuOpen) {

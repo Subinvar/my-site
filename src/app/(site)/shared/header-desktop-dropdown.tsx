@@ -280,32 +280,6 @@ export function HeaderDesktopDropdown({
       style={{ top: "var(--header-height)" }}
       aria-hidden={!isOpen}
     >
-      {/*
-        Blur layer that covers EVERYTHING below the header (Apple-like).
-        The panel itself is above this layer.
-      */}
-      <button
-        type="button"
-        aria-label={closeLabel}
-        onClick={onRequestClose}
-        tabIndex={-1}
-        style={overlayTransitionStyle}
-        className={cn(
-          "absolute inset-0 z-0",
-          overlayTransitionClass,
-          "motion-reduce:transition-none motion-reduce:duration-0",
-
-          // Важно: backdrop-filter (blur) НЕ зависит от opacity. Если держать blur всегда,
-          // то при первом монтировании (даже при opacity:0) фон размывается мгновенно.
-          // Поэтому blur включаем только в открытом состоянии и даём ему transition.
-          "bg-[color:var(--mega-menu-scrim)]",
-          isOpen ? "backdrop-blur-[var(--mega-menu-blur)]" : "backdrop-blur-none",
-          isOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0",
-        )}
-      />
-
       {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
       <div
         id={DESKTOP_DROPDOWN_PANEL_ID}
@@ -422,6 +396,35 @@ export function HeaderDesktopDropdown({
           </nav>
         </div>
       </div>
+
+      {/*
+        Blur layer that covers EVERYTHING below the header (Apple-like).
+        Делаем её фокусируемой для клавиатуры, но ставим В КОНЕЦ tab-order,
+        чтобы Tab из триггера попадал сразу в пункты подменю.
+      */}
+      <button
+        type="button"
+        aria-label={closeLabel}
+        onClick={onRequestClose}
+        tabIndex={isOpen ? 0 : -1}
+        disabled={!onRequestClose}
+        style={overlayTransitionStyle}
+        className={cn(
+          "absolute inset-0 z-0",
+          overlayTransitionClass,
+          "motion-reduce:transition-none motion-reduce:duration-0",
+          focusRingBase,
+
+          // Важно: backdrop-filter (blur) НЕ зависит от opacity. Если держать blur всегда,
+          // то при первом монтировании (даже при opacity:0) фон размывается мгновенно.
+          // Поэтому blur включаем только в открытом состоянии и даём ему transition.
+          "bg-[color:var(--mega-menu-scrim)]",
+          isOpen ? "backdrop-blur-[var(--mega-menu-blur)]" : "backdrop-blur-none",
+          isOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0",
+        )}
+      />
     </div>
   );
 }

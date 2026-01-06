@@ -245,12 +245,13 @@ export const HeaderTopBar = memo(function HeaderTopBar({
     desktopItems.push({
       id: "phone",
       node: (
-        <HeaderTopPillLink
-          href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
-          label={contacts.phone}
-          pillBase={pillBase}
-          className="w-fit"
-        />
+        <HeaderTopSlot id="phone">
+          <HeaderTopPillLink
+            href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
+            label={contacts.phone}
+            pillBase={pillBase}
+          />
+        </HeaderTopSlot>
       ),
     });
   }
@@ -259,12 +260,13 @@ export const HeaderTopBar = memo(function HeaderTopBar({
     desktopItems.push({
       id: "email",
       node: (
-        <HeaderTopPillLink
-          href={`mailto:${contacts.email}`}
-          label={contacts.email}
-          pillBase={pillBase}
-          className="w-fit"
-        />
+        <HeaderTopSlot id="email">
+          <HeaderTopPillLink
+            href={`mailto:${contacts.email}`}
+            label={contacts.email}
+            pillBase={pillBase}
+          />
+        </HeaderTopSlot>
       ),
     });
   }

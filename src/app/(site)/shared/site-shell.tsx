@@ -197,6 +197,7 @@ export function SiteShell({
 
   const desktopHoverSuppressForIdRef = useRef<string | null>(initialDesktopHoverSuppressId);
   const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
+  const desktopHoverSuppressionCleanupRef = useRef<(() => void) | null>(null);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
@@ -264,12 +265,39 @@ export function SiteShell({
   // для этого пункта, пока курсор не уйдёт с него.
   const clearDesktopHoverSuppression = useCallback(() => {
     desktopHoverSuppressForIdRef.current = null;
+
+    const cleanup = desktopHoverSuppressionCleanupRef.current;
+    if (cleanup) {
+      cleanup();
+      desktopHoverSuppressionCleanupRef.current = null;
+    }
+
     try {
       window.sessionStorage.removeItem(DESKTOP_HOVER_SUPPRESS_STORAGE_KEY);
     } catch {
       // ignore
     }
   }, []);
+
+  const attachDesktopHoverSuppressionListener = useCallback(
+    (trigger: HTMLElement | null) => {
+      if (!trigger) return;
+
+      const prevCleanup = desktopHoverSuppressionCleanupRef.current;
+      if (prevCleanup) prevCleanup();
+      desktopHoverSuppressionCleanupRef.current = null;
+
+      const onLeave = () => clearDesktopHoverSuppression();
+      trigger.addEventListener("pointerleave", onLeave, { passive: true });
+      trigger.addEventListener("pointercancel", onLeave, { passive: true });
+
+      desktopHoverSuppressionCleanupRef.current = () => {
+        trigger.removeEventListener("pointerleave", onLeave);
+        trigger.removeEventListener("pointercancel", onLeave);
+      };
+    },
+    [clearDesktopHoverSuppression],
+  );
 
   const restoreDesktopHoverSuppression = useCallback(() => {
     let record: DesktopHoverSuppressRecord | null = null;
@@ -293,39 +321,33 @@ export function SiteShell({
     desktopHoverSuppressForIdRef.current = record.id;
 
     const pt = lastPointerPosRef.current ?? { x: record.x, y: record.y };
-    if (typeof pt?.x !== "number" || typeof pt?.y !== "number") return;
+    if (typeof pt?.x !== "number" || typeof pt?.y !== "number") {
+      clearDesktopHoverSuppression();
+      return;
+    }
 
     const el = document.elementFromPoint(pt.x, pt.y) as HTMLElement | null;
     const trigger = el?.closest("[data-nav-trigger]") as HTMLElement | null;
     const hoveredId = trigger?.getAttribute("data-nav-trigger");
 
-    if (hoveredId && hoveredId !== record.id) {
-      // Курсор уже не над тем пунктом — снимаем предохранитель.
+    if (hoveredId !== record.id) {
+      // Курсор уже не над тем пунктом (или вообще не над пунктом меню) — снимаем предохранитель.
       clearDesktopHoverSuppression();
+      return;
     }
-  }, [clearDesktopHoverSuppression]);
 
-  // Трекаем координаты курсора + снимаем предохранитель, как только курсор ушёл
-  // с кликнутого пункта меню.
+    attachDesktopHoverSuppressionListener(trigger);
+  }, [attachDesktopHoverSuppressionListener, clearDesktopHoverSuppression]);
+
+  // Уборка «предохранителя» делается через pointerleave на самом триггере,
+  // без глобального pointermove + elementFromPoint.
   useEffect(() => {
-    const onPointerMove = (event: PointerEvent) => {
-      lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
-
-      const suppressedId = desktopHoverSuppressForIdRef.current;
-      if (!suppressedId) return;
-
-      const el = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
-      const trigger = el?.closest("[data-nav-trigger]") as HTMLElement | null;
-      const hoveredId = trigger?.getAttribute("data-nav-trigger");
-
-      if (hoveredId === suppressedId) return;
-
-      clearDesktopHoverSuppression();
+    return () => {
+      const cleanup = desktopHoverSuppressionCleanupRef.current;
+      if (cleanup) cleanup();
+      desktopHoverSuppressionCleanupRef.current = null;
     };
-
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onPointerMove);
-  }, [clearDesktopHoverSuppression]);
+  }, []);
 
   // После навигации (и после гидрации) восстанавливаем предохранитель,
   // если курсор всё ещё находится над пунктом меню, по которому кликнули.
@@ -364,9 +386,13 @@ export function SiteShell({
         // ignore
       }
 
+      // Снимаем предохранитель, как только курсор уходит с кликнутого триггера,
+      // без глобального pointermove + elementFromPoint.
+      attachDesktopHoverSuppressionListener(trigger);
+
       closeDesktopDropdown();
     },
-    [closeDesktopDropdown, isBurgerMode, isMenuOpen],
+    [attachDesktopHoverSuppressionListener, closeDesktopDropdown, isBurgerMode, isMenuOpen],
   );
 
   const handleDesktopNavLinkPointerEnter = useCallback(
@@ -438,7 +464,15 @@ export function SiteShell({
     [],
   );
 
-  const inertFallbackRegistryRef = useRef(new Map<HTMLElement, MutationObserver>());
+  const inertFallbackRegistryRef = useRef(
+    new Map<
+      HTMLElement,
+      {
+        observer: MutationObserver;
+        raf: number | null;
+      }
+    >(),
+  );
 
   const {
     basePath,
@@ -542,14 +576,36 @@ export function SiteShell({
       applyInertFallback(root);
 
       if (registry.has(root)) continue;
-      const observer = new MutationObserver(() => applyInertFallback(root));
-      observer.observe(root, { subtree: true, childList: true });
-      registry.set(root, observer);
+
+      // Троттлим applyInertFallback максимум до 1 раза на кадр,
+      // чтобы не пересчитывать таб-индексы несколько раз в одном рендере.
+      const entry: { observer: MutationObserver; raf: number | null } = {
+        observer: new MutationObserver(() => {
+          const current = registry.get(root);
+          if (!current) return;
+          if (current.raf !== null) return;
+
+          current.raf = window.requestAnimationFrame(() => {
+            const latest = registry.get(root);
+            if (!latest) return;
+            latest.raf = null;
+            if (!root.isConnected) return;
+            applyInertFallback(root);
+          });
+        }),
+        raf: null,
+      };
+
+      entry.observer.observe(root, { subtree: true, childList: true });
+      registry.set(root, entry);
     }
 
-    for (const [root, observer] of Array.from(registry.entries())) {
+    for (const [root, entry] of Array.from(registry.entries())) {
       if (root.isConnected && inertRoots.has(root)) continue;
-      observer.disconnect();
+      entry.observer.disconnect();
+      if (entry.raf !== null) {
+        window.cancelAnimationFrame(entry.raf);
+      }
       registry.delete(root);
       removeInertFallback(root);
     }
@@ -559,8 +615,11 @@ export function SiteShell({
     const registry = inertFallbackRegistryRef.current;
 
     return () => {
-      for (const [root, observer] of Array.from(registry.entries())) {
-        observer.disconnect();
+      for (const [root, entry] of Array.from(registry.entries())) {
+        entry.observer.disconnect();
+        if (entry.raf !== null) {
+          window.cancelAnimationFrame(entry.raf);
+        }
         removeInertFallback(root);
       }
       registry.clear();
@@ -838,9 +897,29 @@ export function SiteShell({
     document.body.style.width = "100%";
     document.body.style.top = `-${scrollY}px`;
 
+    const getBurgerToggle = () =>
+      (
+        document.querySelector<HTMLElement>(
+          'button[aria-controls="site-menu"][aria-expanded="true"]',
+        ) ?? document.querySelector<HTMLElement>('button[aria-controls="site-menu"]')
+      );
+
     const focusFirst = () => {
       const container = menuPanelRef.current;
       if (!container) return;
+
+      const burgerToggle = getBurgerToggle();
+      const active = document.activeElement;
+
+      // Если меню открыли с клавиатуры/кликом по бургеру — не «уводим» фокус,
+      // иначе крестик становится недостижим после focus-trap.
+      if (
+        active instanceof HTMLElement &&
+        (active === burgerToggle || container.contains(active))
+      ) {
+        return;
+      }
+
       // Не уводим фокус на первую кнопку/ссылку (иначе появляется «как баг» яркая обводка).
       // Вместо этого фокусируем контейнер: табуляция всё равно попадёт в первый пункт меню.
       container.focus();
@@ -860,11 +939,21 @@ export function SiteShell({
       const container = menuPanelRef.current;
       if (!container) return;
 
-      const focusables = Array.from(
-        container.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
+      const focusableSelector =
+        'a[href]:not([tabindex="-1"]), ' +
+        'button:not([disabled]):not([tabindex="-1"]), ' +
+        'input:not([disabled]):not([type="hidden"]):not([tabindex="-1"]), ' +
+        'select:not([disabled]):not([tabindex="-1"]), ' +
+        'textarea:not([disabled]):not([tabindex="-1"]), ' +
+        '[tabindex]:not([tabindex="-1"])';
+
+      const menuFocusables = Array.from(
+        container.querySelectorAll<HTMLElement>(focusableSelector),
       );
+
+      // Добавляем крестик (кнопку бургера в шапке) в цикл табуляции.
+      const burgerToggle = getBurgerToggle();
+      const focusables = burgerToggle ? [...menuFocusables, burgerToggle] : menuFocusables;
 
       if (focusables.length === 0) {
         event.preventDefault();
@@ -872,21 +961,25 @@ export function SiteShell({
         return;
       }
 
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      const active = document.activeElement;
+      const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const activeIndex = active ? focusables.indexOf(active) : -1;
+      const lastIndex = focusables.length - 1;
 
-      if (event.shiftKey) {
-        if (active === first || !container.contains(active)) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (active === last || !container.contains(active)) {
-          event.preventDefault();
-          first.focus();
-        }
-      }
+      const nextIndex =
+        activeIndex === -1
+          ? event.shiftKey
+            ? lastIndex
+            : 0
+          : event.shiftKey
+            ? activeIndex === 0
+              ? lastIndex
+              : activeIndex - 1
+            : activeIndex === lastIndex
+              ? 0
+              : activeIndex + 1;
+
+      event.preventDefault();
+      focusables[nextIndex]?.focus();
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -1072,220 +1165,138 @@ export function SiteShell({
               <div className="flex h-full min-h-0 flex-col">
                 <div className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
                   <ul className="m-0 list-none space-y-4 p-0">
-                    <li>
-                      {(() => {
-                        const { className, style } = getBurgerItemMotion(nextBurgerMotionIndex());
-                        return (
-                          <div className={className} style={style}>
-                            <Link
-                              href={productsHrefRoot}
-                              onClick={handleCloseMenu}
-                              aria-current={isProductsRootActive ? "page" : undefined}
-                              className={cn(
-                                "group block w-full py-2",
-                                "no-underline",
-                                "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
-                                isProductsRootActive
-                                  ? "text-foreground"
-                                  : "text-muted-foreground transition-colors hover:text-foreground",
-                                focusRingBase,
-                              )}
-                            >
-                              <span className={navUnderlineSpanClass(isProductsRootActive, "menu")}>
-                                {productsLink?.label ?? (locale === "ru" ? "Продукция" : "Products")}
-                              </span>
-                            </Link>
-                          </div>
-                        );
-                      })()}
+                    {navigation.header.map((link) => {
+                      const isProducts = link.id === "products";
+                      const isAbout = link.id === "about";
 
-                      <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
-                        {productsSubLinks.map((item) => {
-                          const isActive = activeProductsSubId === item.id;
+                      const href = (
+                        isProducts ? productsHrefRoot : isAbout ? aboutHrefRoot : (link.href ?? "/")
+                      ).trim() || "/";
+
+                      const label = isProducts
+                        ? productsLink?.label ?? (locale === "ru" ? "Продукция" : "Products")
+                        : link.label;
+
+                      const children = isProducts
+                        ? productsSubLinks
+                        : isAbout
+                          ? aboutSubLinks
+                          : link.children ?? [];
+
+                      const hasChildren = children.length > 0;
+
+                      const isExternal = link.newTab || link.isExternal || isExternalHref(href);
+
+                      const activeSubId = (() => {
+                        if (!hasChildren) return "";
+                        if (isProducts) return activeProductsSubId;
+                        if (isAbout) return activeAboutSubId;
+
+                        const active = children.find((item) => {
                           const itemHref = (item.href ?? "/").trim() || "/";
                           const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
+                          return !itemIsExternal && isActiveHref(itemHref);
+                        });
+                        return active?.id ?? "";
+                      })();
 
-                          const itemClassName = cn(
-                            "group block w-full py-1.5",
-                            "no-underline",
-                            "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                            isActive
-                              ? "text-foreground"
-                              : "text-muted-foreground transition-colors hover:text-foreground",
-                            focusRingBase,
-                          );
+                      const isRootPage = isProducts ? isProductsRootActive : isActiveHref(href);
+                      const isRootActive = isProducts
+                        ? isProductsRootActive
+                        : isAbout
+                          ? isAboutMenuActive
+                          : isActiveHref(href) || Boolean(activeSubId);
 
-                          const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                      const rootClassName = cn(
+                        "group block w-full py-2",
+                        "no-underline",
+                        "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
+                        isRootActive
+                          ? "text-foreground"
+                          : "text-muted-foreground transition-colors hover:text-foreground",
+                        focusRingBase,
+                      );
 
-                          return (
-                            <li key={item.id} className={motion.className} style={motion.style}>
-                              {itemIsExternal ? (
-                                <a
-                                  href={itemHref}
-                                  target={item.newTab ? "_blank" : undefined}
-                                  rel={item.newTab ? "noopener noreferrer" : undefined}
-                                  aria-current={isActive ? "page" : undefined}
-                                  className={itemClassName}
-                                >
-                                  <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                                </a>
-                              ) : (
-                                <Link
-                                  href={itemHref}
-                                  onClick={handleCloseMenu}
-                                  aria-current={isActive ? "page" : undefined}
-                                  className={itemClassName}
-                                >
-                                  <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
-                                </Link>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </li>
+                      return (
+                        <li key={link.id}>
+                          {(() => {
+                            const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                            return (
+                              <div className={motion.className} style={motion.style}>
+                                {isExternal ? (
+                                  <a
+                                    href={href}
+                                    target={link.newTab ? "_blank" : undefined}
+                                    rel={link.newTab ? "noopener noreferrer" : undefined}
+                                    aria-current={isRootPage ? "page" : undefined}
+                                    className={rootClassName}
+                                  >
+                                    <span className={navUnderlineSpanClass(isRootActive, "menu")}>{label}</span>
+                                  </a>
+                                ) : (
+                                  <Link
+                                    href={href}
+                                    onClick={handleCloseMenu}
+                                    aria-current={isRootPage ? "page" : undefined}
+                                    className={rootClassName}
+                                  >
+                                    <span className={navUnderlineSpanClass(isRootActive, "menu")}>{label}</span>
+                                  </Link>
+                                )}
+                              </div>
+                            );
+                          })()}
 
-                    {navigation.header
-                      .filter((l) => l.id !== "products")
-                      .map((link) => {
-                        const href = (link.href ?? "/").trim() || "/";
-                        const isActive = isActiveHref(href);
-                        const isExternal = link.newTab || isExternalHref(href);
+                          {hasChildren ? (
+                            <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
+                              {children.map((item) => {
+                                const isActive = activeSubId === item.id;
+                                const itemHref = (item.href ?? "/").trim() || "/";
+                                const itemIsExternal =
+                                  item.newTab || item.isExternal || isExternalHref(itemHref);
 
-                        if (link.id === "about" && aboutSubLinks.length > 0) {
-                          const rootActive = isAboutMenuActive;
+                                const itemClassName = cn(
+                                  "group block w-full py-1.5",
+                                  "no-underline",
+                                  "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
+                                  isActive
+                                    ? "text-foreground"
+                                    : "text-muted-foreground transition-colors hover:text-foreground",
+                                  focusRingBase,
+                                );
 
-                          const rootClassName = cn(
-                            "group block w-full py-2",
-                            "no-underline",
-                            "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
-                            rootActive
-                              ? "text-foreground"
-                              : "text-muted-foreground transition-colors hover:text-foreground",
-                            focusRingBase,
-                          );
+                                const motion = getBurgerItemMotion(nextBurgerMotionIndex());
 
-                          return (
-                            <li key={link.id}>
-                              {(() => {
-                                const { className, style } = getBurgerItemMotion(nextBurgerMotionIndex());
                                 return (
-                                  <div className={className} style={style}>
-                                    {isExternal ? (
+                                  <li key={item.id} className={motion.className} style={motion.style}>
+                                    {itemIsExternal ? (
                                       <a
-                                        href={href}
-                                        target={link.newTab ? "_blank" : undefined}
-                                        rel={link.newTab ? "noopener noreferrer" : undefined}
+                                        href={itemHref}
+                                        target={item.newTab ? "_blank" : undefined}
+                                        rel={item.newTab ? "noopener noreferrer" : undefined}
                                         aria-current={isActive ? "page" : undefined}
-                                        className={rootClassName}
+                                        className={itemClassName}
                                       >
-                                        <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+                                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
                                       </a>
                                     ) : (
                                       <Link
-                                        href={href}
+                                        href={itemHref}
                                         onClick={handleCloseMenu}
                                         aria-current={isActive ? "page" : undefined}
-                                        className={rootClassName}
+                                        className={itemClassName}
                                       >
-                                        <span className={navUnderlineSpanClass(rootActive, "menu")}>{link.label}</span>
+                                        <span className={navUnderlineSpanClass(isActive, "menu")}>{item.label}</span>
                                       </Link>
                                     )}
-                                  </div>
+                                  </li>
                                 );
-                              })()}
-
-                              <ul className="m-0 mt-3 list-none space-y-2 p-0 pl-4">
-                                {aboutSubLinks.map((item) => {
-                                  const isSubActive = activeAboutSubId === item.id;
-                                  const itemHref = (item.href ?? "/").trim() || "/";
-                                  const itemIsExternal = item.newTab || item.isExternal || isExternalHref(itemHref);
-
-                                  const itemClassName = cn(
-                                    "group block w-full py-1.5",
-                                    "no-underline",
-                                    "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
-                                    isSubActive
-                                      ? "text-foreground"
-                                      : "text-muted-foreground transition-colors hover:text-foreground",
-                                    focusRingBase,
-                                  );
-
-                                  const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-
-                                  return (
-                                    <li key={item.id} className={motion.className} style={motion.style}>
-                                      {itemIsExternal ? (
-                                        <a
-                                          href={itemHref}
-                                          target={item.newTab ? "_blank" : undefined}
-                                          rel={item.newTab ? "noopener noreferrer" : undefined}
-                                          aria-current={isSubActive ? "page" : undefined}
-                                          className={itemClassName}
-                                        >
-                                          <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
-                                        </a>
-                                      ) : (
-                                        <Link
-                                          href={itemHref}
-                                          onClick={handleCloseMenu}
-                                          aria-current={isSubActive ? "page" : undefined}
-                                          className={itemClassName}
-                                        >
-                                          <span className={navUnderlineSpanClass(isSubActive, "menu")}>{item.label}</span>
-                                        </Link>
-                                      )}
-                                    </li>
-                                  );
-                                })}
-                              </ul>
-                            </li>
-                          );
-                        }
-
-                        const rootMotion = getBurgerItemMotion(nextBurgerMotionIndex());
-
-                        return (
-                          <li key={link.id} className={rootMotion.className} style={rootMotion.style}>
-                            {isExternal ? (
-                              <a
-                                href={href}
-                                target={link.newTab ? "_blank" : undefined}
-                                rel={link.newTab ? "noopener noreferrer" : undefined}
-                                aria-current={isActive ? "page" : undefined}
-                                className={cn(
-                                  "group block w-full py-2",
-                                  "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
-                                  isActive
-                                    ? "text-foreground"
-                                    : "text-muted-foreground transition-colors hover:text-foreground",
-                                  focusRingBase,
-                                )}
-                              >
-                                <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
-                              </a>
-                            ) : (
-                              <Link
-                                href={href}
-                                onClick={handleCloseMenu}
-                                aria-current={isActive ? "page" : undefined}
-                                className={cn(
-                                  "group block w-full py-2",
-                                  "no-underline",
-                                  "font-[var(--font-heading)] text-[clamp(1.15rem,0.95rem+0.8vw,1.8rem)] font-medium leading-[1.18] tracking-[-0.01em]",
-                                  isActive
-                                    ? "text-foreground"
-                                    : "text-muted-foreground transition-colors hover:text-foreground",
-                                  focusRingBase,
-                                )}
-                              >
-                                <span className={navUnderlineSpanClass(isActive, "menu")}>{link.label}</span>
-                              </Link>
-                            )}
-                          </li>
-                        );
-                      })}
+                              })}
+                            </ul>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   {site.contacts.email || (!isSmUp && telegramHref) ? (
