@@ -186,7 +186,7 @@ function InsightTilesCarousel({
   title: string;
   tiles: InsightTile[];
   isRu: boolean;
-  onOpen: (id: string, trigger: HTMLElement) => void;
+  onOpen: (id: string, trigger: HTMLElement, restoreFocus: boolean) => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
 
@@ -350,7 +350,7 @@ function InsightTilesCarousel({
               <AppleHoverLift strength="xs" className="hover:z-40 focus-within:z-40">
                 <button
                   type="button"
-                  onClick={(e) => onOpen(tile.id, e.currentTarget)}
+                  onClick={(e) => onOpen(tile.id, e.currentTarget, e.detail === 0)}
                   aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
                   aria-haspopup="dialog"
                   className={cn(
@@ -491,8 +491,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   }, []);
 
-  const openTileModal = useCallback((id: string, trigger: HTMLElement) => {
-    restoreFocusRef.current = trigger;
+  const openTileModal = useCallback((id: string, trigger: HTMLElement, restoreFocus: boolean) => {
+    // For pointer opens we intentionally do NOT restore focus on close.
+    // Otherwise the tile can "stick" in the lifted (focus-within) state.
+    restoreFocusRef.current = restoreFocus ? trigger : null;
     setOpenTileId(id);
   }, []);
 
@@ -500,6 +502,15 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     // Важно: сбрасываем openTileId СРАЗУ, чтобы можно было тут же открыть ту же плитку повторно.
     // Саму модалку держим в DOM через renderedTile, чтобы анимация закрытия была плавной.
     setOpenTileId(null);
+
+    // Снимаем инертность фона сразу же при закрытии.
+    // Иначе страница остаётся некликабельной на время fade-out.
+    const page = pageRef.current;
+    if (page) {
+      page.removeAttribute('aria-hidden');
+      page.removeAttribute('inert');
+      (page as unknown as { inert?: boolean }).inert = false;
+    }
 
     if (openRaf1Ref.current) window.cancelAnimationFrame(openRaf1Ref.current);
     if (openRaf2Ref.current) window.cancelAnimationFrame(openRaf2Ref.current);
@@ -518,9 +529,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       setRenderedTile(null);
 
       const target = restoreFocusRef.current;
+      restoreFocusRef.current = null;
+
       if (target && document.contains(target)) {
-        // Restore focus back to the tile that opened the dialog.
-        // Doing it after unmount avoids focusing "behind" the overlay.
+        // Restore focus back to the tile only for keyboard-driven opens.
         window.requestAnimationFrame(() => target.focus());
       }
     }, delay);
@@ -610,9 +622,36 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     };
   }, []);
 
-  // Блокируем прокрутку фона и закрываем по ESC, пока открыта модалка плитки.
+  // Блокируем прокрутку фона (без "прыжка" ширины из-за пропажи scrollbar).
   useEffect(() => {
     if (!renderedTile) return;
+
+    const body = document.body;
+    const prevOverflow = body.style.overflow;
+    const prevPaddingRight = body.style.paddingRight;
+
+    // Компенсируем исчезновение scrollbar, чтобы модалка не выглядела «дёрганой»
+    // из‑за микро‑layout shift на десктопе.
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      const computedPaddingRight = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+      body.style.paddingRight = `${computedPaddingRight + scrollbarWidth}px`;
+    }
+
+    body.style.overflow = 'hidden';
+
+    return () => {
+      body.style.overflow = prevOverflow;
+      body.style.paddingRight = prevPaddingRight;
+    };
+  }, [renderedTile]);
+
+  // Делаем фон инертным и ловим ESC/Tab только пока модалка ВИДИМА.
+  // В момент закрытия сразу снимаем блокировку фона, чтобы можно было
+  // мгновенно повторно кликнуть по плитке (не ждать завершения fade-out).
+  useEffect(() => {
+    if (!renderedTile) return;
+    if (!isModalVisible) return;
 
     // Make the background inert for both pointer and assistive tech navigation.
     const page = pageRef.current;
@@ -621,9 +660,6 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       page.setAttribute('inert', '');
       (page as unknown as { inert?: boolean }).inert = true;
     }
-
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -670,7 +706,6 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     document.addEventListener('keydown', onKeyDown);
 
     return () => {
-      document.body.style.overflow = prevOverflow;
       if (page) {
         page.removeAttribute('aria-hidden');
         page.removeAttribute('inert');
@@ -678,7 +713,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       }
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [renderedTile, closeTileModal]);
+  }, [renderedTile, isModalVisible, closeTileModal]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
@@ -961,8 +996,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           className={cn(
             // Always center the dialog — including the smallest mobile breakpoints.
             'fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6',
-            // Keep pointer events enabled during close animation to prevent "click-through".
-            'pointer-events-auto',
+            // While the dialog is visible, we block interaction with the page.
+            // On close we immediately release pointer events so the user can
+            // re-open the same tile without waiting for the fade-out to finish.
+            isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',
           )}
         >
           <button
@@ -1005,13 +1042,13 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
               prefersReducedMotion
                 ? {
                     opacity: 1,
-                    transform: 'translateY(0px) scale(1)',
+                    transform: 'translateY(0px)',
                   }
                 : {
                     opacity: isModalVisible ? 1 : 0,
                     transform: isModalVisible
-                      ? 'translateY(0px) scale(1)'
-                      : `translateY(${TILE_MODAL_MOTION.dialogTranslateYPx}px) scale(${TILE_MODAL_MOTION.dialogScaleFrom})`,
+                      ? 'translateY(0px)'
+                      : `translateY(${TILE_MODAL_MOTION.dialogTranslateYPx}px)`,
                     transitionProperty: 'opacity, transform',
                     transitionDuration: `${isModalVisible ? TILE_MODAL_MOTION.dialogInMs : TILE_MODAL_MOTION.dialogOutMs}ms`,
                     transitionTimingFunction: TILE_MODAL_MOTION.easing,

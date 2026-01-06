@@ -131,9 +131,15 @@ export function HeaderDesktopDropdown({
       // открываем сразу, без лишнего кадра.
       if (!wasOpen) {
         scheduleStateUpdate(() => setEnterReady(false));
+        // ДВА rAF: первый гарантирует кадр с "закрытым" состоянием в DOM,
+        // второй — переключает в открытое состояние уже ПОСЛЕ того, как браузер
+        // успел применить исходные стили. Это убирает "мгновенное" раскрытие
+        // при первом наведении.
         openRafRef.current = window.requestAnimationFrame(() => {
-          openRafRef.current = null;
-          setEnterReady(true);
+          openRafRef.current = window.requestAnimationFrame(() => {
+            openRafRef.current = null;
+            setEnterReady(true);
+          });
         });
       } else {
         scheduleStateUpdate(() => setEnterReady(true));
@@ -250,7 +256,7 @@ export function HeaderDesktopDropdown({
   const transitionClass = prefersReducedMotion ? "transition-none" : "transition-[height]";
   const overlayTransitionClass = prefersReducedMotion
     ? "transition-none"
-    : "transition-opacity";
+    : "transition-[opacity,backdrop-filter]";
 
   const panelTransitionStyle = prefersReducedMotion
     ? undefined
@@ -289,7 +295,11 @@ export function HeaderDesktopDropdown({
           overlayTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
 
-          "bg-[color:var(--mega-menu-scrim)] backdrop-blur-[var(--mega-menu-blur)]",
+          // Важно: backdrop-filter (blur) НЕ зависит от opacity. Если держать blur всегда,
+          // то при первом монтировании (даже при opacity:0) фон размывается мгновенно.
+          // Поэтому blur включаем только в открытом состоянии и даём ему transition.
+          "bg-[color:var(--mega-menu-scrim)]",
+          isOpen ? "backdrop-blur-[var(--mega-menu-blur)]" : "backdrop-blur-none",
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",

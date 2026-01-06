@@ -584,8 +584,9 @@ export function SiteShell({
   }, [hasHydrated, isBurgerMode, isMenuModal, isMenuOpen]);
 
   useEffect(() => {
+    const registry = inertFallbackRegistryRef.current;
+
     return () => {
-      const registry = inertFallbackRegistryRef.current;
       for (const [root, observer] of Array.from(registry.entries())) {
         observer.disconnect();
         removeInertFallback(root);

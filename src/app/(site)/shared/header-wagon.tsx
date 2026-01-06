@@ -124,10 +124,6 @@ export const HeaderWagon = memo(function HeaderWagon({
     // На первом кадре после гидрации (и при reduced-motion) не запускаем анимации.
     if (!motionReady || prefersReducedMotion) {
       prevShowSecondaryRef.current = showSecondary;
-      // Важно: обновляем состояние синхронно (без startTransition),
-      // чтобы не было «промежуточного кадра» с резким свопом панелей.
-      setEntering(null);
-      setExiting(null);
       return;
     }
 
@@ -152,6 +148,9 @@ export const HeaderWagon = memo(function HeaderWagon({
   }, [showSecondary, hasHydrated, motionReady, prefersReducedMotion, durationMs]);
 
   const activePanel: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
+  const shouldAnimate = hasHydrated && motionReady && !prefersReducedMotion;
+  const enteringPanel = shouldAnimate ? entering : null;
+  const exitingPanel = shouldAnimate ? exiting : null;
 
   const base = cn(
     "absolute inset-0 h-full w-full",
@@ -183,8 +182,8 @@ export const HeaderWagon = memo(function HeaderWagon({
     if (!hasHydrated) return ssrPrimaryClassName;
 
     const isActive = activePanel === "primary";
-    const isEntering = entering === "primary";
-    const isExiting = exiting === "primary";
+    const isEntering = enteringPanel === "primary";
+    const isExiting = exitingPanel === "primary";
 
     if (isExiting) {
       return cn("z-10 pointer-events-none", visible, "animate-wagon-out motion-reduce:animate-none");
@@ -203,8 +202,8 @@ export const HeaderWagon = memo(function HeaderWagon({
     if (!hasHydrated) return ssrSecondaryClassName;
 
     const isActive = activePanel === "secondary";
-    const isEntering = entering === "secondary";
-    const isExiting = exiting === "secondary";
+    const isEntering = enteringPanel === "secondary";
+    const isExiting = exitingPanel === "secondary";
 
     if (isExiting) {
       return cn("z-10 pointer-events-none", visible, "animate-wagon-out motion-reduce:animate-none");
@@ -265,7 +264,6 @@ export function useDelayedCollapse(
 
   useLayoutEffect(() => {
     if (!hasHydrated) {
-      setCollapsed(false);
       didInitRef.current = false;
       return;
     }
@@ -277,12 +275,12 @@ export function useDelayedCollapse(
     }
 
     if (!shouldCollapse) {
-      setCollapsed(false);
+      setCollapsed(shouldCollapse);
       return;
     }
 
     if (prefersReducedMotion) {
-      setCollapsed(true);
+      setCollapsed(shouldCollapse);
       return;
     }
 
