@@ -56,11 +56,8 @@ export function Hero({ locale, data }: HeroProps) {
   const secondaryCtaHref = withFallback(data?.secondaryCtaHref, isRu ? '/contacts' : '/en/contacts');
 
   return (
-    <section
-      className="relative isolate overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl"
-      suppressHydrationWarning
-    >
-      <div className="absolute inset-0 -z-10">
+    <section className="relative isolate overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl">
+      <div className="absolute inset-0 -z-10" aria-hidden>
         <Image
           src="/uploads/hero.jpg"
           alt={isRu ? 'Литейное производство' : 'Foundry production'}

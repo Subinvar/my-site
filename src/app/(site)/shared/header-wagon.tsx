@@ -77,6 +77,9 @@ type HeaderWagonProps = {
 const DEFAULT_SSR_PRIMARY = "hidden lg:flex";
 const DEFAULT_SSR_SECONDARY = "flex lg:hidden";
 
+const scheduleMicrotask = (cb: () => void) =>
+  typeof queueMicrotask === "function" ? queueMicrotask(cb) : Promise.resolve().then(cb);
+
 /**
  * Унифицированный "вагончик" с ДВУМЯ анимациями:
  *  - enter: появление (въезд снизу)
@@ -134,10 +137,12 @@ export const HeaderWagon = memo(function HeaderWagon({
     const incoming: "primary" | "secondary" = showSecondary ? "secondary" : "primary";
 
     prevShowSecondaryRef.current = showSecondary;
-    // Синхронно выставляем entering/exiting в layout-effect:
-    // так браузер не успевает нарисовать кадр без анимации.
-    setExiting(outgoing);
-    setEntering(incoming);
+    // Выставляем entering/exiting в microtask:
+    // так состояние обновится до следующего кадра, но без синхронного setState в эффекте.
+    scheduleMicrotask(() => {
+      setExiting(outgoing);
+      setEntering(incoming);
+    });
 
     const t = window.setTimeout(() => {
       setExiting(null);
@@ -270,17 +275,17 @@ export function useDelayedCollapse(
 
     if (!didInitRef.current) {
       didInitRef.current = true;
-      setCollapsed(shouldCollapse);
+      scheduleMicrotask(() => setCollapsed(shouldCollapse));
       return;
     }
 
     if (!shouldCollapse) {
-      setCollapsed(shouldCollapse);
+      scheduleMicrotask(() => setCollapsed(shouldCollapse));
       return;
     }
 
     if (prefersReducedMotion) {
-      setCollapsed(shouldCollapse);
+      scheduleMicrotask(() => setCollapsed(shouldCollapse));
       return;
     }
 
