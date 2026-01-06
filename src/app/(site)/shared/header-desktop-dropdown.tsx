@@ -279,14 +279,14 @@ export function HeaderDesktopDropdown({
       className="fixed inset-x-0 bottom-0 z-[58]"
       style={{ top: "var(--header-height)" }}
       aria-hidden={!isOpen}
+      onFocusCapture={onPanelEnter}
+      onBlurCapture={handleBlurCapture}
     >
       {/* Full-width dropdown panel that раскрывается от нижнего края шапки */}
       <div
         id={DESKTOP_DROPDOWN_PANEL_ID}
         onPointerEnter={onPanelEnter}
         onPointerLeave={onPanelLeave}
-        onFocusCapture={onPanelEnter}
-        onBlurCapture={handleBlurCapture}
         className={cn(
           "relative z-10 w-full",
           "overflow-hidden",

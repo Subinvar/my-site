@@ -92,14 +92,19 @@ function applyInertFallback(root: HTMLElement) {
   );
 
   for (const el of focusables) {
-    if (el.hasAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR)) continue;
+    if (!el.hasAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR)) {
+      const prevTabindex = el.getAttribute("tabindex");
+      el.setAttribute(
+        INERT_FALLBACK_PREV_TABINDEX_ATTR,
+        prevTabindex === null ? INERT_FALLBACK_PREV_TABINDEX_MISSING : prevTabindex,
+      );
+    }
 
-    const prevTabindex = el.getAttribute("tabindex");
-    el.setAttribute(
-      INERT_FALLBACK_PREV_TABINDEX_ATTR,
-      prevTabindex === null ? INERT_FALLBACK_PREV_TABINDEX_MISSING : prevTabindex,
-    );
-    el.setAttribute("tabindex", "-1");
+    // Важно: даже если элемент уже «помечен» (prev-tabindex сохранён),
+    // всё равно принудительно удерживаем его вне tab-order.
+    if (el.getAttribute("tabindex") !== "-1") {
+      el.setAttribute("tabindex", "-1");
+    }
   }
 
   const active = document.activeElement;
@@ -288,12 +293,21 @@ export function SiteShell({
       desktopHoverSuppressionCleanupRef.current = null;
 
       const onLeave = () => clearDesktopHoverSuppression();
+
+      // Трекаем позицию курсора, но НЕ делаем elementFromPoint на каждый move.
+      // elementFromPoint используем один раз — только при восстановлении предохранителя.
+      const onMove = (event: PointerEvent) => {
+        lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
+      };
+
       trigger.addEventListener("pointerleave", onLeave, { passive: true });
       trigger.addEventListener("pointercancel", onLeave, { passive: true });
+      window.addEventListener("pointermove", onMove, { passive: true });
 
       desktopHoverSuppressionCleanupRef.current = () => {
         trigger.removeEventListener("pointerleave", onLeave);
         trigger.removeEventListener("pointercancel", onLeave);
+        window.removeEventListener("pointermove", onMove);
       };
     },
     [clearDesktopHoverSuppression],
@@ -339,8 +353,8 @@ export function SiteShell({
     attachDesktopHoverSuppressionListener(trigger);
   }, [attachDesktopHoverSuppressionListener, clearDesktopHoverSuppression]);
 
-  // Уборка «предохранителя» делается через pointerleave на самом триггере,
-  // без глобального pointermove + elementFromPoint.
+  // Уборка «предохранителя» делается через pointerleave на самом триггере.
+  // pointermove используется только для трекинга координат курсора (без elementFromPoint).
   useEffect(() => {
     return () => {
       const cleanup = desktopHoverSuppressionCleanupRef.current;
@@ -386,8 +400,8 @@ export function SiteShell({
         // ignore
       }
 
-      // Снимаем предохранитель, как только курсор уходит с кликнутого триггера,
-      // без глобального pointermove + elementFromPoint.
+      // Снимаем предохранитель, как только курсор уходит с кликнутого триггера.
+      // pointermove используется только для трекинга координат курсора (без elementFromPoint).
       attachDesktopHoverSuppressionListener(trigger);
 
       closeDesktopDropdown();

@@ -641,10 +641,11 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     };
   }, [renderedTile]);
 
-  // Делаем фон инертным и ловим ESC/Tab, пока модалка находится в DOM
-  // (включая fade-out). Это убирает «клик-сквозь» во время закрытия.
+  // Делаем фон инертным и ловим ESC/Tab, пока модалка ОТКРЫТА.
+  // Важно: как только начинается закрытие (isModalVisible=false), фон снова кликабелен —
+  // это позволяет сразу повторно открыть ту же плитку.
   useEffect(() => {
-    if (!renderedTile) return;
+    if (!renderedTile || !isModalVisible) return;
 
     // Make the background inert for both pointer and assistive tech navigation.
     const page = pageRef.current;
@@ -706,7 +707,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       }
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [renderedTile, closeTileModal]);
+  }, [renderedTile, isModalVisible, closeTileModal]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
   // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
@@ -989,10 +990,9 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
           className={cn(
             // Always center the dialog — including the smallest mobile breakpoints.
             'fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6',
-            // While the modal exists in the DOM (including fade-out), we block
-            // interaction with the page. This avoids accidental “click-through”
-            // on close.
-            'pointer-events-auto',
+            // Важно: во время fade-out даём «клик-сквозь», чтобы можно было сразу
+            // повторно открыть плитку (не блокируем страницу невидимым оверлеем).
+            isModalVisible ? 'pointer-events-auto' : 'pointer-events-none',
           )}
         >
           <button
