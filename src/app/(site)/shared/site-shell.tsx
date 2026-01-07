@@ -21,6 +21,7 @@ import { cn } from "@/lib/cn";
 import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import { formatTelegramHandle } from "@/lib/contacts";
+import { isExternalHref, normalizePathname, resolveHref } from "@/lib/url";
 import {
   BURGER_MENU_CLOSE_MS,
   BURGER_MENU_OPEN_MS,
@@ -42,29 +43,6 @@ import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar } from "./header-top-bar";
 import { headerButtonBase, pillBase } from "./ui-classes";
-
-const normalizePathname = (value: string): string => {
-  const [pathWithoutQuery] = value.split("?");
-  const [path] = (pathWithoutQuery ?? "").split("#");
-  const trimmed = (path ?? "/").replace(/\/+$/, "");
-  return trimmed.length ? trimmed : "/";
-};
-
-const isExternalHref = (href: string): boolean => {
-  const normalized = resolveHref(href);
-  return (
-    normalized.startsWith("http://") ||
-    normalized.startsWith("https://") ||
-    normalized.startsWith("//") ||
-    normalized.startsWith("mailto:") ||
-    normalized.startsWith("tel:")
-  );
-};
-
-const resolveHref = (href: string): string => {
-  const normalized = (href ?? "").trim();
-  return normalized.length ? normalized : "/";
-};
 
 type SiteShellProps = {
   locale: Locale;
@@ -113,6 +91,32 @@ function applyInertFallback(root: HTMLElement) {
   }
 }
 
+function applyInertFallbackSubtree(subtreeRoot: HTMLElement) {
+  const focusables: HTMLElement[] = [];
+
+  if (subtreeRoot.matches(INERT_FOCUSABLE_SELECTOR)) {
+    focusables.push(subtreeRoot);
+  }
+
+  focusables.push(
+    ...Array.from(subtreeRoot.querySelectorAll<HTMLElement>(INERT_FOCUSABLE_SELECTOR)),
+  );
+
+  for (const el of focusables) {
+    if (!el.hasAttribute(INERT_FALLBACK_PREV_TABINDEX_ATTR)) {
+      const prevTabindex = el.getAttribute("tabindex");
+      el.setAttribute(
+        INERT_FALLBACK_PREV_TABINDEX_ATTR,
+        prevTabindex === null ? INERT_FALLBACK_PREV_TABINDEX_MISSING : prevTabindex,
+      );
+    }
+
+    if (el.getAttribute("tabindex") !== "-1") {
+      el.setAttribute("tabindex", "-1");
+    }
+  }
+}
+
 function removeInertFallback(root: HTMLElement) {
   const processed = Array.from(
     root.querySelectorAll<HTMLElement>(`[${INERT_FALLBACK_PREV_TABINDEX_ATTR}]`),
@@ -140,8 +144,12 @@ function removeInertFallback(root: HTMLElement) {
 
 type DesktopHoverSuppressRecord = {
   id: string;
-  x: number;
-  y: number;
+  /**
+   * Legacy fields (v1/v2): were used for elementFromPoint restoration.
+   * We keep them optional for backward compatibility with existing sessions.
+   */
+  x?: number;
+  y?: number;
 };
 
 type SkipToContentLinkProps = {
@@ -201,7 +209,6 @@ export function SiteShell({
   }, []);
 
   const desktopHoverSuppressForIdRef = useRef<string | null>(initialDesktopHoverSuppressId);
-  const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
   const desktopHoverSuppressionCleanupRef = useRef<(() => void) | null>(null);
   const prevPathRef = useRef(currentPath);
   const menuPanelRef = useRef<HTMLElement | null>(null);
@@ -238,6 +245,34 @@ export function SiteShell({
     clearDesktopDropdownOpen();
     setDesktopDropdownId(null);
   }, [clearDesktopDropdownClose, clearDesktopDropdownOpen]);
+
+  const focusDesktopNavTrigger = useCallback((triggerId: string | null) => {
+    if (!triggerId || typeof document === "undefined") return;
+
+    const escaped =
+      typeof CSS !== "undefined" && typeof CSS.escape === "function"
+        ? CSS.escape(triggerId)
+        : triggerId.replace(/[\\"]/g, "\\$&");
+
+    const el = document.querySelector(
+      `[data-nav-trigger="${escaped}"]`,
+    ) as HTMLElement | null;
+
+    if (!el) return;
+    try {
+      el.focus({ preventScroll: true });
+    } catch {
+      el.focus();
+    }
+  }, []);
+
+  // Явное закрытие mega-menu (Esc / overlay click): возвращаем фокус на триггер,
+  // иначе клавиатура может "потеряться" на body после размонтирования панели.
+  const requestCloseDesktopDropdown = useCallback(() => {
+    const id = desktopDropdownId;
+    closeDesktopDropdown();
+    focusDesktopNavTrigger(id);
+  }, [closeDesktopDropdown, desktopDropdownId, focusDesktopNavTrigger]);
 
   const scheduleDesktopDropdownClose = useCallback(() => {
     clearDesktopDropdownClose();
@@ -294,20 +329,12 @@ export function SiteShell({
 
       const onLeave = () => clearDesktopHoverSuppression();
 
-      // Трекаем позицию курсора, но НЕ делаем elementFromPoint на каждый move.
-      // elementFromPoint используем один раз — только при восстановлении предохранителя.
-      const onMove = (event: PointerEvent) => {
-        lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
-      };
-
       trigger.addEventListener("pointerleave", onLeave, { passive: true });
       trigger.addEventListener("pointercancel", onLeave, { passive: true });
-      window.addEventListener("pointermove", onMove, { passive: true });
 
       desktopHoverSuppressionCleanupRef.current = () => {
         trigger.removeEventListener("pointerleave", onLeave);
         trigger.removeEventListener("pointercancel", onLeave);
-        window.removeEventListener("pointermove", onMove);
       };
     },
     [clearDesktopHoverSuppression],
@@ -334,18 +361,11 @@ export function SiteShell({
     // чем раскрыть его сразу после клика/навигации.
     desktopHoverSuppressForIdRef.current = record.id;
 
-    const pt = lastPointerPosRef.current ?? { x: record.x, y: record.y };
-    if (typeof pt?.x !== "number" || typeof pt?.y !== "number") {
-      clearDesktopHoverSuppression();
-      return;
-    }
-
-    const el = document.elementFromPoint(pt.x, pt.y) as HTMLElement | null;
-    const trigger = el?.closest("[data-nav-trigger]") as HTMLElement | null;
-    const hoveredId = trigger?.getAttribute("data-nav-trigger");
-
-    if (hoveredId !== record.id) {
-      // Курсор уже не над тем пунктом (или вообще не над пунктом меню) — снимаем предохранитель.
+    // Восстанавливаем предохранитель ТОЛЬКО если курсор всё ещё над тем же триггером.
+    // Это избавляет от глобального pointermove и elementFromPoint.
+    const selector = `[data-nav-trigger="${record.id}"]`;
+    const trigger = document.querySelector(selector) as HTMLElement | null;
+    if (!trigger || !trigger.matches(":hover")) {
       clearDesktopHoverSuppression();
       return;
     }
@@ -354,7 +374,6 @@ export function SiteShell({
   }, [attachDesktopHoverSuppressionListener, clearDesktopHoverSuppression]);
 
   // Уборка «предохранителя» делается через pointerleave на самом триггере.
-  // pointermove используется только для трекинга координат курсора (без elementFromPoint).
   useEffect(() => {
     return () => {
       const cleanup = desktopHoverSuppressionCleanupRef.current;
@@ -384,13 +403,10 @@ export function SiteShell({
       if (!triggerId) return;
 
       desktopHoverSuppressForIdRef.current = triggerId;
-      lastPointerPosRef.current = { x: event.clientX, y: event.clientY };
 
       try {
         const record: DesktopHoverSuppressRecord = {
           id: triggerId,
-          x: event.clientX,
-          y: event.clientY,
         };
         window.sessionStorage.setItem(
           DESKTOP_HOVER_SUPPRESS_STORAGE_KEY,
@@ -401,7 +417,6 @@ export function SiteShell({
       }
 
       // Снимаем предохранитель, как только курсор уходит с кликнутого триггера.
-      // pointermove используется только для трекинга координат курсора (без elementFromPoint).
       attachDesktopHoverSuppressionListener(trigger);
 
       closeDesktopDropdown();
@@ -484,6 +499,7 @@ export function SiteShell({
       {
         observer: MutationObserver;
         raf: number | null;
+        pending: Set<HTMLElement>;
       }
     >(),
   );
@@ -591,12 +607,40 @@ export function SiteShell({
 
       if (registry.has(root)) continue;
 
-      // Троттлим applyInertFallback максимум до 1 раза на кадр,
-      // чтобы не пересчитывать таб-индексы несколько раз в одном рендере.
-      const entry: { observer: MutationObserver; raf: number | null } = {
-        observer: new MutationObserver(() => {
+      // Троттлим обновление максимум до 1 раза на кадр,
+      // но вместо полного querySelectorAll по всему DOM
+      // обрабатываем только добавленные поддеревья.
+      const entry: {
+        observer: MutationObserver;
+        raf: number | null;
+        pending: Set<HTMLElement>;
+      } = {
+        observer: new MutationObserver((mutations) => {
           const current = registry.get(root);
           if (!current) return;
+
+          for (const mutation of mutations) {
+            if (mutation.type !== "childList") continue;
+            for (const node of Array.from(mutation.addedNodes)) {
+              if (node instanceof HTMLElement) {
+                current.pending.add(node);
+                continue;
+              }
+
+              if (node instanceof DocumentFragment) {
+                for (const child of Array.from(node.children)) {
+                  if (child instanceof HTMLElement) current.pending.add(child);
+                }
+                continue;
+              }
+
+              if (node instanceof Element) {
+                current.pending.add(node as HTMLElement);
+              }
+            }
+          }
+
+          if (current.pending.size === 0) return;
           if (current.raf !== null) return;
 
           current.raf = window.requestAnimationFrame(() => {
@@ -604,10 +648,29 @@ export function SiteShell({
             if (!latest) return;
             latest.raf = null;
             if (!root.isConnected) return;
-            applyInertFallback(root);
+
+            const pending = Array.from(latest.pending);
+            latest.pending.clear();
+
+            // Если в кадре слишком много изменений — делаем полный проход,
+            // чтобы не пропустить редкие edge-cases.
+            if (pending.length > 24) {
+              applyInertFallback(root);
+            } else {
+              for (const node of pending) {
+                if (!root.contains(node)) continue;
+                applyInertFallbackSubtree(node);
+              }
+
+              const active = document.activeElement;
+              if (active instanceof HTMLElement && root.contains(active)) {
+                active.blur();
+              }
+            }
           });
         }),
         raf: null,
+        pending: new Set<HTMLElement>(),
       };
 
       entry.observer.observe(root, { subtree: true, childList: true });
@@ -1062,11 +1125,11 @@ export function SiteShell({
           isHeaderDividerVisible
             ? cn(
                 // ⬆️ Чуть меньше прозрачности: хедер меньше «просвечивает».
-                "bg-background/97 before:opacity-100",
+                "bg-background before:opacity-100",
                 shouldShowHeaderShadow && "shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
               )
             : // ⬆️ Чуть меньше прозрачности: хедер меньше «просвечивает».
-              "bg-background/95",
+              "bg-background",
         )}
       >
         <div className="relative pt-[var(--safe-area-top)]">
@@ -1144,7 +1207,7 @@ export function SiteShell({
         closeLabel={locale === "ru" ? "Закрыть подменю" : "Close submenu"}
         onPanelEnter={clearDesktopDropdownClose}
         onPanelLeave={scheduleDesktopDropdownClose}
-        onRequestClose={closeDesktopDropdown}
+        onRequestClose={requestCloseDesktopDropdown}
       />
 
       {isMenuModal ? (
@@ -1152,13 +1215,16 @@ export function SiteShell({
           id="site-menu"
           ref={menuPanelRef}
           tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-label={menuDialogLabel}
           aria-hidden={!isMenuOpen}
           {...inertProps(!isMenuOpen)}
           className={cn(
             // Apple-like: "шторка" на весь экран под шапкой
             "fixed inset-x-0 z-[59] overflow-hidden",
-            // ⬆️ Чуть меньше прозрачности: панель меню меньше «просвечивает».
-            isHeaderElevated ? "bg-background/99" : "bg-background/98",
+            // ⬆️ Панель меню менее «просвечивает».
+            "bg-background",
             "will-change-[height]",
             prefersReducedMotion
               ? "transition-none"
@@ -1319,7 +1385,7 @@ export function SiteShell({
                   {site.contacts.email || (!isSmUp && telegramHref) ? (
                     <div className="mt-6 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
                       {/* ✅ Оптическое выравнивание контактов по видимому тексту */}
-                      <div className="flex flex-row flex-wrap items-center gap-2 -ml-3">
+                      <div className="flex flex-row flex-wrap items-center gap-2">
                         {site.contacts.email
                           ? (() => {
                               const motion = getBurgerItemMotion(nextBurgerMotionIndex());

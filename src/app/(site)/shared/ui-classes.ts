@@ -21,7 +21,7 @@ export const headerButtonBase = cn(
 );
 
 export const pillBase = cn(
-  "relative inline-flex h-10 w-full items-center justify-center rounded-lg px-3 border border-transparent bg-transparent",
+  "relative inline-flex h-10 min-w-0 max-w-full items-center justify-center rounded-lg px-3 border border-transparent bg-transparent",
   "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
   "after:transition-colors after:duration-200 after:ease-out",
   "text-muted-foreground no-underline transition-colors duration-200 ease-out",

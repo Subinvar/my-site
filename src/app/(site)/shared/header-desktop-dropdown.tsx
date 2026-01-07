@@ -8,6 +8,7 @@ import type { NavigationLink } from "@/lib/keystatic";
 import { cn } from "@/lib/cn";
 import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
+import { normalizePathname, resolveHref } from "@/lib/url";
 import {
   DESKTOP_DROPDOWN_CLOSE_MS,
   DESKTOP_DROPDOWN_OPEN_MS,
@@ -30,17 +31,6 @@ type HeaderDesktopDropdownProps = {
 
 const DESKTOP_DROPDOWN_PANEL_ID = "header-desktop-dropdown-panel";
 
-const normalizePathname = (value: string): string => {
-  const [pathWithoutQuery] = value.split("?");
-  const [path] = (pathWithoutQuery ?? "").split("#");
-  const trimmed = (path ?? "/").replace(/\/+$/, "");
-  return trimmed.length ? trimmed : "/";
-};
-
-const resolveHref = (href: string): string => {
-  const normalized = (href ?? "").trim();
-  return normalized.length ? normalized : "/";
-};
 
 const getChildren = (links: NavigationLink[], id: string | null): NavigationLink[] => {
   if (!id) return [];
@@ -81,7 +71,15 @@ export function HeaderDesktopDropdown({
   const prevShouldBeOpenRef = useRef(false);
   const openRafRef = useRef<number | null>(null);
 
-  const scheduleStateUpdate = (update: () => void) => queueMicrotask(update);
+  const scheduleStateUpdate = (update: () => void) => {
+    if (typeof queueMicrotask === "function") {
+      queueMicrotask(update);
+      return;
+    }
+
+    // Fallback for environments without queueMicrotask.
+    Promise.resolve().then(update);
+  };
 
   const activeChildren = useMemo(() => getChildren(links, activeId), [activeId, links]);
   const shouldBeOpen = Boolean(activeId && activeChildren.length);
@@ -291,7 +289,7 @@ export function HeaderDesktopDropdown({
           "relative z-10 w-full",
           "overflow-hidden",
           // Surface
-          "bg-background/96",
+          "bg-background",
           "shadow-[0_24px_60px_rgba(0,0,0,0.12)]",
           // Nice edge where it attaches to header
           "border-b border-[color:var(--header-border)]",
@@ -413,7 +411,9 @@ export function HeaderDesktopDropdown({
           "absolute inset-0 z-0",
           overlayTransitionClass,
           "motion-reduce:transition-none motion-reduce:duration-0",
-          focusRingBase,
+          // Не показываем гигантский ring вокруг всего вьюпорта.
+          // Overlay остаётся доступным для клавиатуры (Enter/Space закрывает меню).
+          "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
 
           // Важно: backdrop-filter (blur) НЕ зависит от opacity. Если держать blur всегда,
           // то при первом монтировании (даже при opacity:0) фон размывается мгновенно.

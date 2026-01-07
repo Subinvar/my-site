@@ -6,6 +6,7 @@ import { focusRingBase } from "@/lib/focus-ring";
 import type { Navigation, SiteContent } from "@/lib/keystatic";
 import type { Locale } from "@/lib/i18n";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
+import { normalizePathname, resolveHref } from "@/lib/url";
 import { pillBase } from "./ui-classes";
 
 export type SiteFooterProps = {
@@ -16,18 +17,6 @@ export type SiteFooterProps = {
   copyrightText: string;
   contacts: SiteContent["contacts"];
   tagline: string | null;
-};
-
-const normalizePathname = (value: string): string => {
-  const [pathWithoutQuery] = value.split("?");
-  const [path] = (pathWithoutQuery ?? "").split("#");
-  const trimmed = (path ?? "/").replace(/\/+$/, "");
-  return trimmed.length ? trimmed : "/";
-};
-
-const resolveHref = (href: string): string => {
-  const normalized = (href ?? "").trim();
-  return normalized.length ? normalized : "/";
 };
 
 export function SiteFooter({
@@ -146,7 +135,7 @@ export function SiteFooter({
           <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               {/* ✅ Оптическое выравнивание по тексту (а не по границе пилюли) */}
-              <div className="flex flex-wrap items-center gap-2 -ml-3">
+              <div className="flex flex-wrap items-center gap-2">
                 {contacts.email ? (
                   <a
                     href={`mailto:${contacts.email}`}

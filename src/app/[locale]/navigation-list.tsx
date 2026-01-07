@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { focusRingBase } from "@/lib/focus-ring";
 import { navUnderlineSpanClass } from "@/lib/nav-underline";
 import type { NavigationLink } from "@/lib/keystatic";
+import { normalizePathname, resolveHref } from "@/lib/url";
 
 type NavigationListProps = {
   links: NavigationLink[];
@@ -31,18 +32,6 @@ type NavigationListProps = {
   onNavLeave?: () => void;
   onLinkEnter?: (link: NavigationLink) => void;
   onLinkFocus?: (link: NavigationLink) => void;
-};
-
-const normalizePathname = (value: string): string => {
-  const [pathWithoutQuery] = value.split("?");
-  const [path] = (pathWithoutQuery ?? "").split("#");
-  const trimmed = (path ?? "/").replace(/\/+$/, "");
-  return trimmed.length ? trimmed : "/";
-};
-
-const resolveHref = (href: string): string => {
-  const normalized = href.trim();
-  return normalized.length ? normalized : "/";
 };
 
 export function NavigationList({
