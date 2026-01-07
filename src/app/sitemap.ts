@@ -1,10 +1,11 @@
 import type { MetadataRoute } from 'next';
 
-import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
+import { getAllCatalogEntries, getAllPages, getAllPosts, getProductsPage, getSite } from '@/lib/keystatic';
 import { buildPath } from '@/lib/paths';
 import { defaultLocale, locales, type Locale } from '@/lib/i18n';
 import { HREFLANG_CODE } from '@/lib/seo';
 import { normalizeBaseUrl, resolvePublicBaseUrl } from '@/lib/url';
+import { getProductsHubGroupsForSitemap } from '@/lib/content/products-hub';
 
 type Collection = 'pages' | 'posts' | 'catalog';
 
@@ -15,14 +16,22 @@ type DatedEntry = {
   date?: string | null;
 };
 
+const splitSlug = (slug: string): string[] =>
+  slug
+    .split('/')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
 const buildSegments = (collection: Collection, slug: string): string[] => {
+  const segments = splitSlug(slug);
+
   if (collection === 'posts') {
-    return ['news', slug];
+    return ['news', ...segments];
   }
   if (collection === 'catalog') {
-    return ['catalog', slug];
+    return ['catalog', ...segments];
   }
-  return slug.length ? [slug] : [];
+  return segments;
 };
 
 const toAbsoluteUrl = (
@@ -133,11 +142,13 @@ const createSitemapEntries = (
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [site, pages, posts, catalogEntries] = await Promise.all([
+  const [site, pages, posts, catalogEntries, productsPage, productsHubGroups] = await Promise.all([
     getSite(defaultLocale),
     getAllPages(),
     getAllPosts(),
     getAllCatalogEntries(),
+    getProductsPage(defaultLocale),
+    getProductsHubGroupsForSitemap(),
   ]);
 
   const baseUrl = resolvePublicBaseUrl(site.seo.canonicalBase ?? null, {
@@ -183,13 +194,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   });
 
-  const productsEntries = createSitemapEntries(baseUrl, {
-    collection: 'pages',
-    slugByLocale: {
-      ru: 'products',
-      en: 'products',
-    },
-  });
+  const productsEntries = productsPage.published
+    ? createSitemapEntries(baseUrl, {
+        collection: 'pages',
+        slugByLocale: productsPage.slugByLocale,
+        updatedAt: productsPage.updatedAt,
+      })
+    : [];
 
-  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries, ...productsEntries];
+  const productGroupEntries = productsPage.published
+    ? productsHubGroups
+        .filter((group) => !group.hidden)
+        .flatMap((group) => {
+          const slugByLocale: Partial<Record<Locale, string>> = {};
+
+          for (const locale of locales) {
+            const baseSlug = (productsPage.slugByLocale[locale] ?? productsPage.slugByLocale[defaultLocale] ?? 'products')
+              .replace(/^\/+/g, '')
+              .replace(/\/+$/g, '');
+            const groupSlug = (group.slugByLocale[locale] ?? group.slugByLocale[defaultLocale] ?? group.id)
+              .replace(/^\/+/g, '')
+              .replace(/\/+$/g, '');
+            if (!baseSlug || !groupSlug) {
+              continue;
+            }
+            slugByLocale[locale] = `${baseSlug}/${groupSlug}`;
+          }
+
+          return createSitemapEntries(baseUrl, {
+            collection: 'pages',
+            slugByLocale,
+            updatedAt: productsPage.updatedAt,
+          });
+        })
+    : [];
+
+  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries, ...productsEntries, ...productGroupEntries];
 }

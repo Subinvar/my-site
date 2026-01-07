@@ -25,6 +25,7 @@ type RawCard = {
 
 type RawGroup = {
   id?: string | null;
+  slug?: Localized<string>;
   title?: Localized<string>;
   description?: Localized<string>;
   icon?: string | null;
@@ -59,11 +60,18 @@ export type ProductsHubCard = {
 
 export type ProductsHubGroup = {
   id: string;
+  slug: string;
   title?: string;
   description?: string;
   icon?: string;
   order: number;
   cards: ProductsHubCard[];
+};
+
+export type ProductsHubGroupSitemapEntry = {
+  id: string;
+  order: number;
+  slugByLocale: Partial<Record<Locale, string>>;
 };
 
 export type ProductsHubInsight = {
@@ -88,6 +96,8 @@ const pickLocalized = <T>(value: Localized<T> | undefined, locale: Locale): T | 
 
 const normalizeOrder = (value: number | null | undefined, fallback: number): number =>
   typeof value === 'number' ? value : fallback;
+
+const normalizeSlug = (value: string): string => value.trim().replace(/^\/+|\/+$/g, '');
 
 const mapCard = (
   card: RawCard,
@@ -124,6 +134,8 @@ const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): Produ
   if (group.hidden) return null;
 
   const id = group.id?.trim() || `group-${fallbackIndex}`;
+  const slugCandidate = pickLocalized(group.slug, locale) ?? id;
+  const slug = normalizeSlug(slugCandidate) || id;
 
   const cards = Array.isArray(group.cards)
     ? group.cards
@@ -157,6 +169,7 @@ const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): Produ
 
   return {
     id,
+    slug,
     title: pickLocalized(group.title, locale),
     description: pickLocalized(group.description, locale),
     icon: group.icon ?? undefined,
@@ -164,6 +177,43 @@ const mapGroup = (group: RawGroup, locale: Locale, fallbackIndex: number): Produ
     cards: uniqueCards,
   } satisfies ProductsHubGroup;
 };
+
+const hasVisibleCards = (group: RawGroup): boolean => {
+  if (!Array.isArray(group.cards)) return false;
+  return group.cards.some((card) => !card.hidden);
+};
+
+export const getProductsHubGroupsForSitemap = cache(async (): Promise<ProductsHubGroupSitemapEntry[]> => {
+  const reader = getReader();
+  const data = (await reader.singletons.productsHub.read()) as RawProductsHub | null;
+
+  if (!data || !Array.isArray(data.groups)) return [];
+
+  const groups: ProductsHubGroupSitemapEntry[] = [];
+
+  data.groups.forEach((group, index) => {
+    if (group.hidden) return;
+    const id = group.id?.trim() || `group-${index}`;
+    if (!hasVisibleCards(group)) return;
+
+    const slugByLocale: Partial<Record<Locale, string>> = {};
+    for (const locale of locales) {
+      const candidate = pickLocalized(group.slug, locale) ?? id;
+      const slug = normalizeSlug(candidate);
+      if (slug) {
+        slugByLocale[locale] = slug;
+      }
+    }
+
+    groups.push({
+      id,
+      order: normalizeOrder(group.order, index),
+      slugByLocale,
+    });
+  });
+
+  return groups.sort((a, b) => a.order - b.order);
+});
 
 const mapInsight = (insight: RawInsight, locale: Locale, fallbackIndex: number): ProductsHubInsight | null => {
   const details = Array.isArray(insight.details)

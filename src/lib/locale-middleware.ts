@@ -2,11 +2,47 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { defaultLocale, locales, type Locale } from "./i18n";
+import productsPageSettings from "../../content/products-page/index.json";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 export const LOCALE_HEADER = "x-middleware-request-locale";
 
 const LOCALE_PREFIXES = new Set(locales);
+
+type ProductsPageSettingsJson = {
+  slug?: Partial<Record<Locale, string>>;
+};
+
+const INTERNAL_PRODUCTS_SEGMENTS = ['products'];
+
+const normalizeSlugSegments = (value: string): string[] =>
+  value
+    .split('/')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+const productsPageSlugByLocale = (productsPageSettings as ProductsPageSettingsJson)?.slug ?? {};
+
+const productsExternalSegments: Record<Locale, string[]> = locales.reduce((acc, locale) => {
+  const raw = productsPageSlugByLocale[locale] ?? productsPageSlugByLocale[defaultLocale] ?? 'products';
+  acc[locale] = normalizeSlugSegments(raw || 'products');
+  return acc;
+}, {} as Record<Locale, string[]>);
+
+function startsWithSegments(segments: string[], prefix: string[]): boolean {
+  if (prefix.length === 0) {
+    return false;
+  }
+  if (segments.length < prefix.length) {
+    return false;
+  }
+  for (let i = 0; i < prefix.length; i += 1) {
+    if (segments[i] !== prefix[i]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 function withLocaleCookie(response: NextResponse, locale: Locale): NextResponse {
   const isProduction = process.env.NODE_ENV === "production";
@@ -110,6 +146,27 @@ export function proxy(request: NextRequest) {
 
   const locale = extractLocale(pathname);
   const isFileRequest = hasFileExtension(pathname);
+
+  if (!isFileRequest) {
+    const allSegments = pathname.split("/").filter(Boolean);
+    const pathSegments = locale ? allSegments.slice(1) : allSegments;
+    const effectiveLocale = locale ?? defaultLocale;
+    const externalSegments = productsExternalSegments[effectiveLocale] ?? INTERNAL_PRODUCTS_SEGMENTS;
+
+    if (startsWithSegments(pathSegments, externalSegments)) {
+      const rest = pathSegments.slice(externalSegments.length);
+      const internalSegments = locale
+        ? [effectiveLocale, ...INTERNAL_PRODUCTS_SEGMENTS, ...rest]
+        : [defaultLocale, ...INTERNAL_PRODUCTS_SEGMENTS, ...rest];
+      const internalPath = `/${internalSegments.join("/")}`.replace(/\/+/, "/");
+
+      if (internalPath !== pathname) {
+        const url = request.nextUrl.clone();
+        url.pathname = internalPath;
+        return rewriteWithLocale(request, url, effectiveLocale);
+      }
+    }
+  }
 
   if (isFileRequest) {
     if (locale === defaultLocale) {

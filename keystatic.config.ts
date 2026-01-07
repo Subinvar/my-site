@@ -460,6 +460,7 @@ export default config({
           fields.object(
             {
               id: fields.text({ label: 'ID группы (латиница без пробелов)', validation: { isRequired: true } }),
+              slug: localizedSlug('Slug группы', { isRequired: true }),
               title: localizedText('Заголовок группы', { isRequired: true }),
               description: localizedText('Описание группы', { multiline: true }),
               icon: fields.select({
@@ -597,7 +598,12 @@ export default config({
       path: 'content/products-page/',
       format: { data: 'json' },
       schema: {
+        published: fields.checkbox({ label: 'Опубликовано', defaultValue: true }),
+        slug: localizedSlug('Slug', { isRequired: true }),
+        title: localizedText('Заголовок', { isRequired: true }),
+        description: localizedText('Описание', { multiline: true }),
         seo: localizedSeoGroup(),
+        updatedAt: fields.datetime({ label: 'Обновлено' }),
       },
     }),
     navigation: singleton({

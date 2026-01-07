@@ -151,7 +151,11 @@
           "order": 6,
           "hidden": false
         }
-      ]
+      ],
+      "slug": {
+        "ru": "binders",
+        "en": "binders"
+      }
     },
     {
       "id": "coatings",
@@ -224,7 +228,11 @@
           "order": 2,
           "hidden": false
         }
-      ]
+      ],
+      "slug": {
+        "ru": "coatings",
+        "en": "coatings"
+      }
     },
     {
       "id": "auxiliaries",
@@ -377,7 +385,11 @@
           "order": 6,
           "hidden": false
         }
-      ]
+      ],
+      "slug": {
+        "ru": "auxiliaries",
+        "en": "auxiliaries"
+      }
     }
   ],
   "insights": [

@@ -1,9 +1,23 @@
 {
+  "published": true,
+  "slug": {
+    "ru": "products",
+    "en": "products"
+  },
+  "title": {
+    "ru": "Продукция",
+    "en": "Products"
+  },
+  "description": {
+    "ru": "Продукты и решения Интема Групп для литейного производства.",
+    "en": "Intema Group products and solutions for foundry production."
+  },
   "seo": {
     "title": {},
     "description": {},
     "ogTitle": {},
     "ogDescription": {},
     "ogImage": {}
-  }
+  },
+  "updatedAt": null
 }

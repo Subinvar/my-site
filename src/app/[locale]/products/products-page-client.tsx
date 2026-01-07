@@ -935,89 +935,91 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
         className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
       >
         {/* Навигация по секциям */}
-        <div
-          ref={navSlotRef}
-          className="relative"
-          // Когда включается fixed-fallback — оставляем на месте «слот» той же высоты,
-          // чтобы контент ниже не подпрыгивал.
-          style={isNavFixed && navSlotHeight ? ({ height: `${navSlotHeight}px` } as CSSProperties) : undefined}
-        >
-          <nav
-            ref={navRef}
-            aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
-            className={cn('z-50 py-2')}
-            style={
-              navFixedStyle ??
-              ({ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' } as CSSProperties)
-            }
+        {groups.length > 1 ? (
+          <div
+            ref={navSlotRef}
+            className="relative"
+            // Когда включается fixed-fallback — оставляем на месте «слот» той же высоты,
+            // чтобы контент ниже не подпрыгивал.
+            style={isNavFixed && navSlotHeight ? ({ height: `${navSlotHeight}px` } as CSSProperties) : undefined}
           >
-            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-              {groups.map((group) => {
-                const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
-                const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
-                const isActive = activeSection === group.id;
-                const count = counts.get(group.id) ?? 0;
+            <nav
+              ref={navRef}
+              aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
+              className={cn('z-50 py-2')}
+              style={
+                navFixedStyle ??
+                ({ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' } as CSSProperties)
+              }
+            >
+              <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+                {groups.map((group) => {
+                  const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
+                  const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
+                  const isActive = activeSection === group.id;
+                  const count = counts.get(group.id) ?? 0;
 
-                return (
-                  <a
-                    key={group.id}
-                    href={`#${group.id}`}
-                    onClick={(e) => {
-                      if (isModifiedEvent(e)) return;
-                      e.preventDefault();
+                  return (
+                    <a
+                      key={group.id}
+                      href={`#${group.id}`}
+                      onClick={(e) => {
+                        if (isModifiedEvent(e)) return;
+                        e.preventDefault();
 
-                      const hash = `#${group.id}`;
-                      // Preserve native anchor semantics: deep links, share/copy, and back/forward navigation.
-                      if (window.location.hash !== hash) {
-                        window.history.pushState(null, '', hash);
-                      } else {
-                        window.history.replaceState(null, '', hash);
-                      }
+                        const hash = `#${group.id}`;
+                        // Preserve native anchor semantics: deep links, share/copy, and back/forward navigation.
+                        if (window.location.hash !== hash) {
+                          window.history.pushState(null, '', hash);
+                        } else {
+                          window.history.replaceState(null, '', hash);
+                        }
 
-                      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-                      document
-                        .getElementById(group.id)
-                        ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-                    }}
-                    className={cn(
-                      'flex w-full items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
-                      'bg-background/80 transition-colors duration-150 ease-out',
-                      isActive
-                        ? cn(
-                            'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
-                            'bg-[color:color-mix(in_srgb,var(--color-brand-600)_18%,var(--background))]',
-                            'text-foreground',
-                          )
-                        : cn(
-                            'border border-[var(--header-border)] text-[var(--muted-foreground)]',
-                            'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
-                            'hover:text-foreground',
-                          ),
-                      focusRingBase,
-                    )}
-                  >
-                    <span className="mt-0.5 shrink-0" aria-hidden>
-                      {icon}
-                    </span>
-
-                    <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">{label}</span>
-                    <span
+                        const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+                        document
+                          .getElementById(group.id)
+                          ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+                      }}
                       className={cn(
-                        'ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
+                        'flex w-full items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
+                        'bg-background/80 transition-colors duration-150 ease-out',
                         isActive
-                          ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
-                          : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
+                          ? cn(
+                              'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+                              'bg-[color:color-mix(in_srgb,var(--color-brand-600)_18%,var(--background))]',
+                              'text-foreground',
+                            )
+                          : cn(
+                              'border border-[var(--header-border)] text-[var(--muted-foreground)]',
+                              'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
+                              'hover:text-foreground',
+                            ),
+                        focusRingBase,
                       )}
-                      aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
                     >
-                      {count}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </nav>
-        </div>
+                      <span className="mt-0.5 shrink-0" aria-hidden>
+                        {icon}
+                      </span>
+
+                      <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">{label}</span>
+                      <span
+                        className={cn(
+                          'ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
+                          isActive
+                            ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
+                            : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
+                        )}
+                        aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
+                      >
+                        {count}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </nav>
+          </div>
+        ) : null}
 
         {/* Секции с карточками */}
         <div className="space-y-10 lg:space-y-12">

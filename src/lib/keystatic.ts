@@ -399,7 +399,21 @@ type CatalogPageSingleton = {
 };
 
 type ProductsPageSingleton = {
+  published?: boolean | null;
+  slug?: Localized<string>;
+  title?: Localized<string>;
+  description?: Localized<string>;
   seo?: RawSeoGroup;
+  updatedAt?: string | null;
+};
+
+export type ProductsPageContent = {
+  published: boolean;
+  slugByLocale: Partial<Record<Locale, string>>;
+  title: Partial<Record<Locale, string>>;
+  description: Partial<Record<Locale, string>>;
+  updatedAt: string | null;
+  seo: ResolvedSeo | null;
 };
 
 type NavigationEntry = {
@@ -1892,6 +1906,34 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
     groupLabels,
     seo,
   } satisfies CatalogPageContent;
+}
+
+const DEFAULT_PRODUCTS_PAGE_SLUG = 'products';
+
+export async function getProductsPage(locale: Locale): Promise<ProductsPageContent> {
+  const productsPage = await readProductsPageSingleton();
+  const rawSlugs = mapLocalizedSlugs(productsPage?.slug);
+  const slugByLocale: Partial<Record<Locale, string>> = {};
+
+  for (const candidateLocale of locales) {
+    slugByLocale[candidateLocale] =
+      rawSlugs[candidateLocale] ?? rawSlugs[defaultLocale] ?? DEFAULT_PRODUCTS_PAGE_SLUG;
+  }
+
+  const title = mapLocalizedTextRecord(productsPage?.title);
+  const description = mapLocalizedTextRecord(productsPage?.description);
+  const updatedAt = normalizeDateTime(productsPage?.updatedAt ?? null);
+  const published = productsPage?.published ?? true;
+  const seo = mapResolvedSeo(productsPage?.seo ?? null, locale);
+
+  return {
+    published: Boolean(published),
+    slugByLocale,
+    title,
+    description,
+    updatedAt,
+    seo,
+  } satisfies ProductsPageContent;
 }
 
 export async function getProductsPageSeo(locale: Locale): Promise<ResolvedSeo | null> {

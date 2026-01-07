@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
-import { isLocale, locales, type Locale } from '@/lib/i18n';
-import { getProductsPageSeo, getSite } from '@/lib/keystatic';
+import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
+import { getProductsPage, getSite } from '@/lib/keystatic';
 import { buildPath, findTargetLocale } from '@/lib/paths';
 import {
   HREFLANG_CODE,
@@ -26,6 +26,20 @@ import {
 import { ALLOWED_AUXILIARIES, ALLOWED_BINDER_PROCESSES, ALLOWED_COATING_BASES } from './constants';
 import { sortByOrderAndLabel, toSlug } from './helpers';
 import { ProductsPageClient } from './products-page-client';
+
+const normalizeSlug = (value: string): string => value.trim().replace(/^\/+|\/+$/g, '');
+
+const splitSlug = (value: string): string[] =>
+  normalizeSlug(value)
+    .split('/')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+const resolveProductsBaseSegments = (slugByLocale: Partial<Record<Locale, string>>, locale: Locale): string[] => {
+  const raw = slugByLocale[locale] ?? slugByLocale[defaultLocale] ?? 'products';
+  const normalized = normalizeSlug(raw);
+  return splitSlug(normalized.length ? normalized : 'products');
+};
 
 type PageParams = { locale: Locale };
 
@@ -184,15 +198,22 @@ export default async function ProductsPage({ params }: PageProps) {
   }
 
   const locale = rawLocale;
+  const [shell, productsPage] = await Promise.all([getSiteShellData(locale), getProductsPage(locale)]);
 
-  const shell = await getSiteShellData(locale);
+  if (!productsPage.published) {
+    notFound();
+  }
+
   const taxonomyOptions = getCatalogTaxonomyOptions(locale);
 
   const targetLocale = findTargetLocale(locale);
-  const switcherHref = buildPath(targetLocale, ['products']);
-  const currentPath = buildPath(locale, ['products']);
+  const baseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, locale);
+  const targetBaseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, targetLocale);
+  const switcherHref = buildPath(targetLocale, targetBaseSegments);
+  const currentPath = buildPath(locale, baseSegments);
 
-  const pageTitle = locale === 'ru' ? 'Продукция' : 'Products';
+  const pageTitle =
+    productsPage.title[locale] ?? (locale === 'ru' ? 'Продукция' : 'Products');
 
   const binders: ProductsHubCard[] = taxonomyOptions.processes
     .filter((option) => ALLOWED_BINDER_PROCESSES.includes(option.value))
@@ -205,7 +226,7 @@ export default async function ProductsPage({ params }: PageProps) {
           ? (BINDER_CARD_DESCRIPTIONS_RU[option.value] ?? `Связующие для процесса «${option.label}».`)
           : `Binders for “${option.label}”.`,
       image: CARD_PLACEHOLDER,
-      href: buildPath(locale, ['products', 'binders', toSlug(option.value)]),
+      href: buildPath(locale, [...baseSegments, 'binders', toSlug(option.value)]),
       order: index,
     }));
 
@@ -220,7 +241,7 @@ export default async function ProductsPage({ params }: PageProps) {
           ? (COATING_CARD_DESCRIPTIONS_RU[option.value] ?? `Покрытия на ${option.label.toLowerCase()} основе.`)
           : `${option.label} coatings.`,
       image: CARD_PLACEHOLDER,
-      href: buildPath(locale, ['products', 'coatings', toSlug(option.value)]),
+      href: buildPath(locale, [...baseSegments, 'coatings', toSlug(option.value)]),
       order: index,
     }));
 
@@ -235,13 +256,14 @@ export default async function ProductsPage({ params }: PageProps) {
           ? (AUXILIARY_CARD_DESCRIPTIONS_RU[option.value] ?? `Вспомогательные материалы: ${option.label.toLowerCase()}.`)
           : `Auxiliary materials: ${option.label.toLowerCase()}.`,
       image: CARD_PLACEHOLDER,
-      href: buildPath(locale, ['products', 'auxiliaries', toSlug(option.value)]),
+      href: buildPath(locale, [...baseSegments, 'auxiliaries', toSlug(option.value)]),
       order: index,
     }));
 
   const fallbackGroups: ProductsHubGroup[] = [
     {
       id: 'binders',
+      slug: 'binders',
       title: locale === 'ru' ? 'Связующие системы' : 'Binder systems',
       description:
         locale === 'ru'
@@ -253,6 +275,7 @@ export default async function ProductsPage({ params }: PageProps) {
     },
     {
       id: 'coatings',
+      slug: 'coatings',
       title: locale === 'ru' ? 'Противопригарные покрытия' : 'Coatings',
       description:
         locale === 'ru'
@@ -264,6 +287,7 @@ export default async function ProductsPage({ params }: PageProps) {
     },
     {
       id: 'auxiliaries',
+      slug: 'auxiliaries',
       title: locale === 'ru' ? 'Вспомогательные материалы' : 'Auxiliary materials',
       description:
         locale === 'ru'
@@ -311,11 +335,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const locale = rawLocale;
-  const [site, pageSeo] = await Promise.all([getSite(locale), getProductsPageSeo(locale)]);
+  const [site, productsPage] = await Promise.all([getSite(locale), getProductsPage(locale)]);
+
+  if (!productsPage.published) {
+    return {};
+  }
+
+  const pageSeo = productsPage.seo;
 
   const slugMap: Partial<Record<Locale, string>> = {};
-  for (const candidate of locales) {
-    slugMap[candidate] = buildPath(candidate, ['products']);
+  for (const candidateLocale of locales) {
+    const baseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, candidateLocale);
+    slugMap[candidateLocale] = buildPath(candidateLocale, baseSegments);
   }
 
   const alternates = buildAlternates({
@@ -324,11 +355,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     canonicalBase: site.seo.canonicalBase,
   });
 
-  const fallbackTitle = locale === 'ru' ? 'Продукция' : 'Products';
+  const fallbackTitle = productsPage.title[locale] ?? (locale === 'ru' ? 'Продукция' : 'Products');
   const fallbackDescription =
-    locale === 'ru'
+    productsPage.description[locale] ??
+    (locale === 'ru'
       ? 'Продукты и решения Интема Групп для литейного производства.'
-      : 'Intema Group products and solutions for foundry production.';
+      : 'Intema Group products and solutions for foundry production.');
 
   const merged = mergeSeo({
     site: site.seo,
