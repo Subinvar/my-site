@@ -351,14 +351,8 @@ export default config({
               }),
               {
                 label: 'Локации',
-                itemLabel: (item) =>
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
-                  ((item as any)?.title?.ru as string | undefined) ||
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
-                  ((item as any)?.title?.en as string | undefined) ||
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
-                  ((item as any)?.id as string | undefined) ||
-                  'Локация',
+                itemLabel: (item: { title?: Record<string, string>; id?: string } | null) =>
+                  item?.title?.ru || item?.title?.en || item?.id || 'Локация',
               }
             ),
 

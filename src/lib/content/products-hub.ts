@@ -72,6 +72,7 @@ export type ProductsHubGroupSitemapEntry = {
   id: string;
   order: number;
   slugByLocale: Partial<Record<Locale, string>>;
+  hidden: boolean;
 };
 
 export type ProductsHubInsight = {
@@ -209,6 +210,7 @@ export const getProductsHubGroupsForSitemap = cache(async (): Promise<ProductsHu
       id,
       order: normalizeOrder(group.order, index),
       slugByLocale,
+      hidden: Boolean(group.hidden),
     });
   });
 
