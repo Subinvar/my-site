@@ -183,5 +183,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   });
 
-  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries];
+  const productsEntries = createSitemapEntries(baseUrl, {
+    collection: 'pages',
+    slugByLocale: {
+      ru: 'products',
+      en: 'products',
+    },
+  });
+
+  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries, ...productsEntries];
 }

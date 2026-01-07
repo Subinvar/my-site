@@ -452,7 +452,7 @@ export default config({
       },
     }),
     productsHub: singleton({
-      label: 'Продукция',
+      label: 'Контент',
       path: 'content/products-hub/',
       format: { data: 'json' },
       schema: {
@@ -590,6 +590,14 @@ export default config({
             }) => value?.title?.ru || value?.title?.en || 'Карточка',
           }
         ),
+      },
+    }),
+    productsPage: singleton({
+      label: 'Настройка страницы',
+      path: 'content/products-page/',
+      format: { data: 'json' },
+      schema: {
+        seo: localizedSeoGroup(),
       },
     }),
     navigation: singleton({
@@ -1056,7 +1064,8 @@ export default config({
         'catalogAuxiliaries',
         'catalog',
       ],
-      'Контент': ['home', 'productsHub', 'pages', 'posts', 'documents'],
+      'Контент': ['home', 'pages', 'posts', 'documents'],
+      'Продукция': ['productsHub', 'productsPage'],
       'Настройки': [
         'site',
         'navigation',

@@ -3,10 +3,19 @@ import { notFound } from 'next/navigation';
 
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
 import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
-import { isLocale, type Locale } from '@/lib/i18n';
+import { isLocale, locales, type Locale } from '@/lib/i18n';
+import { getProductsPageSeo, getSite } from '@/lib/keystatic';
 import { buildPath, findTargetLocale } from '@/lib/paths';
+import {
+  HREFLANG_CODE,
+  OPEN_GRAPH_LOCALE,
+  buildAlternates,
+  mergeSeo,
+  resolveAlternateOgLocales,
+  resolveOpenGraphImage,
+  resolveRobotsMeta,
+} from '@/lib/seo';
 import {
   getProductsHubContent,
   type ProductsHubCard,
@@ -301,6 +310,61 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
 
-  // SEO берём из Keystatic-страницы "products" (контент можно менять без правок кода).
-  return resolveContentPageMetadata(rawLocale, 'products');
+  const locale = rawLocale;
+  const [site, pageSeo] = await Promise.all([getSite(locale), getProductsPageSeo(locale)]);
+
+  const slugMap: Partial<Record<Locale, string>> = {};
+  for (const candidate of locales) {
+    slugMap[candidate] = buildPath(candidate, ['products']);
+  }
+
+  const alternates = buildAlternates({
+    locale,
+    slugMap,
+    canonicalBase: site.seo.canonicalBase,
+  });
+
+  const fallbackTitle = locale === 'ru' ? 'Продукция' : 'Products';
+  const fallbackDescription =
+    locale === 'ru'
+      ? 'Продукты и решения Интема Групп для литейного производства.'
+      : 'Intema Group products and solutions for foundry production.';
+
+  const merged = mergeSeo({
+    site: site.seo,
+    page: pageSeo,
+    defaults: { title: fallbackTitle, description: fallbackDescription },
+  });
+
+  const canonicalUrl = merged.canonicalOverride ?? alternates.canonical;
+  const alternatesData: Metadata['alternates'] = {
+    languages: alternates.languages,
+  };
+  if (canonicalUrl) {
+    alternatesData.canonical = canonicalUrl;
+  }
+
+  const currentHrefLang = HREFLANG_CODE[locale];
+  const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
+  const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
+  const alternateOgLocales = resolveAlternateOgLocales(locale, slugMap);
+  const descriptionFallback = merged.description ?? undefined;
+  const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
+  const ogTitleFallback = merged.ogTitle ?? merged.title ?? fallbackTitle;
+
+  return {
+    title: merged.title ?? fallbackTitle,
+    description: descriptionFallback,
+    alternates: alternatesData,
+    robots: resolveRobotsMeta(site.robots),
+    openGraph: {
+      type: 'website',
+      locale: OPEN_GRAPH_LOCALE[locale],
+      url: preferredUrl,
+      title: ogTitleFallback,
+      description: ogDescriptionFallback,
+      alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  } satisfies Metadata;
 }

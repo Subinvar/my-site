@@ -394,16 +394,16 @@
       },
       "details": [
         {
-          "ru": "• Начинаем с уточнения исходных данных: процесс, оборудование, параметры смеси, текущие дефекты и целевой результат.",
-          "en": "• We start by clarifying the baseline: process, equipment, sand mix parameters, current defects, and target outcome."
+          "ru": "Начинаем с уточнения исходных данных: процесс, оборудование, параметры смеси, текущие дефекты и целевой результат.",
+          "en": "We start by clarifying the baseline: process, equipment, sand mix parameters, current defects, and target outcome."
         },
         {
-          "ru": "• На основе информации предлагаем 1–3 варианта решения и объясняем логику выбора: что даёт эффект, где риски и как их закрываем.",
-          "en": "• Based on the inputs, we propose 1–3 options and explain the rationale: expected effect, risks, and how we mitigate them."
+          "ru": "На основе информации предлагаем 1–3 варианта решения и объясняем логику выбора: что даёт эффект, где риски и как их закрываем.",
+          "en": "Based on the inputs, we propose 1–3 options and explain the rationale: expected effect, risks, and how we mitigate them."
         },
         {
-          "ru": "• Итогом вы получаете конкретную рекомендацию: номенклатура, режимы применения, контрольные параметры и комплект сопроводительных материалов.",
-          "en": "• You receive a clear recommendation: product list, application parameters, control points, and a supporting documentation pack."
+          "ru": "Итогом вы получаете конкретную рекомендацию: номенклатура, режимы применения, контрольные параметры и комплект сопроводительных материалов.",
+          "en": "You receive a clear recommendation: product list, application parameters, control points, and a supporting documentation pack."
         }
       ],
       "order": 1,
@@ -422,16 +422,16 @@
       },
       "details": [
         {
-          "ru": "• Готовим план испытаний с понятными критериями: что сравниваем, какие параметры фиксируем и по каким признакам принимаем решение.",
-          "en": "• We prepare a trial plan with clear criteria: what we compare, which parameters we record, and how we make the decision."
+          "ru": "Готовим план испытаний с понятными критериями: что сравниваем, какие параметры фиксируем и по каким признакам принимаем решение.",
+          "en": "We prepare a trial plan with clear criteria: what we compare, which parameters we record, and how we make the decision."
         },
         {
-          "ru": "• На площадке технолог сопровождает внедрение: настройка режимов, обучение персонала, контроль первых партий и корректировка по факту.",
-          "en": "• On site, our technologist supports implementation: setting up parameters, training personnel, monitoring first runs, and adjusting in real time."
+          "ru": "На площадке технолог сопровождает внедрение: настройка режимов, обучение персонала, контроль первых партий и корректировка по факту.",
+          "en": "On site, our technologist supports implementation: setting up parameters, training personnel, monitoring first runs, and adjusting in real time."
         },
         {
-          "ru": "• После запуска закрепляем результат: рекомендации для серии и поддержка, чтобы технология работала стабильно без “ручного управления”.",
-          "en": "• After start-up, we lock in the result: guidelines for serial production and ongoing support so the technology runs steadily without constant manual intervention."
+          "ru": "После запуска закрепляем результат: рекомендации для серии и поддержка, чтобы технология работала стабильно без “ручного управления”.",
+          "en": "After start-up, we lock in the result: guidelines for serial production and ongoing support so the technology runs steadily without constant manual intervention."
         }
       ],
       "order": 2,
@@ -450,16 +450,16 @@
       },
       "details": [
         {
-          "ru": "• Ключевые показатели продукции регламентированы и контролируются; каждая партия имеет идентификацию и прозрачную прослеживаемость.",
-          "en": "• Key product indicators are specified and controlled; each batch is identified and fully traceable."
+          "ru": "Ключевые показатели продукции регламентированы и контролируются; каждая партия имеет идентификацию и прозрачную прослеживаемость.",
+          "en": "Key product indicators are specified and controlled; each batch is identified and fully traceable."
         },
         {
-          "ru": "• Мы следим за стабильностью поставок и совместимостью партий, чтобы процесс не менялся при переходе на новую партию материала.",
-          "en": "• We monitor supply consistency and batch compatibility, so the process does not change when switching to a new batch."
+          "ru": "Мы следим за стабильностью поставок и совместимостью партий, чтобы процесс не менялся при переходе на новую партию материала.",
+          "en": "We monitor supply consistency and batch compatibility, so the process does not change when switching to a new batch."
         },
         {
-          "ru": "• При любых отклонениях оперативно подключаемся: анализ причин, корректирующие действия и настройка режима под устойчивый результат.",
-          "en": "• If deviations occur, we respond quickly: root-cause analysis, corrective actions, and parameter tuning for a stable outcome."
+          "ru": "При любых отклонениях оперативно подключаемся: анализ причин, корректирующие действия и настройка режима под устойчивый результат.",
+          "en": "If deviations occur, we respond quickly: root-cause analysis, corrective actions, and parameter tuning for a stable outcome."
         }
       ],
       "order": 3,
@@ -478,16 +478,16 @@
       },
       "details": [
         {
-          "ru": "• Подбираем материалы и режимы под критичные дефекты и особенности процесса, чтобы снизить вероятность брака на готовом литье.",
-          "en": "• We select materials and settings for critical defects and process specifics to reduce the risk of scrap in finished castings."
+          "ru": "Подбираем материалы и режимы под критичные дефекты и особенности процесса, чтобы снизить вероятность брака на готовом литье.",
+          "en": "We select materials and settings for critical defects and process specifics to reduce the risk of scrap in finished castings."
         },
         {
-          "ru": "• Оптимизируем технологичность: расход, нанесение, сушку, дозировки и стабильность работы — чтобы уменьшить передел и мехобработку.",
-          "en": "• We optimize processability: consumption, application, drying, dosing, and operating stability—to reduce rework and machining."
+          "ru": "Оптимизируем технологичность: расход, нанесение, сушку, дозировки и стабильность работы — чтобы уменьшить передел и мехобработку.",
+          "en": "We optimize processability: consumption, application, drying, dosing, and operating stability—to reduce rework and machining."
         },
         {
-          "ru": "• Эффект подтверждаем показателями: доля брака, расход материалов, время операций и затраты на передел — экономика становится измеримой.",
-          "en": "• We confirm the effect with metrics: scrap rate, material consumption, operation time, and rework costs—making the economics measurable."
+          "ru": "Эффект подтверждаем показателями: доля брака, расход материалов, время операций и затраты на передел — экономика становится измеримой.",
+          "en": "We confirm the effect with metrics: scrap rate, material consumption, operation time, and rework costs—making the economics measurable."
         }
       ],
       "order": 4,
@@ -506,16 +506,16 @@
       },
       "details": [
         {
-          "ru": "• Мы работаем в партнёрстве с Shengquan Group и Cavenaghi S.p.A., используя их опыт и наработки в связующих и покрытиях.",
-          "en": "• We work in partnership with Shengquan Group and Cavenaghi S.p.A., leveraging their expertise and R&D in binders and coatings."
+          "ru": "Мы работаем в партнёрстве с Shengquan Group и Cavenaghi S.p.A., используя их опыт и наработки в связующих и покрытиях.",
+          "en": "We work in partnership with Shengquan Group and Cavenaghi S.p.A., leveraging their expertise and R&D in binders and coatings."
         },
         {
-          "ru": "• Важно не просто “привезти продукт”, а адаптировать решение под условия предприятия: оборудование, режимы, сырьё и требования к документации.",
-          "en": "• We do more than supply a product: we adapt the solution to your conditions—equipment, operating modes, raw materials, and documentation requirements."
+          "ru": "Важно не просто “привезти продукт”, а адаптировать решение под условия предприятия: оборудование, режимы, сырьё и требования к документации.",
+          "en": "We do more than supply a product: we adapt the solution to your conditions—equipment, operating modes, raw materials, and documentation requirements."
         },
         {
-          "ru": "• Поэтому вы получаете современную технологию с понятными рекомендациями и поддержкой специалистов, отвечающих за итоговый результат.",
-          "en": "• As a result, you get modern technology with clear guidance and support from specialists accountable for the final outcome."
+          "ru": "Поэтому вы получаете современную технологию с понятными рекомендациями и поддержкой специалистов, отвечающих за итоговый результат.",
+          "en": "As a result, you get modern technology with clear guidance and support from specialists accountable for the final outcome."
         }
       ],
       "order": 5,
@@ -534,16 +534,16 @@
       },
       "details": [
         {
-          "ru": "• По запросу предоставляем паспорта безопасности, инструкции по применению и рекомендации по хранению и обращению с материалами.",
-          "en": "• Upon request, we provide Safety Data Sheets, application instructions, and guidance for storage and handling."
+          "ru": "По запросу предоставляем паспорта безопасности, инструкции по применению и рекомендации по хранению и обращению с материалами.",
+          "en": "Upon request, we provide Safety Data Sheets, application instructions, and guidance for storage and handling."
         },
         {
-          "ru": "• Помогаем выбрать состав и режимы под ваш участок, чтобы снизить неприятные факторы и обеспечить комфортные условия работы персонала.",
-          "en": "• We help choose formulations and parameters for your site to reduce unpleasant factors and improve working comfort."
+          "ru": "Помогаем выбрать состав и режимы под ваш участок, чтобы снизить неприятные факторы и обеспечить комфортные условия работы персонала.",
+          "en": "We help choose formulations and parameters for your site to reduce unpleasant factors and improve working comfort."
         },
         {
-          "ru": "• Консультируем по практическим мерам безопасности: СИЗ, вентиляция, порядок работ, хранение и корректная утилизация отходов.",
-          "en": "• We advise on practical safety measures: PPE, ventilation, work procedures, storage, and proper waste disposal."
+          "ru": "Консультируем по практическим мерам безопасности: СИЗ, вентиляция, порядок работ, хранение и корректная утилизация отходов.",
+          "en": "We advise on practical safety measures: PPE, ventilation, work procedures, storage, and proper waste disposal."
         }
       ],
       "order": 6,
@@ -562,16 +562,16 @@
       },
       "details": [
         {
-          "ru": "• В линейке есть решения для ключевых литейных процессов, чтобы собрать технологию без разрозненных поставщиков и несостыковок.",
-          "en": "• Our range includes solutions for key foundry processes, so you can build a coherent technology without mismatched suppliers."
+          "ru": "В линейке есть решения для ключевых литейных процессов, чтобы собрать технологию без разрозненных поставщиков и несостыковок.",
+          "en": "Our range includes solutions for key foundry processes, so you can build a coherent technology without mismatched suppliers."
         },
         {
-          "ru": "• Мы подбираем материалы как систему: совместимость, режимы, расход, влияние на качество и последующую обработку отливок.",
-          "en": "• We select materials as a system: compatibility, operating parameters, consumption, impact on quality, and subsequent casting finishing."
+          "ru": "Мы подбираем материалы как систему: совместимость, режимы, расход, влияние на качество и последующую обработку отливок.",
+          "en": "We select materials as a system: compatibility, operating parameters, consumption, impact on quality, and subsequent casting finishing."
         },
         {
-          "ru": "• Если нужной позиции нет в каталоге, предложим аналог, подберём альтернативу или проработаем индивидуальное решение под ваш запрос.",
-          "en": "• If an item is not listed in the catalog, we can propose an equivalent, offer an alternative, or develop a tailored option for your request."
+          "ru": "Если нужной позиции нет в каталоге, предложим аналог, подберём альтернативу или проработаем индивидуальное решение под ваш запрос.",
+          "en": "If an item is not listed in the catalog, we can propose an equivalent, offer an alternative, or develop a tailored option for your request."
         }
       ],
       "order": 7,
@@ -590,16 +590,16 @@
       },
       "details": [
         {
-          "ru": "• Подбираем удобный формат снабжения: плановые отгрузки, резервирование, а при необходимости — ускоренный сценарий поставки.",
-          "en": "• We set a convenient supply format: scheduled shipments, stock reservation, and—if needed—an expedited delivery scenario."
+          "ru": "Подбираем удобный формат снабжения: плановые отгрузки, резервирование, а при необходимости — ускоренный сценарий поставки.",
+          "en": "We set a convenient supply format: scheduled shipments, stock reservation, and—if needed—an expedited delivery scenario."
         },
         {
-          "ru": "• Берём на себя организацию логистики и сопровождающие документы, чтобы поставка проходила предсказуемо для снабжения и бухгалтерии.",
-          "en": "• We handle logistics and accompanying documents, so deliveries are predictable for purchasing and accounting."
+          "ru": "Берём на себя организацию логистики и сопровождающие документы, чтобы поставка проходила предсказуемо для снабжения и бухгалтерии.",
+          "en": "We handle logistics and accompanying documents, so deliveries are predictable for purchasing and accounting."
         },
         {
-          "ru": "• Согласуем условия транспортировки и хранения, чтобы продукция приезжала в нужном состоянии и была готова к применению.",
-          "en": "• We agree transport and storage conditions to ensure the product arrives in the right condition and is ready for use."
+          "ru": "Согласуем условия транспортировки и хранения, чтобы продукция приезжала в нужном состоянии и была готова к применению.",
+          "en": "We agree transport and storage conditions to ensure the product arrives in the right condition and is ready for use."
         }
       ],
       "order": 8,
@@ -618,16 +618,16 @@
       },
       "details": [
         {
-          "ru": "• В проектах уровня ГОЗ важны дисциплина поставок, точность документов и стабильность качества — эти процессы у нас выстроены.",
-          "en": "• In GOZ-level projects, delivery discipline, document accuracy, and consistent quality are critical—these processes are in place."
+          "ru": "В проектах уровня ГОЗ важны дисциплина поставок, точность документов и стабильность качества — эти процессы у нас выстроены.",
+          "en": "In GOZ-level projects, delivery discipline, document accuracy, and consistent quality are critical—these processes are in place."
         },
         {
-          "ru": "• Обеспечиваем прослеживаемость партий и соблюдение согласованных параметров, чтобы материал уверенно проходил входной контроль и производство.",
-          "en": "• We ensure batch traceability and compliance with agreed parameters, so materials pass incoming inspection and production confidently."
+          "ru": "Обеспечиваем прослеживаемость партий и соблюдение согласованных параметров, чтобы материал уверенно проходил входной контроль и производство.",
+          "en": "We ensure batch traceability and compliance with agreed parameters, so materials pass incoming inspection and production confidently."
         },
         {
-          "ru": "• Работаем строго по обязательствам: сроки, спецификации, аккуратность в коммуникациях и техническая поддержка на всём цикле поставки.",
-          "en": "• We work strictly to commitments: timelines, specifications, disciplined communication, and technical support throughout the supply cycle."
+          "ru": "Работаем строго по обязательствам: сроки, спецификации, аккуратность в коммуникациях и техническая поддержка на всём цикле поставки.",
+          "en": "We work strictly to commitments: timelines, specifications, disciplined communication, and technical support throughout the supply cycle."
         }
       ],
       "order": 9,

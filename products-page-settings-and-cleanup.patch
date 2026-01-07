@@ -1,0 +1,5184 @@
+diff --git a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index.json b/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index.json
+deleted file mode 100644
+index c1098d1..0000000
+--- a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index.json
++++ /dev/null
+@@ -1,50 +0,0 @@
+-{
+-  "id": "products",
+-  "published": true,
+-  "slug": {
+-    "ru": "products",
+-    "en": "products"
+-  },
+-  "title": {
+-    "ru": "Продукция",
+-    "en": "Products"
+-  },
+-  "description": {
+-    "ru": "Продукты и решения Интема Групп для литейного производства.",
+-    "en": "Intema Group products and solutions for foundry production."
+-  },
+-  "excerpt": {
+-    "ru": "Каталог литейных связующих систем, противопригарных покрытий и вспомогательных материалов.",
+-    "en": "Catalogue of foundry binder systems, release coatings, and auxiliary materials."
+-  },
+-  "content": {},
+-  "hero": {
+-    "image": "/uploads/Продукция/hero/image.jpg",
+-    "alt": {
+-      "ru": "Ассортимент материалов Интема Групп для литейного производства",
+-      "en": "Intema Group product range for foundry production"
+-    }
+-  },
+-  "seo": {
+-    "title": {
+-      "ru": "Продукция Интема Групп",
+-      "en": "Intema Group Products"
+-    },
+-    "description": {
+-      "ru": "Литейные связующие системы, противопригарные покрытия и материалы для стабильного литья.",
+-      "en": "Foundry binder systems, release coatings, and materials for stable casting."
+-    },
+-    "ogTitle": {
+-      "ru": "Материалы и решения Интема Групп",
+-      "en": "Intema Group materials and solutions"
+-    },
+-    "ogDescription": {
+-      "ru": "Готовые решения под задачи литейных цехов и техническая поддержка внедрения.",
+-      "en": "Ready-made solutions for foundry teams with implementation support."
+-    },
+-    "ogImage": {
+-      "alt": "Продукция Интема Групп"
+-    }
+-  },
+-  "updatedAt": "2025-11-24T12:00:00.000Z"
+-}
+diff --git a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/en.mdoc b/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/en.mdoc
+deleted file mode 100644
+index fd983ac..0000000
+--- a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/en.mdoc
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# Intema Group products
+-
+-Intema Group supplies binder systems, foundry coatings, and auxiliary materials for metal casting. We help with core and mould mixes, casting surface quality, and keeping the process stable.
+-
+-## Binder systems
+-
+-- **Processes:** cold-box (amine / CO₂), alpha-set, furan and resol systems, pep-set, and liquid-sodium-silicate processes.
+-- **Benefits:** consistent strength of cores and moulds, predictable shake-out, lower scrap from gas and mechanical defects.
+-- **Where they fit:** for new lines and for replacing existing systems with minimal process changes.
+-
+-## Foundry coatings
+-
+-- **Types:** alcohol and water-based coatings with zircon, aluminosilicate, graphite, magnesite, or chromite fillers.
+-- **Benefits:** clean casting surfaces, fewer burn-on defects, less manual grinding.
+-- **Where used:** large and critical castings, non-ferrous casting, and areas with higher surface requirements.
+-
+-## Auxiliary materials
+-
+-- **For tooling:** release agents for patterns and mould boxes, sealing cords, repair pastes.
+-- **For melting and pouring:** exothermic and covering compounds, modifiers for ductile and grey iron, additives that stabilise the process.
+-- **For maintenance:** cleaning agents and service materials to keep equipment running consistently.
+-
+-## Go to the catalogue
+-
+-See the full product list with filters by process, metal, and material type in the [product catalogue](/en/catalog).
+diff --git a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/ru.mdoc b/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/ru.mdoc
+deleted file mode 100644
+index d6248d6..0000000
+--- a/content/pages/#U041f#U0440#U043e#U0434#U0443#U043a#U0446#U0438#U044f/index/content/ru.mdoc
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# Продукция Интема Групп
+-
+-Интема Групп поставляет литейные связующие системы, противопригарные покрытия и вспомогательные материалы для литейных производств. Мы закрываем задачи по формовочным и стержневым смесям, чистоте отливок и стабильности процесса.
+-
+-## Литейные связующие
+-
+-- **Процессы:** холодный ящик (amine / CO₂), альфа-сет, фурановые и резольные системы, пеп-сет, процессы на жидком стекле.
+-- **Что дают:** стабильная прочность форм и стержней, предсказуемая выбиваемость, снижение брака по газовым и механическим дефектам.
+-- **Где удобны:** как при запуске новых линий, так и при замене существующих систем с минимальными изменениями в технологии.
+-
+-## Противопригарные покрытия
+-
+-- **Типы:** спиртовые и водные покрытия с наполнителями на основе циркона, алюмосиликата, графита, магнезита и хромита.
+-- **Что дают:** чистая поверхность отливок, уменьшение пригаров, сокращение объёма ручной зачистки.
+-- **Где применяются:** крупные и ответственные отливки, цветное литьё, участки с повышенными требованиями к поверхности.
+-
+-## Вспомогательные материалы
+-
+-- **Для оснастки:** разделительные составы для моделей и опок, уплотнительные шнуры, ремонтные пасты.
+-- **Для плавки и разливки:** экзотермические и покровные смеси, модификаторы для ВЧ и ШГ, добавки для стабилизации процесса.
+-- **Для обслуживания:** очищающие составы и сервисные материалы, помогающие поддерживать стабильную работу оборудования.
+-
+-## Перейти в каталог
+-
+-Полный перечень продуктов с фильтрами по процессу, металлу и типу материала — в [каталоге продукции](/catalog).
+diff --git a/keystatic.config.ts b/keystatic.config.ts
+index 9429e56..b5c76e0 100644
+--- a/keystatic.config.ts
++++ b/keystatic.config.ts
+@@ -452,7 +452,7 @@ export default config({
+       },
+     }),
+     productsHub: singleton({
+-      label: 'Продукция',
++      label: 'Контент',
+       path: 'content/products-hub/',
+       format: { data: 'json' },
+       schema: {
+@@ -592,6 +592,14 @@ export default config({
+         ),
+       },
+     }),
++    productsPage: singleton({
++      label: 'Настройка страницы',
++      path: 'content/products-page/',
++      format: { data: 'json' },
++      schema: {
++        seo: localizedSeoGroup(),
++      },
++    }),
+     navigation: singleton({
+       label: 'Навигация',
+       path: 'content/navigation/',
+@@ -1056,7 +1064,8 @@ export default config({
+         'catalogAuxiliaries',
+         'catalog',
+       ],
+-      'Контент': ['home', 'productsHub', 'pages', 'posts', 'documents'],
++      'Контент': ['home', 'pages', 'posts', 'documents'],
++      'Продукция': ['productsHub', 'productsPage'],
+       'Настройки': [
+         'site',
+         'navigation',
+diff --git a/src/app/(site)/shared/catalog-listing.tsx b/src/app/(site)/shared/catalog-listing.tsx
+deleted file mode 100644
+index 60863b6..0000000
+--- a/src/app/(site)/shared/catalog-listing.tsx
++++ /dev/null
+@@ -1,115 +0,0 @@
+-'use client';
+-
+-import { useMemo } from 'react';
+-import { useSearchParams } from 'next/navigation';
+-
+-import { applyFilters, parseFilters, type FilterState } from './catalog-filtering';
+-import { buildPath } from '@/lib/paths';
+-import { CatalogItemCard, type AttributeLabels, type CatalogValueLabels } from './ui/catalog-item-card';
+-import type { CatalogTaxonomyOptions } from './filter-controls';
+-import type { CatalogTaxonomyValues } from '@/lib/catalog/constants';
+-import type { CatalogListItem } from '@/lib/keystatic';
+-import type { Locale } from '@/lib/i18n';
+-
+-const ATTRIBUTE_LABELS: Record<Locale, AttributeLabels> = {
+-  ru: {
+-    category: 'Категория',
+-    process: 'Процесс',
+-    base: 'Основа',
+-    filler: 'Наполнитель',
+-    auxiliary: 'Вспомогательные',
+-    metal: 'Металл',
+-  },
+-  en: {
+-    category: 'Category',
+-    process: 'Process',
+-    base: 'Base',
+-    filler: 'Filler',
+-    auxiliary: 'Auxiliary supplies',
+-    metal: 'Metal',
+-  },
+-};
+-
+-function toRecord(params: URLSearchParams): Record<string, string | string[]> {
+-  const record: Record<string, string | string[]> = {};
+-  params.forEach((value, key) => {
+-    const current = record[key];
+-    if (Array.isArray(current)) {
+-      record[key] = [...current, value];
+-    } else if (typeof current === 'string') {
+-      record[key] = [current, value];
+-    } else {
+-      record[key] = value;
+-    }
+-  });
+-  return record;
+-}
+-
+-type CatalogListingProps = {
+-  items: CatalogListItem[];
+-  initialFilters: FilterState;
+-  emptyStateMessage: string;
+-  detailLabel: string;
+-  locale: Locale;
+-  taxonomy: CatalogTaxonomyValues;
+-  taxonomyOptions: CatalogTaxonomyOptions;
+-};
+-
+-export function CatalogListing({
+-  items,
+-  initialFilters,
+-  emptyStateMessage,
+-  detailLabel,
+-  locale,
+-  taxonomy,
+-  taxonomyOptions,
+-}: CatalogListingProps) {
+-  const searchParams = useSearchParams();
+-  const filters = useMemo(() => {
+-    if (!searchParams) {
+-      return initialFilters;
+-    }
+-    return parseFilters(toRecord(searchParams), taxonomy);
+-  }, [initialFilters, searchParams, taxonomy]);
+-
+-  const filteredItems = useMemo(() => applyFilters(items, filters, taxonomy), [items, filters, taxonomy]);
+-  const attributeLabels = ATTRIBUTE_LABELS[locale];
+-  const valueLabels = useMemo(() => createValueLabels(taxonomyOptions), [taxonomyOptions]);
+-
+-  if (filteredItems.length === 0) {
+-    return (
+-      <p className="rounded-lg border border-dashed border-border bg-background p-6 text-sm text-muted-foreground">
+-        {emptyStateMessage}
+-      </p>
+-    );
+-  }
+-
+-  return (
+-    <div className="space-y-4">
+-      <ul className="grid gap-8 md:grid-cols-2">
+-        {filteredItems.map((item) => (
+-          <li key={`${item.id}:${item.slug}`}>
+-            <CatalogItemCard
+-              item={item}
+-              detailHref={buildPath(locale, ['catalog', item.slug])}
+-              detailLabel={detailLabel}
+-              attributeLabels={attributeLabels}
+-              valueLabels={valueLabels}
+-            />
+-          </li>
+-        ))}
+-      </ul>
+-    </div>
+-  );
+-}
+-
+-function createValueLabels(options: CatalogTaxonomyOptions): CatalogValueLabels {
+-  return {
+-    category: new Map(options.categories.map((entry) => [entry.value, entry.label])),
+-    process: new Map(options.processes.map((entry) => [entry.value, entry.label])),
+-    base: new Map(options.bases.map((entry) => [entry.value, entry.label])),
+-    filler: new Map(options.fillers.map((entry) => [entry.value, entry.label])),
+-    metal: new Map(options.metals.map((entry) => [entry.value, entry.label])),
+-    auxiliary: new Map(options.auxiliaries.map((entry) => [entry.value, entry.label])),
+-  } satisfies CatalogValueLabels;
+-}
+diff --git a/src/app/(site)/shared/header-contact-layout-context.tsx b/src/app/(site)/shared/header-contact-layout-context.tsx
+deleted file mode 100644
+index d226620..0000000
+--- a/src/app/(site)/shared/header-contact-layout-context.tsx
++++ /dev/null
+@@ -1,38 +0,0 @@
+-"use client";
+-
+-import { createContext, useContext, type ReactNode } from "react";
+-
+-export type HeaderContactLayoutState = {
+-  /** Burger-режим активен: либо <lg, либо nav не влез. */
+-  isBurgerMode: boolean;
+-
+-  /**
+-   * Второй порог: слишком узко, чтобы держать телефон + Telegram рядом с кнопками снизу.
+-   * Тогда телефон переносим в верхний ряд (к ThemeToggle), а Telegram уходит в бургер.
+-   */
+-  isBurgerContactsNarrow: boolean;
+-};
+-
+-const HeaderContactLayoutContext = createContext<HeaderContactLayoutState | null>(null);
+-
+-export function HeaderContactLayoutProvider({
+-  value,
+-  children,
+-}: {
+-  value: HeaderContactLayoutState;
+-  children: ReactNode;
+-}) {
+-  return (
+-    <HeaderContactLayoutContext.Provider value={value}>
+-      {children}
+-    </HeaderContactLayoutContext.Provider>
+-  );
+-}
+-
+-export function useHeaderContactLayout(): HeaderContactLayoutState {
+-  // Вне провайдера ведём себя как «десктоп без бургера» — безопасный дефолт.
+-  return (
+-    useContext(HeaderContactLayoutContext) ??
+-    ({ isBurgerMode: false, isBurgerContactsNarrow: false } as const)
+-  );
+-}
+diff --git a/src/app/(site)/shared/hooks/hooks.test.tsx b/src/app/(site)/shared/hooks/hooks.test.tsx
+deleted file mode 100644
+index 26c3a8c..0000000
+--- a/src/app/(site)/shared/hooks/hooks.test.tsx
++++ /dev/null
+@@ -1,161 +0,0 @@
+-import assert from "node:assert/strict";
+-import test from "node:test";
+-import React, { useRef } from "react";
+-import { act, create } from "react-test-renderer";
+-
+-import { useIntersection } from "./use-intersection";
+-import { useScrollPosition } from "./use-scroll-position";
+-import { useWindowResize } from "./use-window-resize";
+-
+-type Listener = { handler: EventListener; options?: AddEventListenerOptions };
+-
+-class MockEventTarget {
+-  private listeners = new Map<string, Set<Listener>>();
+-
+-  addEventListener(type: string, handler: EventListener, options?: AddEventListenerOptions) {
+-    const set = this.listeners.get(type) ?? new Set<Listener>();
+-    set.add({ handler, options });
+-    this.listeners.set(type, set);
+-  }
+-
+-  removeEventListener(type: string, handler: EventListener) {
+-    const set = this.listeners.get(type);
+-    if (!set) return;
+-    for (const entry of set) {
+-      if (entry.handler === handler) {
+-        set.delete(entry);
+-      }
+-    }
+-    if (set.size === 0) this.listeners.delete(type);
+-  }
+-
+-  dispatch(type: string, event: Event) {
+-    const set = this.listeners.get(type);
+-    if (!set) return;
+-    for (const entry of set) {
+-      entry.handler(event);
+-    }
+-  }
+-
+-  count(type: string) {
+-    return this.listeners.get(type)?.size ?? 0;
+-  }
+-}
+-
+-class MockIntersectionObserver {
+-  static lastInstance: MockIntersectionObserver | undefined;
+-
+-  public observed: Element[] = [];
+-  public disconnectCalls = 0;
+-
+-  private readonly callback: IntersectionObserverCallback;
+-
+-  constructor(callback: IntersectionObserverCallback) {
+-    this.callback = callback;
+-    MockIntersectionObserver.lastInstance = this;
+-  }
+-
+-  observe = (element: Element) => {
+-    this.observed.push(element);
+-  };
+-
+-  disconnect = () => {
+-    this.disconnectCalls += 1;
+-  };
+-
+-  trigger(entries: IntersectionObserverEntry[]) {
+-    this.callback(entries, this as unknown as IntersectionObserver);
+-  }
+-}
+-
+-test("useWindowResize снимает подписку на unmount", async () => {
+-  const target = new MockEventTarget();
+-  let calls = 0;
+-
+-  function Component() {
+-    useWindowResize(() => {
+-      calls += 1;
+-    }, { target });
+-    return null;
+-  }
+-
+-  let renderer: ReturnType<typeof create> | null = null;
+-  await act(() => {
+-    renderer = create(React.createElement(Component));
+-  });
+-
+-  assert.equal(target.count("resize"), 1);
+-
+-  target.dispatch("resize", new Event("resize"));
+-  assert.equal(calls, 1);
+-
+-  await act(() => {
+-    renderer?.unmount();
+-  });
+-
+-  assert.equal(target.count("resize"), 0);
+-});
+-
+-test("useScrollPosition вызывает callback сразу и чистит слушатель", async () => {
+-  const target = new MockEventTarget();
+-  let calls = 0;
+-
+-  function Component() {
+-    useScrollPosition(() => {
+-      calls += 1;
+-    }, { target });
+-    return null;
+-  }
+-
+-  let renderer: ReturnType<typeof create> | null = null;
+-  await act(() => {
+-    renderer = create(React.createElement(Component));
+-  });
+-
+-  assert.equal(calls, 1);
+-  assert.equal(target.count("scroll"), 1);
+-
+-  target.dispatch("scroll", new Event("scroll"));
+-  assert.equal(calls, 2);
+-
+-  await act(() => {
+-    renderer?.unmount();
+-  });
+-
+-  assert.equal(target.count("scroll"), 0);
+-});
+-
+-test("useIntersection подписывается и отключается при размонтировании", async () => {
+-  const element = {} as Element;
+-  let intersected = false;
+-
+-  function Component() {
+-    const ref = useRef<Element | null>(element);
+-    useIntersection(
+-      ref,
+-      (entry) => {
+-        intersected = entry.isIntersecting;
+-      },
+-      { Observer: MockIntersectionObserver as unknown as typeof IntersectionObserver },
+-    );
+-    return null;
+-  }
+-
+-  let renderer: ReturnType<typeof create> | null = null;
+-  await act(() => {
+-    renderer = create(React.createElement(Component));
+-  });
+-
+-  const instance = MockIntersectionObserver.lastInstance;
+-  assert.ok(instance);
+-  assert.deepEqual(instance?.observed, [element]);
+-
+-  instance?.trigger([{ isIntersecting: true } as IntersectionObserverEntry]);
+-  assert.equal(intersected, true);
+-
+-  await act(() => {
+-    renderer?.unmount();
+-  });
+-
+-  assert.equal(instance?.disconnectCalls, 1);
+-});
+diff --git a/src/app/(site)/shared/hooks/use-header-height.ts b/src/app/(site)/shared/hooks/use-header-height.ts
+deleted file mode 100644
+index a2ed528..0000000
+--- a/src/app/(site)/shared/hooks/use-header-height.ts
++++ /dev/null
+@@ -1,32 +0,0 @@
+-/**
+- * ⚠️ Legacy hook.
+- * Раньше использовался для синхронизации CSS-переменной `--header-height` через ResizeObserver.
+- * Сейчас высота шапки держится стабильной токеном `--header-height-initial` в `src/app/globals.css`,
+- * поэтому хук не используется и оставлен только как справочный.
+- */
+-
+-import { useLayoutEffect, useRef } from "react";
+-
+-export function useHeaderHeight() {
+-  const shellRef = useRef<HTMLDivElement | null>(null);
+-  const headerRef = useRef<HTMLElement | null>(null);
+-
+-  useLayoutEffect(() => {
+-    const headerEl = headerRef.current;
+-    const shellEl = shellRef.current;
+-    if (!headerEl || !shellEl || typeof ResizeObserver === "undefined") return;
+-
+-    const update = () => {
+-      const h = Math.round(headerEl.getBoundingClientRect().height);
+-      shellEl.style.setProperty("--header-height", `${h}px`);
+-    };
+-
+-    const observer = new ResizeObserver(update);
+-    observer.observe(headerEl);
+-    update();
+-
+-    return () => observer.disconnect();
+-  }, []);
+-
+-  return { shellRef, headerRef } as const;
+-}
+diff --git a/src/app/(site)/shared/hooks/use-intersection.ts b/src/app/(site)/shared/hooks/use-intersection.ts
+deleted file mode 100644
+index d8f6704..0000000
+--- a/src/app/(site)/shared/hooks/use-intersection.ts
++++ /dev/null
+@@ -1,31 +0,0 @@
+-import { useEffect, type RefObject } from "react";
+-
+-export type UseIntersectionOptions = {
+-  Observer?: typeof IntersectionObserver | null;
+-  observerInit?: IntersectionObserverInit;
+-  disabled?: boolean;
+-};
+-
+-export type UseIntersectionHandler = (
+-  entry: IntersectionObserverEntry,
+-  observer: IntersectionObserver,
+-) => void;
+-
+-export function useIntersection(
+-  targetRef: RefObject<Element | null>,
+-  onIntersect: UseIntersectionHandler,
+-  { Observer = typeof IntersectionObserver !== "undefined" ? IntersectionObserver : null, observerInit, disabled = false }: UseIntersectionOptions = {},
+-) {
+-  useEffect(() => {
+-    const element = targetRef.current;
+-    if (!element || disabled || !Observer) return;
+-
+-    const observer = new Observer((entries, observerInstance) => {
+-      const [entry] = entries;
+-      if (entry) onIntersect(entry, observerInstance);
+-    }, observerInit);
+-    observer.observe(element);
+-
+-    return () => observer.disconnect();
+-  }, [Observer, disabled, observerInit, onIntersect, targetRef]);
+-}
+\ No newline at end of file
+diff --git a/src/app/(site)/shared/hooks/use-scroll-position.ts b/src/app/(site)/shared/hooks/use-scroll-position.ts
+deleted file mode 100644
+index fe35f86..0000000
+--- a/src/app/(site)/shared/hooks/use-scroll-position.ts
++++ /dev/null
+@@ -1,26 +0,0 @@
+-import { useEffect } from "react";
+-
+-type UseScrollPositionOptions = {
+-  listenerOptions?: AddEventListenerOptions;
+-  immediate?: boolean;
+-  disabled?: boolean;
+-  target?: Pick<EventTarget, "addEventListener" | "removeEventListener"> | null;
+-};
+-
+-export function useScrollPosition(
+-  onScroll: (event: UIEvent) => void,
+-  { listenerOptions = { passive: true }, immediate = true, disabled = false, target }: UseScrollPositionOptions = {},
+-) {
+-  useEffect(() => {
+-    const eventTarget = target ?? (typeof window !== "undefined" ? window : null);
+-    if (!eventTarget || disabled) return;
+-
+-    const handler = (event: Event) => onScroll(event as UIEvent);
+-
+-    if (immediate) handler(new Event("scroll"));
+-
+-    eventTarget.addEventListener("scroll", handler, listenerOptions);
+-
+-    return () => eventTarget.removeEventListener("scroll", handler, listenerOptions);
+-  }, [onScroll, disabled, immediate, listenerOptions, target]);
+-}
+\ No newline at end of file
+diff --git a/src/app/(site)/shared/ui/badge.tsx b/src/app/(site)/shared/ui/badge.tsx
+deleted file mode 100644
+index 87a8c88..0000000
+--- a/src/app/(site)/shared/ui/badge.tsx
++++ /dev/null
+@@ -1,28 +0,0 @@
+-import type { HTMLAttributes } from 'react';
+-import { cn } from '@/lib/cn';
+-
+-type BadgeVariant = 'default' | 'success' | 'warning';
+-
+-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+-  variant?: BadgeVariant;
+-}
+-
+-const variantClasses: Record<BadgeVariant, string> = {
+-  default:
+-    'bg-[color-mix(in_srgb,var(--color-brand-600)_10%,transparent)] text-[var(--color-brand-600)]',
+-  success: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-100',
+-  warning: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-100',
+-};
+-
+-export function Badge({ variant = 'default', className, ...rest }: BadgeProps) {
+-  return (
+-    <span
+-      className={cn(
+-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+-        variantClasses[variant],
+-        className,
+-      )}
+-      {...rest}
+-    />
+-  );
+-}
+diff --git a/src/app/(site)/shared/ui/catalog-item-card.tsx b/src/app/(site)/shared/ui/catalog-item-card.tsx
+deleted file mode 100644
+index d0a6dd5..0000000
+--- a/src/app/(site)/shared/ui/catalog-item-card.tsx
++++ /dev/null
+@@ -1,141 +0,0 @@
+-import Image from 'next/image';
+-import Link from 'next/link';
+-
+-import type { CatalogListItem } from '../catalog-filtering';
+-import { Card, CardTitle, CardDescription, CardFooter } from './card';
+-import { Tag } from './tag';
+-
+-export type AttributeLabels = {
+-  category: string;
+-  process: string;
+-  base: string;
+-  filler: string;
+-  auxiliary: string;
+-  metal: string;
+-};
+-
+-type CatalogItemCardProps = {
+-  item: CatalogListItem;
+-  detailHref: string;
+-  detailLabel: string;
+-  attributeLabels: AttributeLabels;
+-  valueLabels: CatalogValueLabels;
+-};
+-
+-export function CatalogItemCard({ item, detailHref, detailLabel, attributeLabels, valueLabels }: CatalogItemCardProps) {
+-  const tagLabels = buildTags(item, valueLabels);
+-  const summary = item.teaser ?? item.excerpt;
+-
+-  return (
+-    <Card as="article" className="flex h-full flex-col gap-4">
+-      <div className="flex items-start justify-between gap-4">
+-        <div className="min-w-0 space-y-1">
+-          <CardTitle data-testid="catalog-item" className="text-lg">
+-            {item.title}
+-          </CardTitle>
+-          {summary ? (
+-            <CardDescription className="mt-1 text-sm">{summary}</CardDescription>
+-          ) : null}
+-          {tagLabels.length > 0 ? (
+-            <div className="mt-2 flex flex-wrap gap-2">
+-              {tagLabels.map((label) => (
+-                <Tag key={label} active disabled aria-hidden>
+-                  {label}
+-                </Tag>
+-              ))}
+-            </div>
+-          ) : null}
+-        </div>
+-        {item.image ? (
+-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]">
+-            <Image
+-              src={item.image.src}
+-              alt=""
+-              fill
+-              sizes="80px"
+-              className="h-full w-full object-contain"
+-            />
+-          </div>
+-        ) : null}
+-      </div>
+-
+-      <dl className="grid gap-3 rounded-md bg-[var(--card)] p-3 text-xs text-[var(--muted-foreground)] sm:grid-cols-2">
+-        {item.category ? (
+-          <Attribute label={attributeLabels.category} value={item.category} />
+-        ) : null}
+-        {item.process.length > 0 ? (
+-          <Attribute label={attributeLabels.process} value={item.process.join(', ')} />
+-        ) : null}
+-        {item.base.length > 0 ? (
+-          <Attribute label={attributeLabels.base} value={item.base.join(', ')} />
+-        ) : null}
+-        {item.filler.length > 0 ? (
+-          <Attribute label={attributeLabels.filler} value={item.filler.join(', ')} />
+-        ) : null}
+-        {item.metals.length > 0 ? (
+-          <Attribute label={attributeLabels.metal} value={item.metals.join(', ')} />
+-        ) : null}
+-        {item.auxiliary.length > 0 ? (
+-          <Attribute label={attributeLabels.auxiliary} value={item.auxiliary.join(', ')} />
+-        ) : null}
+-      </dl>
+-
+-      <CardFooter>
+-        <div className="text-xs text-[var(--muted-foreground)]">
+-          {item.updatedAt ? <time dateTime={item.updatedAt}>{item.updatedAt}</time> : null}
+-        </div>
+-        <Link
+-          href={detailHref}
+-          className="inline-flex items-center text-sm font-semibold text-[var(--color-brand-600)] underline-offset-4 transition-colors duration-150 hover:text-[var(--color-brand-700)] hover:underline"
+-        >
+-          {detailLabel}
+-          <span
+-            aria-hidden
+-            className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full border border-transparent text-xs transition-all duration-150 group-hover:translate-x-0.5 group-hover:border-[var(--color-brand-400)]"
+-          >
+-            →
+-          </span>
+-        </Link>
+-      </CardFooter>
+-    </Card>
+-  );
+-}
+-
+-export type CatalogValueLabels = {
+-  category: Map<string, string>;
+-  process: Map<string, string>;
+-  base: Map<string, string>;
+-  filler: Map<string, string>;
+-  metal: Map<string, string>;
+-  auxiliary: Map<string, string>;
+-};
+-
+-function buildTags(item: CatalogListItem, labels: CatalogValueLabels): string[] {
+-  const tagSet = new Set<string>();
+-
+-  const addFrom = (values: string[], map: Map<string, string>) => {
+-    for (const value of values) {
+-      tagSet.add(map.get(value) ?? value);
+-    }
+-  };
+-
+-  if (item.category) {
+-    tagSet.add(labels.category.get(item.category) ?? item.category);
+-  }
+-  addFrom(item.base, labels.base);
+-  addFrom(item.filler, labels.filler);
+-  addFrom(item.metals, labels.metal);
+-  addFrom(item.process, labels.process);
+-  addFrom(item.auxiliary, labels.auxiliary);
+-
+-  return [...tagSet].slice(0, 6);
+-}
+-
+-function Attribute({ label, value }: { label: string; value: string }) {
+-  return (
+-    <div className="space-y-1">
+-      <dt className="font-semibold uppercase tracking-wide text-[var(--foreground)]">{label}</dt>
+-      <dd>{value}</dd>
+-    </div>
+-  );
+-}
+diff --git a/src/app/(site)/shared/ui/select.tsx b/src/app/(site)/shared/ui/select.tsx
+deleted file mode 100644
+index 6d3544e..0000000
+--- a/src/app/(site)/shared/ui/select.tsx
++++ /dev/null
+@@ -1,27 +0,0 @@
+-import type { SelectHTMLAttributes } from 'react';
+-
+-import { cn } from '@/lib/cn';
+-import { focusRingBase } from '@/lib/focus-ring';
+-
+-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+-  error?: string;
+-}
+-
+-export function Select({ className, error, children, ...rest }: SelectProps) {
+-  return (
+-    <select
+-      className={cn(
+-        'block w-full rounded-lg border bg-[var(--input)] text-[var(--foreground)]',
+-        'border-[var(--border)] px-3 py-2 text-sm sm:text-base',
+-        focusRingBase,
+-        'disabled:cursor-not-allowed disabled:bg-[var(--muted)] disabled:text-[var(--muted-foreground)]',
+-        error && 'border-[var(--destructive)]',
+-        className,
+-      )}
+-      aria-invalid={!!error}
+-      {...rest}
+-    >
+-      {children}
+-    </select>
+-  );
+-}
+diff --git a/src/app/(site)/shared/ui/tag.tsx b/src/app/(site)/shared/ui/tag.tsx
+deleted file mode 100644
+index ca992b7..0000000
+--- a/src/app/(site)/shared/ui/tag.tsx
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import type { ButtonHTMLAttributes } from 'react';
+-import { cn } from '@/lib/cn';
+-
+-interface TagProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+-  active?: boolean;
+-}
+-
+-export function Tag({ active, className, children, ...rest }: TagProps) {
+-  return (
+-    <button
+-      type="button"
+-      className={cn(
+-        'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs',
+-        'transition-colors',
+-        active
+-          ? 'border-[var(--color-brand-600)] bg-[color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-[var(--foreground)]'
+-          : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--card)]',
+-        className,
+-      )}
+-      {...rest}
+-    >
+-      {children}
+-    </button>
+-  );
+-}
+diff --git a/src/app/[locale]/products/page.tsx b/src/app/[locale]/products/page.tsx
+index ef4f10b..6be7db9 100644
+--- a/src/app/[locale]/products/page.tsx
++++ b/src/app/[locale]/products/page.tsx
+@@ -3,10 +3,19 @@ import { notFound } from 'next/navigation';
+ 
+ import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
+ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
+-import { resolveContentPageMetadata } from '@/app/(site)/shared/content-page';
+ import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
+-import { isLocale, type Locale } from '@/lib/i18n';
++import { isLocale, locales, type Locale } from '@/lib/i18n';
++import { getProductsPageSeo, getSite } from '@/lib/keystatic';
+ import { buildPath, findTargetLocale } from '@/lib/paths';
++import {
++  HREFLANG_CODE,
++  OPEN_GRAPH_LOCALE,
++  buildAlternates,
++  mergeSeo,
++  resolveAlternateOgLocales,
++  resolveOpenGraphImage,
++  resolveRobotsMeta,
++} from '@/lib/seo';
+ import {
+   getProductsHubContent,
+   type ProductsHubCard,
+@@ -301,6 +310,61 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
+     return {};
+   }
+ 
+-  // SEO берём из Keystatic-страницы "products" (контент можно менять без правок кода).
+-  return resolveContentPageMetadata(rawLocale, 'products');
++  const locale = rawLocale;
++  const [site, pageSeo] = await Promise.all([getSite(locale), getProductsPageSeo(locale)]);
++
++  const slugMap: Partial<Record<Locale, string>> = {};
++  for (const candidate of locales) {
++    slugMap[candidate] = buildPath(candidate, ['products']);
++  }
++
++  const alternates = buildAlternates({
++    locale,
++    slugMap,
++    canonicalBase: site.seo.canonicalBase,
++  });
++
++  const fallbackTitle = locale === 'ru' ? 'Продукция' : 'Products';
++  const fallbackDescription =
++    locale === 'ru'
++      ? 'Продукты и решения Интема Групп для литейного производства.'
++      : 'Intema Group products and solutions for foundry production.';
++
++  const merged = mergeSeo({
++    site: site.seo,
++    page: pageSeo,
++    defaults: { title: fallbackTitle, description: fallbackDescription },
++  });
++
++  const canonicalUrl = merged.canonicalOverride ?? alternates.canonical;
++  const alternatesData: Metadata['alternates'] = {
++    languages: alternates.languages,
++  };
++  if (canonicalUrl) {
++    alternatesData.canonical = canonicalUrl;
++  }
++
++  const currentHrefLang = HREFLANG_CODE[locale];
++  const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
++  const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
++  const alternateOgLocales = resolveAlternateOgLocales(locale, slugMap);
++  const descriptionFallback = merged.description ?? undefined;
++  const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
++  const ogTitleFallback = merged.ogTitle ?? merged.title ?? fallbackTitle;
++
++  return {
++    title: merged.title ?? fallbackTitle,
++    description: descriptionFallback,
++    alternates: alternatesData,
++    robots: resolveRobotsMeta(site.robots),
++    openGraph: {
++      type: 'website',
++      locale: OPEN_GRAPH_LOCALE[locale],
++      url: preferredUrl,
++      title: ogTitleFallback,
++      description: ogDescriptionFallback,
++      alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
++      images: ogImage ? [ogImage] : undefined,
++    },
++  } satisfies Metadata;
+ }
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+index 68f74ec..d2954bb 100644
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -1,187 +1,195 @@
+-import type { MetadataRoute } from 'next';
+-
+-import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
+-import { buildPath } from '@/lib/paths';
+-import { defaultLocale, locales, type Locale } from '@/lib/i18n';
+-import { HREFLANG_CODE } from '@/lib/seo';
+-import { normalizeBaseUrl, resolvePublicBaseUrl } from '@/lib/url';
+-
+-type Collection = 'pages' | 'posts' | 'catalog';
+-
+-type DatedEntry = {
+-  collection: Collection;
+-  slugByLocale: Partial<Record<Locale, string | null | undefined>>;
+-  updatedAt?: string | null;
+-  date?: string | null;
+-};
+-
+-const buildSegments = (collection: Collection, slug: string): string[] => {
+-  if (collection === 'posts') {
+-    return ['news', slug];
+-  }
+-  if (collection === 'catalog') {
+-    return ['catalog', slug];
+-  }
+-  return slug.length ? [slug] : [];
+-};
+-
+-const toAbsoluteUrl = (
+-  baseUrl: string | null,
+-  path: string,
+-  fallbackBaseUrl?: string | null
+-): string | null => {
+-  const resolvedBaseUrl =
+-    normalizeBaseUrl(baseUrl) ??
+-    normalizeBaseUrl(fallbackBaseUrl) ??
+-    normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL ?? null);
+-  if (!resolvedBaseUrl) {
+-    return null;
+-  }
+-
+-  try {
+-    return new URL(path, resolvedBaseUrl).toString();
+-  } catch {
+-    return null;
+-  }
+-};
+-
+-const buildLocalizedUrls = (
+-  baseUrl: string | null,
+-  { collection, slugByLocale }: Pick<DatedEntry, 'collection' | 'slugByLocale'>,
+-  fallbackBaseUrl?: string | null
+-): Partial<Record<Locale, string>> => {
+-  const record: Partial<Record<Locale, string>> = {};
+-  if (!slugByLocale) {
+-    return record;
+-  }
+-  for (const locale of locales) {
+-    const raw = slugByLocale[locale];
+-    if (raw === undefined || raw === null) {
+-      continue;
+-    }
+-    const normalized = raw.trim();
+-    if (collection === 'posts' && normalized.length === 0) {
+-      continue;
+-    }
+-    const segments = buildSegments(collection, normalized);
+-    const relative = buildPath(locale, segments);
+-    const absoluteUrl = toAbsoluteUrl(baseUrl, relative, fallbackBaseUrl);
+-    if (absoluteUrl) {
+-      record[locale] = absoluteUrl;
+-    }
+-  }
+-
+-  return record;
+-};
+-
+-const toLastModified = (entry: DatedEntry): Date | undefined => {
+-  const source = entry.updatedAt ?? entry.date;
+-  if (!source) {
+-    return undefined;
+-  }
+-  const timestamp = Date.parse(source);
+-  if (Number.isNaN(timestamp)) {
+-    return undefined;
+-  }
+-  return new Date(timestamp);
+-};
+-
+-const buildAlternateLanguages = (
+-  alternates: Partial<Record<Locale, string>>
+-): Record<string, string> | undefined => {
+-  const languages: Record<string, string> = {};
+-
+-  for (const locale of locales) {
+-    const href = alternates[locale];
+-    if (!href) {
+-      continue;
+-    }
+-    languages[HREFLANG_CODE[locale]] = href;
+-  }
+-
+-  const defaultHref = alternates[defaultLocale];
+-  if (defaultHref) {
+-    languages['x-default'] = defaultHref;
+-  }
+-
+-  return Object.keys(languages).length ? languages : undefined;
+-};
+-
+-const createSitemapEntries = (
+-  baseUrl: string,
+-  entry: DatedEntry
+-): MetadataRoute.Sitemap => {
+-  const urls = buildLocalizedUrls(baseUrl, entry, baseUrl);
+-  const lastModified = toLastModified(entry);
+-  const entries: MetadataRoute.Sitemap = [];
+-
+-  for (const locale of locales) {
+-    const url = urls[locale];
+-    if (!url) {
+-      continue;
+-    }
+-
+-    const languages = buildAlternateLanguages(urls);
+-    entries.push({
+-      url,
+-      lastModified,
+-      alternates: languages ? { languages } : undefined,
+-    });
+-  }
+-
+-  return entries;
+-};
+-
+-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+-  const [site, pages, posts, catalogEntries] = await Promise.all([
+-    getSite(defaultLocale),
+-    getAllPages(),
+-    getAllPosts(),
+-    getAllCatalogEntries(),
+-  ]);
+-
+-  const baseUrl = resolvePublicBaseUrl(site.seo.canonicalBase ?? null, {
+-    fallbackHost: site.domain,
+-  });
+-
+-  const pageEntries = pages
+-    .filter((page) => page.published)
+-    .flatMap((page) =>
+-      createSitemapEntries(baseUrl, {
+-        collection: 'pages',
+-        slugByLocale: page.slugByLocale,
+-        updatedAt: page.updatedAt,
+-      })
+-    );
+-
+-  const postEntries = posts
+-    .filter((post) => post.published)
+-    .flatMap((post) =>
+-      createSitemapEntries(baseUrl, {
+-        collection: 'posts',
+-        slugByLocale: post.slugByLocale,
+-        updatedAt: post.updatedAt,
+-        date: post.date,
+-      })
+-    );
+-
+-  const catalogEntriesUrls = catalogEntries
+-    .filter((entry) => entry.published)
+-    .flatMap((entry) =>
+-      createSitemapEntries(baseUrl, {
+-        collection: 'catalog',
+-        slugByLocale: entry.slugByLocale,
+-        updatedAt: entry.updatedAt,
+-      })
+-    );
+-
+-  const documentsEntries = createSitemapEntries(baseUrl, {
+-    collection: 'pages',
+-    slugByLocale: {
+-      ru: 'documents',
+-      en: 'documents',
+-    },
+-  });
+-
+-  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries];
+-}
++import type { MetadataRoute } from 'next';
++
++import { getAllCatalogEntries, getAllPages, getAllPosts, getSite } from '@/lib/keystatic';
++import { buildPath } from '@/lib/paths';
++import { defaultLocale, locales, type Locale } from '@/lib/i18n';
++import { HREFLANG_CODE } from '@/lib/seo';
++import { normalizeBaseUrl, resolvePublicBaseUrl } from '@/lib/url';
++
++type Collection = 'pages' | 'posts' | 'catalog';
++
++type DatedEntry = {
++  collection: Collection;
++  slugByLocale: Partial<Record<Locale, string | null | undefined>>;
++  updatedAt?: string | null;
++  date?: string | null;
++};
++
++const buildSegments = (collection: Collection, slug: string): string[] => {
++  if (collection === 'posts') {
++    return ['news', slug];
++  }
++  if (collection === 'catalog') {
++    return ['catalog', slug];
++  }
++  return slug.length ? [slug] : [];
++};
++
++const toAbsoluteUrl = (
++  baseUrl: string | null,
++  path: string,
++  fallbackBaseUrl?: string | null
++): string | null => {
++  const resolvedBaseUrl =
++    normalizeBaseUrl(baseUrl) ??
++    normalizeBaseUrl(fallbackBaseUrl) ??
++    normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL ?? null);
++  if (!resolvedBaseUrl) {
++    return null;
++  }
++
++  try {
++    return new URL(path, resolvedBaseUrl).toString();
++  } catch {
++    return null;
++  }
++};
++
++const buildLocalizedUrls = (
++  baseUrl: string | null,
++  { collection, slugByLocale }: Pick<DatedEntry, 'collection' | 'slugByLocale'>,
++  fallbackBaseUrl?: string | null
++): Partial<Record<Locale, string>> => {
++  const record: Partial<Record<Locale, string>> = {};
++  if (!slugByLocale) {
++    return record;
++  }
++  for (const locale of locales) {
++    const raw = slugByLocale[locale];
++    if (raw === undefined || raw === null) {
++      continue;
++    }
++    const normalized = raw.trim();
++    if (collection === 'posts' && normalized.length === 0) {
++      continue;
++    }
++    const segments = buildSegments(collection, normalized);
++    const relative = buildPath(locale, segments);
++    const absoluteUrl = toAbsoluteUrl(baseUrl, relative, fallbackBaseUrl);
++    if (absoluteUrl) {
++      record[locale] = absoluteUrl;
++    }
++  }
++
++  return record;
++};
++
++const toLastModified = (entry: DatedEntry): Date | undefined => {
++  const source = entry.updatedAt ?? entry.date;
++  if (!source) {
++    return undefined;
++  }
++  const timestamp = Date.parse(source);
++  if (Number.isNaN(timestamp)) {
++    return undefined;
++  }
++  return new Date(timestamp);
++};
++
++const buildAlternateLanguages = (
++  alternates: Partial<Record<Locale, string>>
++): Record<string, string> | undefined => {
++  const languages: Record<string, string> = {};
++
++  for (const locale of locales) {
++    const href = alternates[locale];
++    if (!href) {
++      continue;
++    }
++    languages[HREFLANG_CODE[locale]] = href;
++  }
++
++  const defaultHref = alternates[defaultLocale];
++  if (defaultHref) {
++    languages['x-default'] = defaultHref;
++  }
++
++  return Object.keys(languages).length ? languages : undefined;
++};
++
++const createSitemapEntries = (
++  baseUrl: string,
++  entry: DatedEntry
++): MetadataRoute.Sitemap => {
++  const urls = buildLocalizedUrls(baseUrl, entry, baseUrl);
++  const lastModified = toLastModified(entry);
++  const entries: MetadataRoute.Sitemap = [];
++
++  for (const locale of locales) {
++    const url = urls[locale];
++    if (!url) {
++      continue;
++    }
++
++    const languages = buildAlternateLanguages(urls);
++    entries.push({
++      url,
++      lastModified,
++      alternates: languages ? { languages } : undefined,
++    });
++  }
++
++  return entries;
++};
++
++export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
++  const [site, pages, posts, catalogEntries] = await Promise.all([
++    getSite(defaultLocale),
++    getAllPages(),
++    getAllPosts(),
++    getAllCatalogEntries(),
++  ]);
++
++  const baseUrl = resolvePublicBaseUrl(site.seo.canonicalBase ?? null, {
++    fallbackHost: site.domain,
++  });
++
++  const pageEntries = pages
++    .filter((page) => page.published)
++    .flatMap((page) =>
++      createSitemapEntries(baseUrl, {
++        collection: 'pages',
++        slugByLocale: page.slugByLocale,
++        updatedAt: page.updatedAt,
++      })
++    );
++
++  const postEntries = posts
++    .filter((post) => post.published)
++    .flatMap((post) =>
++      createSitemapEntries(baseUrl, {
++        collection: 'posts',
++        slugByLocale: post.slugByLocale,
++        updatedAt: post.updatedAt,
++        date: post.date,
++      })
++    );
++
++  const catalogEntriesUrls = catalogEntries
++    .filter((entry) => entry.published)
++    .flatMap((entry) =>
++      createSitemapEntries(baseUrl, {
++        collection: 'catalog',
++        slugByLocale: entry.slugByLocale,
++        updatedAt: entry.updatedAt,
++      })
++    );
++
++  const documentsEntries = createSitemapEntries(baseUrl, {
++    collection: 'pages',
++    slugByLocale: {
++      ru: 'documents',
++      en: 'documents',
++    },
++  });
++
++  const productsEntries = createSitemapEntries(baseUrl, {
++    collection: 'pages',
++    slugByLocale: {
++      ru: 'products',
++      en: 'products',
++    },
++  });
++
++  return [...pageEntries, ...postEntries, ...catalogEntriesUrls, ...documentsEntries, ...productsEntries];
++}
+diff --git a/src/lib/keystatic.ts b/src/lib/keystatic.ts
+index e4b309c..f91d193 100644
+--- a/src/lib/keystatic.ts
++++ b/src/lib/keystatic.ts
+@@ -1,1919 +1,1941 @@
+-import { cache } from 'react';
+-import { promises as fs } from 'fs';
+-import path from 'path';
+-import { createReader } from '@keystatic/core/reader';
+-import type { Node as MarkdocNode } from '@markdoc/markdoc';
+-import config from '../../keystatic.config';
+-import { defaultLocale, locales, type Locale } from './i18n';
+-import { isLocale } from '@/lib/i18n';
+-import { buildPath } from '@/lib/paths';
+-import type { MarkdocContent, ResolvedMarkdocContent } from '@/lib/markdoc';
+-import {
+-  CATALOG_BASES,
+-  CATALOG_CATEGORIES,
+-  CATALOG_AUXILIARIES,
+-  CATALOG_FILLERS,
+-  CATALOG_METALS,
+-  CATALOG_PROCESSES,
+-  type CatalogBase,
+-  type CatalogCategory,
+-  type CatalogAuxiliary,
+-  type CatalogFiller,
+-  type CatalogMetal,
+-  type CatalogProcess,
+-} from './catalog/constants';
+-
+-const ROOT_SLUG_PLACEHOLDER = '__root__';
+-
+-export type DocumentType = 'certificate' | 'tds' | 'msds' | 'brochure';
+-export type DocumentLanguage = 'ru' | 'en';
+-
+-const CATALOG_CATEGORY_SET = new Set<string>(CATALOG_CATEGORIES);
+-const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
+-const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
+-const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
+-const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
+-const CATALOG_METAL_SET = new Set<string>(CATALOG_METALS);
+-const CATALOG_BADGE_SET = new Set(['bestseller', 'premium', 'eco', 'special'] as const);
+-const DOCUMENT_TYPE_SET = new Set<DocumentType>(['certificate', 'tds', 'msds', 'brochure']);
+-const DOCUMENT_LANGUAGE_SET = new Set<DocumentLanguage>(['ru', 'en']);
+-const DOCUMENT_TYPE_ORDER: DocumentType[] = ['certificate', 'tds', 'msds', 'brochure'];
+-
+-export const DOCUMENT_TYPES: readonly DocumentType[] = DOCUMENT_TYPE_ORDER;
+-export const DOCUMENT_LANGUAGES: readonly DocumentLanguage[] = ['ru', 'en'];
+-
+-const getReader = cache(() => createReader(process.cwd(), config));
+-
+-async function readJsonFile<T>(absolutePath: string): Promise<T | null> {
+-  try {
+-    const raw = await fs.readFile(absolutePath, 'utf8');
+-    return JSON.parse(raw) as T;
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ key: string; entry: T }>> {
+-  const directory = path.join(process.cwd(), relativeDir);
+-  const dirEntries = await fs.readdir(directory, { withFileTypes: true }).catch(() => null);
+-  if (!dirEntries) {
+-    return [];
+-  }
+-
+-  const results: Array<{ key: string; entry: T }> = [];
+-
+-  for (const entry of dirEntries) {
+-    let filePath: string | null = null;
+-    let key: string;
+-    let entryDir: string | null = null;
+-
+-    if (entry.isDirectory()) {
+-      const dir = path.join(directory, entry.name);
+-      const primaryIndexPath = path.join(dir, 'index.json');
+-      const nestedIndexPath = path.join(dir, 'index', 'index.json');
+-      const existingIndexPath =
+-        (await fs.stat(primaryIndexPath).then(() => primaryIndexPath).catch(() => null)) ??
+-        (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
+-
+-      if (!existingIndexPath) {
+-        console.warn(
+-          `[keystatic] Skipping fallback entry "${entry.name}" in "${relativeDir}": missing index.json.`,
+-        );
+-        continue;
+-      }
+-
+-      filePath = existingIndexPath;
+-      key = entry.name;
+-      entryDir = dir;
+-    } else if (entry.isFile() && entry.name.endsWith('.json')) {
+-      filePath = path.join(directory, entry.name);
+-      key = entry.name.replace(/\.json$/i, '');
+-    } else {
+-      continue;
+-    }
+-
+-    const data = await readJsonFile<T>(filePath);
+-    if (!data) {
+-      console.warn(
+-        `[keystatic] Skipping fallback entry "${key}" in "${relativeDir}": cannot read JSON data from ${filePath}.`,
+-      );
+-      continue;
+-    }
+-
+-    normalizeEntrySlugs(data);
+-
+-    await hydrateLocalizedMarkdoc(entryDir, data);
+-
+-    results.push({ key, entry: data });
+-  }
+-
+-  return results;
+-}
+-
+-async function readFallbackSingleton<T>(relativePath: string): Promise<T | null> {
+-  const absolute = path.join(process.cwd(), relativePath);
+-  return readJsonFile<T>(absolute);
+-}
+-
+-function normalizeEntrySlugs(entry: unknown): void {
+-  if (!entry || typeof entry !== 'object') {
+-    return;
+-  }
+-  const record = entry as { slug?: unknown; path?: unknown };
+-  if (record.slug && typeof record.slug === 'object') {
+-    normalizeSlugRecord(record.slug as Record<string, unknown>);
+-  }
+-  if (record.path && typeof record.path === 'object') {
+-    normalizeSlugRecord(record.path as Record<string, unknown>);
+-  }
+-}
+-
+-async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown): Promise<void> {
+-  if (!entryDir) {
+-    return;
+-  }
+-  if (!entry || typeof entry !== 'object') {
+-    return;
+-  }
+-  const record = entry as { content?: unknown };
+-  const localized = record.content;
+-  if (!localized || typeof localized !== 'object') {
+-    return;
+-  }
+-  const baseDir = await findExistingDirectory([
+-    path.join(entryDir, 'content'),
+-    path.join(entryDir, 'index', 'content'),
+-  ]);
+-
+-  if (!baseDir) {
+-    return;
+-  }
+-
+-  const localizedRecord = localized as Record<string, unknown>;
+-  for (const locale of locales) {
+-    const current = localizedRecord[locale];
+-    if (current && typeof current === 'object') {
+-      if ('content' in (current as Record<string, unknown>) || 'node' in (current as Record<string, unknown>)) {
+-        continue;
+-      }
+-    }
+-    if (typeof current === 'string') {
+-      continue;
+-    }
+-
+-    const filePath = path.join(baseDir, `${locale}.mdoc`);
+-    const hasFile = await fs.stat(filePath).then((stats) => stats.isFile()).catch(() => false);
+-    if (!hasFile) {
+-      if (current === undefined) {
+-        localizedRecord[locale] = null;
+-      }
+-      continue;
+-    }
+-
+-    const relative = path.relative(path.join(process.cwd(), 'content'), filePath);
+-    localizedRecord[locale] = relative;
+-  }
+-}
+-
+-async function findExistingDirectory(paths: string[]): Promise<string | null> {
+-  for (const dir of paths) {
+-    const exists = await fs.stat(dir).then((stats) => stats.isDirectory()).catch(() => false);
+-    if (exists) {
+-      return dir;
+-    }
+-  }
+-  return null;
+-}
+-
+-async function hydrateLocalizedMarkdocByKey(
+-  collectionRoot: string,
+-  entryKey: string,
+-  entry: unknown
+-): Promise<void> {
+-  if (!entry || typeof entry !== 'object') {
+-    return;
+-  }
+-  const record = entry as { content?: unknown };
+-  if (!record.content || typeof record.content !== 'object') {
+-    return;
+-  }
+-
+-  const baseDir = await findExistingDirectory([
+-    path.join(process.cwd(), collectionRoot, entryKey, 'content'),
+-    path.join(process.cwd(), collectionRoot, entryKey, 'index', 'content'),
+-  ]);
+-
+-  if (!baseDir) {
+-    return;
+-  }
+-
+-  const localizedRecord = record.content as Record<string, unknown>;
+-  for (const locale of locales) {
+-    const current = localizedRecord[locale];
+-    if (typeof current === 'string') {
+-      continue;
+-    }
+-    if (current && typeof current === 'object') {
+-      const currentRecord = current as Record<string, unknown>;
+-      if ('content' in currentRecord || 'node' in currentRecord) {
+-        continue;
+-      }
+-    }
+-
+-    const localeFile = path.join(baseDir, `${locale}.mdoc`);
+-    const hasFile = await fs.stat(localeFile).then((stats) => stats.isFile()).catch(() => false);
+-    if (!hasFile) {
+-      continue;
+-    }
+-
+-    const relative = path.relative(path.join(process.cwd(), 'content'), localeFile);
+-    localizedRecord[locale] = relative;
+-  }
+-}
+-
+-function normalizeSlugRecord(record: Record<string, unknown>): void {
+-  for (const key of Object.keys(record)) {
+-    const value = record[key];
+-    if (typeof value === 'string') {
+-      if (!value.trim()) {
+-        record[key] = ROOT_SLUG_PLACEHOLDER;
+-      }
+-      continue;
+-    }
+-    if (typeof value === 'object' && value !== null && 'slug' in value) {
+-      const nested = value as { slug?: string | null };
+-      if (typeof nested.slug === 'string' && !nested.slug.trim()) {
+-        nested.slug = ROOT_SLUG_PLACEHOLDER;
+-      }
+-    }
+-  }
+-}
+-
+-function normalizeDateTime(value: string | null | undefined): string | null {
+-  if (!value) {
+-    return null;
+-  }
+-  const trimmed = value.trim();
+-  if (!trimmed) {
+-    return null;
+-  }
+-
+-  const minutesPrecisionMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})$/);
+-  if (minutesPrecisionMatch) {
+-    const candidate = `${minutesPrecisionMatch[1]}:00.000Z`;
+-    const date = new Date(candidate);
+-    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+-  }
+-
+-  const date = new Date(trimmed);
+-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+-}
+-
+-type Localized<T> = Partial<Record<Locale, T | null | undefined>>;
+-
+-type RawMedia =
+-  | string
+-  | { src?: string | null; width?: number | null; height?: number | null }
+-  | null
+-  | undefined;
+-
+-type RawSeoImage = {
+-  image?: RawMedia;
+-  alt?: string | null;
+-} | null;
+-
+-type RawSeoGroup = {
+-  title?: Localized<string>;
+-  description?: Localized<string>;
+-  ogTitle?: Localized<string>;
+-  ogDescription?: Localized<string>;
+-  ogImage?: RawSeoImage;
+-  canonicalOverride?: string | null;
+-} | null;
+-
+-type RawMarkdocValue = string | { content?: string | null } | { node?: MarkdocNode | null } | null;
+-
+-type SlugKeyValue = { slug?: string | null; name?: string | null } | null;
+-
+-type RawPageEntry = {
+-  id?: string | null;
+-  slug?: Localized<string | { slug?: string | null } | null>;
+-  title?: Localized<string>;
+-  description?: Localized<string>;
+-  content?: Localized<RawMarkdocValue>;
+-  hero?: {
+-    image?: RawMedia;
+-    alt?: Localized<string>;
+-  } | null;
+-  seo?: RawSeoGroup;
+-  published?: boolean | null;
+-  status?: 'draft' | 'published';
+-  updatedAt?: string | null;
+-  excerpt?: Localized<string>;
+-  slugKey?: string | SlugKeyValue;
+-};
+-
+-type RawPostEntry = RawPageEntry & {
+-  date?: string | null;
+-  tags?: string[] | null;
+-  cover?: {
+-    image?: RawMedia;
+-    alt?: Localized<string>;
+-  } | null;
+-};
+-
+-type RawCatalogEntry = {
+-  id?: string | null;
+-  slug?: Localized<string | { slug?: string | null } | null>;
+-  title?: Localized<string>;
+-  shortDescription?: Localized<string>;
+-  seriesDescription?: Localized<string>;
+-  teaser?: Localized<string>;
+-  excerpt?: Localized<string>;
+-  content?: Localized<RawMarkdocValue>;
+-  category?: string | null;
+-  process?: string[] | null;
+-  base?: string[] | null;
+-  filler?: string[] | null;
+-  metals?: string[] | null;
+-  auxiliary?: string[] | null;
+-  variantGroup?: Array<{ value?: string | null } | string> | null;
+-  image?: RawMedia;
+-  docs?: string | { value?: string | null; slug?: string | null; name?: string | null } | null;
+-  documentLinks?: Array<{ value?: string | null } | string> | null;
+-  badge?: string | null;
+-  published?: boolean | null;
+-  status?: 'draft' | 'published';
+-  updatedAt?: string | null;
+-  slugKey?: string | SlugKeyValue;
+-};
+-
+-type RawDocumentEntry = {
+-  id?: string | null;
+-  title?: Localized<string>;
+-  file?: RawMedia;
+-  type?: string | null;
+-  lang?: string | null;
+-  relatedProducts?: string[] | string | null;
+-  published?: boolean | null;
+-  status?: 'draft' | 'published';
+-  updatedAt?: string | null;
+-  slugKey?: string | SlugKeyValue;
+-};
+-
+-type DocumentsPageSingleton = {
+-  title?: Localized<string>;
+-  description?: Localized<string>;
+-  typeFilterLabel?: Localized<string>;
+-  languageFilterLabel?: Localized<string>;
+-  applyLabel?: Localized<string>;
+-  resetLabel?: Localized<string>;
+-  allLanguagesLabel?: Localized<string>;
+-  downloadLabel?: Localized<string>;
+-  relatedProductsLabel?: Localized<string>;
+-  emptyStateMessage?: Localized<string>;
+-  resultsLabelTemplate?: Localized<string>;
+-  typeLabels?: Record<DocumentType, Localized<string>>;
+-  languageLabels?: Record<DocumentLanguage, Localized<string>>;
+-  ogImage?: RawSeoImage;
+-};
+-
+-type CatalogPageSingleton = {
+-  title?: Localized<string>;
+-  description?: Localized<string>;
+-  submitLabel?: Localized<string>;
+-  resetLabel?: Localized<string>;
+-  categoryAllLabel?: Localized<string>;
+-  detailLabel?: Localized<string>;
+-  requestLabel?: Localized<string>;
+-  emptyStateMessage?: Localized<string>;
+-  groupLabels?: {
+-    category?: Localized<string>;
+-    process?: Localized<string>;
+-    base?: Localized<string>;
+-    filler?: Localized<string>;
+-    metal?: Localized<string>;
+-    auxiliary?: Localized<string>;
+-  } | null;
+-  seo?: RawSeoGroup;
+-};
+-
+-type NavigationEntry = {
+-  id?: string | null;
+-  label?: Localized<string>;
+-  path?: Localized<string>;
+-  externalUrl?: string | null;
+-  newTab?: boolean | null;
+-  order?: number | null;
+-  children?: NavigationEntry[] | null;
+-};
+-
+-export type SeoImage = {
+-  src: string;
+-  width?: number | null;
+-  height?: number | null;
+-  alt?: string | null;
+-};
+-
+-export type ResolvedSeo = {
+-  title?: string | null;
+-  description?: string | null;
+-  ogTitle?: string | null;
+-  ogDescription?: string | null;
+-  ogImage?: SeoImage | null;
+-  canonicalOverride?: string | null;
+-};
+-
+-export type SiteSeo = Omit<ResolvedSeo, 'canonicalOverride'> & {
+-  canonicalBase: string | null;
+-};
+-
+-export type SiteContent = {
+-  locale: Locale;
+-  name: string | null;
+-  tagline: string | null;
+-  contacts: {
+-    email: string | null;
+-    phone: string | null;
+-    telegramUrl: string | null;
+-    address: string | null;
+-  };
+-  seo: SiteSeo;
+-  domain: string | null;
+-  robots: { index: boolean; follow: boolean };
+-  footer: {
+-    tagline: string | null;
+-    copyright: string | null;
+-  };
+-};
+-
+-export type NavigationLink = {
+-  id: string;
+-  label: string;
+-  href: string;
+-  isExternal: boolean;
+-  newTab: boolean;
+-  localizedPath?: Localized<string>;
+-  children?: NavigationLink[];
+-};
+-
+-export type Navigation = {
+-  header: NavigationLink[];
+-  footer: NavigationLink[];
+-};
+-
+-export type PageHero = {
+-  image: CatalogImage | null;
+-  alt: string | null;
+-};
+-
+-export type PageContent = {
+-  id: string;
+-  locale: Locale;
+-  title: string;
+-  slug: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  content: MarkdocContent;
+-  description: string | null;
+-  seo: ResolvedSeo | null;
+-  excerpt: string | null;
+-  updatedAt?: string | null;
+-  hero: PageHero | null;
+-};
+-
+-export type PageSummary = {
+-  id: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  published: boolean;
+-  updatedAt?: string | null;
+-};
+-
+-export type PostSummary = {
+-  id: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  published: boolean;
+-  date?: string | null;
+-  updatedAt?: string | null;
+-};
+-
+-export type PostContent = PageContent & {
+-  date?: string | null;
+-  tags: string[];
+-  cover?: {
+-    src: string;
+-    alt?: string | null;
+-    width?: number | null;
+-    height?: number | null;
+-    image?: CatalogImage | null;
+-  } | null;
+-};
+-
+-export type CatalogImage = {
+-  src: string;
+-  width?: number | null;
+-  height?: number | null;
+-};
+-
+-export type CatalogBadge = 'bestseller' | 'premium' | 'eco' | 'special';
+-
+-export type CatalogVariant = {
+-  id: string;
+-  slug: string;
+-  title: string;
+-};
+-
+-export type CatalogListItem = {
+-  id: string;
+-  locale: Locale;
+-  slug: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  title: string;
+-  shortDescription: string | null;
+-  badge: CatalogBadge | null;
+-  teaser: string | null;
+-  excerpt: string | null;
+-  category: CatalogCategory | null;
+-  process: CatalogProcess[];
+-  base: CatalogBase[];
+-  filler: CatalogFiller[];
+-  metals: CatalogMetal[];
+-  auxiliary: CatalogAuxiliary[];
+-  image: CatalogImage | null;
+-  docs: string | null;
+-  updatedAt?: string | null;
+-};
+-
+-export type CatalogItem = CatalogListItem & {
+-  content: MarkdocContent;
+-  documents: CatalogDocument[];
+-  seriesDescription: string | null;
+-  variants: CatalogVariant[];
+-};
+-
+-export type CatalogLookupItem = {
+-  id: string;
+-  slug: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  title: string;
+-};
+-
+-export type CatalogSummary = {
+-  id: string;
+-  slugByLocale: Partial<Record<Locale, string>>;
+-  published: boolean;
+-  updatedAt?: string | null;
+-};
+-
+-export type Document = {
+-  id: string;
+-  title: Partial<Record<Locale, string>>;
+-  type: DocumentType;
+-  lang: DocumentLanguage;
+-  file: string | null;
+-  fileName: string | null;
+-  fileExtension: string | null;
+-  fileSize: number | null;
+-  relatedProductIds: string[];
+-  updatedAt?: string | null;
+-};
+-
+-export type CatalogDocument = {
+-  slug: string;
+-  title: string;
+-  type: DocumentType;
+-  file: string;
+-};
+-
+-export type DocumentsPageContent = {
+-  title: Partial<Record<Locale, string>>;
+-  description: Partial<Record<Locale, string>>;
+-  typeFilterLabel: Partial<Record<Locale, string>>;
+-  languageFilterLabel: Partial<Record<Locale, string>>;
+-  applyLabel: Partial<Record<Locale, string>>;
+-  resetLabel: Partial<Record<Locale, string>>;
+-  allLanguagesLabel: Partial<Record<Locale, string>>;
+-  downloadLabel: Partial<Record<Locale, string>>;
+-  relatedProductsLabel: Partial<Record<Locale, string>>;
+-  emptyStateMessage: Partial<Record<Locale, string>>;
+-  resultsLabelTemplate: Partial<Record<Locale, string>>;
+-  typeLabels: Record<DocumentType, Partial<Record<Locale, string>>>;
+-  languageLabels: Record<DocumentLanguage, Partial<Record<Locale, string>>>;
+-  ogImage: SeoImage | null;
+-};
+-
+-export type CatalogPageContent = {
+-  title: Partial<Record<Locale, string>>;
+-  description: Partial<Record<Locale, string>>;
+-  submitLabel: Partial<Record<Locale, string>>;
+-  resetLabel: Partial<Record<Locale, string>>;
+-  categoryAllLabel: Partial<Record<Locale, string>>;
+-  detailLabel: Partial<Record<Locale, string>>;
+-  requestLabel: Partial<Record<Locale, string>>;
+-  emptyStateMessage: Partial<Record<Locale, string>>;
+-  groupLabels: {
+-    category: Partial<Record<Locale, string>>;
+-    process: Partial<Record<Locale, string>>;
+-    base: Partial<Record<Locale, string>>;
+-    filler: Partial<Record<Locale, string>>;
+-    metal: Partial<Record<Locale, string>>;
+-    auxiliary: Partial<Record<Locale, string>>;
+-  };
+-  seo: ResolvedSeo | null;
+-};
+-
+-function toOptionalString(value: unknown): string | null {
+-  if (typeof value === 'string') {
+-    const trimmed = value.trim();
+-    return trimmed.length ? trimmed : null;
+-  }
+-  if (value && typeof value === 'object') {
+-    const record = value as { slug?: unknown; name?: unknown; value?: unknown; id?: unknown };
+-    const candidates: unknown[] = [record.slug, record.name, record.value, record.id];
+-    for (const candidate of candidates) {
+-      if (!candidate || candidate === value) {
+-        continue;
+-      }
+-      const resolved = toOptionalString(candidate ?? undefined);
+-      if (resolved) {
+-        return resolved;
+-      }
+-    }
+-  }
+-  return null;
+-}
+-
+-function normalizeImageAsset(value: RawMedia): { src: string; width?: number | null; height?: number | null } | null {
+-  if (!value) {
+-    return null;
+-  }
+-  if (typeof value === 'string') {
+-    const trimmed = value.trim();
+-    if (!trimmed) {
+-      return null;
+-    }
+-    return { src: normalizeImagePath(trimmed) };
+-  }
+-  const src = typeof value.src === 'string' ? value.src.trim() : '';
+-  if (!src) {
+-    return null;
+-  }
+-  const width = typeof value.width === 'number' ? value.width : undefined;
+-  const height = typeof value.height === 'number' ? value.height : undefined;
+-  return { src: normalizeImagePath(src), width, height };
+-}
+-
+-function normalizeImagePath(src: string): string {
+-  if (/^https?:\/\//.test(src)) {
+-    return src;
+-  }
+-  const normalized = src.replace(/^\/+/g, '');
+-  return `/${normalized}`;
+-}
+-
+-async function resolveUploadSize(filePath: string | null): Promise<number | null> {
+-  if (!filePath || /^https?:\/\//i.test(filePath)) {
+-    return null;
+-  }
+-  const withoutLeading = filePath.replace(/^\/+/g, '');
+-  const withoutQuery = withoutLeading.split('?')[0]?.split('#')[0] ?? '';
+-  const relative = withoutQuery.startsWith('public/')
+-    ? withoutQuery.slice('public/'.length)
+-    : withoutQuery;
+-  const absolute = path.join(process.cwd(), 'public', relative);
+-  try {
+-    const stats = await fs.stat(absolute);
+-    if (!stats.isFile()) {
+-      return null;
+-    }
+-    return stats.size;
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-function mapSeoImage(value: RawSeoImage): SeoImage | null {
+-  if (!value) {
+-    return null;
+-  }
+-  const asset = normalizeImageAsset(value.image);
+-  if (!asset) {
+-    return null;
+-  }
+-  return {
+-    src: asset.src,
+-    width: asset.width,
+-    height: asset.height,
+-    alt: toOptionalString(value.alt ?? undefined) ?? undefined,
+-  } satisfies SeoImage;
+-}
+-
+-function mapResolvedSeo(value: RawSeoGroup | undefined | null, locale: Locale): ResolvedSeo | null {
+-  if (!value) {
+-    return null;
+-  }
+-  const title = toOptionalString(pickLocalized(value.title, locale));
+-  const description = toOptionalString(pickLocalized(value.description, locale));
+-  const ogTitle = toOptionalString(pickLocalized(value.ogTitle, locale));
+-  const ogDescription = toOptionalString(pickLocalized(value.ogDescription, locale));
+-  const ogImage = mapSeoImage(value.ogImage ?? null);
+-  const canonicalOverride = toOptionalString(value.canonicalOverride ?? undefined);
+-  if (!title && !description && !ogTitle && !ogDescription && !ogImage && !canonicalOverride) {
+-    return null;
+-  }
+-  return {
+-    title,
+-    description,
+-    ogTitle,
+-    ogDescription,
+-    ogImage,
+-    canonicalOverride,
+-  } satisfies ResolvedSeo;
+-}
+-
+-function isPublished(entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry): boolean {
+-  if (typeof entry.published === 'boolean') {
+-    return entry.published;
+-  }
+-  return (entry.status ?? 'draft') === 'published';
+-}
+-
+-function pickLocalized<T>(value: Localized<T> | undefined, locale: Locale): T | undefined {
+-  if (!value) {
+-    return undefined;
+-  }
+-  const localized = value[locale];
+-  if (localized !== undefined && localized !== null) {
+-    return localized ?? undefined;
+-  }
+-  const fallback = value[defaultLocale];
+-  return fallback ?? undefined;
+-}
+-
+-function normalizeSlug(value: unknown): string | null {
+-  if (!value) {
+-    return null;
+-  }
+-  if (typeof value === 'string') {
+-    const trimmed = value.trim();
+-    if (!trimmed || trimmed === ROOT_SLUG_PLACEHOLDER) {
+-      return '';
+-    }
+-    return trimmed.replace(/^\/+|\/+$/g, '');
+-  }
+-  if (typeof value === 'object' && value !== null && 'slug' in value) {
+-    return normalizeSlug((value as { slug?: string | null }).slug ?? null);
+-  }
+-  return null;
+-}
+-
+-function mapLocalizedSlugs(slugs?: Localized<string | { slug?: string | null } | null>): Partial<Record<Locale, string>> {
+-  const record: Partial<Record<Locale, string>> = {};
+-  if (!slugs) {
+-    return record;
+-  }
+-  for (const locale of locales) {
+-    const slug = normalizeSlug(slugs[locale] ?? null);
+-    if (slug === null || slug === undefined) {
+-      continue;
+-    }
+-    record[locale] = slug;
+-  }
+-  return record;
+-}
+-
+-function mapLocalizedTextRecord(value?: Localized<string>): Partial<Record<Locale, string>> {
+-  const record: Partial<Record<Locale, string>> = {};
+-  if (!value) {
+-    return record;
+-  }
+-  for (const locale of locales) {
+-    const text = toOptionalString(value[locale] ?? undefined);
+-    if (!text) {
+-      continue;
+-    }
+-    record[locale] = text;
+-  }
+-  return record;
+-}
+-
+-function mapLocalizedRecordMap<T extends string>(
+-  value: Record<T, Localized<string>> | undefined
+-): Record<T, Partial<Record<Locale, string>>> {
+-  const record: Partial<Record<T, Partial<Record<Locale, string>>>> = {};
+-  if (!value) {
+-    return record as Record<T, Partial<Record<Locale, string>>>;
+-  }
+-  for (const key of Object.keys(value) as T[]) {
+-    record[key] = mapLocalizedTextRecord(value[key]);
+-  }
+-  return record as Record<T, Partial<Record<Locale, string>>>;
+-}
+-
+-function mapPageHero(hero: RawPageEntry['hero'], locale: Locale): PageHero | null {
+-  if (!hero) {
+-    return null;
+-  }
+-  const image = normalizeImageAsset(hero.image ?? null);
+-  const alt = pickLocalized(hero.alt, locale) ?? null;
+-  if (!image && !alt) {
+-    return null;
+-  }
+-  return { image, alt } satisfies PageHero;
+-}
+-
+-function pickFirstLocalizedText(record: Partial<Record<Locale, string>>): string | null {
+-  const orderedLocales = [defaultLocale, ...locales.filter((candidate) => candidate !== defaultLocale)];
+-  for (const locale of orderedLocales) {
+-    const value = record[locale];
+-    if (value && value.trim()) {
+-      return value;
+-    }
+-  }
+-  return null;
+-}
+-
+-async function resolveCatalogDocuments(value: unknown, locale: Locale): Promise<CatalogDocument[]> {
+-  const linkedIds = mapRelationshipValues(value);
+-  if (!linkedIds.length) {
+-    return [];
+-  }
+-
+-  const documents = await getDocuments();
+-  const resolved: CatalogDocument[] = [];
+-
+-  for (const id of linkedIds) {
+-    const document = documents.find((entry) => entry.id === id);
+-    if (!document || !document.file) {
+-      continue;
+-    }
+-
+-    const title =
+-      pickLocalized(document.title, locale) ??
+-      pickLocalized(document.title, defaultLocale) ??
+-      pickFirstLocalizedText(document.title) ??
+-      document.fileName ??
+-      document.id;
+-
+-    resolved.push({
+-      slug: document.id,
+-      title,
+-      type: document.type,
+-      file: document.file,
+-    });
+-  }
+-
+-  return resolved;
+-}
+-
+-function normalizeFilePath(value: unknown): string | null {
+-  if (!value) {
+-    return null;
+-  }
+-  if (typeof value === 'string') {
+-    const trimmed = value.trim();
+-    if (!trimmed) {
+-      return null;
+-    }
+-    return normalizeImagePath(trimmed);
+-  }
+-  if (typeof value === 'object' && value !== null) {
+-    if ('src' in value && typeof (value as { src?: string | null }).src === 'string') {
+-      return normalizeFilePath((value as { src?: string | null }).src ?? null);
+-    }
+-    if ('path' in value && typeof (value as { path?: string | null }).path === 'string') {
+-      return normalizeFilePath((value as { path?: string | null }).path ?? null);
+-    }
+-  }
+-  return null;
+-}
+-
+-function mapRelationshipValues(value: unknown): string[] {
+-  if (!value) {
+-    return [];
+-  }
+-  if (Array.isArray(value)) {
+-    const seen = new Set<string>();
+-    const result: string[] = [];
+-    for (const entry of value) {
+-      let candidate: string | null = null;
+-      if (typeof entry === 'string') {
+-        candidate = entry;
+-      } else if (entry && typeof entry === 'object' && 'value' in entry) {
+-        const record = entry as { value?: string | null };
+-        if (typeof record.value === 'string') {
+-          candidate = record.value;
+-        }
+-      }
+-      if (typeof candidate !== 'string') {
+-        continue;
+-      }
+-      const trimmed = candidate.trim();
+-      if (!trimmed || seen.has(trimmed)) {
+-        continue;
+-      }
+-      seen.add(trimmed);
+-      result.push(trimmed);
+-    }
+-    return result;
+-  }
+-  if (typeof value === 'string') {
+-    const trimmed = value.trim();
+-    return trimmed ? [trimmed] : [];
+-  }
+-  return [];
+-}
+-
+-function filterValidValues<T extends string>(values: unknown, allowed: Set<string>): T[] {
+-  if (!Array.isArray(values)) {
+-    return [];
+-  }
+-  const seen = new Set<string>();
+-  const result: T[] = [];
+-  for (const value of values) {
+-    if (typeof value !== 'string') {
+-      continue;
+-    }
+-    const trimmed = value.trim();
+-    if (!allowed.has(trimmed) || seen.has(trimmed)) {
+-      continue;
+-    }
+-    seen.add(trimmed);
+-    result.push(trimmed as T);
+-  }
+-  return result;
+-}
+-
+-function ensureUniqueLocalizedSlugs<T extends { slug?: Localized<string | { slug?: string | null } | null> }>(
+-  entries: Array<{ entry: T; key: string }>,
+-  collection: string
+-): void {
+-  const seenByLocale = new Map<Locale, Map<string, string>>();
+-  for (const locale of locales) {
+-    seenByLocale.set(locale, new Map());
+-  }
+-
+-  for (const { entry, key } of entries) {
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    for (const locale of locales) {
+-      const slug = slugByLocale[locale];
+-      if (!slug) {
+-        continue;
+-      }
+-      const localeMap = seenByLocale.get(locale);
+-      if (!localeMap) {
+-        continue;
+-      }
+-      const existing = localeMap.get(slug);
+-      if (existing) {
+-        throw new Error(
+-          `Duplicate slug "${slug}" for locale "${locale}" in collection "${collection}" (entries "${existing}" and "${key}").`
+-        );
+-      }
+-      localeMap.set(slug, key);
+-    }
+-  }
+-}
+-
+-async function readMarkdoc(
+-  reference: string | { content?: string | null } | { node?: MarkdocNode | null } | null | undefined
+-): Promise<ResolvedMarkdocContent | null> {
+-  if (!reference) {
+-    return null;
+-  }
+-  if (typeof reference === 'object' && reference !== null) {
+-    if ('node' in reference && reference.node) {
+-      return { node: reference.node } satisfies ResolvedMarkdocContent;
+-    }
+-    if ('content' in reference && typeof reference.content === 'string') {
+-      return reference.content;
+-    }
+-  }
+-  const raw = typeof reference === 'string' ? reference : null;
+-  if (!raw) {
+-    return null;
+-  }
+-  const normalized = raw.startsWith('content/') ? raw : `content/${raw.replace(/^\/+/, '')}`;
+-  const absolute = path.join(process.cwd(), normalized);
+-  try {
+-    return await fs.readFile(absolute, 'utf8');
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-async function resolveLocalizedContent(
+-  content: Localized<RawMarkdocValue> | undefined,
+-  locale: Locale
+-): Promise<MarkdocContent> {
+-  if (!content) {
+-    return null;
+-  }
+-  const exact = await readMarkdoc(content[locale] ?? null);
+-  if (exact) {
+-    return exact;
+-  }
+-  if (locale === defaultLocale) {
+-    return null;
+-  }
+-  return readMarkdoc(content[defaultLocale] ?? null);
+-}
+-
+-type SiteSingleton = {
+-  siteName?: Localized<string>;
+-  brand?: {
+-    siteName?: Localized<string>;
+-    tagline?: Localized<string>;
+-    contacts?: {
+-      email?: string | null;
+-      phone?: string | null;
+-      telegramUrl?: string | null;
+-      address?: Localized<string>;
+-    } | null;
+-  } | null;
+-  tagline?: Localized<string>;
+-  contacts?: {
+-    email?: string | null;
+-    phone?: string | null;
+-    telegramUrl?: string | null;
+-    address?: Localized<string>;
+-  } | null;
+-  footer?: {
+-    tagline?: Localized<string>;
+-    copyright?: Localized<string>;
+-  } | null;
+-  seo?: {
+-    title?: Localized<string>;
+-    description?: Localized<string>;
+-    ogTitle?: Localized<string>;
+-    ogDescription?: Localized<string>;
+-    ogImage?: RawSeoImage;
+-    canonicalBase?: string | null;
+-  } | null;
+-  meta?: {
+-    domain?: string | null;
+-    robots?: {
+-      index?: boolean | null;
+-      follow?: boolean | null;
+-    } | null;
+-  } | null;
+-};
+-
+-type NavigationSingleton = {
+-  headerLinks?: NavigationEntry[];
+-  footerLinks?: NavigationEntry[];
+-};
+-
+-const readSiteSingleton = cache(async (): Promise<SiteSingleton | null> => {
+-  const reader = getReader();
+-  try {
+-    const site = await reader.singletons.site.read();
+-    if (site) {
+-      return site as SiteSingleton;
+-    }
+-  } catch {
+-    // fall back to file system
+-  }
+-  return (await readFallbackSingleton<SiteSingleton>('content/site/index.json')) ?? null;
+-});
+-
+-async function readNavigationSingleton(): Promise<NavigationSingleton | null> {
+-  const reader = getReader();
+-  try {
+-    const navigation = await reader.singletons.navigation.read();
+-    if (navigation) {
+-      return navigation as NavigationSingleton;
+-    }
+-  } catch {
+-    // fall back to file system
+-  }
+-  return (await readFallbackSingleton<NavigationSingleton>('content/navigation/index.json')) ?? null;
+-}
+-
+-const readDocumentsPageSingleton = cache(async (): Promise<DocumentsPageSingleton | null> => {
+-  const reader = getReader();
+-  try {
+-    const documentsPage = await reader.singletons.documentsPage.read();
+-    if (documentsPage) {
+-      return documentsPage as DocumentsPageSingleton;
+-    }
+-  } catch {
+-    // fall back to file system
+-  }
+-  return (await readFallbackSingleton<DocumentsPageSingleton>('content/documents-page/index.json')) ?? null;
+-});
+-
+-const readCatalogPageSingleton = cache(async (): Promise<CatalogPageSingleton | null> => {
+-  const reader = getReader();
+-  try {
+-    const catalogPage = await reader.singletons.catalogPage.read();
+-    if (catalogPage) {
+-      return catalogPage as CatalogPageSingleton;
+-    }
+-  } catch {
+-    // fall back to file system
+-  }
+-  return (await readFallbackSingleton<CatalogPageSingleton>('content/catalog-page/index.json')) ?? null;
+-});
+-
+-function mergeCollections<T>(
+-  primary: Array<{ key: string; entry: T }>,
+-  fallback: Array<{ key: string; entry: T }>
+-): Array<{ key: string; entry: T }> {
+-  if (fallback.length === 0) {
+-    return primary;
+-  }
+-
+-  const merged = new Map<string, { key: string; entry: T }>();
+-  for (const entry of fallback) {
+-    merged.set(entry.key, entry);
+-  }
+-  for (const entry of primary) {
+-    merged.set(entry.key, entry);
+-  }
+-  return Array.from(merged.values());
+-}
+-
+-async function hydrateMarkdocEntries<T extends { content?: unknown }>(
+-  collectionRoot: string,
+-  entries: Array<{ key: string; entry: T }>
+-): Promise<Array<{ key: string; entry: T }>> {
+-  await Promise.all(entries.map(({ key, entry }) => hydrateLocalizedMarkdocByKey(collectionRoot, key, entry)));
+-  return entries;
+-}
+-
+-const readPagesCollection = cache(async () => {
+-  const reader = getReader();
+-  let entries: Array<{ key: string; entry: RawPageEntry }> = [];
+-  try {
+-    const result = await reader.collections.pages.all({ resolveLinkedFiles: true });
+-    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+-      key: slug,
+-      entry: entry as RawPageEntry,
+-    }));
+-  } catch {
+-    // fall back to file system
+-  }
+-
+-  const fallback = await readFallbackCollection<RawPageEntry>('content/pages');
+-  if (entries.length === 0) {
+-    return hydrateMarkdocEntries('content/pages', fallback);
+-  }
+-  return hydrateMarkdocEntries('content/pages', mergeCollections(entries, fallback));
+-});
+-
+-const readPostsCollection = cache(async () => {
+-  const reader = getReader();
+-  let entries: Array<{ key: string; entry: RawPostEntry }> = [];
+-  try {
+-    const result = await reader.collections.posts.all({ resolveLinkedFiles: true });
+-    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+-      key: slug,
+-      entry: entry as RawPostEntry,
+-    }));
+-  } catch {
+-    // fall back to file system
+-  }
+-
+-  const fallback = await readFallbackCollection<RawPostEntry>('content/posts');
+-  if (entries.length === 0) {
+-    return hydrateMarkdocEntries('content/posts', fallback);
+-  }
+-  return hydrateMarkdocEntries('content/posts', mergeCollections(entries, fallback));
+-});
+-
+-const readCatalogCollection = cache(async () => {
+-  const reader = getReader();
+-  let entries: Array<{ key: string; entry: RawCatalogEntry }> = [];
+-  try {
+-    const result = await reader.collections.catalog.all({ resolveLinkedFiles: true });
+-    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+-      key: slug,
+-      entry: entry as RawCatalogEntry,
+-    }));
+-  } catch {
+-    // fall back to file system
+-  }
+-
+-  const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
+-  const merged = entries.length === 0 ? fallback : mergeCollections(entries, fallback);
+-  await hydrateMarkdocEntries('content/catalog', merged);
+-  ensureUniqueLocalizedSlugs(merged, 'catalog');
+-  return merged;
+-});
+-
+-const readDocumentsCollection = cache(async () => {
+-  const reader = getReader();
+-  let entries: Array<{ key: string; entry: RawDocumentEntry }> = [];
+-  try {
+-    const result = await reader.collections.documents.all({ resolveLinkedFiles: true });
+-    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
+-      key: slug,
+-      entry: entry as RawDocumentEntry,
+-    }));
+-  } catch {
+-    // fall back to file system
+-  }
+-
+-  const fallback = await readFallbackCollection<RawDocumentEntry>('content/documents');
+-  if (entries.length === 0) {
+-    return fallback;
+-  }
+-  return mergeCollections(entries, fallback);
+-});
+-
+-function resolveNavigationLinks(
+-  links: NavigationEntry[] | undefined,
+-  locale: Locale
+-): NavigationLink[] {
+-  if (!Array.isArray(links)) {
+-    return [];
+-  }
+-  const blacklist = new Set(['linkedin', 'footer-news']);
+-  const filteredLinks = links.filter((link) => {
+-    const id = toOptionalString(link.id ?? undefined);
+-    return !id || !blacklist.has(id);
+-  });
+-
+-  const withOrder = filteredLinks
+-    .map((link, index) => {
+-      const id = toOptionalString(link.id) ?? `link-${index}`;
+-      const label = pickLocalized(link.label, locale) ?? '';
+-      const localizedPath = link.path;
+-      const pathValue = localizedPath ? pickLocalized(localizedPath, locale) : undefined;
+-      const href = toOptionalString(link.externalUrl) ?? (pathValue ? buildInternalPath(locale, pathValue) : null);
+-      const isExternal = Boolean(link.externalUrl && toOptionalString(link.externalUrl));
+-      const children = resolveNavigationLinks(
+-        Array.isArray(link.children) ? link.children : undefined,
+-        locale,
+-      );
+-      if (!href) {
+-        return null;
+-      }
+-      const order = typeof link.order === 'number' ? link.order : Number.POSITIVE_INFINITY;
+-      const orderedLink: NavigationLink & { order: number } = {
+-        id,
+-        label: label || href,
+-        href,
+-        isExternal,
+-        newTab: Boolean(link.newTab),
+-        localizedPath,
+-        children: children.length ? children : undefined,
+-        order,
+-      };
+-      return orderedLink;
+-    })
+-    .filter((value): value is NavigationLink & { order: number } => value !== null)
+-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+-
+-  return withOrder.map(({ id, label, href, isExternal, newTab, localizedPath, children }) => ({
+-    id,
+-    label,
+-    href,
+-    isExternal,
+-    newTab,
+-    localizedPath,
+-    children,
+-  } satisfies NavigationLink));
+-}
+-
+-function buildInternalPath(locale: Locale, pathValue: string): string {
+-  const normalized = pathValue.trim().replace(/^\/+|\/+$/g, '');
+-
+-  if (!normalized) {
+-    return buildPath(locale);
+-  }
+-
+-  const segments = normalized.split('/').filter(Boolean);
+-  const [firstSegment] = segments;
+-  if (firstSegment && isLocale(firstSegment)) {
+-    return `/${segments.join('/')}`;
+-  }
+-
+-  return buildPath(locale, segments);
+-}
+-
+-function computeEntryId(
+-  entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry,
+-  fallback: string
+-): string {
+-  const id = toOptionalString(entry.id ?? undefined);
+-  if (id) {
+-    return id;
+-  }
+-  const slugFallback = toOptionalString(entry.slugKey ?? undefined);
+-  if (slugFallback) {
+-    return slugFallback;
+-  }
+-  return fallback;
+-}
+-
+-export async function getSite(locale: Locale): Promise<SiteContent> {
+-  const site = await readSiteSingleton();
+-  const seoGroup = site?.seo ?? null;
+-  const resolvedSeo = mapResolvedSeo(seoGroup, locale);
+-  const contacts = site?.contacts ?? site?.brand?.contacts ?? {};
+-  const footer = site?.footer ?? null;
+-  return {
+-    locale,
+-    name: pickLocalized(site?.siteName ?? site?.brand?.siteName, locale) ?? null,
+-    tagline: pickLocalized(site?.tagline ?? site?.brand?.tagline, locale) ?? null,
+-    contacts: {
+-      email: toOptionalString(contacts.email ?? undefined),
+-      phone: toOptionalString(contacts.phone ?? undefined),
+-      telegramUrl: toOptionalString(contacts.telegramUrl ?? undefined),
+-      address: pickLocalized(contacts.address, locale) ?? null,
+-    },
+-    seo: {
+-      title: resolvedSeo?.title ?? null,
+-      description: resolvedSeo?.description ?? null,
+-      ogTitle: resolvedSeo?.ogTitle ?? null,
+-      ogDescription: resolvedSeo?.ogDescription ?? null,
+-      ogImage: resolvedSeo?.ogImage ?? null,
+-      canonicalBase: toOptionalString(seoGroup?.canonicalBase ?? undefined),
+-    },
+-    domain: toOptionalString(site?.meta?.domain ?? undefined),
+-    robots: {
+-      index: site?.meta?.robots?.index !== false,
+-      follow: site?.meta?.robots?.follow !== false,
+-    },
+-    footer: {
+-      tagline: pickLocalized(footer?.tagline, locale) ?? null,
+-      copyright: pickLocalized(footer?.copyright, locale) ?? null,
+-    },
+-  } satisfies SiteContent;
+-}
+-
+-export async function getNavigation(locale: Locale): Promise<Navigation> {
+-  const navigation = await readNavigationSingleton();
+-  return {
+-    header: resolveNavigationLinks(navigation?.headerLinks, locale),
+-    footer: resolveNavigationLinks(navigation?.footerLinks, locale),
+-  } satisfies Navigation;
+-}
+-
+-export async function getPageById(id: string, locale: Locale): Promise<PageContent | null> {
+-  const entries = await readPagesCollection();
+-  const entryRecord = entries.find(({ entry, key }) => {
+-    const entryId = computeEntryId(entry, key);
+-    return entryId === id;
+-  });
+-  if (!entryRecord) {
+-    return null;
+-  }
+-  if (!isPublished(entryRecord.entry)) {
+-    return null;
+-  }
+-  const slugByLocale = mapLocalizedSlugs(entryRecord.entry.slug);
+-  const slug = slugByLocale[locale] ?? '';
+-  const title = pickLocalized(entryRecord.entry.title, locale) ?? '';
+-  const content = await resolveLocalizedContent(entryRecord.entry.content, locale);
+-  const seo = mapResolvedSeo(entryRecord.entry.seo ?? null, locale);
+-  const description = pickLocalized(entryRecord.entry.description, locale) ?? null;
+-  const excerpt = pickLocalized(entryRecord.entry.excerpt, locale) ?? null;
+-  const hero = mapPageHero(entryRecord.entry.hero ?? null, locale);
+-  return {
+-    id,
+-    locale,
+-    title,
+-    slug,
+-    slugByLocale,
+-    content,
+-    description,
+-    seo,
+-    excerpt,
+-    updatedAt: normalizeDateTime(entryRecord.entry.updatedAt),
+-    hero,
+-  } satisfies PageContent;
+-}
+-
+-export async function getAllPages(): Promise<PageSummary[]> {
+-  const entries = await readPagesCollection();
+-  return entries.map(({ entry, key }) => {
+-    const id = computeEntryId(entry, key);
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    return {
+-      id,
+-      slugByLocale,
+-      published: isPublished(entry),
+-      updatedAt: normalizeDateTime(entry.updatedAt),
+-    } satisfies PageSummary;
+-  });
+-}
+-
+-export async function getPageBySlug(slug: string, locale: Locale): Promise<PageContent | null> {
+-  const entries = await readPagesCollection();
+-  const record = entries.find(({ entry }) => {
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    return slugByLocale[locale] === slug;
+-  });
+-  if (!record) {
+-    return null;
+-  }
+-  if (!isPublished(record.entry)) {
+-    return null;
+-  }
+-  const slugByLocale = mapLocalizedSlugs(record.entry.slug);
+-  const title = pickLocalized(record.entry.title, locale) ?? '';
+-  const content = await resolveLocalizedContent(record.entry.content, locale);
+-  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
+-  const description = pickLocalized(record.entry.description, locale) ?? null;
+-  const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
+-  const hero = mapPageHero(record.entry.hero ?? null, locale);
+-  return {
+-    id: computeEntryId(record.entry, record.key),
+-    locale,
+-    title,
+-    slug,
+-    slugByLocale,
+-    content,
+-    description,
+-    seo,
+-    excerpt,
+-    updatedAt: normalizeDateTime(record.entry.updatedAt),
+-    hero,
+-  } satisfies PageContent;
+-}
+-
+-export async function getAllPosts(): Promise<PostSummary[]> {
+-  const entries = await readPostsCollection();
+-  return entries.map(({ entry, key }) => {
+-    const id = computeEntryId(entry, key);
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    return {
+-      id,
+-      slugByLocale,
+-      published: isPublished(entry),
+-      date: normalizeDateTime(entry.date),
+-      updatedAt: normalizeDateTime(entry.updatedAt),
+-    } satisfies PostSummary;
+-  });
+-}
+-
+-function mapCatalogLookupItem(
+-  entry: RawCatalogEntry,
+-  key: string,
+-  locale: Locale
+-): CatalogLookupItem | null {
+-  const slugByLocale = mapLocalizedSlugs(entry.slug);
+-  const slug = slugByLocale[locale];
+-  if (!slug) {
+-    return null;
+-  }
+-
+-  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
+-
+-  return {
+-    id: computeEntryId(entry, key),
+-    slug,
+-    slugByLocale,
+-    title,
+-  } satisfies CatalogLookupItem;
+-}
+-
+-function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale): CatalogListItem | null {
+-  const slugByLocale = mapLocalizedSlugs(entry.slug);
+-  const slug = slugByLocale[locale];
+-  if (!slug) {
+-    return null;
+-  }
+-
+-  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
+-  const shortDescription =
+-    pickLocalized(entry.shortDescription, locale) ??
+-    pickLocalized(entry.shortDescription, defaultLocale) ??
+-    null;
+-  const teaser =
+-    pickLocalized(entry.teaser, locale) ?? pickLocalized(entry.teaser, defaultLocale) ?? null;
+-  const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, defaultLocale) ?? null;
+-  const category = typeof entry.category === 'string' && CATALOG_CATEGORY_SET.has(entry.category)
+-    ? (entry.category as CatalogCategory)
+-    : null;
+-  const process = filterValidValues<CatalogProcess>(entry.process, CATALOG_PROCESS_SET);
+-  const base = filterValidValues<CatalogBase>(entry.base, CATALOG_BASE_SET);
+-  const filler = filterValidValues<CatalogFiller>(entry.filler, CATALOG_FILLER_SET);
+-  const metals = filterValidValues<CatalogMetal>(entry.metals, CATALOG_METAL_SET);
+-  const auxiliary = filterValidValues<CatalogAuxiliary>(entry.auxiliary, CATALOG_AUXILIARY_SET);
+-  const imageAsset = normalizeImageAsset(entry.image ?? null);
+-  const image = imageAsset
+-    ? ({ src: imageAsset.src, width: imageAsset.width, height: imageAsset.height } satisfies CatalogImage)
+-    : null;
+-  const docs = toOptionalString(entry.docs ?? undefined);
+-  const badge =
+-    typeof entry.badge === 'string' && CATALOG_BADGE_SET.has(entry.badge as CatalogBadge)
+-      ? (entry.badge as CatalogBadge)
+-      : null;
+-
+-  return {
+-    id: computeEntryId(entry, key),
+-    locale,
+-    slug,
+-    slugByLocale,
+-    title,
+-    shortDescription,
+-    badge,
+-    teaser,
+-    excerpt,
+-    category,
+-    process,
+-    base,
+-    filler,
+-    metals,
+-    auxiliary,
+-    image,
+-    docs,
+-    updatedAt: normalizeDateTime(entry.updatedAt),
+-  } satisfies CatalogListItem;
+-}
+-
+-function resolveCatalogVariants(
+-  value: unknown,
+-  entries: Awaited<ReturnType<typeof readCatalogCollection>>,
+-  currentId: string,
+-  locale: Locale,
+-): CatalogVariant[] {
+-  const linkedIds = mapRelationshipValues(value);
+-  if (!linkedIds.length) {
+-    return [];
+-  }
+-
+-  const catalogById = new Map(
+-    entries.map((record) => [computeEntryId(record.entry, record.key), record] as const),
+-  );
+-
+-  const variants: CatalogVariant[] = [];
+-  for (const id of linkedIds) {
+-    if (id === currentId) {
+-      continue;
+-    }
+-    const record = catalogById.get(id);
+-    if (!record || !isPublished(record.entry)) {
+-      continue;
+-    }
+-    const mapped = mapCatalogLookupItem(record.entry, record.key, locale);
+-    if (!mapped) {
+-      continue;
+-    }
+-    variants.push({ id, slug: mapped.slug, title: mapped.title });
+-  }
+-
+-  return variants;
+-}
+-
+-export async function getPostBySlug(slug: string, locale: Locale): Promise<PostContent | null> {
+-  const entries = await readPostsCollection();
+-  const record = entries.find(({ entry }) => {
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    return slugByLocale[locale] === slug;
+-  });
+-  if (!record) {
+-    return null;
+-  }
+-  if (!isPublished(record.entry)) {
+-    return null;
+-  }
+-  const slugByLocale = mapLocalizedSlugs(record.entry.slug);
+-  const title = pickLocalized(record.entry.title, locale) ?? '';
+-  const content = await resolveLocalizedContent(record.entry.content, locale);
+-  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
+-  const description = pickLocalized(record.entry.description, locale) ?? null;
+-  const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
+-  const coverAsset = normalizeImageAsset(record.entry.cover?.image);
+-  const cover = coverAsset
+-    ? {
+-        src: coverAsset.src,
+-        alt: pickLocalized(record.entry.cover?.alt, locale) ?? null,
+-        width: coverAsset.width ?? null,
+-        height: coverAsset.height ?? null,
+-        image: {
+-          src: coverAsset.src,
+-          width: coverAsset.width ?? null,
+-          height: coverAsset.height ?? null,
+-        },
+-      }
+-    : null;
+-  const hero = mapPageHero(record.entry.hero ?? null, locale);
+-  return {
+-    id: computeEntryId(record.entry, record.key),
+-    locale,
+-    title,
+-    slug,
+-    slugByLocale,
+-    content,
+-    description,
+-    seo,
+-    excerpt,
+-    updatedAt: normalizeDateTime(record.entry.updatedAt),
+-    date: normalizeDateTime(record.entry.date),
+-    tags: record.entry.tags ?? [],
+-    cover,
+-    hero,
+-  } satisfies PostContent;
+-}
+-
+-export async function getCatalogItems(locale: Locale): Promise<CatalogListItem[]> {
+-  const entries = await readCatalogCollection();
+-  const items: CatalogListItem[] = [];
+-
+-  for (const { entry, key } of entries) {
+-    if (!isPublished(entry)) {
+-      continue;
+-    }
+-    const mapped = mapCatalogListItem(entry, key, locale);
+-    if (!mapped) {
+-      continue;
+-    }
+-    items.push(mapped);
+-  }
+-
+-  return items;
+-}
+-
+-export async function getCatalogLookupItems(locale: Locale): Promise<CatalogLookupItem[]> {
+-  const entries = await readCatalogCollection();
+-  const items: CatalogLookupItem[] = [];
+-
+-  for (const { entry, key } of entries) {
+-    if (!isPublished(entry)) {
+-      continue;
+-    }
+-    const mapped = mapCatalogLookupItem(entry, key, locale);
+-    if (!mapped) {
+-      continue;
+-    }
+-    items.push(mapped);
+-  }
+-
+-  return items;
+-}
+-
+-export async function getCatalogItemBySlug(slug: string, locale: Locale): Promise<CatalogItem | null> {
+-  const entries = await readCatalogCollection();
+-  const record = entries.find(({ entry }) => {
+-    const slugByLocale = mapLocalizedSlugs(entry.slug);
+-    return slugByLocale[locale] === slug;
+-  });
+-  if (!record) {
+-    return null;
+-  }
+-  if (!isPublished(record.entry)) {
+-    return null;
+-  }
+-  const baseItem = mapCatalogListItem(record.entry, record.key, locale);
+-  if (!baseItem) {
+-    return null;
+-  }
+-  const [content, documents] = await Promise.all([
+-    resolveLocalizedContent(record.entry.content, locale),
+-    resolveCatalogDocuments(record.entry.documentLinks, locale),
+-  ]);
+-  const seriesDescription =
+-    pickLocalized(record.entry.seriesDescription, locale) ??
+-    pickLocalized(record.entry.seriesDescription, defaultLocale) ??
+-    null;
+-  const variants = resolveCatalogVariants(
+-    record.entry.variantGroup,
+-    entries,
+-    baseItem.id,
+-    locale,
+-  );
+-
+-  return { ...baseItem, content, documents, seriesDescription, variants } satisfies CatalogItem;
+-}
+-
+-export async function getAllCatalogEntries(): Promise<CatalogSummary[]> {
+-  const entries = await readCatalogCollection();
+-  return entries.map(({ entry, key }) => ({
+-    id: computeEntryId(entry, key),
+-    slugByLocale: mapLocalizedSlugs(entry.slug),
+-    published: isPublished(entry),
+-    updatedAt: normalizeDateTime(entry.updatedAt),
+-  } satisfies CatalogSummary));
+-}
+-
+-export async function getPostAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
+-  const entries = await readPostsCollection();
+-  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
+-  if (!record) {
+-    return {};
+-  }
+-  return mapLocalizedSlugs(record.entry.slug);
+-}
+-
+-export async function getPageAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
+-  const entries = await readPagesCollection();
+-  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
+-  if (!record) {
+-    return {};
+-  }
+-  return mapLocalizedSlugs(record.entry.slug);
+-}
+-
+-export async function getCatalogAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
+-  const entries = await readCatalogCollection();
+-  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
+-  if (!record) {
+-    return {};
+-  }
+-  return mapLocalizedSlugs(record.entry.slug);
+-}
+-
+-export async function getDocuments(): Promise<Document[]> {
+-  const entries = await readDocumentsCollection();
+-  const documents: Document[] = [];
+-
+-  for (const { entry, key } of entries) {
+-    if (!isPublished(entry)) {
+-      continue;
+-    }
+-    const typeValue = typeof entry.type === 'string' ? (entry.type.trim() as DocumentType) : null;
+-    if (!typeValue || !DOCUMENT_TYPE_SET.has(typeValue)) {
+-      continue;
+-    }
+-    const langValue = typeof entry.lang === 'string' ? (entry.lang.trim() as DocumentLanguage) : null;
+-    if (!langValue || !DOCUMENT_LANGUAGE_SET.has(langValue)) {
+-      continue;
+-    }
+-    const filePath = normalizeFilePath(entry.file ?? null);
+-    const sanitizedFilePath = filePath ?? null;
+-    const fileName = sanitizedFilePath
+-      ? path.basename(sanitizedFilePath.split('?')[0]?.split('#')[0] ?? sanitizedFilePath)
+-      : null;
+-    const fileExtension = fileName && fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() ?? null : null;
+-    const fileSize = await resolveUploadSize(sanitizedFilePath);
+-    const title = mapLocalizedTextRecord(entry.title);
+-    const relatedProductIds = mapRelationshipValues(entry.relatedProducts);
+-    documents.push({
+-      id: computeEntryId(entry, key),
+-      title,
+-      type: typeValue,
+-      lang: langValue,
+-      file: sanitizedFilePath,
+-      fileName,
+-      fileExtension,
+-      fileSize,
+-      relatedProductIds,
+-      updatedAt: normalizeDateTime(entry.updatedAt),
+-    });
+-  }
+-
+-  documents.sort((a, b) => {
+-    const typeDiff = DOCUMENT_TYPE_ORDER.indexOf(a.type) - DOCUMENT_TYPE_ORDER.indexOf(b.type);
+-    if (typeDiff !== 0) {
+-      return typeDiff;
+-    }
+-    const updatedA = a.updatedAt ?? '';
+-    const updatedB = b.updatedAt ?? '';
+-    if (updatedA && updatedB && updatedA !== updatedB) {
+-      return updatedA > updatedB ? -1 : 1;
+-    }
+-    const titleA = pickFirstLocalizedText(a.title) ?? a.fileName ?? a.id;
+-    const titleB = pickFirstLocalizedText(b.title) ?? b.fileName ?? b.id;
+-    return titleA.localeCompare(titleB);
+-  });
+-
+-  return documents;
+-}
+-
+-export async function getDocumentsPage(): Promise<DocumentsPageContent | null> {
+-  const documentsPage = await readDocumentsPageSingleton();
+-  if (!documentsPage) {
+-    return null;
+-  }
+-  const title = mapLocalizedTextRecord(documentsPage.title);
+-  const description = mapLocalizedTextRecord(documentsPage.description);
+-  const typeFilterLabel = mapLocalizedTextRecord(documentsPage.typeFilterLabel);
+-  const languageFilterLabel = mapLocalizedTextRecord(documentsPage.languageFilterLabel);
+-  const applyLabel = mapLocalizedTextRecord(documentsPage.applyLabel);
+-  const resetLabel = mapLocalizedTextRecord(documentsPage.resetLabel);
+-  const allLanguagesLabel = mapLocalizedTextRecord(documentsPage.allLanguagesLabel);
+-  const downloadLabel = mapLocalizedTextRecord(documentsPage.downloadLabel);
+-  const relatedProductsLabel = mapLocalizedTextRecord(documentsPage.relatedProductsLabel);
+-  const emptyStateMessage = mapLocalizedTextRecord(documentsPage.emptyStateMessage);
+-  const resultsLabelTemplate = mapLocalizedTextRecord(documentsPage.resultsLabelTemplate);
+-  const typeLabelsRecord = mapLocalizedRecordMap<DocumentType>(documentsPage.typeLabels);
+-  const languageLabelsRecord = mapLocalizedRecordMap<DocumentLanguage>(documentsPage.languageLabels);
+-  const ogImage = mapSeoImage(documentsPage.ogImage ?? null);
+-
+-  if (
+-    !Object.keys(title).length &&
+-    !Object.keys(description).length &&
+-    !ogImage &&
+-    !Object.keys(typeFilterLabel).length &&
+-    !Object.keys(languageFilterLabel).length
+-  ) {
+-    return null;
+-  }
+-
+-  const typeLabels = Object.fromEntries(
+-    DOCUMENT_TYPES.map((type) => [type, typeLabelsRecord[type] ?? {}])
+-  ) as Record<DocumentType, Partial<Record<Locale, string>>>;
+-  const languageLabels = Object.fromEntries(
+-    DOCUMENT_LANGUAGES.map((lang) => [lang, languageLabelsRecord[lang] ?? {}])
+-  ) as Record<DocumentLanguage, Partial<Record<Locale, string>>>;
+-
+-  return {
+-    title,
+-    description,
+-    typeFilterLabel,
+-    languageFilterLabel,
+-    applyLabel,
+-    resetLabel,
+-    allLanguagesLabel,
+-    downloadLabel,
+-    relatedProductsLabel,
+-    emptyStateMessage,
+-    resultsLabelTemplate,
+-    typeLabels,
+-    languageLabels,
+-    ogImage,
+-  } satisfies DocumentsPageContent;
+-}
+-
+-export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent | null> {
+-  const catalogPage = await readCatalogPageSingleton();
+-  if (!catalogPage) {
+-    return null;
+-  }
+-  const title = mapLocalizedTextRecord(catalogPage.title);
+-  const description = mapLocalizedTextRecord(catalogPage.description);
+-  const submitLabel = mapLocalizedTextRecord(catalogPage.submitLabel);
+-  const resetLabel = mapLocalizedTextRecord(catalogPage.resetLabel);
+-  const categoryAllLabel = mapLocalizedTextRecord(catalogPage.categoryAllLabel);
+-  const detailLabel = mapLocalizedTextRecord(catalogPage.detailLabel);
+-  const requestLabel = mapLocalizedTextRecord(catalogPage.requestLabel);
+-  const emptyStateMessage = mapLocalizedTextRecord(catalogPage.emptyStateMessage);
+-  const groupLabelsSource = catalogPage.groupLabels ?? {};
+-  const groupLabels: CatalogPageContent['groupLabels'] = {
+-    category: mapLocalizedTextRecord(groupLabelsSource.category),
+-    process: mapLocalizedTextRecord(groupLabelsSource.process),
+-    base: mapLocalizedTextRecord(groupLabelsSource.base),
+-    filler: mapLocalizedTextRecord(groupLabelsSource.filler),
+-    metal: mapLocalizedTextRecord(groupLabelsSource.metal),
+-    auxiliary: mapLocalizedTextRecord(groupLabelsSource.auxiliary),
+-  };
+-  const seo = mapResolvedSeo(catalogPage.seo ?? null, locale);
+-
+-  if (
+-    !Object.keys(title).length &&
+-    !Object.keys(description).length &&
+-    !Object.keys(submitLabel).length &&
+-    !Object.keys(resetLabel).length &&
+-    !seo
+-  ) {
+-    return null;
+-  }
+-
+-  return {
+-    title,
+-    description,
+-    submitLabel,
+-    resetLabel,
+-    categoryAllLabel,
+-    detailLabel,
+-    requestLabel,
+-    emptyStateMessage,
+-    groupLabels,
+-    seo,
+-  } satisfies CatalogPageContent;
+-}
+-
+-export async function getNavigationEntityByPath(
+-  locale: Locale,
+-  pathname: string
+-): Promise<{ link: NavigationLink; slugByLocale: Partial<Record<Locale, string>> } | null> {
+-  const navigation = await getNavigation(locale);
+-  const trimmed = pathname.replace(/^\/+/, '');
+-  const segments = trimmed.split('/').filter(Boolean);
+-  const relevantSegments = segments.length && isLocale(segments[0]) ? segments.slice(1) : segments;
+-  const relative = relevantSegments.join('/');
+-  const match = [...navigation.header, ...navigation.footer].find((link) => {
+-    if (!link.localizedPath) {
+-      return false;
+-    }
+-    const localized = link.localizedPath[locale]?.trim().replace(/^\/+|\/+$/g, '') ?? '';
+-    return localized === relative;
+-  });
+-  if (!match || !match.localizedPath) {
+-    return null;
+-  }
+-  return { link: match, slugByLocale: mapLocalizedSlugs(match.localizedPath) };
+-}
+-
+-export {
+-  AUXILIARY_CATEGORY,
+-  CATALOG_AUXILIARIES,
+-  CATALOG_BASES,
+-  CATALOG_CATEGORIES,
+-  CATALOG_FILLERS,
+-  CATALOG_PROCESSES,
+-  getCatalogTaxonomyLabel,
+-  getCatalogTaxonomyOptions,
+-} from './catalog/constants';
+-export type {
+-  CatalogAuxiliary,
+-  CatalogBase,
+-  CatalogCategory,
+-  CatalogFiller,
+-  CatalogMetal,
+-  CatalogProcess,
++import { cache } from 'react';
++import { promises as fs } from 'fs';
++import path from 'path';
++import { createReader } from '@keystatic/core/reader';
++import type { Node as MarkdocNode } from '@markdoc/markdoc';
++import config from '../../keystatic.config';
++import { defaultLocale, locales, type Locale } from './i18n';
++import { isLocale } from '@/lib/i18n';
++import { buildPath } from '@/lib/paths';
++import type { MarkdocContent, ResolvedMarkdocContent } from '@/lib/markdoc';
++import {
++  CATALOG_BASES,
++  CATALOG_CATEGORIES,
++  CATALOG_AUXILIARIES,
++  CATALOG_FILLERS,
++  CATALOG_METALS,
++  CATALOG_PROCESSES,
++  type CatalogBase,
++  type CatalogCategory,
++  type CatalogAuxiliary,
++  type CatalogFiller,
++  type CatalogMetal,
++  type CatalogProcess,
++} from './catalog/constants';
++
++const ROOT_SLUG_PLACEHOLDER = '__root__';
++
++export type DocumentType = 'certificate' | 'tds' | 'msds' | 'brochure';
++export type DocumentLanguage = 'ru' | 'en';
++
++const CATALOG_CATEGORY_SET = new Set<string>(CATALOG_CATEGORIES);
++const CATALOG_PROCESS_SET = new Set<string>(CATALOG_PROCESSES);
++const CATALOG_BASE_SET = new Set<string>(CATALOG_BASES);
++const CATALOG_FILLER_SET = new Set<string>(CATALOG_FILLERS);
++const CATALOG_AUXILIARY_SET = new Set<string>(CATALOG_AUXILIARIES);
++const CATALOG_METAL_SET = new Set<string>(CATALOG_METALS);
++const CATALOG_BADGE_SET = new Set(['bestseller', 'premium', 'eco', 'special'] as const);
++const DOCUMENT_TYPE_SET = new Set<DocumentType>(['certificate', 'tds', 'msds', 'brochure']);
++const DOCUMENT_LANGUAGE_SET = new Set<DocumentLanguage>(['ru', 'en']);
++const DOCUMENT_TYPE_ORDER: DocumentType[] = ['certificate', 'tds', 'msds', 'brochure'];
++
++export const DOCUMENT_TYPES: readonly DocumentType[] = DOCUMENT_TYPE_ORDER;
++export const DOCUMENT_LANGUAGES: readonly DocumentLanguage[] = ['ru', 'en'];
++
++const getReader = cache(() => createReader(process.cwd(), config));
++
++async function readJsonFile<T>(absolutePath: string): Promise<T | null> {
++  try {
++    const raw = await fs.readFile(absolutePath, 'utf8');
++    return JSON.parse(raw) as T;
++  } catch {
++    return null;
++  }
++}
++
++async function readFallbackCollection<T>(relativeDir: string): Promise<Array<{ key: string; entry: T }>> {
++  const directory = path.join(process.cwd(), relativeDir);
++  const dirEntries = await fs.readdir(directory, { withFileTypes: true }).catch(() => null);
++  if (!dirEntries) {
++    return [];
++  }
++
++  const results: Array<{ key: string; entry: T }> = [];
++
++  for (const entry of dirEntries) {
++    let filePath: string | null = null;
++    let key: string;
++    let entryDir: string | null = null;
++
++    if (entry.isDirectory()) {
++      const dir = path.join(directory, entry.name);
++      const primaryIndexPath = path.join(dir, 'index.json');
++      const nestedIndexPath = path.join(dir, 'index', 'index.json');
++      const existingIndexPath =
++        (await fs.stat(primaryIndexPath).then(() => primaryIndexPath).catch(() => null)) ??
++        (await fs.stat(nestedIndexPath).then(() => nestedIndexPath).catch(() => null));
++
++      if (!existingIndexPath) {
++        console.warn(
++          `[keystatic] Skipping fallback entry "${entry.name}" in "${relativeDir}": missing index.json.`,
++        );
++        continue;
++      }
++
++      filePath = existingIndexPath;
++      key = entry.name;
++      entryDir = dir;
++    } else if (entry.isFile() && entry.name.endsWith('.json')) {
++      filePath = path.join(directory, entry.name);
++      key = entry.name.replace(/\.json$/i, '');
++    } else {
++      continue;
++    }
++
++    const data = await readJsonFile<T>(filePath);
++    if (!data) {
++      console.warn(
++        `[keystatic] Skipping fallback entry "${key}" in "${relativeDir}": cannot read JSON data from ${filePath}.`,
++      );
++      continue;
++    }
++
++    normalizeEntrySlugs(data);
++
++    await hydrateLocalizedMarkdoc(entryDir, data);
++
++    results.push({ key, entry: data });
++  }
++
++  return results;
++}
++
++async function readFallbackSingleton<T>(relativePath: string): Promise<T | null> {
++  const absolute = path.join(process.cwd(), relativePath);
++  return readJsonFile<T>(absolute);
++}
++
++function normalizeEntrySlugs(entry: unknown): void {
++  if (!entry || typeof entry !== 'object') {
++    return;
++  }
++  const record = entry as { slug?: unknown; path?: unknown };
++  if (record.slug && typeof record.slug === 'object') {
++    normalizeSlugRecord(record.slug as Record<string, unknown>);
++  }
++  if (record.path && typeof record.path === 'object') {
++    normalizeSlugRecord(record.path as Record<string, unknown>);
++  }
++}
++
++async function hydrateLocalizedMarkdoc(entryDir: string | null, entry: unknown): Promise<void> {
++  if (!entryDir) {
++    return;
++  }
++  if (!entry || typeof entry !== 'object') {
++    return;
++  }
++  const record = entry as { content?: unknown };
++  const localized = record.content;
++  if (!localized || typeof localized !== 'object') {
++    return;
++  }
++  const baseDir = await findExistingDirectory([
++    path.join(entryDir, 'content'),
++    path.join(entryDir, 'index', 'content'),
++  ]);
++
++  if (!baseDir) {
++    return;
++  }
++
++  const localizedRecord = localized as Record<string, unknown>;
++  for (const locale of locales) {
++    const current = localizedRecord[locale];
++    if (current && typeof current === 'object') {
++      if ('content' in (current as Record<string, unknown>) || 'node' in (current as Record<string, unknown>)) {
++        continue;
++      }
++    }
++    if (typeof current === 'string') {
++      continue;
++    }
++
++    const filePath = path.join(baseDir, `${locale}.mdoc`);
++    const hasFile = await fs.stat(filePath).then((stats) => stats.isFile()).catch(() => false);
++    if (!hasFile) {
++      if (current === undefined) {
++        localizedRecord[locale] = null;
++      }
++      continue;
++    }
++
++    const relative = path.relative(path.join(process.cwd(), 'content'), filePath);
++    localizedRecord[locale] = relative;
++  }
++}
++
++async function findExistingDirectory(paths: string[]): Promise<string | null> {
++  for (const dir of paths) {
++    const exists = await fs.stat(dir).then((stats) => stats.isDirectory()).catch(() => false);
++    if (exists) {
++      return dir;
++    }
++  }
++  return null;
++}
++
++async function hydrateLocalizedMarkdocByKey(
++  collectionRoot: string,
++  entryKey: string,
++  entry: unknown
++): Promise<void> {
++  if (!entry || typeof entry !== 'object') {
++    return;
++  }
++  const record = entry as { content?: unknown };
++  if (!record.content || typeof record.content !== 'object') {
++    return;
++  }
++
++  const baseDir = await findExistingDirectory([
++    path.join(process.cwd(), collectionRoot, entryKey, 'content'),
++    path.join(process.cwd(), collectionRoot, entryKey, 'index', 'content'),
++  ]);
++
++  if (!baseDir) {
++    return;
++  }
++
++  const localizedRecord = record.content as Record<string, unknown>;
++  for (const locale of locales) {
++    const current = localizedRecord[locale];
++    if (typeof current === 'string') {
++      continue;
++    }
++    if (current && typeof current === 'object') {
++      const currentRecord = current as Record<string, unknown>;
++      if ('content' in currentRecord || 'node' in currentRecord) {
++        continue;
++      }
++    }
++
++    const localeFile = path.join(baseDir, `${locale}.mdoc`);
++    const hasFile = await fs.stat(localeFile).then((stats) => stats.isFile()).catch(() => false);
++    if (!hasFile) {
++      continue;
++    }
++
++    const relative = path.relative(path.join(process.cwd(), 'content'), localeFile);
++    localizedRecord[locale] = relative;
++  }
++}
++
++function normalizeSlugRecord(record: Record<string, unknown>): void {
++  for (const key of Object.keys(record)) {
++    const value = record[key];
++    if (typeof value === 'string') {
++      if (!value.trim()) {
++        record[key] = ROOT_SLUG_PLACEHOLDER;
++      }
++      continue;
++    }
++    if (typeof value === 'object' && value !== null && 'slug' in value) {
++      const nested = value as { slug?: string | null };
++      if (typeof nested.slug === 'string' && !nested.slug.trim()) {
++        nested.slug = ROOT_SLUG_PLACEHOLDER;
++      }
++    }
++  }
++}
++
++function normalizeDateTime(value: string | null | undefined): string | null {
++  if (!value) {
++    return null;
++  }
++  const trimmed = value.trim();
++  if (!trimmed) {
++    return null;
++  }
++
++  const minutesPrecisionMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})$/);
++  if (minutesPrecisionMatch) {
++    const candidate = `${minutesPrecisionMatch[1]}:00.000Z`;
++    const date = new Date(candidate);
++    return Number.isNaN(date.getTime()) ? null : date.toISOString();
++  }
++
++  const date = new Date(trimmed);
++  return Number.isNaN(date.getTime()) ? null : date.toISOString();
++}
++
++type Localized<T> = Partial<Record<Locale, T | null | undefined>>;
++
++type RawMedia =
++  | string
++  | { src?: string | null; width?: number | null; height?: number | null }
++  | null
++  | undefined;
++
++type RawSeoImage = {
++  image?: RawMedia;
++  alt?: string | null;
++} | null;
++
++type RawSeoGroup = {
++  title?: Localized<string>;
++  description?: Localized<string>;
++  ogTitle?: Localized<string>;
++  ogDescription?: Localized<string>;
++  ogImage?: RawSeoImage;
++  canonicalOverride?: string | null;
++} | null;
++
++type RawMarkdocValue = string | { content?: string | null } | { node?: MarkdocNode | null } | null;
++
++type SlugKeyValue = { slug?: string | null; name?: string | null } | null;
++
++type RawPageEntry = {
++  id?: string | null;
++  slug?: Localized<string | { slug?: string | null } | null>;
++  title?: Localized<string>;
++  description?: Localized<string>;
++  content?: Localized<RawMarkdocValue>;
++  hero?: {
++    image?: RawMedia;
++    alt?: Localized<string>;
++  } | null;
++  seo?: RawSeoGroup;
++  published?: boolean | null;
++  status?: 'draft' | 'published';
++  updatedAt?: string | null;
++  excerpt?: Localized<string>;
++  slugKey?: string | SlugKeyValue;
++};
++
++type RawPostEntry = RawPageEntry & {
++  date?: string | null;
++  tags?: string[] | null;
++  cover?: {
++    image?: RawMedia;
++    alt?: Localized<string>;
++  } | null;
++};
++
++type RawCatalogEntry = {
++  id?: string | null;
++  slug?: Localized<string | { slug?: string | null } | null>;
++  title?: Localized<string>;
++  shortDescription?: Localized<string>;
++  seriesDescription?: Localized<string>;
++  teaser?: Localized<string>;
++  excerpt?: Localized<string>;
++  content?: Localized<RawMarkdocValue>;
++  category?: string | null;
++  process?: string[] | null;
++  base?: string[] | null;
++  filler?: string[] | null;
++  metals?: string[] | null;
++  auxiliary?: string[] | null;
++  variantGroup?: Array<{ value?: string | null } | string> | null;
++  image?: RawMedia;
++  docs?: string | { value?: string | null; slug?: string | null; name?: string | null } | null;
++  documentLinks?: Array<{ value?: string | null } | string> | null;
++  badge?: string | null;
++  published?: boolean | null;
++  status?: 'draft' | 'published';
++  updatedAt?: string | null;
++  slugKey?: string | SlugKeyValue;
++};
++
++type RawDocumentEntry = {
++  id?: string | null;
++  title?: Localized<string>;
++  file?: RawMedia;
++  type?: string | null;
++  lang?: string | null;
++  relatedProducts?: string[] | string | null;
++  published?: boolean | null;
++  status?: 'draft' | 'published';
++  updatedAt?: string | null;
++  slugKey?: string | SlugKeyValue;
++};
++
++type DocumentsPageSingleton = {
++  title?: Localized<string>;
++  description?: Localized<string>;
++  typeFilterLabel?: Localized<string>;
++  languageFilterLabel?: Localized<string>;
++  applyLabel?: Localized<string>;
++  resetLabel?: Localized<string>;
++  allLanguagesLabel?: Localized<string>;
++  downloadLabel?: Localized<string>;
++  relatedProductsLabel?: Localized<string>;
++  emptyStateMessage?: Localized<string>;
++  resultsLabelTemplate?: Localized<string>;
++  typeLabels?: Record<DocumentType, Localized<string>>;
++  languageLabels?: Record<DocumentLanguage, Localized<string>>;
++  ogImage?: RawSeoImage;
++};
++
++type CatalogPageSingleton = {
++  title?: Localized<string>;
++  description?: Localized<string>;
++  submitLabel?: Localized<string>;
++  resetLabel?: Localized<string>;
++  categoryAllLabel?: Localized<string>;
++  detailLabel?: Localized<string>;
++  requestLabel?: Localized<string>;
++  emptyStateMessage?: Localized<string>;
++  groupLabels?: {
++    category?: Localized<string>;
++    process?: Localized<string>;
++    base?: Localized<string>;
++    filler?: Localized<string>;
++    metal?: Localized<string>;
++    auxiliary?: Localized<string>;
++  } | null;
++  seo?: RawSeoGroup;
++};
++
++type ProductsPageSingleton = {
++  seo?: RawSeoGroup;
++};
++
++type NavigationEntry = {
++  id?: string | null;
++  label?: Localized<string>;
++  path?: Localized<string>;
++  externalUrl?: string | null;
++  newTab?: boolean | null;
++  order?: number | null;
++  children?: NavigationEntry[] | null;
++};
++
++export type SeoImage = {
++  src: string;
++  width?: number | null;
++  height?: number | null;
++  alt?: string | null;
++};
++
++export type ResolvedSeo = {
++  title?: string | null;
++  description?: string | null;
++  ogTitle?: string | null;
++  ogDescription?: string | null;
++  ogImage?: SeoImage | null;
++  canonicalOverride?: string | null;
++};
++
++export type SiteSeo = Omit<ResolvedSeo, 'canonicalOverride'> & {
++  canonicalBase: string | null;
++};
++
++export type SiteContent = {
++  locale: Locale;
++  name: string | null;
++  tagline: string | null;
++  contacts: {
++    email: string | null;
++    phone: string | null;
++    telegramUrl: string | null;
++    address: string | null;
++  };
++  seo: SiteSeo;
++  domain: string | null;
++  robots: { index: boolean; follow: boolean };
++  footer: {
++    tagline: string | null;
++    copyright: string | null;
++  };
++};
++
++export type NavigationLink = {
++  id: string;
++  label: string;
++  href: string;
++  isExternal: boolean;
++  newTab: boolean;
++  localizedPath?: Localized<string>;
++  children?: NavigationLink[];
++};
++
++export type Navigation = {
++  header: NavigationLink[];
++  footer: NavigationLink[];
++};
++
++export type PageHero = {
++  image: CatalogImage | null;
++  alt: string | null;
++};
++
++export type PageContent = {
++  id: string;
++  locale: Locale;
++  title: string;
++  slug: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  content: MarkdocContent;
++  description: string | null;
++  seo: ResolvedSeo | null;
++  excerpt: string | null;
++  updatedAt?: string | null;
++  hero: PageHero | null;
++};
++
++export type PageSummary = {
++  id: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  published: boolean;
++  updatedAt?: string | null;
++};
++
++export type PostSummary = {
++  id: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  published: boolean;
++  date?: string | null;
++  updatedAt?: string | null;
++};
++
++export type PostContent = PageContent & {
++  date?: string | null;
++  tags: string[];
++  cover?: {
++    src: string;
++    alt?: string | null;
++    width?: number | null;
++    height?: number | null;
++    image?: CatalogImage | null;
++  } | null;
++};
++
++export type CatalogImage = {
++  src: string;
++  width?: number | null;
++  height?: number | null;
++};
++
++export type CatalogBadge = 'bestseller' | 'premium' | 'eco' | 'special';
++
++export type CatalogVariant = {
++  id: string;
++  slug: string;
++  title: string;
++};
++
++export type CatalogListItem = {
++  id: string;
++  locale: Locale;
++  slug: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  title: string;
++  shortDescription: string | null;
++  badge: CatalogBadge | null;
++  teaser: string | null;
++  excerpt: string | null;
++  category: CatalogCategory | null;
++  process: CatalogProcess[];
++  base: CatalogBase[];
++  filler: CatalogFiller[];
++  metals: CatalogMetal[];
++  auxiliary: CatalogAuxiliary[];
++  image: CatalogImage | null;
++  docs: string | null;
++  updatedAt?: string | null;
++};
++
++export type CatalogItem = CatalogListItem & {
++  content: MarkdocContent;
++  documents: CatalogDocument[];
++  seriesDescription: string | null;
++  variants: CatalogVariant[];
++};
++
++export type CatalogLookupItem = {
++  id: string;
++  slug: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  title: string;
++};
++
++export type CatalogSummary = {
++  id: string;
++  slugByLocale: Partial<Record<Locale, string>>;
++  published: boolean;
++  updatedAt?: string | null;
++};
++
++export type Document = {
++  id: string;
++  title: Partial<Record<Locale, string>>;
++  type: DocumentType;
++  lang: DocumentLanguage;
++  file: string | null;
++  fileName: string | null;
++  fileExtension: string | null;
++  fileSize: number | null;
++  relatedProductIds: string[];
++  updatedAt?: string | null;
++};
++
++export type CatalogDocument = {
++  slug: string;
++  title: string;
++  type: DocumentType;
++  file: string;
++};
++
++export type DocumentsPageContent = {
++  title: Partial<Record<Locale, string>>;
++  description: Partial<Record<Locale, string>>;
++  typeFilterLabel: Partial<Record<Locale, string>>;
++  languageFilterLabel: Partial<Record<Locale, string>>;
++  applyLabel: Partial<Record<Locale, string>>;
++  resetLabel: Partial<Record<Locale, string>>;
++  allLanguagesLabel: Partial<Record<Locale, string>>;
++  downloadLabel: Partial<Record<Locale, string>>;
++  relatedProductsLabel: Partial<Record<Locale, string>>;
++  emptyStateMessage: Partial<Record<Locale, string>>;
++  resultsLabelTemplate: Partial<Record<Locale, string>>;
++  typeLabels: Record<DocumentType, Partial<Record<Locale, string>>>;
++  languageLabels: Record<DocumentLanguage, Partial<Record<Locale, string>>>;
++  ogImage: SeoImage | null;
++};
++
++export type CatalogPageContent = {
++  title: Partial<Record<Locale, string>>;
++  description: Partial<Record<Locale, string>>;
++  submitLabel: Partial<Record<Locale, string>>;
++  resetLabel: Partial<Record<Locale, string>>;
++  categoryAllLabel: Partial<Record<Locale, string>>;
++  detailLabel: Partial<Record<Locale, string>>;
++  requestLabel: Partial<Record<Locale, string>>;
++  emptyStateMessage: Partial<Record<Locale, string>>;
++  groupLabels: {
++    category: Partial<Record<Locale, string>>;
++    process: Partial<Record<Locale, string>>;
++    base: Partial<Record<Locale, string>>;
++    filler: Partial<Record<Locale, string>>;
++    metal: Partial<Record<Locale, string>>;
++    auxiliary: Partial<Record<Locale, string>>;
++  };
++  seo: ResolvedSeo | null;
++};
++
++function toOptionalString(value: unknown): string | null {
++  if (typeof value === 'string') {
++    const trimmed = value.trim();
++    return trimmed.length ? trimmed : null;
++  }
++  if (value && typeof value === 'object') {
++    const record = value as { slug?: unknown; name?: unknown; value?: unknown; id?: unknown };
++    const candidates: unknown[] = [record.slug, record.name, record.value, record.id];
++    for (const candidate of candidates) {
++      if (!candidate || candidate === value) {
++        continue;
++      }
++      const resolved = toOptionalString(candidate ?? undefined);
++      if (resolved) {
++        return resolved;
++      }
++    }
++  }
++  return null;
++}
++
++function normalizeImageAsset(value: RawMedia): { src: string; width?: number | null; height?: number | null } | null {
++  if (!value) {
++    return null;
++  }
++  if (typeof value === 'string') {
++    const trimmed = value.trim();
++    if (!trimmed) {
++      return null;
++    }
++    return { src: normalizeImagePath(trimmed) };
++  }
++  const src = typeof value.src === 'string' ? value.src.trim() : '';
++  if (!src) {
++    return null;
++  }
++  const width = typeof value.width === 'number' ? value.width : undefined;
++  const height = typeof value.height === 'number' ? value.height : undefined;
++  return { src: normalizeImagePath(src), width, height };
++}
++
++function normalizeImagePath(src: string): string {
++  if (/^https?:\/\//.test(src)) {
++    return src;
++  }
++  const normalized = src.replace(/^\/+/g, '');
++  return `/${normalized}`;
++}
++
++async function resolveUploadSize(filePath: string | null): Promise<number | null> {
++  if (!filePath || /^https?:\/\//i.test(filePath)) {
++    return null;
++  }
++  const withoutLeading = filePath.replace(/^\/+/g, '');
++  const withoutQuery = withoutLeading.split('?')[0]?.split('#')[0] ?? '';
++  const relative = withoutQuery.startsWith('public/')
++    ? withoutQuery.slice('public/'.length)
++    : withoutQuery;
++  const absolute = path.join(process.cwd(), 'public', relative);
++  try {
++    const stats = await fs.stat(absolute);
++    if (!stats.isFile()) {
++      return null;
++    }
++    return stats.size;
++  } catch {
++    return null;
++  }
++}
++
++function mapSeoImage(value: RawSeoImage): SeoImage | null {
++  if (!value) {
++    return null;
++  }
++  const asset = normalizeImageAsset(value.image);
++  if (!asset) {
++    return null;
++  }
++  return {
++    src: asset.src,
++    width: asset.width,
++    height: asset.height,
++    alt: toOptionalString(value.alt ?? undefined) ?? undefined,
++  } satisfies SeoImage;
++}
++
++function mapResolvedSeo(value: RawSeoGroup | undefined | null, locale: Locale): ResolvedSeo | null {
++  if (!value) {
++    return null;
++  }
++  const title = toOptionalString(pickLocalized(value.title, locale));
++  const description = toOptionalString(pickLocalized(value.description, locale));
++  const ogTitle = toOptionalString(pickLocalized(value.ogTitle, locale));
++  const ogDescription = toOptionalString(pickLocalized(value.ogDescription, locale));
++  const ogImage = mapSeoImage(value.ogImage ?? null);
++  const canonicalOverride = toOptionalString(value.canonicalOverride ?? undefined);
++  if (!title && !description && !ogTitle && !ogDescription && !ogImage && !canonicalOverride) {
++    return null;
++  }
++  return {
++    title,
++    description,
++    ogTitle,
++    ogDescription,
++    ogImage,
++    canonicalOverride,
++  } satisfies ResolvedSeo;
++}
++
++function isPublished(entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry): boolean {
++  if (typeof entry.published === 'boolean') {
++    return entry.published;
++  }
++  return (entry.status ?? 'draft') === 'published';
++}
++
++function pickLocalized<T>(value: Localized<T> | undefined, locale: Locale): T | undefined {
++  if (!value) {
++    return undefined;
++  }
++  const localized = value[locale];
++  if (localized !== undefined && localized !== null) {
++    return localized ?? undefined;
++  }
++  const fallback = value[defaultLocale];
++  return fallback ?? undefined;
++}
++
++function normalizeSlug(value: unknown): string | null {
++  if (!value) {
++    return null;
++  }
++  if (typeof value === 'string') {
++    const trimmed = value.trim();
++    if (!trimmed || trimmed === ROOT_SLUG_PLACEHOLDER) {
++      return '';
++    }
++    return trimmed.replace(/^\/+|\/+$/g, '');
++  }
++  if (typeof value === 'object' && value !== null && 'slug' in value) {
++    return normalizeSlug((value as { slug?: string | null }).slug ?? null);
++  }
++  return null;
++}
++
++function mapLocalizedSlugs(slugs?: Localized<string | { slug?: string | null } | null>): Partial<Record<Locale, string>> {
++  const record: Partial<Record<Locale, string>> = {};
++  if (!slugs) {
++    return record;
++  }
++  for (const locale of locales) {
++    const slug = normalizeSlug(slugs[locale] ?? null);
++    if (slug === null || slug === undefined) {
++      continue;
++    }
++    record[locale] = slug;
++  }
++  return record;
++}
++
++function mapLocalizedTextRecord(value?: Localized<string>): Partial<Record<Locale, string>> {
++  const record: Partial<Record<Locale, string>> = {};
++  if (!value) {
++    return record;
++  }
++  for (const locale of locales) {
++    const text = toOptionalString(value[locale] ?? undefined);
++    if (!text) {
++      continue;
++    }
++    record[locale] = text;
++  }
++  return record;
++}
++
++function mapLocalizedRecordMap<T extends string>(
++  value: Record<T, Localized<string>> | undefined
++): Record<T, Partial<Record<Locale, string>>> {
++  const record: Partial<Record<T, Partial<Record<Locale, string>>>> = {};
++  if (!value) {
++    return record as Record<T, Partial<Record<Locale, string>>>;
++  }
++  for (const key of Object.keys(value) as T[]) {
++    record[key] = mapLocalizedTextRecord(value[key]);
++  }
++  return record as Record<T, Partial<Record<Locale, string>>>;
++}
++
++function mapPageHero(hero: RawPageEntry['hero'], locale: Locale): PageHero | null {
++  if (!hero) {
++    return null;
++  }
++  const image = normalizeImageAsset(hero.image ?? null);
++  const alt = pickLocalized(hero.alt, locale) ?? null;
++  if (!image && !alt) {
++    return null;
++  }
++  return { image, alt } satisfies PageHero;
++}
++
++function pickFirstLocalizedText(record: Partial<Record<Locale, string>>): string | null {
++  const orderedLocales = [defaultLocale, ...locales.filter((candidate) => candidate !== defaultLocale)];
++  for (const locale of orderedLocales) {
++    const value = record[locale];
++    if (value && value.trim()) {
++      return value;
++    }
++  }
++  return null;
++}
++
++async function resolveCatalogDocuments(value: unknown, locale: Locale): Promise<CatalogDocument[]> {
++  const linkedIds = mapRelationshipValues(value);
++  if (!linkedIds.length) {
++    return [];
++  }
++
++  const documents = await getDocuments();
++  const resolved: CatalogDocument[] = [];
++
++  for (const id of linkedIds) {
++    const document = documents.find((entry) => entry.id === id);
++    if (!document || !document.file) {
++      continue;
++    }
++
++    const title =
++      pickLocalized(document.title, locale) ??
++      pickLocalized(document.title, defaultLocale) ??
++      pickFirstLocalizedText(document.title) ??
++      document.fileName ??
++      document.id;
++
++    resolved.push({
++      slug: document.id,
++      title,
++      type: document.type,
++      file: document.file,
++    });
++  }
++
++  return resolved;
++}
++
++function normalizeFilePath(value: unknown): string | null {
++  if (!value) {
++    return null;
++  }
++  if (typeof value === 'string') {
++    const trimmed = value.trim();
++    if (!trimmed) {
++      return null;
++    }
++    return normalizeImagePath(trimmed);
++  }
++  if (typeof value === 'object' && value !== null) {
++    if ('src' in value && typeof (value as { src?: string | null }).src === 'string') {
++      return normalizeFilePath((value as { src?: string | null }).src ?? null);
++    }
++    if ('path' in value && typeof (value as { path?: string | null }).path === 'string') {
++      return normalizeFilePath((value as { path?: string | null }).path ?? null);
++    }
++  }
++  return null;
++}
++
++function mapRelationshipValues(value: unknown): string[] {
++  if (!value) {
++    return [];
++  }
++  if (Array.isArray(value)) {
++    const seen = new Set<string>();
++    const result: string[] = [];
++    for (const entry of value) {
++      let candidate: string | null = null;
++      if (typeof entry === 'string') {
++        candidate = entry;
++      } else if (entry && typeof entry === 'object' && 'value' in entry) {
++        const record = entry as { value?: string | null };
++        if (typeof record.value === 'string') {
++          candidate = record.value;
++        }
++      }
++      if (typeof candidate !== 'string') {
++        continue;
++      }
++      const trimmed = candidate.trim();
++      if (!trimmed || seen.has(trimmed)) {
++        continue;
++      }
++      seen.add(trimmed);
++      result.push(trimmed);
++    }
++    return result;
++  }
++  if (typeof value === 'string') {
++    const trimmed = value.trim();
++    return trimmed ? [trimmed] : [];
++  }
++  return [];
++}
++
++function filterValidValues<T extends string>(values: unknown, allowed: Set<string>): T[] {
++  if (!Array.isArray(values)) {
++    return [];
++  }
++  const seen = new Set<string>();
++  const result: T[] = [];
++  for (const value of values) {
++    if (typeof value !== 'string') {
++      continue;
++    }
++    const trimmed = value.trim();
++    if (!allowed.has(trimmed) || seen.has(trimmed)) {
++      continue;
++    }
++    seen.add(trimmed);
++    result.push(trimmed as T);
++  }
++  return result;
++}
++
++function ensureUniqueLocalizedSlugs<T extends { slug?: Localized<string | { slug?: string | null } | null> }>(
++  entries: Array<{ entry: T; key: string }>,
++  collection: string
++): void {
++  const seenByLocale = new Map<Locale, Map<string, string>>();
++  for (const locale of locales) {
++    seenByLocale.set(locale, new Map());
++  }
++
++  for (const { entry, key } of entries) {
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    for (const locale of locales) {
++      const slug = slugByLocale[locale];
++      if (!slug) {
++        continue;
++      }
++      const localeMap = seenByLocale.get(locale);
++      if (!localeMap) {
++        continue;
++      }
++      const existing = localeMap.get(slug);
++      if (existing) {
++        throw new Error(
++          `Duplicate slug "${slug}" for locale "${locale}" in collection "${collection}" (entries "${existing}" and "${key}").`
++        );
++      }
++      localeMap.set(slug, key);
++    }
++  }
++}
++
++async function readMarkdoc(
++  reference: string | { content?: string | null } | { node?: MarkdocNode | null } | null | undefined
++): Promise<ResolvedMarkdocContent | null> {
++  if (!reference) {
++    return null;
++  }
++  if (typeof reference === 'object' && reference !== null) {
++    if ('node' in reference && reference.node) {
++      return { node: reference.node } satisfies ResolvedMarkdocContent;
++    }
++    if ('content' in reference && typeof reference.content === 'string') {
++      return reference.content;
++    }
++  }
++  const raw = typeof reference === 'string' ? reference : null;
++  if (!raw) {
++    return null;
++  }
++  const normalized = raw.startsWith('content/') ? raw : `content/${raw.replace(/^\/+/, '')}`;
++  const absolute = path.join(process.cwd(), normalized);
++  try {
++    return await fs.readFile(absolute, 'utf8');
++  } catch {
++    return null;
++  }
++}
++
++async function resolveLocalizedContent(
++  content: Localized<RawMarkdocValue> | undefined,
++  locale: Locale
++): Promise<MarkdocContent> {
++  if (!content) {
++    return null;
++  }
++  const exact = await readMarkdoc(content[locale] ?? null);
++  if (exact) {
++    return exact;
++  }
++  if (locale === defaultLocale) {
++    return null;
++  }
++  return readMarkdoc(content[defaultLocale] ?? null);
++}
++
++type SiteSingleton = {
++  siteName?: Localized<string>;
++  brand?: {
++    siteName?: Localized<string>;
++    tagline?: Localized<string>;
++    contacts?: {
++      email?: string | null;
++      phone?: string | null;
++      telegramUrl?: string | null;
++      address?: Localized<string>;
++    } | null;
++  } | null;
++  tagline?: Localized<string>;
++  contacts?: {
++    email?: string | null;
++    phone?: string | null;
++    telegramUrl?: string | null;
++    address?: Localized<string>;
++  } | null;
++  footer?: {
++    tagline?: Localized<string>;
++    copyright?: Localized<string>;
++  } | null;
++  seo?: {
++    title?: Localized<string>;
++    description?: Localized<string>;
++    ogTitle?: Localized<string>;
++    ogDescription?: Localized<string>;
++    ogImage?: RawSeoImage;
++    canonicalBase?: string | null;
++  } | null;
++  meta?: {
++    domain?: string | null;
++    robots?: {
++      index?: boolean | null;
++      follow?: boolean | null;
++    } | null;
++  } | null;
++};
++
++type NavigationSingleton = {
++  headerLinks?: NavigationEntry[];
++  footerLinks?: NavigationEntry[];
++};
++
++const readSiteSingleton = cache(async (): Promise<SiteSingleton | null> => {
++  const reader = getReader();
++  try {
++    const site = await reader.singletons.site.read();
++    if (site) {
++      return site as SiteSingleton;
++    }
++  } catch {
++    // fall back to file system
++  }
++  return (await readFallbackSingleton<SiteSingleton>('content/site/index.json')) ?? null;
++});
++
++async function readNavigationSingleton(): Promise<NavigationSingleton | null> {
++  const reader = getReader();
++  try {
++    const navigation = await reader.singletons.navigation.read();
++    if (navigation) {
++      return navigation as NavigationSingleton;
++    }
++  } catch {
++    // fall back to file system
++  }
++  return (await readFallbackSingleton<NavigationSingleton>('content/navigation/index.json')) ?? null;
++}
++
++const readDocumentsPageSingleton = cache(async (): Promise<DocumentsPageSingleton | null> => {
++  const reader = getReader();
++  try {
++    const documentsPage = await reader.singletons.documentsPage.read();
++    if (documentsPage) {
++      return documentsPage as DocumentsPageSingleton;
++    }
++  } catch {
++    // fall back to file system
++  }
++  return (await readFallbackSingleton<DocumentsPageSingleton>('content/documents-page/index.json')) ?? null;
++});
++
++const readCatalogPageSingleton = cache(async (): Promise<CatalogPageSingleton | null> => {
++  const reader = getReader();
++  try {
++    const catalogPage = await reader.singletons.catalogPage.read();
++    if (catalogPage) {
++      return catalogPage as CatalogPageSingleton;
++    }
++  } catch {
++    // fall back to file system
++  }
++  return (await readFallbackSingleton<CatalogPageSingleton>('content/catalog-page/index.json')) ?? null;
++});
++
++const readProductsPageSingleton = cache(async (): Promise<ProductsPageSingleton | null> => {
++  const reader = getReader();
++  try {
++    const productsPage = await reader.singletons.productsPage.read();
++    if (productsPage) {
++      return productsPage as ProductsPageSingleton;
++    }
++  } catch {
++    // fall back to file system
++  }
++  return (await readFallbackSingleton<ProductsPageSingleton>('content/products-page/index.json')) ?? null;
++});
++
++function mergeCollections<T>(
++  primary: Array<{ key: string; entry: T }>,
++  fallback: Array<{ key: string; entry: T }>
++): Array<{ key: string; entry: T }> {
++  if (fallback.length === 0) {
++    return primary;
++  }
++
++  const merged = new Map<string, { key: string; entry: T }>();
++  for (const entry of fallback) {
++    merged.set(entry.key, entry);
++  }
++  for (const entry of primary) {
++    merged.set(entry.key, entry);
++  }
++  return Array.from(merged.values());
++}
++
++async function hydrateMarkdocEntries<T extends { content?: unknown }>(
++  collectionRoot: string,
++  entries: Array<{ key: string; entry: T }>
++): Promise<Array<{ key: string; entry: T }>> {
++  await Promise.all(entries.map(({ key, entry }) => hydrateLocalizedMarkdocByKey(collectionRoot, key, entry)));
++  return entries;
++}
++
++const readPagesCollection = cache(async () => {
++  const reader = getReader();
++  let entries: Array<{ key: string; entry: RawPageEntry }> = [];
++  try {
++    const result = await reader.collections.pages.all({ resolveLinkedFiles: true });
++    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
++      key: slug,
++      entry: entry as RawPageEntry,
++    }));
++  } catch {
++    // fall back to file system
++  }
++
++  const fallback = await readFallbackCollection<RawPageEntry>('content/pages');
++  if (entries.length === 0) {
++    return hydrateMarkdocEntries('content/pages', fallback);
++  }
++  return hydrateMarkdocEntries('content/pages', mergeCollections(entries, fallback));
++});
++
++const readPostsCollection = cache(async () => {
++  const reader = getReader();
++  let entries: Array<{ key: string; entry: RawPostEntry }> = [];
++  try {
++    const result = await reader.collections.posts.all({ resolveLinkedFiles: true });
++    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
++      key: slug,
++      entry: entry as RawPostEntry,
++    }));
++  } catch {
++    // fall back to file system
++  }
++
++  const fallback = await readFallbackCollection<RawPostEntry>('content/posts');
++  if (entries.length === 0) {
++    return hydrateMarkdocEntries('content/posts', fallback);
++  }
++  return hydrateMarkdocEntries('content/posts', mergeCollections(entries, fallback));
++});
++
++const readCatalogCollection = cache(async () => {
++  const reader = getReader();
++  let entries: Array<{ key: string; entry: RawCatalogEntry }> = [];
++  try {
++    const result = await reader.collections.catalog.all({ resolveLinkedFiles: true });
++    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
++      key: slug,
++      entry: entry as RawCatalogEntry,
++    }));
++  } catch {
++    // fall back to file system
++  }
++
++  const fallback = await readFallbackCollection<RawCatalogEntry>('content/catalog');
++  const merged = entries.length === 0 ? fallback : mergeCollections(entries, fallback);
++  await hydrateMarkdocEntries('content/catalog', merged);
++  ensureUniqueLocalizedSlugs(merged, 'catalog');
++  return merged;
++});
++
++const readDocumentsCollection = cache(async () => {
++  const reader = getReader();
++  let entries: Array<{ key: string; entry: RawDocumentEntry }> = [];
++  try {
++    const result = await reader.collections.documents.all({ resolveLinkedFiles: true });
++    entries = result.map(({ slug, entry }: { slug: string; entry: unknown }) => ({
++      key: slug,
++      entry: entry as RawDocumentEntry,
++    }));
++  } catch {
++    // fall back to file system
++  }
++
++  const fallback = await readFallbackCollection<RawDocumentEntry>('content/documents');
++  if (entries.length === 0) {
++    return fallback;
++  }
++  return mergeCollections(entries, fallback);
++});
++
++function resolveNavigationLinks(
++  links: NavigationEntry[] | undefined,
++  locale: Locale
++): NavigationLink[] {
++  if (!Array.isArray(links)) {
++    return [];
++  }
++  const blacklist = new Set(['linkedin', 'footer-news']);
++  const filteredLinks = links.filter((link) => {
++    const id = toOptionalString(link.id ?? undefined);
++    return !id || !blacklist.has(id);
++  });
++
++  const withOrder = filteredLinks
++    .map((link, index) => {
++      const id = toOptionalString(link.id) ?? `link-${index}`;
++      const label = pickLocalized(link.label, locale) ?? '';
++      const localizedPath = link.path;
++      const pathValue = localizedPath ? pickLocalized(localizedPath, locale) : undefined;
++      const href = toOptionalString(link.externalUrl) ?? (pathValue ? buildInternalPath(locale, pathValue) : null);
++      const isExternal = Boolean(link.externalUrl && toOptionalString(link.externalUrl));
++      const children = resolveNavigationLinks(
++        Array.isArray(link.children) ? link.children : undefined,
++        locale,
++      );
++      if (!href) {
++        return null;
++      }
++      const order = typeof link.order === 'number' ? link.order : Number.POSITIVE_INFINITY;
++      const orderedLink: NavigationLink & { order: number } = {
++        id,
++        label: label || href,
++        href,
++        isExternal,
++        newTab: Boolean(link.newTab),
++        localizedPath,
++        children: children.length ? children : undefined,
++        order,
++      };
++      return orderedLink;
++    })
++    .filter((value): value is NavigationLink & { order: number } => value !== null)
++    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
++
++  return withOrder.map(({ id, label, href, isExternal, newTab, localizedPath, children }) => ({
++    id,
++    label,
++    href,
++    isExternal,
++    newTab,
++    localizedPath,
++    children,
++  } satisfies NavigationLink));
++}
++
++function buildInternalPath(locale: Locale, pathValue: string): string {
++  const normalized = pathValue.trim().replace(/^\/+|\/+$/g, '');
++
++  if (!normalized) {
++    return buildPath(locale);
++  }
++
++  const segments = normalized.split('/').filter(Boolean);
++  const [firstSegment] = segments;
++  if (firstSegment && isLocale(firstSegment)) {
++    return `/${segments.join('/')}`;
++  }
++
++  return buildPath(locale, segments);
++}
++
++function computeEntryId(
++  entry: RawPageEntry | RawPostEntry | RawCatalogEntry | RawDocumentEntry,
++  fallback: string
++): string {
++  const id = toOptionalString(entry.id ?? undefined);
++  if (id) {
++    return id;
++  }
++  const slugFallback = toOptionalString(entry.slugKey ?? undefined);
++  if (slugFallback) {
++    return slugFallback;
++  }
++  return fallback;
++}
++
++export async function getSite(locale: Locale): Promise<SiteContent> {
++  const site = await readSiteSingleton();
++  const seoGroup = site?.seo ?? null;
++  const resolvedSeo = mapResolvedSeo(seoGroup, locale);
++  const contacts = site?.contacts ?? site?.brand?.contacts ?? {};
++  const footer = site?.footer ?? null;
++  return {
++    locale,
++    name: pickLocalized(site?.siteName ?? site?.brand?.siteName, locale) ?? null,
++    tagline: pickLocalized(site?.tagline ?? site?.brand?.tagline, locale) ?? null,
++    contacts: {
++      email: toOptionalString(contacts.email ?? undefined),
++      phone: toOptionalString(contacts.phone ?? undefined),
++      telegramUrl: toOptionalString(contacts.telegramUrl ?? undefined),
++      address: pickLocalized(contacts.address, locale) ?? null,
++    },
++    seo: {
++      title: resolvedSeo?.title ?? null,
++      description: resolvedSeo?.description ?? null,
++      ogTitle: resolvedSeo?.ogTitle ?? null,
++      ogDescription: resolvedSeo?.ogDescription ?? null,
++      ogImage: resolvedSeo?.ogImage ?? null,
++      canonicalBase: toOptionalString(seoGroup?.canonicalBase ?? undefined),
++    },
++    domain: toOptionalString(site?.meta?.domain ?? undefined),
++    robots: {
++      index: site?.meta?.robots?.index !== false,
++      follow: site?.meta?.robots?.follow !== false,
++    },
++    footer: {
++      tagline: pickLocalized(footer?.tagline, locale) ?? null,
++      copyright: pickLocalized(footer?.copyright, locale) ?? null,
++    },
++  } satisfies SiteContent;
++}
++
++export async function getNavigation(locale: Locale): Promise<Navigation> {
++  const navigation = await readNavigationSingleton();
++  return {
++    header: resolveNavigationLinks(navigation?.headerLinks, locale),
++    footer: resolveNavigationLinks(navigation?.footerLinks, locale),
++  } satisfies Navigation;
++}
++
++export async function getPageById(id: string, locale: Locale): Promise<PageContent | null> {
++  const entries = await readPagesCollection();
++  const entryRecord = entries.find(({ entry, key }) => {
++    const entryId = computeEntryId(entry, key);
++    return entryId === id;
++  });
++  if (!entryRecord) {
++    return null;
++  }
++  if (!isPublished(entryRecord.entry)) {
++    return null;
++  }
++  const slugByLocale = mapLocalizedSlugs(entryRecord.entry.slug);
++  const slug = slugByLocale[locale] ?? '';
++  const title = pickLocalized(entryRecord.entry.title, locale) ?? '';
++  const content = await resolveLocalizedContent(entryRecord.entry.content, locale);
++  const seo = mapResolvedSeo(entryRecord.entry.seo ?? null, locale);
++  const description = pickLocalized(entryRecord.entry.description, locale) ?? null;
++  const excerpt = pickLocalized(entryRecord.entry.excerpt, locale) ?? null;
++  const hero = mapPageHero(entryRecord.entry.hero ?? null, locale);
++  return {
++    id,
++    locale,
++    title,
++    slug,
++    slugByLocale,
++    content,
++    description,
++    seo,
++    excerpt,
++    updatedAt: normalizeDateTime(entryRecord.entry.updatedAt),
++    hero,
++  } satisfies PageContent;
++}
++
++export async function getAllPages(): Promise<PageSummary[]> {
++  const entries = await readPagesCollection();
++  return entries.map(({ entry, key }) => {
++    const id = computeEntryId(entry, key);
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    return {
++      id,
++      slugByLocale,
++      published: isPublished(entry),
++      updatedAt: normalizeDateTime(entry.updatedAt),
++    } satisfies PageSummary;
++  });
++}
++
++export async function getPageBySlug(slug: string, locale: Locale): Promise<PageContent | null> {
++  const entries = await readPagesCollection();
++  const record = entries.find(({ entry }) => {
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    return slugByLocale[locale] === slug;
++  });
++  if (!record) {
++    return null;
++  }
++  if (!isPublished(record.entry)) {
++    return null;
++  }
++  const slugByLocale = mapLocalizedSlugs(record.entry.slug);
++  const title = pickLocalized(record.entry.title, locale) ?? '';
++  const content = await resolveLocalizedContent(record.entry.content, locale);
++  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
++  const description = pickLocalized(record.entry.description, locale) ?? null;
++  const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
++  const hero = mapPageHero(record.entry.hero ?? null, locale);
++  return {
++    id: computeEntryId(record.entry, record.key),
++    locale,
++    title,
++    slug,
++    slugByLocale,
++    content,
++    description,
++    seo,
++    excerpt,
++    updatedAt: normalizeDateTime(record.entry.updatedAt),
++    hero,
++  } satisfies PageContent;
++}
++
++export async function getAllPosts(): Promise<PostSummary[]> {
++  const entries = await readPostsCollection();
++  return entries.map(({ entry, key }) => {
++    const id = computeEntryId(entry, key);
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    return {
++      id,
++      slugByLocale,
++      published: isPublished(entry),
++      date: normalizeDateTime(entry.date),
++      updatedAt: normalizeDateTime(entry.updatedAt),
++    } satisfies PostSummary;
++  });
++}
++
++function mapCatalogLookupItem(
++  entry: RawCatalogEntry,
++  key: string,
++  locale: Locale
++): CatalogLookupItem | null {
++  const slugByLocale = mapLocalizedSlugs(entry.slug);
++  const slug = slugByLocale[locale];
++  if (!slug) {
++    return null;
++  }
++
++  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
++
++  return {
++    id: computeEntryId(entry, key),
++    slug,
++    slugByLocale,
++    title,
++  } satisfies CatalogLookupItem;
++}
++
++function mapCatalogListItem(entry: RawCatalogEntry, key: string, locale: Locale): CatalogListItem | null {
++  const slugByLocale = mapLocalizedSlugs(entry.slug);
++  const slug = slugByLocale[locale];
++  if (!slug) {
++    return null;
++  }
++
++  const title = pickLocalized(entry.title, locale) ?? pickLocalized(entry.title, defaultLocale) ?? slug;
++  const shortDescription =
++    pickLocalized(entry.shortDescription, locale) ??
++    pickLocalized(entry.shortDescription, defaultLocale) ??
++    null;
++  const teaser =
++    pickLocalized(entry.teaser, locale) ?? pickLocalized(entry.teaser, defaultLocale) ?? null;
++  const excerpt = pickLocalized(entry.excerpt, locale) ?? pickLocalized(entry.excerpt, defaultLocale) ?? null;
++  const category = typeof entry.category === 'string' && CATALOG_CATEGORY_SET.has(entry.category)
++    ? (entry.category as CatalogCategory)
++    : null;
++  const process = filterValidValues<CatalogProcess>(entry.process, CATALOG_PROCESS_SET);
++  const base = filterValidValues<CatalogBase>(entry.base, CATALOG_BASE_SET);
++  const filler = filterValidValues<CatalogFiller>(entry.filler, CATALOG_FILLER_SET);
++  const metals = filterValidValues<CatalogMetal>(entry.metals, CATALOG_METAL_SET);
++  const auxiliary = filterValidValues<CatalogAuxiliary>(entry.auxiliary, CATALOG_AUXILIARY_SET);
++  const imageAsset = normalizeImageAsset(entry.image ?? null);
++  const image = imageAsset
++    ? ({ src: imageAsset.src, width: imageAsset.width, height: imageAsset.height } satisfies CatalogImage)
++    : null;
++  const docs = toOptionalString(entry.docs ?? undefined);
++  const badge =
++    typeof entry.badge === 'string' && CATALOG_BADGE_SET.has(entry.badge as CatalogBadge)
++      ? (entry.badge as CatalogBadge)
++      : null;
++
++  return {
++    id: computeEntryId(entry, key),
++    locale,
++    slug,
++    slugByLocale,
++    title,
++    shortDescription,
++    badge,
++    teaser,
++    excerpt,
++    category,
++    process,
++    base,
++    filler,
++    metals,
++    auxiliary,
++    image,
++    docs,
++    updatedAt: normalizeDateTime(entry.updatedAt),
++  } satisfies CatalogListItem;
++}
++
++function resolveCatalogVariants(
++  value: unknown,
++  entries: Awaited<ReturnType<typeof readCatalogCollection>>,
++  currentId: string,
++  locale: Locale,
++): CatalogVariant[] {
++  const linkedIds = mapRelationshipValues(value);
++  if (!linkedIds.length) {
++    return [];
++  }
++
++  const catalogById = new Map(
++    entries.map((record) => [computeEntryId(record.entry, record.key), record] as const),
++  );
++
++  const variants: CatalogVariant[] = [];
++  for (const id of linkedIds) {
++    if (id === currentId) {
++      continue;
++    }
++    const record = catalogById.get(id);
++    if (!record || !isPublished(record.entry)) {
++      continue;
++    }
++    const mapped = mapCatalogLookupItem(record.entry, record.key, locale);
++    if (!mapped) {
++      continue;
++    }
++    variants.push({ id, slug: mapped.slug, title: mapped.title });
++  }
++
++  return variants;
++}
++
++export async function getPostBySlug(slug: string, locale: Locale): Promise<PostContent | null> {
++  const entries = await readPostsCollection();
++  const record = entries.find(({ entry }) => {
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    return slugByLocale[locale] === slug;
++  });
++  if (!record) {
++    return null;
++  }
++  if (!isPublished(record.entry)) {
++    return null;
++  }
++  const slugByLocale = mapLocalizedSlugs(record.entry.slug);
++  const title = pickLocalized(record.entry.title, locale) ?? '';
++  const content = await resolveLocalizedContent(record.entry.content, locale);
++  const seo = mapResolvedSeo(record.entry.seo ?? null, locale);
++  const description = pickLocalized(record.entry.description, locale) ?? null;
++  const excerpt = pickLocalized(record.entry.excerpt, locale) ?? null;
++  const coverAsset = normalizeImageAsset(record.entry.cover?.image);
++  const cover = coverAsset
++    ? {
++        src: coverAsset.src,
++        alt: pickLocalized(record.entry.cover?.alt, locale) ?? null,
++        width: coverAsset.width ?? null,
++        height: coverAsset.height ?? null,
++        image: {
++          src: coverAsset.src,
++          width: coverAsset.width ?? null,
++          height: coverAsset.height ?? null,
++        },
++      }
++    : null;
++  const hero = mapPageHero(record.entry.hero ?? null, locale);
++  return {
++    id: computeEntryId(record.entry, record.key),
++    locale,
++    title,
++    slug,
++    slugByLocale,
++    content,
++    description,
++    seo,
++    excerpt,
++    updatedAt: normalizeDateTime(record.entry.updatedAt),
++    date: normalizeDateTime(record.entry.date),
++    tags: record.entry.tags ?? [],
++    cover,
++    hero,
++  } satisfies PostContent;
++}
++
++export async function getCatalogItems(locale: Locale): Promise<CatalogListItem[]> {
++  const entries = await readCatalogCollection();
++  const items: CatalogListItem[] = [];
++
++  for (const { entry, key } of entries) {
++    if (!isPublished(entry)) {
++      continue;
++    }
++    const mapped = mapCatalogListItem(entry, key, locale);
++    if (!mapped) {
++      continue;
++    }
++    items.push(mapped);
++  }
++
++  return items;
++}
++
++export async function getCatalogLookupItems(locale: Locale): Promise<CatalogLookupItem[]> {
++  const entries = await readCatalogCollection();
++  const items: CatalogLookupItem[] = [];
++
++  for (const { entry, key } of entries) {
++    if (!isPublished(entry)) {
++      continue;
++    }
++    const mapped = mapCatalogLookupItem(entry, key, locale);
++    if (!mapped) {
++      continue;
++    }
++    items.push(mapped);
++  }
++
++  return items;
++}
++
++export async function getCatalogItemBySlug(slug: string, locale: Locale): Promise<CatalogItem | null> {
++  const entries = await readCatalogCollection();
++  const record = entries.find(({ entry }) => {
++    const slugByLocale = mapLocalizedSlugs(entry.slug);
++    return slugByLocale[locale] === slug;
++  });
++  if (!record) {
++    return null;
++  }
++  if (!isPublished(record.entry)) {
++    return null;
++  }
++  const baseItem = mapCatalogListItem(record.entry, record.key, locale);
++  if (!baseItem) {
++    return null;
++  }
++  const [content, documents] = await Promise.all([
++    resolveLocalizedContent(record.entry.content, locale),
++    resolveCatalogDocuments(record.entry.documentLinks, locale),
++  ]);
++  const seriesDescription =
++    pickLocalized(record.entry.seriesDescription, locale) ??
++    pickLocalized(record.entry.seriesDescription, defaultLocale) ??
++    null;
++  const variants = resolveCatalogVariants(
++    record.entry.variantGroup,
++    entries,
++    baseItem.id,
++    locale,
++  );
++
++  return { ...baseItem, content, documents, seriesDescription, variants } satisfies CatalogItem;
++}
++
++export async function getAllCatalogEntries(): Promise<CatalogSummary[]> {
++  const entries = await readCatalogCollection();
++  return entries.map(({ entry, key }) => ({
++    id: computeEntryId(entry, key),
++    slugByLocale: mapLocalizedSlugs(entry.slug),
++    published: isPublished(entry),
++    updatedAt: normalizeDateTime(entry.updatedAt),
++  } satisfies CatalogSummary));
++}
++
++export async function getPostAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
++  const entries = await readPostsCollection();
++  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
++  if (!record) {
++    return {};
++  }
++  return mapLocalizedSlugs(record.entry.slug);
++}
++
++export async function getPageAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
++  const entries = await readPagesCollection();
++  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
++  if (!record) {
++    return {};
++  }
++  return mapLocalizedSlugs(record.entry.slug);
++}
++
++export async function getCatalogAlternates(id: string): Promise<Partial<Record<Locale, string>>> {
++  const entries = await readCatalogCollection();
++  const record = entries.find(({ entry, key }) => computeEntryId(entry, key) === id);
++  if (!record) {
++    return {};
++  }
++  return mapLocalizedSlugs(record.entry.slug);
++}
++
++export async function getDocuments(): Promise<Document[]> {
++  const entries = await readDocumentsCollection();
++  const documents: Document[] = [];
++
++  for (const { entry, key } of entries) {
++    if (!isPublished(entry)) {
++      continue;
++    }
++    const typeValue = typeof entry.type === 'string' ? (entry.type.trim() as DocumentType) : null;
++    if (!typeValue || !DOCUMENT_TYPE_SET.has(typeValue)) {
++      continue;
++    }
++    const langValue = typeof entry.lang === 'string' ? (entry.lang.trim() as DocumentLanguage) : null;
++    if (!langValue || !DOCUMENT_LANGUAGE_SET.has(langValue)) {
++      continue;
++    }
++    const filePath = normalizeFilePath(entry.file ?? null);
++    const sanitizedFilePath = filePath ?? null;
++    const fileName = sanitizedFilePath
++      ? path.basename(sanitizedFilePath.split('?')[0]?.split('#')[0] ?? sanitizedFilePath)
++      : null;
++    const fileExtension = fileName && fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() ?? null : null;
++    const fileSize = await resolveUploadSize(sanitizedFilePath);
++    const title = mapLocalizedTextRecord(entry.title);
++    const relatedProductIds = mapRelationshipValues(entry.relatedProducts);
++    documents.push({
++      id: computeEntryId(entry, key),
++      title,
++      type: typeValue,
++      lang: langValue,
++      file: sanitizedFilePath,
++      fileName,
++      fileExtension,
++      fileSize,
++      relatedProductIds,
++      updatedAt: normalizeDateTime(entry.updatedAt),
++    });
++  }
++
++  documents.sort((a, b) => {
++    const typeDiff = DOCUMENT_TYPE_ORDER.indexOf(a.type) - DOCUMENT_TYPE_ORDER.indexOf(b.type);
++    if (typeDiff !== 0) {
++      return typeDiff;
++    }
++    const updatedA = a.updatedAt ?? '';
++    const updatedB = b.updatedAt ?? '';
++    if (updatedA && updatedB && updatedA !== updatedB) {
++      return updatedA > updatedB ? -1 : 1;
++    }
++    const titleA = pickFirstLocalizedText(a.title) ?? a.fileName ?? a.id;
++    const titleB = pickFirstLocalizedText(b.title) ?? b.fileName ?? b.id;
++    return titleA.localeCompare(titleB);
++  });
++
++  return documents;
++}
++
++export async function getDocumentsPage(): Promise<DocumentsPageContent | null> {
++  const documentsPage = await readDocumentsPageSingleton();
++  if (!documentsPage) {
++    return null;
++  }
++  const title = mapLocalizedTextRecord(documentsPage.title);
++  const description = mapLocalizedTextRecord(documentsPage.description);
++  const typeFilterLabel = mapLocalizedTextRecord(documentsPage.typeFilterLabel);
++  const languageFilterLabel = mapLocalizedTextRecord(documentsPage.languageFilterLabel);
++  const applyLabel = mapLocalizedTextRecord(documentsPage.applyLabel);
++  const resetLabel = mapLocalizedTextRecord(documentsPage.resetLabel);
++  const allLanguagesLabel = mapLocalizedTextRecord(documentsPage.allLanguagesLabel);
++  const downloadLabel = mapLocalizedTextRecord(documentsPage.downloadLabel);
++  const relatedProductsLabel = mapLocalizedTextRecord(documentsPage.relatedProductsLabel);
++  const emptyStateMessage = mapLocalizedTextRecord(documentsPage.emptyStateMessage);
++  const resultsLabelTemplate = mapLocalizedTextRecord(documentsPage.resultsLabelTemplate);
++  const typeLabelsRecord = mapLocalizedRecordMap<DocumentType>(documentsPage.typeLabels);
++  const languageLabelsRecord = mapLocalizedRecordMap<DocumentLanguage>(documentsPage.languageLabels);
++  const ogImage = mapSeoImage(documentsPage.ogImage ?? null);
++
++  if (
++    !Object.keys(title).length &&
++    !Object.keys(description).length &&
++    !ogImage &&
++    !Object.keys(typeFilterLabel).length &&
++    !Object.keys(languageFilterLabel).length
++  ) {
++    return null;
++  }
++
++  const typeLabels = Object.fromEntries(
++    DOCUMENT_TYPES.map((type) => [type, typeLabelsRecord[type] ?? {}])
++  ) as Record<DocumentType, Partial<Record<Locale, string>>>;
++  const languageLabels = Object.fromEntries(
++    DOCUMENT_LANGUAGES.map((lang) => [lang, languageLabelsRecord[lang] ?? {}])
++  ) as Record<DocumentLanguage, Partial<Record<Locale, string>>>;
++
++  return {
++    title,
++    description,
++    typeFilterLabel,
++    languageFilterLabel,
++    applyLabel,
++    resetLabel,
++    allLanguagesLabel,
++    downloadLabel,
++    relatedProductsLabel,
++    emptyStateMessage,
++    resultsLabelTemplate,
++    typeLabels,
++    languageLabels,
++    ogImage,
++  } satisfies DocumentsPageContent;
++}
++
++export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent | null> {
++  const catalogPage = await readCatalogPageSingleton();
++  if (!catalogPage) {
++    return null;
++  }
++  const title = mapLocalizedTextRecord(catalogPage.title);
++  const description = mapLocalizedTextRecord(catalogPage.description);
++  const submitLabel = mapLocalizedTextRecord(catalogPage.submitLabel);
++  const resetLabel = mapLocalizedTextRecord(catalogPage.resetLabel);
++  const categoryAllLabel = mapLocalizedTextRecord(catalogPage.categoryAllLabel);
++  const detailLabel = mapLocalizedTextRecord(catalogPage.detailLabel);
++  const requestLabel = mapLocalizedTextRecord(catalogPage.requestLabel);
++  const emptyStateMessage = mapLocalizedTextRecord(catalogPage.emptyStateMessage);
++  const groupLabelsSource = catalogPage.groupLabels ?? {};
++  const groupLabels: CatalogPageContent['groupLabels'] = {
++    category: mapLocalizedTextRecord(groupLabelsSource.category),
++    process: mapLocalizedTextRecord(groupLabelsSource.process),
++    base: mapLocalizedTextRecord(groupLabelsSource.base),
++    filler: mapLocalizedTextRecord(groupLabelsSource.filler),
++    metal: mapLocalizedTextRecord(groupLabelsSource.metal),
++    auxiliary: mapLocalizedTextRecord(groupLabelsSource.auxiliary),
++  };
++  const seo = mapResolvedSeo(catalogPage.seo ?? null, locale);
++
++  if (
++    !Object.keys(title).length &&
++    !Object.keys(description).length &&
++    !Object.keys(submitLabel).length &&
++    !Object.keys(resetLabel).length &&
++    !seo
++  ) {
++    return null;
++  }
++
++  return {
++    title,
++    description,
++    submitLabel,
++    resetLabel,
++    categoryAllLabel,
++    detailLabel,
++    requestLabel,
++    emptyStateMessage,
++    groupLabels,
++    seo,
++  } satisfies CatalogPageContent;
++}
++
++export async function getProductsPageSeo(locale: Locale): Promise<ResolvedSeo | null> {
++  const productsPage = await readProductsPageSingleton();
++  return mapResolvedSeo(productsPage?.seo ?? null, locale);
++}
++
++export async function getNavigationEntityByPath(
++  locale: Locale,
++  pathname: string
++): Promise<{ link: NavigationLink; slugByLocale: Partial<Record<Locale, string>> } | null> {
++  const navigation = await getNavigation(locale);
++  const trimmed = pathname.replace(/^\/+/, '');
++  const segments = trimmed.split('/').filter(Boolean);
++  const relevantSegments = segments.length && isLocale(segments[0]) ? segments.slice(1) : segments;
++  const relative = relevantSegments.join('/');
++  const match = [...navigation.header, ...navigation.footer].find((link) => {
++    if (!link.localizedPath) {
++      return false;
++    }
++    const localized = link.localizedPath[locale]?.trim().replace(/^\/+|\/+$/g, '') ?? '';
++    return localized === relative;
++  });
++  if (!match || !match.localizedPath) {
++    return null;
++  }
++  return { link: match, slugByLocale: mapLocalizedSlugs(match.localizedPath) };
++}
++
++export {
++  AUXILIARY_CATEGORY,
++  CATALOG_AUXILIARIES,
++  CATALOG_BASES,
++  CATALOG_CATEGORIES,
++  CATALOG_FILLERS,
++  CATALOG_PROCESSES,
++  getCatalogTaxonomyLabel,
++  getCatalogTaxonomyOptions,
++} from './catalog/constants';
++export type {
++  CatalogAuxiliary,
++  CatalogBase,
++  CatalogCategory,
++  CatalogFiller,
++  CatalogMetal,
++  CatalogProcess,
+ } from './catalog/constants';
+\ No newline at end of file

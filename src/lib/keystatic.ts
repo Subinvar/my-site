@@ -398,6 +398,10 @@ type CatalogPageSingleton = {
   seo?: RawSeoGroup;
 };
 
+type ProductsPageSingleton = {
+  seo?: RawSeoGroup;
+};
+
 type NavigationEntry = {
   id?: string | null;
   label?: Localized<string>;
@@ -1113,6 +1117,19 @@ const readCatalogPageSingleton = cache(async (): Promise<CatalogPageSingleton | 
     // fall back to file system
   }
   return (await readFallbackSingleton<CatalogPageSingleton>('content/catalog-page/index.json')) ?? null;
+});
+
+const readProductsPageSingleton = cache(async (): Promise<ProductsPageSingleton | null> => {
+  const reader = getReader();
+  try {
+    const productsPage = await reader.singletons.productsPage.read();
+    if (productsPage) {
+      return productsPage as ProductsPageSingleton;
+    }
+  } catch {
+    // fall back to file system
+  }
+  return (await readFallbackSingleton<ProductsPageSingleton>('content/products-page/index.json')) ?? null;
 });
 
 function mergeCollections<T>(
@@ -1875,6 +1892,11 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
     groupLabels,
     seo,
   } satisfies CatalogPageContent;
+}
+
+export async function getProductsPageSeo(locale: Locale): Promise<ResolvedSeo | null> {
+  const productsPage = await readProductsPageSingleton();
+  return mapResolvedSeo(productsPage?.seo ?? null, locale);
 }
 
 export async function getNavigationEntityByPath(
