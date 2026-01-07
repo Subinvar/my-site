@@ -94,6 +94,8 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
   const categoryAllLabel = resolveCategoryAllLabel(catalogPage, locale);
   const processAllLabel = resolveProcessAllLabel(catalogPage, locale);
   const loadMoreLabel = resolveLoadMoreLabel(catalogPage, locale);
+  const categoryGroupLabel = groupLabels.category ?? (locale === 'ru' ? 'Категория' : 'Category');
+  const processGroupLabel = groupLabels.process ?? (locale === 'ru' ? 'Процесс' : 'Process');
 
   return (
     <SiteShellLayout
@@ -149,12 +151,11 @@ export default async function CatalogPage({ params, searchParams }: PageProps) {
                 taxonomyValues={taxonomyValues}
                 view={view}
                 currentPath={currentPath}
-                auxiliaryCategory={taxonomyValues.auxiliaryCategory}
                 labels={{
                   categoryAll: categoryAllLabel,
                   processAll: processAllLabel,
-                  categoryLabel: groupLabels.category,
-                  processLabel: groupLabels.process,
+                  categoryGroup: categoryGroupLabel,
+                  processGroup: processGroupLabel,
                 }}
               />
 

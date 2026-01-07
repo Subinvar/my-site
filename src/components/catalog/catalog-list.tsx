@@ -60,7 +60,7 @@ export function CatalogList({
 
         const badge = resolveBadge(item.badge, locale);
 
-        const categoryLabel = item.category ? labelMaps.category.get(item.category) : null;
+        const categoryLabel = item.category ? labelMaps.category.get(item.category) ?? null : null;
         const processLabels = item.process
           .map((value) => labelMaps.process.get(value))
           .filter(Boolean) as string[];
@@ -91,6 +91,8 @@ export function CatalogList({
           }
         }
 
+        const summary = item.shortDescription ?? item.teaser ?? item.excerpt ?? null;
+
         const headerChips = (
           <div className="flex flex-wrap items-center gap-2">
             {processLabels.length ? <Pill>{processLabels[0]}</Pill> : null}
@@ -111,7 +113,9 @@ export function CatalogList({
                         {item.title}
                       </Link>
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{item.summary}</p>
+                    {summary ? (
+                      <p className="text-sm text-muted-foreground line-clamp-2">{summary}</p>
+                    ) : null}
                   </div>
                   <SpecList specs={specs} />
                 </div>
@@ -140,7 +144,9 @@ export function CatalogList({
                     {item.title}
                   </Link>
                 </CardTitle>
-                <CardDescription className="line-clamp-2">{item.summary}</CardDescription>
+                {summary ? (
+                  <CardDescription className="line-clamp-2">{summary}</CardDescription>
+                ) : null}
               </div>
 
               <SpecList specs={specs} className="pt-1" />
@@ -214,24 +220,37 @@ function resolveBadge(badge: CatalogBadge | null, locale: Locale) {
       className: null,
     };
   }
-  if (badge === 'bestseller') {
-    return {
-      label: locale === 'ru' ? 'Хит продаж' : 'Bestseller',
-      className:
-        'bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]',
-    };
+  switch (badge) {
+    case 'bestseller':
+      return {
+        label: locale === 'ru' ? 'Хит продаж' : 'Bestseller',
+        className:
+          'bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]',
+      };
+    case 'premium':
+      return {
+        label: locale === 'ru' ? 'Премиум' : 'Premium',
+        className:
+          'bg-[color:var(--color-amber-100)] text-[color:var(--color-amber-900)] border-[color:var(--color-amber-200)]',
+      };
+    case 'eco':
+      return {
+        label: locale === 'ru' ? 'Eco' : 'Eco',
+        className:
+          'bg-[color:var(--color-emerald-100)] text-[color:var(--color-emerald-900)] border-[color:var(--color-emerald-200)]',
+      };
+    case 'special':
+      return {
+        label: locale === 'ru' ? 'Спецпродукт' : 'Special',
+        className:
+          'bg-[color:var(--color-surface-2)] text-foreground border-[color:var(--color-border)]',
+      };
+    default:
+      return {
+        label: null,
+        className: null,
+      };
   }
-  if (badge === 'new') {
-    return {
-      label: locale === 'ru' ? 'Новинка' : 'New',
-      className:
-        'bg-[color:var(--color-surface-2)] text-foreground border-[color:var(--color-border)]',
-    };
-  }
-  return {
-    label: null,
-    className: null,
-  };
 }
 
 function Pill({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'muted' }) {

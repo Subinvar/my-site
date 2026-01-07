@@ -381,12 +381,15 @@ type DocumentsPageSingleton = {
 type CatalogPageSingleton = {
   title?: Localized<string>;
   description?: Localized<string>;
+  searchPlaceholder?: Localized<string>;
   submitLabel?: Localized<string>;
   resetLabel?: Localized<string>;
   categoryAllLabel?: Localized<string>;
+  processAllLabel?: Localized<string>;
   detailLabel?: Localized<string>;
   requestLabel?: Localized<string>;
   emptyStateMessage?: Localized<string>;
+  loadMoreLabel?: Localized<string>;
   groupLabels?: {
     category?: Localized<string>;
     process?: Localized<string>;
