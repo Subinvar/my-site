@@ -98,20 +98,35 @@ function HubCard({ item }: { item: ProductsHubCard }) {
   const href = item.href ?? '#';
 
   return (
-    <AppleHoverLift>
-      <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+    <AppleHoverLift className="h-auto">
+      <Link href={href} className={cn('group block rounded-2xl self-start', focusRingBase)}>
         <Card
           as="article"
           className={cn(
-            'h-full overflow-hidden p-0',
+            'overflow-hidden p-0',
             'border-[var(--header-border)] bg-background/40 shadow-none',
             'transform-none hover:shadow-none hover:-translate-y-0',
             'transition-colors duration-200 ease-out hover:bg-background/55',
           )}
         >
-          <div className="relative aspect-[16/6] w-full overflow-hidden bg-muted/40">
+          <div
+            className="relative aspect-[16/6] w-full overflow-hidden bg-muted/40"
+            // Inline aspect-ratio eliminates the initial "small image" flash on hard reload
+            // before Tailwind styles are applied.
+            style={{ aspectRatio: '16 / 6' }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element -- Используем <img>, чтобы при необходимости легко менять источники без дополнительных конфигов */}
-            <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              decoding="async"
+              width={1600}
+              height={600}
+              className="h-full w-full object-cover"
+              // Inline sizing prevents the initial intrinsic-size paint (CLS) on reload.
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
             <div
               className={cn(
                 'pointer-events-none absolute inset-0',
@@ -168,7 +183,7 @@ function ProductsSection({
         ) : null}
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <HubCard key={item.id} item={item} />
         ))}
@@ -431,13 +446,11 @@ function InsightTilesCarousel({
 export function ProductsPageClient({ locale, groups, insights }: ProductsPageClientProps) {
   const isRu = locale === 'ru';
 
-  const [isNavPinned, setIsNavPinned] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
-  const navSlotRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
-  const [navLayout, setNavLayout] = useState<{ height: number; width: number; left: number } | null>(null);
+  const navHeightRef = useRef(0);
 
   const sectionIds = useMemo(() => groups.map((group) => group.id), [groups]);
 
@@ -710,33 +723,25 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
   }, [renderedTile, isModalVisible, closeTileModal]);
 
   // --- Полностью переписанная логика «липкой» навигации ---
-  // Почему так: position: sticky часто ломается, если у любого родителя есть overflow
-  // (например overflow-x: hidden/clip) или если скролл идёт не по viewport.
-  // Поэтому делаем предсказуемый вариант: обычная навигация в потоке +
-  // переключение на position: fixed, когда её слот доезжает до шапки.
+  // Важно: используем CSS sticky, чтобы навигация не "пропадала" при reload
+  // на уже проскролленной странице (когда JS ещё не загрузился).
   useLayoutEffect(() => {
     const page = pageRef.current;
-    const slot = navSlotRef.current;
     const nav = navRef.current;
-    if (!slot || !nav) return;
+    if (!nav) return;
 
     let raf = 0;
 
     const measure = () => {
       raf = 0;
-      const slotRect = slot.getBoundingClientRect();
       const navRect = nav.getBoundingClientRect();
       const height = Math.max(0, Math.round(navRect.height));
+
+      navHeightRef.current = height;
 
       // CSS-переменная нужна для корректного scroll-margin-top у секций.
       // Задаём на корневом контейнере страницы, чтобы наследовалась.
       page?.style.setProperty('--products-nav-height', `${height}px`);
-
-      setNavLayout({
-        height,
-        width: Math.max(0, Math.round(slotRect.width)),
-        left: Math.round(slotRect.left),
-      });
     };
 
     const schedule = () => {
@@ -745,20 +750,22 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     };
 
     measure();
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null;
+    ro?.observe(nav);
+
     window.addEventListener('resize', schedule);
 
     return () => {
       window.removeEventListener('resize', schedule);
+      ro?.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, []);
 
-  // Пин + активная секция: считаем по положению заголовков относительно «линии якоря».
+  // Активная секция: считаем по положению заголовков относительно «линии якоря».
   // Это стабильнее IO по intersectionRatio (короткие секции иначе часто остаются «активными» слишком долго).
   useEffect(() => {
-    const slot = navSlotRef.current;
-    if (!slot) return;
-
     let raf = 0;
 
     const update = () => {
@@ -772,31 +779,23 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       // 1) читаем --header-height
       // 2) если пусто — берём --header-height-initial
       // 3) если и он не доступен — меряем фактический DOM-элемент шапки.
-      const slotStyles = window.getComputedStyle(slot);
-      const headerHeightVar = Number.parseFloat(slotStyles.getPropertyValue('--header-height')) || 0;
-      const headerHeightInitial = Number.parseFloat(slotStyles.getPropertyValue('--header-height-initial')) || 0;
+      const host = navRef.current ?? document.documentElement;
+      const hostStyles = window.getComputedStyle(host);
+      const headerHeightVar = Number.parseFloat(hostStyles.getPropertyValue('--header-height')) || 0;
+      const headerHeightInitial = Number.parseFloat(hostStyles.getPropertyValue('--header-height-initial')) || 0;
 
       const headerEl = document.querySelector<HTMLElement>('[data-site-header]');
       const headerHeightMeasured = headerEl ? headerEl.getBoundingClientRect().height : 0;
 
       const headerHeight = headerHeightVar || headerHeightInitial || headerHeightMeasured || 0;
 
-      // Порог с небольшим запасом, чтобы не «дребезжало» на полпикселя.
-      const pinned = slot.getBoundingClientRect().top <= headerHeight + 0.5;
-
-      setIsNavPinned((prev) => (prev === pinned ? prev : pinned));
-
-      if (!pinned) {
-        setActiveSection((prev) => (prev === null ? prev : null));
-        return;
-      }
+      const navHeight = navHeightRef.current || navRef.current?.getBoundingClientRect().height || 0;
 
       const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
       // Делаем "линию якоря" согласованной с scroll-margin-top у секций.
       // Это даёт корректную активную вкладку сразу после клика по навигации
       // (scrollIntoView учитывает scroll-margin) и убирает расхождения.
       const extraOffset = rootFontSize * 1; // 1rem
-      const navHeight = navLayout?.height ?? navRef.current?.getBoundingClientRect().height ?? 0;
       const anchorLine = headerHeight + navHeight + extraOffset + 0.5;
 
       const nodes = sectionsRef.current;
@@ -830,42 +829,27 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       window.removeEventListener('resize', schedule);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [navLayout?.height]);
+  }, []);
 
   return (
     <>
       <div
         ref={pageRef}
         className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
-        style={{ '--products-nav-height': `${navLayout?.height ?? 0}px` } as CSSProperties}
       >
-        {/* Навигация по секциям (JS-fixed вместо sticky, чтобы работало в любой разметке) */}
-        <div ref={navSlotRef} className="relative">
-          {/* Плейсхолдер — удерживает место, когда навигация становится fixed */}
-          {isNavPinned ? (
-            <div aria-hidden style={{ height: navLayout?.height ?? 0 }} />
-          ) : null}
-
+        {/* Навигация по секциям (CSS sticky — без «пропадания» при reload на проскролленной странице) */}
+        <div className="relative">
           <nav
             ref={navRef}
             aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
             className={cn('z-50 py-2')}
-            style={
-              (isNavPinned
-                ? {
-                    position: 'fixed',
-                    top: 'var(--header-height, var(--header-height-initial))',
-                    left: navLayout?.left ?? 0,
-                    width: navLayout?.width ?? '100%',
-                  }
-                : undefined) as CSSProperties
-            }
+            style={{ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' }}
           >
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {groups.map((group) => {
                 const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
                 const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
-                const isActive = isNavPinned && activeSection === group.id;
+                const isActive = activeSection === group.id;
                 const count = counts.get(group.id) ?? 0;
 
                 return (
@@ -1077,13 +1061,15 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
 
             <div
               id={modalBodyId}
-              className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base"
+              className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base"
             >
-              {renderedTile.details.map((p) => (
-                <p key={p} className="m-0">
-                  {p}
-                </p>
-              ))}
+              <ul className="m-0 list-disc space-y-2 pl-5">
+                {renderedTile.details.map((item, index) => (
+                  <li key={`${index}-${item}`} className="m-0">
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

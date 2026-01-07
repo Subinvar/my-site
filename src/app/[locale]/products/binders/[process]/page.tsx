@@ -78,7 +78,7 @@ export default async function BinderProcessCatalogPage({ params }: PageProps) {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <main className="page-shell">
+      <main id="main" className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
           <SectionHeading as="h1" title={heading} description={description} />
 

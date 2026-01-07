@@ -59,7 +59,7 @@ export default async function AuxiliaryTypesPage({ params }: PageProps) {
       currentPath={buildPath(locale, ['products', 'auxiliaries'])}
       currentYear={shell.currentYear}
     >
-      <main className="page-shell">
+      <main id="main" className="page-shell">
         <section className="container space-y-6 py-10 lg:py-12">
           <SectionHeading as="h1" title={pageTitle} description={pageDescription} />
 

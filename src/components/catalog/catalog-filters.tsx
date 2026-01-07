@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import type {
   CatalogAuxiliary,
@@ -109,6 +109,7 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const formRef = React.useRef<HTMLFormElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   const autoSubmit = React.useCallback(() => {
     const form = formRef.current;
@@ -131,8 +132,10 @@ export function CatalogFilters({
     const target = params.toString();
     const action = form.getAttribute('action') || pathname || '/catalog';
 
-    window.location.href = target ? `${action}?${target}` : action;
-  }, [pathname]);
+    // Client-side navigation (no hard reload). Inputs stay responsive, and the
+    // server page re-renders with updated search params.
+    router.replace(target ? `${action}?${target}` : action, { scroll: false });
+  }, [pathname, router]);
   const submitText = submitLabel ?? (locale === 'ru' ? 'Показать' : 'Show');
   const resetText = resetLabel ?? (locale === 'ru' ? 'Сбросить' : 'Reset');
   const labels = {
@@ -144,8 +147,35 @@ export function CatalogFilters({
     auxiliary: groupLabels.auxiliary ?? 'Вспомогательные',
   };
 
+  // NOTE: checkboxes use `defaultChecked`, so we force-remount the <form>
+  // whenever the filter state changes (client-side navigation), otherwise
+  // DOM state can drift from URL state.
+  const formKey = React.useMemo(() => {
+    const join = (values: string[]) => values.join(',');
+    return [
+      state.q ?? '',
+      state.sort ?? '',
+      join(state.category.values),
+      join(state.process.values),
+      join(state.base.values),
+      join(state.filler.values),
+      join(state.metal.values),
+      join(state.auxiliary.values),
+    ].join('|');
+  }, [
+    state.q,
+    state.sort,
+    state.category.values,
+    state.process.values,
+    state.base.values,
+    state.filler.values,
+    state.metal.values,
+    state.auxiliary.values,
+  ]);
+
   return (
     <form
+      key={formKey}
       ref={formRef}
       className="space-y-4 text-sm"
       method="GET"
@@ -298,10 +328,16 @@ function CheckboxOption(props: {
 
 function ClearFiltersButton({ label }: { label: string }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
-    <Button variant="secondary" className="w-full" asChild>
-      <a href={pathname}>{label}</a>
+    <Button
+      type="button"
+      variant="secondary"
+      className="w-full"
+      onClick={() => router.replace(pathname, { scroll: false })}
+    >
+      {label}
     </Button>
   );
 }

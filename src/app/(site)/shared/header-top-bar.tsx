@@ -250,6 +250,9 @@ export const HeaderTopBar = memo(function HeaderTopBar({
             href={`tel:${contacts.phone.replace(/[^+\d]/g, "")}`}
             label={contacts.phone}
             pillBase={pillBase}
+            // ⬇️ Не растягиваем пилюлю на всю ширину слота:
+            // иначе hover-обводка получается «огромной» и визуально наезжает на соседние зоны.
+            className="min-w-0 w-auto max-w-full"
           />
         </HeaderTopSlot>
       ),
@@ -265,6 +268,8 @@ export const HeaderTopBar = memo(function HeaderTopBar({
             href={`mailto:${contacts.email}`}
             label={contacts.email}
             pillBase={pillBase}
+            // См. комментарий выше (phone): обводка должна быть только вокруг контента.
+            className="min-w-0 w-auto max-w-full"
           />
         </HeaderTopSlot>
       ),

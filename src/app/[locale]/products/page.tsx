@@ -283,7 +283,7 @@ export default async function ProductsPage({ params }: PageProps) {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <main className="page-shell">
+      <main id="main" className="page-shell">
         {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
             но оставляем для семантики/доступности. */}
         <h1 className="sr-only">{pageTitle}</h1>

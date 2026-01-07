@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import type { CatalogFiltersProps } from './catalog-filters';
 import { Card, CardFooter, CardTitle, type CardProps } from '@/app/(site)/shared/ui/card';
 import { Button } from '@/app/(site)/shared/ui/button';
@@ -69,7 +71,7 @@ function CatalogItemCard({
   const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
   const summary = item.shortDescription;
   const badge = resolveBadge(item.badge, locale);
-  const processLabels = item.process.map((process) => resolveProcessLabel(process, labelMaps));
+  const processLabels = item.process.map((process) => resolveProcessLabel(process, labelMaps, locale));
   const categoryLabel = item.category ? labelMaps.category.get(item.category) ?? item.category : null;
 
   return (
@@ -105,10 +107,10 @@ function CatalogItemCard({
 
       <CardFooter className="mt-3 flex justify-between gap-2">
         <Button asChild variant="link" size="sm">
-          <a href={detailHref}>{detailLabel}</a>
+          <Link href={detailHref}>{detailLabel}</Link>
         </Button>
         <Button asChild size="sm" className="min-w-[150px] justify-center">
-          <a href={requestHref}>{requestLabel}</a>
+          <Link href={requestHref}>{requestLabel}</Link>
         </Button>
       </CardFooter>
     </Card>
@@ -128,18 +130,22 @@ function createLabelMaps(options: CatalogFiltersProps['options']) {
 
 function resolveProcessLabel(
   process: CatalogListItem['process'][number],
-  labelMaps: ReturnType<typeof createLabelMaps>
+  labelMaps: ReturnType<typeof createLabelMaps>,
+  locale: Locale
 ) {
   const mapped = labelMaps.process.get(process);
   if (mapped) {
     return mapped;
   }
 
-  if (process === 'alpha-set') {
-    return 'Alpha-set';
-  }
-  if (process === 'furan') {
-    return 'Фуран';
+  const fallbacks: Record<string, { ru: string; en: string }> = {
+    'alpha-set': { ru: 'Альфа-сет', en: 'Alpha-set' },
+    furan: { ru: 'Фуран', en: 'Furan' },
+  };
+
+  const fallback = fallbacks[process];
+  if (fallback) {
+    return locale === 'ru' ? fallback.ru : fallback.en;
   }
 
   return process;
@@ -161,10 +167,10 @@ function resolveBadge(
   };
 
   const classMap: Record<CatalogBadge, string> = {
-    bestseller: 'bg-amber-100 text-amber-800',
-    premium: 'bg-purple-100 text-purple-800',
-    eco: 'bg-emerald-100 text-emerald-800',
-    special: 'bg-sky-100 text-sky-800',
+    bestseller: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200',
+    premium: 'bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-200',
+    eco: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200',
+    special: 'bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-200',
   };
 
   return {
@@ -195,7 +201,7 @@ function ProcessChip({ processLabels }: { processLabels: string[] }) {
   return processLabels.map((label, index) => (
     <span
       key={`${label}-${index}`}
-      className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground"
+      className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground"
     >
       {label}
     </span>
@@ -208,7 +214,7 @@ function CategoryChip({ label }: { label: string | null }) {
   }
 
   return (
-    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
       {label}
     </span>
   );

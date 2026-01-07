@@ -106,7 +106,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <ProductBadge badge={item.badge} locale={locale} />
-              <ProcessChip process={processLabels[0]} />
+              <ProcessChip process={processLabels[0]} locale={locale} />
               <CategoryChip category={categoryChipLabel} />
             </div>
           </header>
@@ -429,10 +429,10 @@ function resolveBadge(badge: CatalogBadge | null, locale: Locale) {
   };
 
   const classMap: Record<CatalogBadge, string> = {
-    bestseller: 'bg-amber-100 text-amber-800',
-    premium: 'bg-purple-100 text-purple-800',
-    eco: 'bg-emerald-100 text-emerald-800',
-    special: 'bg-sky-100 text-sky-800',
+    bestseller: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200',
+    premium: 'bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-200',
+    eco: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200',
+    special: 'bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-200',
   };
 
   const label = locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en;
@@ -454,20 +454,21 @@ function ProductBadge({ badge, locale }: { badge?: CatalogBadge | null; locale: 
   );
 }
 
-function ProcessChip({ process }: { process?: string }) {
+function ProcessChip({ process, locale }: { process?: string; locale: Locale }) {
   if (!process) {
     return null;
   }
 
-  const label =
-    process === 'alpha-set'
-      ? 'Alpha-set'
-      : process === 'furan'
-        ? 'Фуран'
-        : process;
+  const fallbacks: Record<string, { ru: string; en: string }> = {
+    'alpha-set': { ru: 'Альфа-сет', en: 'Alpha-set' },
+    furan: { ru: 'Фуран', en: 'Furan' },
+  };
+
+  const fallback = fallbacks[process];
+  const label = fallback ? (locale === 'ru' ? fallback.ru : fallback.en) : process;
 
   return (
-    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
       {label}
     </span>
   );
@@ -479,7 +480,7 @@ function CategoryChip({ category }: { category?: string | null }) {
   }
 
   return (
-    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
       {category}
     </span>
   );

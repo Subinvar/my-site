@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="600" viewBox="0 0 1600 600" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f3f4f6" />
@@ -17,11 +17,30 @@
     </pattern>
   </defs>
 
-  <rect width="1200" height="675" fill="url(#bg)" />
-  <rect width="1200" height="675" fill="url(#glow)" />
-  <rect width="1200" height="675" fill="url(#lines)" />
+  <rect width="1600" height="600" fill="url(#bg)" />
+  <rect width="1600" height="600" fill="url(#glow)" />
+  <rect width="1600" height="600" fill="url(#lines)" />
 
-  <path d="M80 520C240 420 360 430 520 520S800 620 1120 460" stroke="rgba(148, 27, 32, 0.20)" stroke-width="2" opacity="0.45" />
-  <circle cx="220" cy="220" r="140" stroke="rgba(17, 24, 39, 0.10)" stroke-width="2" opacity="0.55" />
-  <circle cx="980" cy="520" r="180" stroke="rgba(17, 24, 39, 0.10)" stroke-width="2" opacity="0.55" />
+  <path
+    d="M100 465C320 360 480 372 660 465S1020 560 1490 410"
+    stroke="rgba(148, 27, 32, 0.20)"
+    stroke-width="2"
+    opacity="0.45"
+  />
+  <circle
+    cx="300"
+    cy="200"
+    r="150"
+    stroke="rgba(17, 24, 39, 0.10)"
+    stroke-width="2"
+    opacity="0.55"
+  />
+  <circle
+    cx="1300"
+    cy="440"
+    r="200"
+    stroke="rgba(17, 24, 39, 0.10)"
+    stroke-width="2"
+    opacity="0.55"
+  />
 </svg>

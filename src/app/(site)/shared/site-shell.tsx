@@ -1061,10 +1061,12 @@ export function SiteShell({
           "h-[var(--header-height-initial)]",
           isHeaderDividerVisible
             ? cn(
-                "bg-background/92 before:opacity-100",
+                // ⬆️ Чуть меньше прозрачности: хедер меньше «просвечивает».
+                "bg-background/97 before:opacity-100",
                 shouldShowHeaderShadow && "shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
               )
-            : "bg-background/90",
+            : // ⬆️ Чуть меньше прозрачности: хедер меньше «просвечивает».
+              "bg-background/95",
         )}
       >
         <div className="relative pt-[var(--safe-area-top)]">
@@ -1155,7 +1157,8 @@ export function SiteShell({
           className={cn(
             // Apple-like: "шторка" на весь экран под шапкой
             "fixed inset-x-0 z-[59] overflow-hidden",
-            isHeaderElevated ? "bg-background/97" : "bg-background/95",
+            // ⬆️ Чуть меньше прозрачности: панель меню меньше «просвечивает».
+            isHeaderElevated ? "bg-background/99" : "bg-background/98",
             "will-change-[height]",
             prefersReducedMotion
               ? "transition-none"

@@ -100,6 +100,8 @@ export function LanguageSwitcher({
   return (
     <Link
       href={targetHref}
+      // Сохраняем позицию страницы при смене языка (не скроллим наверх).
+      scroll={false}
       aria-label={ariaLabel}
       onClick={handleClick}
       onPointerEnter={handlePointerEnter}
