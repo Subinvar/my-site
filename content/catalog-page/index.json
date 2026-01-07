@@ -7,6 +7,10 @@
     "ru": "Отфильтруйте продукты по категории, процессу, основе, наполнителю и типу вспомогательных материалов.",
     "en": "Filter products by category, process, base, filler, and auxiliary type."
   },
+  "searchPlaceholder": {
+    "ru": "Поиск по названию или артикулу",
+    "en": "Search by name or code"
+  },
   "submitLabel": {
     "ru": "Применить фильтры",
     "en": "Apply filters"
@@ -19,13 +23,25 @@
     "ru": "Все категории",
     "en": "All categories"
   },
+  "processAllLabel": {
+    "ru": "Все процессы",
+    "en": "All processes"
+  },
   "detailLabel": {
     "ru": "Подробнее",
     "en": "View details"
   },
+  "requestLabel": {
+    "ru": "Запросить КП",
+    "en": "Request a quote"
+  },
   "emptyStateMessage": {
     "ru": "Нет товаров, соответствующих выбранным фильтрам. Попробуйте изменить параметры поиска.",
     "en": "No products match your filters. Try adjusting the search parameters."
+  },
+  "loadMoreLabel": {
+    "ru": "Загрузить ещё",
+    "en": "Load more"
   },
   "groupLabels": {
     "category": {

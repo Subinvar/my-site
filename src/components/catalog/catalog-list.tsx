@@ -1,229 +1,266 @@
 import Link from 'next/link';
 
 import type { CatalogFiltersProps } from './catalog-filters';
-import { Card, CardFooter, CardTitle, type CardProps } from '@/app/(site)/shared/ui/card';
+import type { CatalogView } from './catalog-url';
 import { Button } from '@/app/(site)/shared/ui/button';
-import { buildPath } from '@/lib/paths';
-import type { CatalogListItem } from '@/app/(site)/shared/catalog-filtering';
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/app/(site)/shared/ui/card';
+import { getInterfaceDictionary } from '@/content/dictionary';
+import { cn } from '@/lib/cn';
 import type { Locale } from '@/lib/i18n';
-import type { CatalogBadge } from '@/lib/keystatic';
+import type { CatalogListItem, CatalogBadge } from '@/lib/keystatic';
+import { buildPath } from '@/lib/paths';
 
 export type CatalogListProps = {
-  items: CatalogListItem[];
   locale: Locale;
-  taxonomyOptions: CatalogFiltersProps['options'];
-  emptyStateMessage?: string;
+  items: CatalogListItem[];
+  options: CatalogFiltersProps['options'];
+  auxiliaryCategory: string;
+  view?: CatalogView;
   detailLabel?: string;
   requestLabel?: string;
 };
 
 export function CatalogList({
-  items,
   locale,
-  taxonomyOptions,
-  emptyStateMessage,
-  detailLabel = 'Подробнее',
-  requestLabel = 'Запросить КП',
+  items,
+  options,
+  auxiliaryCategory,
+  view = 'grid',
+  detailLabel = locale === 'ru' ? 'Подробнее' : 'Details',
+  requestLabel = locale === 'ru' ? 'Запросить КП' : 'Request a quote',
 }: CatalogListProps) {
-  const labelMaps = createLabelMaps(taxonomyOptions);
+  const labelMaps = createLabelMaps(options);
+  const dict = getInterfaceDictionary(locale);
+  const a = dict.catalog.attributes;
 
   if (!items.length) {
-    return (
-      <div className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-        {emptyStateMessage ||
-          'По выбранным параметрам ничего не найдено. Попробуйте снять часть фильтров или изменить запрос.'}
-      </div>
-    );
+    return null;
   }
 
+  const isList = view === 'list';
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {items.map((item) => (
-        <CatalogItemCard
-          key={item.slug}
-          data-testid="catalog-item"
-          item={item}
-          locale={locale}
-          labelMaps={labelMaps}
-          detailLabel={detailLabel}
-          requestLabel={requestLabel}
-        />
-      ))}
+    <div
+      className={cn(
+        isList ? 'space-y-3' : 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3',
+        'items-stretch'
+      )}
+    >
+      {items.map((item) => {
+        const href = buildPath(locale, ['catalog', item.slug]);
+        const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(
+          item.title
+        )}`;
+
+        const badge = resolveBadge(item.badge, locale);
+
+        const categoryLabel = item.category ? labelMaps.category.get(item.category) : null;
+        const processLabels = item.process
+          .map((value) => labelMaps.process.get(value))
+          .filter(Boolean) as string[];
+        const baseLabels = item.base.map((value) => labelMaps.base.get(value)).filter(Boolean) as string[];
+        const fillerLabels = item.filler
+          .map((value) => labelMaps.filler.get(value))
+          .filter(Boolean) as string[];
+        const metalLabels = item.metals
+          .map((value) => labelMaps.metal.get(value))
+          .filter(Boolean) as string[];
+        const auxiliaryLabels = item.auxiliary
+          .map((value) => labelMaps.auxiliary.get(value))
+          .filter(Boolean) as string[];
+
+        const specs: Array<{ label: string; value: string | null }> = [
+          { label: a.category, value: categoryLabel },
+          { label: a.process, value: formatList(processLabels, 2) },
+          { label: a.base, value: formatList(baseLabels, 2) },
+          { label: a.metal, value: formatList(metalLabels, 2) },
+        ];
+
+        if (item.category === auxiliaryCategory) {
+          specs.push({ label: a.auxiliary, value: formatList(auxiliaryLabels, 2) });
+        } else {
+          // Non-auxiliary items: show filler if it exists.
+          if (fillerLabels.length) {
+            specs.push({ label: a.filler, value: formatList(fillerLabels, 2) });
+          }
+        }
+
+        const headerChips = (
+          <div className="flex flex-wrap items-center gap-2">
+            {processLabels.length ? <Pill>{processLabels[0]}</Pill> : null}
+            {categoryLabel ? <Pill variant="muted">{categoryLabel}</Pill> : null}
+            {badge.label ? <ProductBadge badgeData={badge} /> : null}
+          </div>
+        );
+
+        if (isList) {
+          return (
+            <Card as="article" key={item.slug} data-testid="catalog-item" className="p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1 space-y-3">
+                  {headerChips}
+                  <div className="space-y-1">
+                    <h3 className="text-base font-semibold leading-snug">
+                      <Link href={href} className="hover:underline">
+                        {item.title}
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{item.summary}</p>
+                  </div>
+                  <SpecList specs={specs} />
+                </div>
+
+                <div className="flex shrink-0 flex-row gap-2 sm:flex-col sm:items-end">
+                  <Button asChild size="sm" variant="secondary">
+                    <Link href={href}>{detailLabel}</Link>
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link href={requestHref}>{requestLabel}</Link>
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          );
+        }
+
+        return (
+          <Card as="article" key={item.slug} data-testid="catalog-item" className="flex h-full flex-col">
+            <CardHeader className="space-y-3">
+              {headerChips}
+
+              <div className="space-y-1">
+                <CardTitle className="text-base leading-snug">
+                  <Link href={href} className="hover:underline">
+                    {item.title}
+                  </Link>
+                </CardTitle>
+                <CardDescription className="line-clamp-2">{item.summary}</CardDescription>
+              </div>
+
+              <SpecList specs={specs} className="pt-1" />
+            </CardHeader>
+
+            <CardFooter className="mt-auto flex flex-col gap-2 sm:flex-row">
+              <Button asChild size="sm" variant="secondary" className="w-full">
+                <Link href={href}>{detailLabel}</Link>
+              </Button>
+              <Button asChild size="sm" className="w-full">
+                <Link href={requestHref}>{requestLabel}</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        );
+      })}
     </div>
   );
 }
 
-function CatalogItemCard({
-  item,
-  locale,
-  labelMaps,
-  detailLabel,
-  requestLabel,
-  ...cardProps
+function SpecList({
+  specs,
+  className,
 }: {
-  item: CatalogListItem;
-  locale: Locale;
-  labelMaps: ReturnType<typeof createLabelMaps>;
-  detailLabel: string;
-  requestLabel: string;
-} & CardProps) {
-  const detailHref = buildPath(locale, ['catalog', item.slug]);
-  const requestHref = `${buildPath(locale, ['contacts'])}?product=${encodeURIComponent(item.title)}`;
-  const summary = item.shortDescription;
-  const badge = resolveBadge(item.badge, locale);
-  const processLabels = item.process.map((process) => resolveProcessLabel(process, labelMaps, locale));
-  const categoryLabel = item.category ? labelMaps.category.get(item.category) ?? item.category : null;
+  specs: Array<{ label: string; value: string | null }>;
+  className?: string;
+}) {
+  const visible = specs.filter((spec) => spec.value);
+  if (!visible.length) {
+    return null;
+  }
 
   return (
-    <Card as="article" className="flex h-full flex-col" {...cardProps}>
-      <div className="flex flex-1 flex-col gap-3">
-        <header className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-base leading-snug">{item.title}</CardTitle>
-            <ProductBadge badgeData={badge} />
-          </div>
-          {summary ? (
-            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{summary}</p>
-          ) : null}
-        </header>
-
-        <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
-          <ProcessChip processLabels={processLabels} />
-          <CategoryChip label={categoryLabel} />
-          {item.base.map((base) => (
-            <Chip key={base}>{labelMaps.base.get(base) ?? base}</Chip>
-          ))}
-          {item.filler.map((filler) => (
-            <Chip key={filler}>{labelMaps.filler.get(filler) ?? filler}</Chip>
-          ))}
-          {item.metals.map((metal) => (
-            <Chip key={metal}>{labelMaps.metals.get(metal) ?? metal}</Chip>
-          ))}
-          {item.auxiliary.map((auxiliary) => (
-            <Chip key={auxiliary}>{labelMaps.auxiliary.get(auxiliary) ?? auxiliary}</Chip>
-          ))}
+    <dl className={cn('grid grid-cols-2 gap-x-4 gap-y-2 text-xs', className)}>
+      {visible.map((spec) => (
+        <div key={spec.label} className="min-w-0">
+          <dt className="text-muted-foreground">{spec.label}</dt>
+          <dd className="font-medium text-foreground truncate">{spec.value}</dd>
         </div>
-      </div>
-
-      <CardFooter className="mt-3 flex justify-between gap-2">
-        <Button asChild variant="link" size="sm">
-          <Link href={detailHref}>{detailLabel}</Link>
-        </Button>
-        <Button asChild size="sm" className="min-w-[150px] justify-center">
-          <Link href={requestHref}>{requestLabel}</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+      ))}
+    </dl>
   );
+}
+
+function formatList(values: string[], max: number): string | null {
+  const list = values.filter(Boolean);
+  if (!list.length) {
+    return null;
+  }
+  if (list.length <= max) {
+    return list.join(', ');
+  }
+  return `${list.slice(0, max).join(', ')} +${list.length - max}`;
 }
 
 function createLabelMaps(options: CatalogFiltersProps['options']) {
   return {
-    category: new Map(options.categories.map((option) => [option.value, option.label])),
-    process: new Map(options.processes.map((option) => [option.value, option.label])),
-    base: new Map(options.bases.map((option) => [option.value, option.label])),
-    filler: new Map(options.fillers.map((option) => [option.value, option.label])),
-    metals: new Map(options.metals.map((option) => [option.value, option.label])),
-    auxiliary: new Map(options.auxiliaries.map((option) => [option.value, option.label])),
+    category: new Map(options.categories.map((option) => [option.value, option.label] as const)),
+    process: new Map(options.processes.map((option) => [option.value, option.label] as const)),
+    base: new Map(options.bases.map((option) => [option.value, option.label] as const)),
+    filler: new Map(options.fillers.map((option) => [option.value, option.label] as const)),
+    metal: new Map(options.metals.map((option) => [option.value, option.label] as const)),
+    auxiliary: new Map(options.auxiliaries.map((option) => [option.value, option.label] as const)),
   };
 }
 
-function resolveProcessLabel(
-  process: CatalogListItem['process'][number],
-  labelMaps: ReturnType<typeof createLabelMaps>,
-  locale: Locale
-) {
-  const mapped = labelMaps.process.get(process);
-  if (mapped) {
-    return mapped;
-  }
-
-  const fallbacks: Record<string, { ru: string; en: string }> = {
-    'alpha-set': { ru: 'Альфа-сет', en: 'Alpha-set' },
-    furan: { ru: 'Фуран', en: 'Furan' },
-  };
-
-  const fallback = fallbacks[process];
-  if (fallback) {
-    return locale === 'ru' ? fallback.ru : fallback.en;
-  }
-
-  return process;
-}
-
-function resolveBadge(
-  badge: CatalogListItem['badge'],
-  locale: Locale
-): { label: string; className: string } | null {
+function resolveBadge(badge: CatalogBadge | null, locale: Locale) {
   if (!badge) {
-    return null;
+    return {
+      label: null,
+      className: null,
+    };
   }
-
-  const labelMap: Record<CatalogBadge, { ru: string; en: string }> = {
-    bestseller: { ru: 'Хит продаж', en: 'Bestseller' },
-    premium: { ru: 'Премиум', en: 'Premium' },
-    eco: { ru: 'Eco', en: 'Eco' },
-    special: { ru: 'Спец.решение', en: 'Special' },
-  };
-
-  const classMap: Record<CatalogBadge, string> = {
-    bestseller: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200',
-    premium: 'bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-200',
-    eco: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200',
-    special: 'bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-200',
-  };
-
+  if (badge === 'bestseller') {
+    return {
+      label: locale === 'ru' ? 'Хит продаж' : 'Bestseller',
+      className:
+        'bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]',
+    };
+  }
+  if (badge === 'new') {
+    return {
+      label: locale === 'ru' ? 'Новинка' : 'New',
+      className:
+        'bg-[color:var(--color-surface-2)] text-foreground border-[color:var(--color-border)]',
+    };
+  }
   return {
-    label: locale === 'ru' ? labelMap[badge].ru : labelMap[badge].en,
-    className: classMap[badge],
+    label: null,
+    className: null,
   };
+}
+
+function Pill({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'muted' }) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium',
+        variant === 'default'
+          ? 'border-[color:var(--color-brand-200)] bg-[color:var(--color-brand-50)] text-[color:var(--color-brand-700)]'
+          : 'border-border bg-muted text-foreground'
+      )}
+    >
+      {children}
+    </span>
+  );
 }
 
 function ProductBadge({ badgeData }: { badgeData: ReturnType<typeof resolveBadge> }) {
-  if (!badgeData) {
+  if (!badgeData.label) {
     return null;
   }
-
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeData.className}`}
+      className={cn(
+        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold',
+        badgeData.className
+      )}
     >
       {badgeData.label}
-    </span>
-  );
-}
-
-function ProcessChip({ processLabels }: { processLabels: string[] }) {
-  if (!processLabels.length) {
-    return null;
-  }
-
-  return processLabels.map((label, index) => (
-    <span
-      key={`${label}-${index}`}
-      className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground"
-    >
-      {label}
-    </span>
-  ));
-}
-
-function CategoryChip({ label }: { label: string | null }) {
-  if (!label) {
-    return null;
-  }
-
-  return (
-    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-      {label}
-    </span>
-  );
-}
-
-function Chip({ children }: { children: string }) {
-  return (
-    <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-      {children}
     </span>
   );
 }

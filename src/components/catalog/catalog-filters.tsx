@@ -14,12 +14,18 @@ import type {
 import { DEFAULT_PAGE_SIZE } from '@/app/(site)/shared/catalog-filtering';
 import type { FilterState } from '@/app/(site)/shared/catalog-filtering';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { Checkbox } from '@/app/(site)/shared/ui/checkbox';
+import type { Locale } from '@/lib/i18n';
+
+import type { CatalogView } from './catalog-url';
 
 export type CatalogFiltersState = FilterState;
 
 export type CatalogFiltersProps = {
-  locale: string;
+  locale: Locale;
   state: CatalogFiltersState;
+  view: CatalogView;
+  auxiliaryCategory: CatalogCategory;
   groupLabels: {
     category?: string;
     process?: string;
@@ -43,6 +49,8 @@ export type CatalogFiltersProps = {
 export function CatalogFiltersMobileTrigger({
   locale,
   state,
+  view,
+  auxiliaryCategory,
   groupLabels,
   options,
   submitLabel,
@@ -55,13 +63,10 @@ export function CatalogFiltersMobileTrigger({
   return (
     <>
       <div className="mb-2 flex items-center justify-between lg:hidden">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="btn-outline text-sm"
-        >
+        <Button type="button" variant="secondary" size="sm" onClick={() => setOpen(true)} className="gap-2">
+          <FilterIcon className="h-4 w-4" />
           {triggerLabel}
-        </button>
+        </Button>
       </div>
 
       {open ? (
@@ -73,19 +78,23 @@ export function CatalogFiltersMobileTrigger({
           <div className="absolute inset-y-0 right-0 flex w-full max-w-[360px] flex-col bg-background p-4 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-base font-semibold">{triggerLabel}</h2>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 p-0"
                 onClick={() => setOpen(false)}
-                className="icon-button"
                 aria-label={closeLabel}
               >
                 ✕
-              </button>
+              </Button>
             </div>
             <div className="flex-1 overflow-y-auto pr-1">
               <CatalogFilters
                 locale={locale}
                 state={state}
+                view={view}
+                auxiliaryCategory={auxiliaryCategory}
                 groupLabels={groupLabels}
                 options={options}
                 submitLabel={submitLabel}
@@ -102,6 +111,8 @@ export function CatalogFiltersMobileTrigger({
 export function CatalogFilters({
   locale,
   state,
+  view,
+  auxiliaryCategory,
   groupLabels,
   options,
   submitLabel,
@@ -147,6 +158,8 @@ export function CatalogFilters({
     auxiliary: groupLabels.auxiliary ?? 'Вспомогательные',
   };
 
+  const isAuxiliaryCategorySelected = state.category.lookup.has(auxiliaryCategory);
+
   // NOTE: checkboxes use `defaultChecked`, so we force-remount the <form>
   // whenever the filter state changes (client-side navigation), otherwise
   // DOM state can drift from URL state.
@@ -188,6 +201,7 @@ export function CatalogFilters({
       {state.sort && state.sort !== 'name' ? (
         <input type="hidden" name="sort" value={state.sort} />
       ) : null}
+      {view === 'list' ? <input type="hidden" name="view" value="list" /> : null}
 
       <FiltersGroup title={labels.category}>
         {options.categories.map((option) => (
@@ -259,32 +273,48 @@ export function CatalogFilters({
         ))}
       </FiltersGroup>
 
-      <FiltersGroup title={labels.auxiliary}>
-        {options.auxiliaries.map((option) => (
-          <CheckboxOption
-            key={option.value}
-            name="auxiliary"
-            value={option.value}
-            label={option.label}
-            checked={state.auxiliary.values.includes(option.value)}
-            onChange={autoSubmit}
-            testId="catalog-filter-checkbox"
-          />
-        ))}
+      <FiltersGroup title={labels.auxiliary} defaultOpen={isAuxiliaryCategorySelected}>
+        {isAuxiliaryCategorySelected ? (
+          options.auxiliaries.map((option) => (
+            <CheckboxOption
+              key={option.value}
+              name="auxiliary"
+              value={option.value}
+              label={option.label}
+              checked={state.auxiliary.values.includes(option.value)}
+              onChange={autoSubmit}
+              testId="catalog-filter-checkbox"
+            />
+          ))
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {locale === 'ru'
+              ? 'Выберите категорию «Вспомогательные материалы», чтобы выбрать тип.'
+              : 'Select the “Auxiliary materials” category to choose a type.'}
+          </p>
+        )}
       </FiltersGroup>
 
       <div className="flex gap-2 pt-2">
         <Button type="submit" className="w-full">
           {submitText}
         </Button>
-        <ClearFiltersButton label={resetText} />
+        <ClearFiltersButton label={resetText} view={view} />
       </div>
     </form>
   );
 }
 
-function FiltersGroup({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(true);
+function FiltersGroup({
+  title,
+  children,
+  defaultOpen = true,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = React.useState(defaultOpen);
 
   return (
     <section className="border-b border-border pb-2">
@@ -311,33 +341,39 @@ function CheckboxOption(props: {
   testId?: string;
 }) {
   return (
-    <label className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        name={props.name}
-        value={props.value}
-        defaultChecked={props.checked}
-        data-testid={props.testId}
-        className="checkbox h-4 w-4 rounded border border-border bg-background text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        onChange={props.onChange}
-      />
-      <span>{props.label}</span>
-    </label>
+    <Checkbox
+      name={props.name}
+      value={props.value}
+      label={props.label}
+      defaultChecked={props.checked}
+      data-testid={props.testId}
+      onChange={props.onChange}
+    />
   );
 }
 
-function ClearFiltersButton({ label }: { label: string }) {
+function ClearFiltersButton({ label, view }: { label: string; view: CatalogView }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const target = view === 'list' ? `${pathname}?view=list` : pathname;
 
   return (
     <Button
       type="button"
       variant="secondary"
       className="w-full"
-      onClick={() => router.replace(pathname, { scroll: false })}
+      onClick={() => router.replace(target, { scroll: false })}
     >
       {label}
     </Button>
+  );
+}
+
+function FilterIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h18M6 12h12M10 19h4" />
+    </svg>
   );
 }

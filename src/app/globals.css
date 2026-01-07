@@ -459,6 +459,15 @@ html[data-theme="dark"] {
   .prose-markdoc strong {
     @apply font-semibold;
   }
+
+  /* <details> without the browser default marker (we render our own chevron) */
+  .details-no-marker summary {
+    list-style: none;
+  }
+
+  .details-no-marker summary::-webkit-details-marker {
+    display: none;
+  }
 }
 
 

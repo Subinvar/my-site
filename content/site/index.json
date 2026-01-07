@@ -11,10 +11,70 @@
     "email": "info@intema.ru",
     "phone": "+7 495 357 25 50",
     "telegramUrl": "https://t.me/IntemaGroup",
-    "address": {
-      "ru": "Офис: г. Москва, Походный проезд, 14\n\nСклад / производство: г. Старая Купавна, ул. Бетонная, 9\n\nРежим работы:\nПн–Пт: 09:00–17:00\nСб–Вс: выходной",
-      "en": "Office: 14 Pokhodny Proyezd, Moscow, Russia\n\nWarehouse / production: 9 Betonaya St, Staraya Kupavna, Russia\n\nWorking hours:\nMon–Fri: 09:00–17:00\nSat–Sun: closed"
-    }
+    "locations": [
+      {
+        "id": "office",
+        "title": {
+          "ru": "Офис",
+          "en": "Office"
+        },
+        "address": {
+          "ru": "г. Москва, Походный проезд, 14",
+          "en": "14 Pokhodny Proyezd, Moscow, Russia"
+        },
+        "hours": {
+          "ru": "Пн–Пт: 09:00–17:00\nСб–Вс: выходной",
+          "en": "Mon–Fri: 09:00–17:00\nSat–Sun: closed"
+        },
+        "latitude": "55.837884",
+        "longitude": "37.417383",
+        "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=55.837884,37.417383",
+        "yandexMapsUrl": "https://yandex.ru/maps/213/moscow/house/pokhodny_proyezd_14/Z04YcgZnSk0EQFtvfXRydnRrYA%3D%3D/",
+        "order": 10,
+        "isPrimary": true
+      },
+      {
+        "id": "warehouse",
+        "title": {
+          "ru": "Склад / производство",
+          "en": "Warehouse / production"
+        },
+        "address": {
+          "ru": "г. Старая Купавна, ул. Бетонная, 9",
+          "en": "9 Betonaya St, Staraya Kupavna, Russia"
+        },
+        "hours": {
+          "ru": "Пн–Пт: 09:00–17:00\nСб–Вс: выходной",
+          "en": "Mon–Fri: 09:00–17:00\nSat–Sun: closed"
+        },
+        "latitude": "55.790003",
+        "longitude": "38.180996",
+        "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=55.790003,38.180996",
+        "yandexMapsUrl": "https://yandex.ru/maps/21656/staraja-kupavna/house/betonnaya_ulitsa_9/Z0EYdw9gQEwBQFtvfXt4cXxjZw%3D%3D/",
+        "order": 20,
+        "isPrimary": false
+      }
+    ],
+    "requisites": {
+      "fullName": "Общество с ограниченной ответственностью «Интема Групп»",
+      "shortName": "ООО «Интема Групп»",
+      "legalAddress": "141241, Московская обл, Пушкинский р-н, г. Пушкино, мкр. Мамонтовка, ул.Центральная, дом № 2, корпус Литера Б, этаж 3, офис 8",
+      "mailingAddress": "125480, г. Москва, а/я 66",
+      "inn": "5038109782",
+      "kpp": "503801001",
+      "ogrn": "1145038009566",
+      "okpo": "39802968",
+      "okato": "46247501000",
+      "bankAccount": "40702810638000018050",
+      "bankName": "В Московском банке Сбербанка России ПАО, г. Москва",
+      "correspondentAccount": "30101810400000000225",
+      "bik": "044525225",
+      "bankInn": "7707083893",
+      "bankAddress": "109544, г. Москва, ул. Большая Андроньевская, д. 6",
+      "director": "Неронов Алексей Валерьевич",
+      "authorityBasis": "Действует на основании Устава"
+    },
+    "companyCardFile": "/uploads/intema-company-card.docx"
   },
   "footer": {
     "tagline": {

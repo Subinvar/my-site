@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { ChevronDown, Download, FileText, Mail, Phone, Send } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
+import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import {
@@ -19,6 +21,9 @@ import {
 import { formatTelegramHandle } from '@/lib/contacts';
 import { getSite, getPageBySlug } from '@/lib/keystatic';
 import { render } from '@/lib/markdoc';
+import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
+import { ContactsLocations } from './contacts-locations';
 import { sendContact } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +33,33 @@ const COPY = {
   ru: {
     title: 'Свяжитесь с нами',
     description: 'Заполните форму или воспользуйтесь контактами — мы ответим на ваш запрос в ближайшее время.',
+    actions: {
+      call: 'Позвонить',
+      email: 'Написать на email',
+      telegram: 'Написать в Telegram',
+      requisites: 'Реквизиты',
+    },
+    contactsBlockTitle: 'Контакты',
+    locations: {
+      title: 'Адреса и карта',
+      description: 'Выберите локацию — карта и режим работы обновятся.',
+      addressLabel: 'Адрес',
+      hoursLabel: 'Режим работы',
+      copyAddress: 'Скопировать адрес',
+      copied: 'Скопировано',
+      openGoogle: 'Google Maps',
+      openYandex: 'Яндекс Карты',
+      openOsm: 'OpenStreetMap',
+      mapFallback: 'Карта временно недоступна — откройте адрес в приложении карт.',
+    },
+    requisites: {
+      title: 'Реквизиты и документы',
+      description: 'ИНН, ОГРН, адреса и банковские реквизиты для договоров и бухгалтерии.',
+      copy: 'Скопировать реквизиты',
+      copied: 'Скопировано',
+      download: 'Скачать карточку компании',
+      more: 'Дополнительная информация',
+    },
     dryRunNotice: 'Сейчас форма работает в тестовом режиме: данные не отправляются.',
     name: 'Имя',
     email: 'Email',
@@ -46,6 +78,33 @@ const COPY = {
   en: {
     title: 'Contact us',
     description: 'Fill out the form or use the details — we will get back to you shortly.',
+    actions: {
+      call: 'Call',
+      email: 'Send an email',
+      telegram: 'Message on Telegram',
+      requisites: 'Company details',
+    },
+    contactsBlockTitle: 'Contact details',
+    locations: {
+      title: 'Locations & map',
+      description: 'Choose a location — the map and hours will update.',
+      addressLabel: 'Address',
+      hoursLabel: 'Working hours',
+      copyAddress: 'Copy address',
+      copied: 'Copied',
+      openGoogle: 'Google Maps',
+      openYandex: 'Yandex Maps',
+      openOsm: 'OpenStreetMap',
+      mapFallback: 'Map is temporarily unavailable — open the address in a maps app.',
+    },
+    requisites: {
+      title: 'Company details & documents',
+      description: 'Tax IDs, registered address and bank details for contracts and accounting.',
+      copy: 'Copy company details',
+      copied: 'Copied',
+      download: 'Download company card',
+      more: 'Additional information',
+    },
     dryRunNotice: 'The form is in test mode right now: submissions are not sent.',
     name: 'Name',
     email: 'Email',
@@ -64,6 +123,33 @@ const COPY = {
 } satisfies Record<Locale, {
   title: string;
   description: string;
+  actions: {
+    call: string;
+    email: string;
+    telegram: string;
+    requisites: string;
+  };
+  contactsBlockTitle: string;
+  locations: {
+    title: string;
+    description: string;
+    addressLabel: string;
+    hoursLabel: string;
+    copyAddress: string;
+    copied: string;
+    openGoogle: string;
+    openYandex: string;
+    openOsm: string;
+    mapFallback: string;
+  };
+  requisites: {
+    title: string;
+    description: string;
+    copy: string;
+    copied: string;
+    download: string;
+    more: string;
+  };
   dryRunNotice: string;
   name: string;
   email: string;
@@ -101,6 +187,95 @@ type ContactEntry = {
   rel?: string;
 };
 
+function normalizeTel(phone: string) {
+  return phone.replace(/[^\d+]/g, '');
+}
+
+function buildRequisitesClipboardText(locale: Locale, requisites: NonNullable<ReturnType<typeof getRequisites>>) {
+  const labels =
+    locale === 'ru'
+      ? {
+          fullName: 'Полное наименование',
+          shortName: 'Сокращённое наименование',
+          legalAddress: 'Юридический адрес',
+          mailingAddress: 'Адрес для корреспонденции',
+          inn: 'ИНН',
+          kpp: 'КПП',
+          ogrn: 'ОГРН',
+          okpo: 'ОКПО',
+          okato: 'ОКАТО',
+          bankAccount: 'Р/с',
+          bankName: 'Банк',
+          correspondentAccount: 'К/с',
+          bik: 'БИК',
+          bankInn: 'ИНН банка',
+          bankAddress: 'Адрес банка',
+          director: 'Генеральный директор',
+          authorityBasis: 'Основание',
+        }
+      : {
+          fullName: 'Legal name',
+          shortName: 'Short name',
+          legalAddress: 'Registered address',
+          mailingAddress: 'Mailing address',
+          inn: 'INN',
+          kpp: 'KPP',
+          ogrn: 'OGRN',
+          okpo: 'OKPO',
+          okato: 'OKATO',
+          bankAccount: 'Account',
+          bankName: 'Bank',
+          correspondentAccount: 'Correspondent account',
+          bik: 'BIC',
+          bankInn: 'Bank INN',
+          bankAddress: 'Bank address',
+          director: 'Director',
+          authorityBasis: 'Authority basis',
+        };
+
+  const rows: Array<[string, string | null | undefined]> = [
+    [labels.fullName, requisites.fullName],
+    [labels.shortName, requisites.shortName],
+    [labels.inn, requisites.inn],
+    [labels.kpp, requisites.kpp],
+    [labels.ogrn, requisites.ogrn],
+    [labels.okpo, requisites.okpo],
+    [labels.okato, requisites.okato],
+    [labels.legalAddress, requisites.legalAddress],
+    [labels.mailingAddress, requisites.mailingAddress],
+    [labels.bankAccount, requisites.bankAccount],
+    [labels.bankName, requisites.bankName],
+    [labels.correspondentAccount, requisites.correspondentAccount],
+    [labels.bik, requisites.bik],
+    [labels.bankInn, requisites.bankInn],
+    [labels.bankAddress, requisites.bankAddress],
+    [labels.director, requisites.director],
+    [labels.authorityBasis, requisites.authorityBasis],
+  ];
+
+  return rows
+    .filter(([, value]) => Boolean(value))
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('\n');
+}
+
+function getRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
+  return shell.site.contacts.requisites;
+}
+
+function hasRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
+  const requisites = getRequisites(shell);
+  if (!requisites) return false;
+  return Boolean(
+    requisites.fullName ||
+      requisites.inn ||
+      requisites.ogrn ||
+      requisites.legalAddress ||
+      requisites.bankAccount ||
+      requisites.bankName
+  );
+}
+
 function resolveStatus(rawStatus: string | string[] | undefined): 'success' | 'error' | null {
   const status = Array.isArray(rawStatus) ? rawStatus[0] : rawStatus;
   if (status === '1') return 'success';
@@ -130,28 +305,23 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const switcherHref = buildPath(targetLocale, ['contacts']);
   const currentPath = buildPath(locale, ['contacts']);
   const copy = COPY[locale];
-  const address = shell.site.contacts.address ?? '';
   const phone = shell.site.contacts.phone ?? '';
   const email = shell.site.contacts.email ?? '';
   const telegramUrl = shell.site.contacts.telegramUrl ?? '';
   const telegramLabel = formatTelegramHandle(telegramUrl) ?? telegramUrl;
+  const locations = shell.site.contacts.locations ?? [];
+  const requisites = shell.site.contacts.requisites;
+  const companyCardFile = shell.site.contacts.companyCardFile ?? '';
+  const showRequisites = hasRequisites(shell);
 
   const contacts: ContactEntry[] = [];
-
-  if (address) {
-    contacts.push({
-      id: 'address',
-      icon: <MapPin aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
-      content: <span className="whitespace-pre-line font-medium">{address}</span>,
-    });
-  }
 
   if (phone) {
     contacts.push({
       id: 'phone',
       icon: <Phone aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
       content: <span className="font-medium">{phone}</span>,
-      href: `tel:${phone}`,
+      href: `tel:${normalizeTel(phone)}`,
     });
   }
 
@@ -185,53 +355,230 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-        <div className="space-y-6">
-          <header className="space-y-3">
-            <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
-            <p className="text-base text-muted-foreground">{copy.description}</p>
-          </header>
+      <div className="space-y-10">
+        <header className="space-y-3">
+          <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
+          <p className="text-base text-muted-foreground">{copy.description}</p>
+        </header>
 
-          <ContactForm
-            copy={copy}
-            locale={locale}
-            contactsPath={currentPath}
-            status={status}
-            onSubmitAction={sendContact}
-            isDryRun={isDryRun}
-            initialProduct={product}
-          />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {phone ? (
+            <QuickActionCard
+              title={copy.actions.call}
+              description={phone}
+              href={`tel:${normalizeTel(phone)}`}
+              icon={<Phone aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+          {email ? (
+            <QuickActionCard
+              title={copy.actions.email}
+              description={email}
+              href={`mailto:${email}`}
+              icon={<Mail aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+          {telegramUrl ? (
+            <QuickActionCard
+              title={copy.actions.telegram}
+              description={telegramLabel || telegramUrl}
+              href={telegramUrl}
+              target="_blank"
+              rel="noreferrer"
+              icon={<Send aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+
+          {(showRequisites || companyCardFile || pageContent) ? (
+            <QuickActionCard
+              title={copy.actions.requisites}
+              description={copy.requisites.description}
+              href="#requisites"
+              icon={<FileText aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
         </div>
 
-        <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-border shadow-sm">
-            <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=37.838%2C55.992%2C37.854%2C56&layer=mapnik&marker=55.996%2C37.845"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-72 w-full border-0"
-              title="OpenStreetMap"
+        <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+          <div className="space-y-6">
+            <ContactForm
+              copy={copy}
+              locale={locale}
+              contactsPath={currentPath}
+              status={status}
+              onSubmitAction={sendContact}
+              isDryRun={isDryRun}
+              initialProduct={product}
             />
           </div>
 
-          {contacts.length ? (
-            <div className="space-y-2 rounded-xl border border-border bg-background p-6 shadow-sm">
-              {contacts.map((contact) => (
-                <ContactRow key={contact.id} {...contact} />
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </div>
+          <div className="space-y-4">
+            {locations.length ? (
+              <ContactsLocations locale={locale} locations={locations} copy={copy.locations} />
+            ) : null}
 
-      {pageContent ? (
-        <div className="mt-10 border-t border-border pt-8">
-          <article className="prose-markdoc">
-            {pageContent}
-          </article>
+            {contacts.length ? (
+              <div className="space-y-3 rounded-xl border border-border bg-background p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-foreground">{copy.contactsBlockTitle}</h2>
+                <div className="space-y-2">
+                  {contacts.map((contact) => (
+                    <ContactRow key={contact.id} {...contact} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
-      ) : null}
+
+        {(showRequisites || companyCardFile || pageContent) ? (
+          <section id="requisites" className="scroll-mt-28">
+            <div className="rounded-xl border border-border bg-background p-6 shadow-sm">
+              <details className="details-no-marker group">
+                <summary className={cn('flex cursor-pointer items-start justify-between gap-4 rounded-lg px-2 py-2', focusRingBase)}>
+                  <span className="space-y-1">
+                    <span className="block text-lg font-semibold text-foreground">{copy.requisites.title}</span>
+                    <span className="block text-sm text-muted-foreground">{copy.requisites.description}</span>
+                  </span>
+                  <ChevronDown
+                    aria-hidden
+                    className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                  />
+                </summary>
+
+                <div className="mt-5 space-y-6 px-2">
+                  {showRequisites || companyCardFile ? (
+                    <div className="flex flex-wrap gap-2">
+                      {showRequisites && requisites ? (
+                        <CopyButton
+                          text={buildRequisitesClipboardText(locale, requisites)}
+                          label={copy.requisites.copy}
+                          copiedLabel={copy.requisites.copied}
+                        />
+                      ) : null}
+
+                      {companyCardFile ? (
+                        <a
+                          href={companyCardFile}
+                          download
+                          className={cn(
+                            'inline-flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-semibold text-foreground transition-colors',
+                            'hover:bg-muted/70',
+                            focusRingBase,
+                          )}
+                        >
+                          <Download aria-hidden className="h-4 w-4" />
+                          {copy.requisites.download}
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {showRequisites && requisites ? (
+                    <div className="grid gap-6 lg:grid-cols-2">
+                      <RequisitesList
+                        title={locale === 'ru' ? 'Организация' : 'Company'}
+                        items={[
+                          [locale === 'ru' ? 'Полное наименование' : 'Legal name', requisites.fullName],
+                          [locale === 'ru' ? 'Сокращённое' : 'Short name', requisites.shortName],
+                          [locale === 'ru' ? 'ИНН' : 'INN', requisites.inn],
+                          [locale === 'ru' ? 'КПП' : 'KPP', requisites.kpp],
+                          [locale === 'ru' ? 'ОГРН' : 'OGRN', requisites.ogrn],
+                          [locale === 'ru' ? 'ОКПО' : 'OKPO', requisites.okpo],
+                          [locale === 'ru' ? 'ОКАТО' : 'OKATO', requisites.okato],
+                          [locale === 'ru' ? 'Юридический адрес' : 'Registered address', requisites.legalAddress],
+                          [locale === 'ru' ? 'Адрес для корреспонденции' : 'Mailing address', requisites.mailingAddress],
+                          [locale === 'ru' ? 'Генеральный директор' : 'Director', requisites.director],
+                          [locale === 'ru' ? 'Основание' : 'Authority basis', requisites.authorityBasis],
+                        ]}
+                      />
+
+                      <RequisitesList
+                        title={locale === 'ru' ? 'Банк' : 'Bank'}
+                        items={[
+                          [locale === 'ru' ? 'Р/с' : 'Account', requisites.bankAccount],
+                          [locale === 'ru' ? 'Банк' : 'Bank', requisites.bankName],
+                          [locale === 'ru' ? 'К/с' : 'Correspondent', requisites.correspondentAccount],
+                          [locale === 'ru' ? 'БИК' : 'BIC', requisites.bik],
+                          [locale === 'ru' ? 'ИНН банка' : 'Bank INN', requisites.bankInn],
+                          [locale === 'ru' ? 'Адрес банка' : 'Bank address', requisites.bankAddress],
+                        ]}
+                      />
+                    </div>
+                  ) : null}
+
+                  {pageContent ? (
+                    <div className="border-t border-border pt-6">
+                      <h3 className="mb-3 text-base font-semibold text-foreground">{copy.requisites.more}</h3>
+                      <article className="prose-markdoc max-w-none">{pageContent}</article>
+                    </div>
+                  ) : null}
+                </div>
+              </details>
+            </div>
+          </section>
+        ) : null}
+      </div>
     </SiteShellLayout>
+  );
+}
+
+function QuickActionCard({
+  title,
+  description,
+  href,
+  icon,
+  target,
+  rel,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  icon: ReactNode;
+  target?: string;
+  rel?: string;
+}) {
+  return (
+    <a href={href} target={target} rel={rel} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+      <Card
+        className={cn(
+          'h-full border-[var(--header-border)] bg-background/40 shadow-none',
+          'transition-colors duration-200 ease-out hover:bg-background/55',
+        )}
+      >
+        <CardHeader className="gap-2">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+            {icon}
+          </div>
+          <CardTitle className="text-base">{title}</CardTitle>
+          <CardDescription className="text-sm">{description}</CardDescription>
+        </CardHeader>
+      </Card>
+    </a>
+  );
+}
+
+function RequisitesList({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<[label: string, value: string | null | undefined]>;
+}) {
+  const filtered = items.filter(([, value]) => Boolean(value));
+  if (!filtered.length) return null;
+
+  return (
+    <section className="space-y-3">
+      <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+      <dl className="grid gap-3">
+        {filtered.map(([label, value]) => (
+          <div key={label} className="space-y-1">
+            <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+            <dd className="whitespace-pre-line text-sm font-medium text-foreground">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 

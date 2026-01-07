@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { createReader } from '@keystatic/core/reader';
 
 import config from '../../../keystatic.config';
-import { defaultLocale, type Locale } from '../i18n';
+import { defaultLocale, locales, type Locale } from '../i18n';
 
 const getReader = cache(() => createReader(process.cwd(), config));
 

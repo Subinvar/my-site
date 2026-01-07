@@ -24,31 +24,67 @@ function resolveLocalizedValue(
 }
 
 export function resolveHeading(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.title ?? null, locale);
+  return resolveLocalizedValue(page?.title ?? null, locale) || (locale === 'ru' ? 'Каталог' : 'Catalog');
 }
 
 export function resolveDescription(page: CatalogPageContent | null, locale: Locale): string {
   return resolveLocalizedValue(page?.description ?? null, locale);
 }
 
+export function resolveSearchPlaceholder(page: CatalogPageContent | null, locale: Locale): string {
+  return (
+    resolveLocalizedValue(page?.searchPlaceholder ?? null, locale) ||
+    (locale === 'ru' ? 'Поиск по названию или артикулу' : 'Search by name or code')
+  );
+}
+
 export function resolveSubmitLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.submitLabel ?? null, locale);
+  return resolveLocalizedValue(page?.submitLabel ?? null, locale) || (locale === 'ru' ? 'Показать' : 'Show');
 }
 
 export function resolveResetLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.resetLabel ?? null, locale);
+  return resolveLocalizedValue(page?.resetLabel ?? null, locale) || (locale === 'ru' ? 'Сбросить' : 'Reset');
+}
+
+export function resolveCategoryAllLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return (
+    resolveLocalizedValue(page?.categoryAllLabel ?? null, locale) ||
+    (locale === 'ru' ? 'Все категории' : 'All categories')
+  );
+}
+
+export function resolveProcessAllLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return (
+    resolveLocalizedValue(page?.processAllLabel ?? null, locale) ||
+    (locale === 'ru' ? 'Все процессы' : 'All processes')
+  );
 }
 
 export function resolveDetailLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.detailLabel ?? null, locale);
+  return resolveLocalizedValue(page?.detailLabel ?? null, locale) || (locale === 'ru' ? 'Подробнее' : 'View details');
 }
 
 export function resolveRequestLabel(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.requestLabel ?? null, locale);
+  return (
+    resolveLocalizedValue(page?.requestLabel ?? null, locale) ||
+    (locale === 'ru' ? 'Запросить КП' : 'Request a quote')
+  );
 }
 
 export function resolveEmptyState(page: CatalogPageContent | null, locale: Locale): string {
-  return resolveLocalizedValue(page?.emptyStateMessage ?? null, locale);
+  return (
+    resolveLocalizedValue(page?.emptyStateMessage ?? null, locale) ||
+    (locale === 'ru'
+      ? 'По выбранным параметрам ничего не найдено. Попробуйте снять часть фильтров или изменить запрос.'
+      : 'No products match your filters. Try adjusting the search parameters.')
+  );
+}
+
+export function resolveLoadMoreLabel(page: CatalogPageContent | null, locale: Locale): string {
+  return (
+    resolveLocalizedValue(page?.loadMoreLabel ?? null, locale) ||
+    (locale === 'ru' ? 'Загрузить ещё' : 'Load more')
+  );
 }
 
 export function resolveGroupLabels(

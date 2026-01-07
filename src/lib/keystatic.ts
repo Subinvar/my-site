@@ -622,12 +622,15 @@ export type DocumentsPageContent = {
 export type CatalogPageContent = {
   title: Partial<Record<Locale, string>>;
   description: Partial<Record<Locale, string>>;
+  searchPlaceholder: Partial<Record<Locale, string>>;
   submitLabel: Partial<Record<Locale, string>>;
   resetLabel: Partial<Record<Locale, string>>;
   categoryAllLabel: Partial<Record<Locale, string>>;
+  processAllLabel: Partial<Record<Locale, string>>;
   detailLabel: Partial<Record<Locale, string>>;
   requestLabel: Partial<Record<Locale, string>>;
   emptyStateMessage: Partial<Record<Locale, string>>;
+  loadMoreLabel: Partial<Record<Locale, string>>;
   groupLabels: {
     category: Partial<Record<Locale, string>>;
     process: Partial<Record<Locale, string>>;
@@ -1867,12 +1870,15 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
   }
   const title = mapLocalizedTextRecord(catalogPage.title);
   const description = mapLocalizedTextRecord(catalogPage.description);
+  const searchPlaceholder = mapLocalizedTextRecord(catalogPage.searchPlaceholder);
   const submitLabel = mapLocalizedTextRecord(catalogPage.submitLabel);
   const resetLabel = mapLocalizedTextRecord(catalogPage.resetLabel);
   const categoryAllLabel = mapLocalizedTextRecord(catalogPage.categoryAllLabel);
+  const processAllLabel = mapLocalizedTextRecord(catalogPage.processAllLabel);
   const detailLabel = mapLocalizedTextRecord(catalogPage.detailLabel);
   const requestLabel = mapLocalizedTextRecord(catalogPage.requestLabel);
   const emptyStateMessage = mapLocalizedTextRecord(catalogPage.emptyStateMessage);
+  const loadMoreLabel = mapLocalizedTextRecord(catalogPage.loadMoreLabel);
   const groupLabelsSource = catalogPage.groupLabels ?? {};
   const groupLabels: CatalogPageContent['groupLabels'] = {
     category: mapLocalizedTextRecord(groupLabelsSource.category),
@@ -1887,8 +1893,15 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
   if (
     !Object.keys(title).length &&
     !Object.keys(description).length &&
+    !Object.keys(searchPlaceholder).length &&
     !Object.keys(submitLabel).length &&
     !Object.keys(resetLabel).length &&
+    !Object.keys(categoryAllLabel).length &&
+    !Object.keys(processAllLabel).length &&
+    !Object.keys(detailLabel).length &&
+    !Object.keys(requestLabel).length &&
+    !Object.keys(emptyStateMessage).length &&
+    !Object.keys(loadMoreLabel).length &&
     !seo
   ) {
     return null;
@@ -1897,12 +1910,15 @@ export async function getCatalogPage(locale: Locale): Promise<CatalogPageContent
   return {
     title,
     description,
+    searchPlaceholder,
     submitLabel,
     resetLabel,
     categoryAllLabel,
+    processAllLabel,
     detailLabel,
     requestLabel,
     emptyStateMessage,
+    loadMoreLabel,
     groupLabels,
     seo,
   } satisfies CatalogPageContent;
