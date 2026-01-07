@@ -18,6 +18,7 @@ type ContactsLocation = {
   longitude: string | null;
   googleMapsUrl: string | null;
   yandexMapsUrl: string | null;
+  yandexWidgetUrl: string | null;
   isPrimary: boolean;
 };
 
@@ -41,18 +42,14 @@ function parseCoord(value: string | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function buildOsmEmbedUrl(lat: number, lon: number, delta = 0.01) {
-  const minLon = lon - delta;
-  const maxLon = lon + delta;
-  const minLat = lat - delta;
-  const maxLat = lat + delta;
-  const bbox = `${minLon.toFixed(6)},${minLat.toFixed(6)},${maxLon.toFixed(6)},${maxLat.toFixed(6)}`;
-  const marker = `${lat.toFixed(6)},${lon.toFixed(6)}`;
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(marker)}`;
-}
+function buildYandexWidgetEmbedUrl(lat: number, lon: number, locale: Locale, zoom = 16) {
+  const ll = `${lon.toFixed(6)},${lat.toFixed(6)}`;
+  const pt = `${lon.toFixed(6)},${lat.toFixed(6)},pm2rdm`;
+  const lang = locale === 'en' ? 'en_US' : 'ru_RU';
 
-function buildOsmViewUrl(lat: number, lon: number, zoom = 16) {
-  return `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat.toFixed(6))}&mlon=${encodeURIComponent(lon.toFixed(6))}#map=${zoom}/${lat.toFixed(6)}/${lon.toFixed(6)}`;
+  // Note: Yandex doesn't guarantee a stable public URL scheme for the widget.
+  // However, this format is widely used and works well without an API key.
+  return `https://yandex.ru/map-widget/v1/?ll=${encodeURIComponent(ll)}&z=${zoom}&pt=${encodeURIComponent(pt)}&lang=${encodeURIComponent(lang)}`;
 }
 
 function buildGoogleMapsUrl(lat: number, lon: number) {
@@ -60,7 +57,9 @@ function buildGoogleMapsUrl(lat: number, lon: number) {
 }
 
 function buildYandexMapsUrl(lat: number, lon: number, zoom = 16) {
-  return `https://yandex.ru/maps/?ll=${encodeURIComponent(`${lon.toFixed(6)},${lat.toFixed(6)}`)}&z=${zoom}`;
+  const ll = `${lon.toFixed(6)},${lat.toFixed(6)}`;
+  const pt = `${lon.toFixed(6)},${lat.toFixed(6)}`;
+  return `https://yandex.ru/maps/?ll=${encodeURIComponent(ll)}&z=${zoom}&pt=${encodeURIComponent(pt)}`;
 }
 
 export function ContactsLocations({
@@ -72,6 +71,8 @@ export function ContactsLocations({
   locations: ContactsLocation[];
   copy: ContactsLocationsCopy;
 }) {
+  const hasDescription = copy.description.trim().length > 0;
+
   const initialLocationId = useMemo(() => {
     const primary = locations.find((location) => location.isPrimary) ?? locations[0];
     return primary?.id ?? '';
@@ -95,9 +96,8 @@ export function ContactsLocations({
     const lon = coords.lon;
     const google = selectedLocation?.googleMapsUrl?.trim() || (lat && lon ? buildGoogleMapsUrl(lat, lon) : null);
     const yandex = selectedLocation?.yandexMapsUrl?.trim() || (lat && lon ? buildYandexMapsUrl(lat, lon) : null);
-    const osm = lat && lon ? buildOsmViewUrl(lat, lon) : null;
-    const embed = lat && lon ? buildOsmEmbedUrl(lat, lon) : null;
-    return { google, yandex, osm, embed };
+    const yandexWidget = selectedLocation?.yandexWidgetUrl?.trim() || (lat && lon ? buildYandexWidgetEmbedUrl(lat, lon, locale) : null);
+    return { google, yandex, yandexWidget };
   }, [coords.lat, coords.lon, selectedLocation]);
 
   if (!locations.length) {
@@ -111,7 +111,7 @@ export function ContactsLocations({
     >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2>
-        <p className="text-sm text-muted-foreground">{copy.description}</p>
+        {hasDescription ? <p className="text-sm text-muted-foreground">{copy.description}</p> : null}
       </header>
 
       {locations.length > 1 ? (
@@ -147,14 +147,15 @@ export function ContactsLocations({
       ) : null}
 
       <div className="overflow-hidden rounded-xl border border-border bg-muted/30 shadow-sm">
-        {urls.embed ? (
+        {urls.yandexWidget ? (
           <iframe
             key={selectedLocation?.id}
-            src={urls.embed}
+            src={urls.yandexWidget}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             className="h-72 w-full border-0"
             title={copy.title}
+            allowFullScreen
           />
         ) : (
           <div className="flex h-72 items-center justify-center px-6 text-center text-sm text-muted-foreground">
@@ -187,23 +188,10 @@ export function ContactsLocations({
 
           <div className="flex flex-wrap gap-2">
             <CopyButton
-              text={[selectedLocation.title, selectedLocation.address].filter(Boolean).join('\n')}
+              text={selectedLocation.address}
               label={copy.copyAddress}
               copiedLabel={copy.copied}
             />
-
-            {urls.google ? (
-              <Button
-                asChild
-                variant="secondary"
-                size="sm"
-                leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-              >
-                <a href={urls.google} target="_blank" rel="noreferrer">
-                  {copy.openGoogle}
-                </a>
-              </Button>
-            ) : null}
 
             {urls.yandex ? (
               <Button
@@ -218,10 +206,15 @@ export function ContactsLocations({
               </Button>
             ) : null}
 
-            {urls.osm ? (
-              <Button asChild variant="secondary" size="sm" leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}>
-                <a href={urls.osm} target="_blank" rel="noreferrer">
-                  {copy.openOsm}
+            {urls.google ? (
+              <Button
+                asChild
+                variant="secondary"
+                size="sm"
+                leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
+              >
+                <a href={urls.google} target="_blank" rel="noreferrer">
+                  {copy.openGoogle}
                 </a>
               </Button>
             ) : null}

@@ -454,7 +454,41 @@ export type SiteContent = {
     email: string | null;
     phone: string | null;
     telegramUrl: string | null;
+    // Backward compatibility (old contacts layout)
     address: string | null;
+    locations: Array<{
+      id: string;
+      title: string;
+      address: string;
+      hours: string | null;
+      latitude: string | null;
+      longitude: string | null;
+      yandexWidgetUrl: string | null;
+      yandexMapsUrl: string | null;
+      googleMapsUrl: string | null;
+      order: number;
+      isPrimary: boolean;
+    }>;
+    requisites: {
+      fullName: string | null;
+      shortName: string | null;
+      legalAddress: string | null;
+      mailingAddress: string | null;
+      inn: string | null;
+      kpp: string | null;
+      ogrn: string | null;
+      okpo: string | null;
+      okato: string | null;
+      bankAccount: string | null;
+      bankName: string | null;
+      correspondentAccount: string | null;
+      bik: string | null;
+      bankInn: string | null;
+      bankAddress: string | null;
+      director: string | null;
+      authorityBasis: string | null;
+    } | null;
+    companyCardFile: string | null;
   };
   seo: SiteSeo;
   domain: string | null;
@@ -1039,25 +1073,60 @@ async function resolveLocalizedContent(
   return readMarkdoc(content[defaultLocale] ?? null);
 }
 
+type RawContactLocation = {
+  id?: string | null;
+  title?: Localized<string>;
+  address?: Localized<string>;
+  hours?: Localized<string>;
+  latitude?: string | null;
+  longitude?: string | null;
+  yandexWidgetUrl?: string | null;
+  yandexMapsUrl?: string | null;
+  googleMapsUrl?: string | null;
+  order?: number | null;
+  isPrimary?: boolean | null;
+};
+
+type RawCompanyRequisites = {
+  fullName?: string | null;
+  shortName?: string | null;
+  legalAddress?: string | null;
+  mailingAddress?: string | null;
+  inn?: string | null;
+  kpp?: string | null;
+  ogrn?: string | null;
+  okpo?: string | null;
+  okato?: string | null;
+  bankAccount?: string | null;
+  bankName?: string | null;
+  correspondentAccount?: string | null;
+  bik?: string | null;
+  bankInn?: string | null;
+  bankAddress?: string | null;
+  director?: string | null;
+  authorityBasis?: string | null;
+};
+
+type RawContactsBlock = {
+  email?: string | null;
+  phone?: string | null;
+  telegramUrl?: string | null;
+  // Backward compatibility (old contacts layout)
+  address?: Localized<string>;
+  locations?: RawContactLocation[] | null;
+  requisites?: RawCompanyRequisites | null;
+  companyCardFile?: string | null;
+};
+
 type SiteSingleton = {
   siteName?: Localized<string>;
   brand?: {
     siteName?: Localized<string>;
     tagline?: Localized<string>;
-    contacts?: {
-      email?: string | null;
-      phone?: string | null;
-      telegramUrl?: string | null;
-      address?: Localized<string>;
-    } | null;
+    contacts?: RawContactsBlock | null;
   } | null;
   tagline?: Localized<string>;
-  contacts?: {
-    email?: string | null;
-    phone?: string | null;
-    telegramUrl?: string | null;
-    address?: Localized<string>;
-  } | null;
+  contacts?: RawContactsBlock | null;
   footer?: {
     tagline?: Localized<string>;
     copyright?: Localized<string>;
@@ -1346,6 +1415,48 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
   const seoGroup = site?.seo ?? null;
   const resolvedSeo = mapResolvedSeo(seoGroup, locale);
   const contacts = site?.contacts ?? site?.brand?.contacts ?? {};
+  const locations = (Array.isArray(contacts.locations) ? contacts.locations : [])
+    .map((location, index) => {
+      const id = toOptionalString(location?.id ?? undefined) ?? `location-${index + 1}`;
+      return {
+        id,
+        title: pickLocalized(location?.title, locale) ?? '',
+        address: pickLocalized(location?.address, locale) ?? '',
+        hours: pickLocalized(location?.hours, locale) ?? null,
+        latitude: toOptionalString(location?.latitude ?? undefined),
+        longitude: toOptionalString(location?.longitude ?? undefined),
+        yandexWidgetUrl: toOptionalString(location?.yandexWidgetUrl ?? undefined),
+        yandexMapsUrl: toOptionalString(location?.yandexMapsUrl ?? undefined),
+        googleMapsUrl: toOptionalString(location?.googleMapsUrl ?? undefined),
+        order: typeof location?.order === 'number' ? location.order : 0,
+        isPrimary: location?.isPrimary === true,
+      };
+    })
+    .filter((location) => Boolean(location.title || location.address))
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+
+  const requisitesRaw = contacts.requisites ?? null;
+  const requisites = requisitesRaw
+    ? {
+        fullName: toOptionalString(requisitesRaw.fullName ?? undefined),
+        shortName: toOptionalString(requisitesRaw.shortName ?? undefined),
+        legalAddress: toOptionalString(requisitesRaw.legalAddress ?? undefined),
+        mailingAddress: toOptionalString(requisitesRaw.mailingAddress ?? undefined),
+        inn: toOptionalString(requisitesRaw.inn ?? undefined),
+        kpp: toOptionalString(requisitesRaw.kpp ?? undefined),
+        ogrn: toOptionalString(requisitesRaw.ogrn ?? undefined),
+        okpo: toOptionalString(requisitesRaw.okpo ?? undefined),
+        okato: toOptionalString(requisitesRaw.okato ?? undefined),
+        bankAccount: toOptionalString(requisitesRaw.bankAccount ?? undefined),
+        bankName: toOptionalString(requisitesRaw.bankName ?? undefined),
+        correspondentAccount: toOptionalString(requisitesRaw.correspondentAccount ?? undefined),
+        bik: toOptionalString(requisitesRaw.bik ?? undefined),
+        bankInn: toOptionalString(requisitesRaw.bankInn ?? undefined),
+        bankAddress: toOptionalString(requisitesRaw.bankAddress ?? undefined),
+        director: toOptionalString(requisitesRaw.director ?? undefined),
+        authorityBasis: toOptionalString(requisitesRaw.authorityBasis ?? undefined),
+      }
+    : null;
   const footer = site?.footer ?? null;
   return {
     locale,
@@ -1356,6 +1467,9 @@ export async function getSite(locale: Locale): Promise<SiteContent> {
       phone: toOptionalString(contacts.phone ?? undefined),
       telegramUrl: toOptionalString(contacts.telegramUrl ?? undefined),
       address: pickLocalized(contacts.address, locale) ?? null,
+      locations,
+      requisites,
+      companyCardFile: toOptionalString(contacts.companyCardFile ?? undefined),
     },
     seo: {
       title: resolvedSeo?.title ?? null,

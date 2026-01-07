@@ -13,27 +13,6 @@
     "telegramUrl": "https://t.me/IntemaGroup",
     "locations": [
       {
-        "id": "office",
-        "title": {
-          "ru": "Офис",
-          "en": "Office"
-        },
-        "address": {
-          "ru": "г. Москва, Походный проезд, 14",
-          "en": "14 Pokhodny Proyezd, Moscow, Russia"
-        },
-        "hours": {
-          "ru": "Пн–Пт: 09:00–17:00\nСб–Вс: выходной",
-          "en": "Mon–Fri: 09:00–17:00\nSat–Sun: closed"
-        },
-        "latitude": "55.837884",
-        "longitude": "37.417383",
-        "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=55.837884,37.417383",
-        "yandexMapsUrl": "https://yandex.ru/maps/213/moscow/house/pokhodny_proyezd_14/Z04YcgZnSk0EQFtvfXRydnRrYA%3D%3D/",
-        "order": 10,
-        "isPrimary": true
-      },
-      {
         "id": "warehouse",
         "title": {
           "ru": "Склад / производство",
@@ -51,6 +30,27 @@
         "longitude": "38.180996",
         "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=55.790003,38.180996",
         "yandexMapsUrl": "https://yandex.ru/maps/21656/staraja-kupavna/house/betonnaya_ulitsa_9/Z0EYdw9gQEwBQFtvfXt4cXxjZw%3D%3D/",
+        "order": 10,
+        "isPrimary": true
+      },
+      {
+        "id": "office",
+        "title": {
+          "ru": "Офис",
+          "en": "Office"
+        },
+        "address": {
+          "ru": "г. Москва, Походный проезд, 14",
+          "en": "14 Pokhodny Proyezd, Moscow, Russia"
+        },
+        "hours": {
+          "ru": "Пн–Пт: 09:00–17:00\nСб–Вс: выходной",
+          "en": "Mon–Fri: 09:00–17:00\nSat–Sun: closed"
+        },
+        "latitude": "55.837884",
+        "longitude": "37.417383",
+        "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=55.837884,37.417383",
+        "yandexMapsUrl": "https://yandex.ru/maps/213/moscow/house/pokhodny_proyezd_14/Z04YcgZnSk0EQFtvfXRydnRrYA%3D%3D/",
         "order": 20,
         "isPrimary": false
       }

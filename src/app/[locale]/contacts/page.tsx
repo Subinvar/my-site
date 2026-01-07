@@ -7,6 +7,7 @@ import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { findTargetLocale, buildPath } from '@/lib/paths';
@@ -19,8 +20,7 @@ import {
   resolveRobotsMeta,
 } from '@/lib/seo';
 import { formatTelegramHandle } from '@/lib/contacts';
-import { getSite, getPageBySlug } from '@/lib/keystatic';
-import { render } from '@/lib/markdoc';
+import { getSite } from '@/lib/keystatic';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 import { ContactsLocations } from './contacts-locations';
@@ -41,8 +41,8 @@ const COPY = {
     },
     contactsBlockTitle: 'Контакты',
     locations: {
-      title: 'Адреса и карта',
-      description: 'Выберите локацию — карта и режим работы обновятся.',
+      title: 'Наши адреса',
+      description: '',
       addressLabel: 'Адрес',
       hoursLabel: 'Режим работы',
       copyAddress: 'Скопировать адрес',
@@ -54,7 +54,7 @@ const COPY = {
     },
     requisites: {
       title: 'Реквизиты и документы',
-      description: 'ИНН, ОГРН, адреса и банковские реквизиты для договоров и бухгалтерии.',
+      description: 'ИНН, ОГРН и банковские реквизиты.',
       copy: 'Скопировать реквизиты',
       copied: 'Скопировано',
       download: 'Скачать карточку компании',
@@ -87,7 +87,7 @@ const COPY = {
     contactsBlockTitle: 'Contact details',
     locations: {
       title: 'Locations & map',
-      description: 'Choose a location — the map and hours will update.',
+      description: '',
       addressLabel: 'Address',
       hoursLabel: 'Working hours',
       copyAddress: 'Copy address',
@@ -176,15 +176,6 @@ type ContactSearchParams = {
 type PageProps = {
   params: Promise<PageParams>;
   searchParams?: Promise<ContactSearchParams>;
-};
-
-type ContactEntry = {
-  id: string;
-  content: ReactNode;
-  icon: ReactNode;
-  href?: string;
-  target?: string;
-  rel?: string;
 };
 
 function normalizeTel(phone: string) {
@@ -295,12 +286,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
   const isDryRun = process.env.LEADS_DRY_RUN === '1';
   const status = isDryRun ? null : resolveStatus(rawSearchParams.ok);
-  const [shell, page] = await Promise.all([
-    getSiteShellData(locale),
-    getPageBySlug('contacts', locale),
-  ]);
-
-  const pageContent = page ? await render(page.content, locale) : null;
+  const shell = await getSiteShellData(locale);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['contacts']);
   const currentPath = buildPath(locale, ['contacts']);
@@ -313,37 +299,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const requisites = shell.site.contacts.requisites;
   const companyCardFile = shell.site.contacts.companyCardFile ?? '';
   const showRequisites = hasRequisites(shell);
-
-  const contacts: ContactEntry[] = [];
-
-  if (phone) {
-    contacts.push({
-      id: 'phone',
-      icon: <Phone aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
-      content: <span className="font-medium">{phone}</span>,
-      href: `tel:${normalizeTel(phone)}`,
-    });
-  }
-
-  if (email) {
-    contacts.push({
-      id: 'email',
-      icon: <Mail aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
-      content: <span className="font-medium">{email}</span>,
-      href: `mailto:${email}`,
-    });
-  }
-
-  if (telegramUrl) {
-    contacts.push({
-      id: 'telegram',
-      icon: <Send aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.75} />,
-      content: <span className="font-medium">{telegramLabel || telegramUrl}</span>,
-      href: telegramUrl,
-      target: '_blank',
-      rel: 'noreferrer',
-    });
-  }
 
   return (
     <SiteShellLayout
@@ -389,7 +344,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             />
           ) : null}
 
-          {(showRequisites || companyCardFile || pageContent) ? (
+          {(showRequisites || companyCardFile) ? (
             <QuickActionCard
               title={copy.actions.requisites}
               description={copy.requisites.description}
@@ -416,21 +371,10 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             {locations.length ? (
               <ContactsLocations locale={locale} locations={locations} copy={copy.locations} />
             ) : null}
-
-            {contacts.length ? (
-              <div className="space-y-3 rounded-xl border border-border bg-background p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-foreground">{copy.contactsBlockTitle}</h2>
-                <div className="space-y-2">
-                  {contacts.map((contact) => (
-                    <ContactRow key={contact.id} {...contact} />
-                  ))}
-                </div>
-              </div>
-            ) : null}
           </div>
         </div>
 
-        {(showRequisites || companyCardFile || pageContent) ? (
+        {(showRequisites || companyCardFile) ? (
           <section id="requisites" className="scroll-mt-28">
             <div className="rounded-xl border border-border bg-background p-6 shadow-sm">
               <details className="details-no-marker group">
@@ -506,12 +450,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                     </div>
                   ) : null}
 
-                  {pageContent ? (
-                    <div className="border-t border-border pt-6">
-                      <h3 className="mb-3 text-base font-semibold text-foreground">{copy.requisites.more}</h3>
-                      <article className="prose-markdoc max-w-none">{pageContent}</article>
-                    </div>
-                  ) : null}
                 </div>
               </details>
             </div>
@@ -538,22 +476,26 @@ function QuickActionCard({
   rel?: string;
 }) {
   return (
-    <a href={href} target={target} rel={rel} className={cn('group block h-full rounded-2xl', focusRingBase)}>
-      <Card
-        className={cn(
-          'h-full border-[var(--header-border)] bg-background/40 shadow-none',
-          'transition-colors duration-200 ease-out hover:bg-background/55',
-        )}
-      >
-        <CardHeader className="gap-2">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-            {icon}
-          </div>
-          <CardTitle className="text-base">{title}</CardTitle>
-          <CardDescription className="text-sm">{description}</CardDescription>
-        </CardHeader>
-      </Card>
-    </a>
+    <AppleHoverLift className="h-full">
+      <a href={href} target={target} rel={rel} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+        <Card
+          className={cn(
+            'h-full border-[var(--header-border)] bg-background/40 shadow-none',
+            // Lift is handled by <AppleHoverLift /> (keep cards consistent with products hub tiles)
+            'transform-none hover:shadow-none hover:-translate-y-0',
+            'transition-colors duration-200 ease-out hover:bg-background/55',
+          )}
+        >
+          <CardHeader className="gap-2">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+              {icon}
+            </div>
+            <CardTitle className="text-base">{title}</CardTitle>
+            <CardDescription className="text-sm">{description}</CardDescription>
+          </CardHeader>
+        </Card>
+      </a>
+    </AppleHoverLift>
   );
 }
 
@@ -580,32 +522,6 @@ function RequisitesList({
       </dl>
     </section>
   );
-}
-
-function ContactRow({ icon, content, href, target, rel }: ContactEntry) {
-  const inner = (
-    <span className="inline-flex items-baseline gap-3 text-base leading-6 text-foreground">
-      <span className="text-brand-700" aria-hidden="true">
-        {icon}
-      </span>
-      <span className="break-words">{content}</span>
-    </span>
-  );
-
-  if (href) {
-    return (
-      <a
-        className="block rounded-lg px-2 py-1.5 transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        href={href}
-        target={target}
-        rel={rel}
-      >
-        {inner}
-      </a>
-    );
-  }
-
-  return <div className="px-2 py-1.5">{inner}</div>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

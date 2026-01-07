@@ -18,6 +18,7 @@ import {
   type FilterState,
 } from '@/app/(site)/shared/catalog-filtering';
 import {
+  getCatalogListing,
   getCatalogListingPage,
   getCatalogTaxonomyOptions,
   resolveCatalogListingMetadata,

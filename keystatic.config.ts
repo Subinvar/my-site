@@ -323,12 +323,75 @@ export default config({
       schema: {
         siteName: localizedText('Название сайта', { isRequired: true }),
         tagline: localizedText('Слоган', { multiline: true }),
-        contacts: fields.object({
-          email: fields.text({ label: 'E-mail' }),
-          phone: fields.text({ label: 'Телефон' }),
-          telegramUrl: fields.text({ label: 'Telegram (ссылка)' }),
-          address: localizedText('Адрес', { multiline: true }),
-        }),
+        contacts: fields.object(
+          {
+            email: fields.text({ label: 'E-mail' }),
+            phone: fields.text({ label: 'Телефон' }),
+            telegramUrl: fields.text({ label: 'Telegram (ссылка)' }),
+
+            // Backward-compatible field (old contacts layout)
+            address: localizedText('Адрес (устарело)', { multiline: true }),
+
+            locations: fields.array(
+              fields.object({
+                id: fields.text({ label: 'ID', validation: { isRequired: true } }),
+                title: localizedText('Название', { isRequired: true }),
+                address: localizedText('Адрес', { multiline: true, isRequired: true }),
+                hours: localizedText('Режим работы', { multiline: true }),
+                latitude: fields.text({ label: 'Широта (lat)' }),
+                longitude: fields.text({ label: 'Долгота (lon)' }),
+                yandexWidgetUrl: fields.text({
+                  label: 'Яндекс Карты — виджет (iframe src)',
+                  description: 'Можно оставить пустым — виджет будет собран по координатам.',
+                }),
+                yandexMapsUrl: fields.text({ label: 'Яндекс Карты (ссылка)' }),
+                googleMapsUrl: fields.text({ label: 'Google Maps (ссылка)' }),
+                order: fields.integer({ label: 'Порядок', defaultValue: 0 }),
+                isPrimary: fields.checkbox({ label: 'Основная локация', defaultValue: false }),
+              }),
+              {
+                label: 'Локации',
+                itemLabel: (item) =>
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
+                  ((item as any)?.title?.ru as string | undefined) ||
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
+                  ((item as any)?.title?.en as string | undefined) ||
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Keystatic типизирует item слабо
+                  ((item as any)?.id as string | undefined) ||
+                  'Локация',
+              }
+            ),
+
+            requisites: fields.object(
+              {
+                fullName: fields.text({ label: 'Полное наименование' }),
+                shortName: fields.text({ label: 'Сокращённое наименование' }),
+                legalAddress: fields.text({ label: 'Юридический адрес', multiline: true }),
+                mailingAddress: fields.text({ label: 'Адрес для корреспонденции', multiline: true }),
+
+                inn: fields.text({ label: 'ИНН' }),
+                kpp: fields.text({ label: 'КПП' }),
+                ogrn: fields.text({ label: 'ОГРН' }),
+                okpo: fields.text({ label: 'ОКПО' }),
+                okato: fields.text({ label: 'ОКАТО' }),
+
+                bankAccount: fields.text({ label: 'Р/с' }),
+                bankName: fields.text({ label: 'Банк' }),
+                correspondentAccount: fields.text({ label: 'К/с' }),
+                bik: fields.text({ label: 'БИК' }),
+                bankInn: fields.text({ label: 'ИНН банка' }),
+                bankAddress: fields.text({ label: 'Адрес банка', multiline: true }),
+
+                director: fields.text({ label: 'Генеральный директор' }),
+                authorityBasis: fields.text({ label: 'Основание', multiline: true }),
+              },
+              { label: 'Реквизиты' }
+            ),
+
+            companyCardFile: fileField('Карточка компании (DOCX/PDF)'),
+          },
+          { label: 'Контакты' }
+        ),
         footer: fields.object(
           {
             tagline: localizedText('Подвал — слоган', { multiline: true }),

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 
+import { cn } from '@/lib/cn';
+
 import { Button, type ButtonProps } from './button';
 
 type CopyButtonProps = {
@@ -70,7 +72,8 @@ export function CopyButton({
     }
   }, [text, timeoutMs]);
 
-  const currentLabel = copied ? (copiedLabel ?? label) : label;
+  const successLabel = copiedLabel ?? label;
+  const currentLabel = copied ? successLabel : label;
   const icon = copied ? <Check aria-hidden className="h-4 w-4" /> : <Copy aria-hidden className="h-4 w-4" />;
 
   return (
@@ -83,7 +86,31 @@ export function CopyButton({
       leftIcon={iconOnly ? undefined : icon}
       {...rest}
     >
-      {iconOnly ? icon : currentLabel}
+      {iconOnly ? (
+        icon
+      ) : (
+        // Keep pill width stable when label changes (avoid layout shift).
+        <span className="inline-grid">
+          <span
+            className={cn(
+              'col-start-1 row-start-1 transition-opacity duration-150',
+              copied ? 'opacity-0' : 'opacity-100'
+            )}
+            aria-hidden={copied}
+          >
+            {label}
+          </span>
+          <span
+            className={cn(
+              'col-start-1 row-start-1 transition-opacity duration-150',
+              copied ? 'opacity-100' : 'opacity-0'
+            )}
+            aria-hidden={!copied}
+          >
+            {successLabel}
+          </span>
+        </span>
+      )}
     </Button>
   );
 }
