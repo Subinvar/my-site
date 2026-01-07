@@ -98,12 +98,12 @@ function HubCard({ item }: { item: ProductsHubCard }) {
   const href = item.href ?? '#';
 
   return (
-    <AppleHoverLift className="h-auto">
-      <Link href={href} className={cn('group block rounded-2xl self-start', focusRingBase)}>
+    <AppleHoverLift className="h-full">
+      <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
         <Card
           as="article"
           className={cn(
-            'overflow-hidden p-0',
+            'flex h-full flex-col overflow-hidden p-0',
             'border-[var(--header-border)] bg-background/40 shadow-none',
             'transform-none hover:shadow-none hover:-translate-y-0',
             'transition-colors duration-200 ease-out hover:bg-background/55',
@@ -183,7 +183,7 @@ function ProductsSection({
         ) : null}
       </header>
 
-      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <HubCard key={item.id} item={item} />
         ))}
@@ -448,9 +448,18 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
 
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
+  const navSlotRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
   const navHeightRef = useRef(0);
+
+  // Если по какой-то причине CSS sticky ломается (обычно из-за overflow/scroll контекстов у предков
+  // в отдельных браузерах), поддерживаем «железобетонный» fallback через position: fixed.
+  const navFixedRef = useRef(false);
+  const navFixedStyleRef = useRef<CSSProperties | null>(null);
+  const [isNavFixed, setIsNavFixed] = useState(false);
+  const [navFixedStyle, setNavFixedStyle] = useState<CSSProperties | null>(null);
+  const [navSlotHeight, setNavSlotHeight] = useState(0);
 
   const sectionIds = useMemo(() => groups.map((group) => group.id), [groups]);
 
@@ -738,6 +747,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       const height = Math.max(0, Math.round(navRect.height));
 
       navHeightRef.current = height;
+      setNavSlotHeight((prev) => (prev === height ? prev : height));
 
       // CSS-переменная нужна для корректного scroll-margin-top у секций.
       // Задаём на корневом контейнере страницы, чтобы наследовалась.
@@ -759,6 +769,93 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     return () => {
       window.removeEventListener('resize', schedule);
       ro?.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Fallback-логика для «липкости» на случай, если sticky не работает в конкретном браузере/контексте.
+  // (Например, когда у какого-то предка внезапно появляется overflow/scroll контекст.)
+  useEffect(() => {
+    const slot = navSlotRef.current;
+    const nav = navRef.current;
+
+    if (!slot || !nav) return;
+
+    let raf = 0;
+
+    const getHeaderHeight = () => {
+      // В идеале меряем живой DOM: это самый надёжный вариант.
+      const headerEl = document.querySelector<HTMLElement>('[data-site-header]');
+      if (headerEl) {
+        return Math.max(0, headerEl.getBoundingClientRect().height);
+      }
+
+      // Fallback: читаем CSS-переменные (если по какой-то причине DOM не найден).
+      const hostStyles = window.getComputedStyle(slot);
+      const headerHeightVar = Number.parseFloat(hostStyles.getPropertyValue('--header-height')) || 0;
+      const headerHeightInitial = Number.parseFloat(hostStyles.getPropertyValue('--header-height-initial')) || 0;
+      return Math.max(0, headerHeightVar || headerHeightInitial || 0);
+    };
+
+    const update = () => {
+      raf = 0;
+
+      const headerHeight = getHeaderHeight();
+      const slotRect = slot.getBoundingClientRect();
+      const slotTop = slotRect.top + window.scrollY;
+
+      // Когда верх вьюпорта (scrollY) + высота шапки догоняет верх «слота»,
+      // начинаем фиксировать навигацию под шапкой.
+      const shouldFix = window.scrollY + headerHeight >= slotTop;
+
+      if (!shouldFix) {
+        if (navFixedRef.current) {
+          navFixedRef.current = false;
+          navFixedStyleRef.current = null;
+          setIsNavFixed(false);
+          setNavFixedStyle(null);
+        }
+        return;
+      }
+
+      // В режиме fixed держим ширину/позицию как у слота, чтобы всё совпадало с контейнером.
+      const nextStyle: CSSProperties = {
+        position: 'fixed',
+        top: headerHeight,
+        left: slotRect.left,
+        width: slotRect.width,
+      };
+
+      const prev = navFixedStyleRef.current;
+      const changed =
+        !prev ||
+        Math.abs((prev.top as number) - (nextStyle.top as number)) > 0.5 ||
+        Math.abs((prev.left as number) - (nextStyle.left as number)) > 0.5 ||
+        Math.abs((prev.width as number) - (nextStyle.width as number)) > 0.5;
+
+      if (!navFixedRef.current) {
+        navFixedRef.current = true;
+        setIsNavFixed(true);
+      }
+
+      if (changed) {
+        navFixedStyleRef.current = nextStyle;
+        setNavFixedStyle(nextStyle);
+      }
+    };
+
+    const schedule = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+
+    return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, []);
@@ -837,13 +934,22 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
         ref={pageRef}
         className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
       >
-        {/* Навигация по секциям (CSS sticky — без «пропадания» при reload на проскролленной странице) */}
-        <div className="relative">
+        {/* Навигация по секциям */}
+        <div
+          ref={navSlotRef}
+          className="relative"
+          // Когда включается fixed-fallback — оставляем на месте «слот» той же высоты,
+          // чтобы контент ниже не подпрыгивал.
+          style={isNavFixed && navSlotHeight ? ({ height: `${navSlotHeight}px` } as CSSProperties) : undefined}
+        >
           <nav
             ref={navRef}
             aria-label={isRu ? 'Навигация по разделам продукции' : 'Product sections navigation'}
             className={cn('z-50 py-2')}
-            style={{ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' }}
+            style={
+              navFixedStyle ??
+              ({ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' } as CSSProperties)
+            }
           >
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {groups.map((group) => {
