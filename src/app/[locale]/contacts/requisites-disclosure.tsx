@@ -34,16 +34,16 @@ export function RequisitesDisclosure({
 
   const [isOpen, setIsOpen] = useState(false);
   const [height, setHeight] = useState<string>('0px');
-  const prefersReducedMotionRef = useRef(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const mountedRef = useRef(false);
 
   // Detect reduced motion once after hydration.
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    prefersReducedMotionRef.current = mq.matches;
+    setPrefersReducedMotion(mq.matches);
 
     const handle = () => {
-      prefersReducedMotionRef.current = mq.matches;
+      setPrefersReducedMotion(mq.matches);
     };
 
     // Safari < 14 uses addListener/removeListener.
@@ -83,7 +83,7 @@ export function RequisitesDisclosure({
       return;
     }
 
-    if (prefersReducedMotionRef.current) {
+    if (prefersReducedMotion) {
       setHeight(isOpen ? 'auto' : '0px');
       return;
     }
@@ -104,7 +104,7 @@ export function RequisitesDisclosure({
     setHeight(`${currentHeight}px`);
     const frame = window.requestAnimationFrame(() => setHeight('0px'));
     return () => window.cancelAnimationFrame(frame);
-  }, [isOpen]);
+  }, [isOpen, prefersReducedMotion]);
 
   return (
     <div className="rounded-xl border border-border bg-background p-6">
@@ -132,7 +132,7 @@ export function RequisitesDisclosure({
         aria-label={title}
         className={cn(
           'overflow-hidden will-change-[height]',
-          prefersReducedMotionRef.current ? 'transition-none' : 'transition-[height]',
+          prefersReducedMotion ? 'transition-none' : 'transition-[height]',
         )}
         style={{
           height,
@@ -142,7 +142,7 @@ export function RequisitesDisclosure({
         onTransitionEnd={(event) => {
           if (event.propertyName !== 'height') return;
           if (!contentRef.current) return;
-          if (prefersReducedMotionRef.current) return;
+          if (prefersReducedMotion) return;
 
           // After opening finishes, unlock the height to allow responsive reflow.
           if (isOpen) {
