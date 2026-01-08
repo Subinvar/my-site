@@ -42,6 +42,7 @@ import { HeaderBrand } from "./header-brand";
 import { HeaderDesktopDropdown } from "./header-desktop-dropdown";
 import { HeaderNav } from "./header-nav";
 import { HeaderTopBar } from "./header-top-bar";
+import { HeaderWagon } from "./header-wagon";
 import { headerButtonBase, pillBase } from "./ui-classes";
 
 type SiteShellProps = {
@@ -1382,46 +1383,61 @@ export function SiteShell({
                     })}
                   </ul>
 
-                  {site.contacts.email || (!isSmUp && telegramHref) ? (
+                  {site.contacts.email || telegramHref ? (
                     <div className="mt-6 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
                       {/* ✅ Оптическое выравнивание контактов по видимому тексту */}
-                      <div className="flex w-full flex-row flex-wrap items-center justify-end gap-2 text-right">
-                        {site.contacts.email
-                          ? (() => {
-                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-                              return (
-                                <div className={motion.className} style={motion.style}>
-                                  <a
-                                    href={`mailto:${site.contacts.email}`}
-                                    className={cn(pillBase, "w-auto max-w-full")}
-                                    onClick={handleCloseMenu}
-                                  >
-                                    {site.contacts.email}
-                                  </a>
-                                </div>
-                              );
-                            })()
-                          : null}
+                      {(() => {
+                        const motion = getBurgerItemMotion(nextBurgerMotionIndex());
+                        const emailNode = site.contacts.email ? (
+                          <a
+                            href={`mailto:${site.contacts.email}`}
+                            className={cn(pillBase, "w-auto max-w-full")}
+                            onClick={handleCloseMenu}
+                          >
+                            {site.contacts.email}
+                          </a>
+                        ) : null;
 
-                        {!isSmUp
-                          ? (() => {
-                              const motion = getBurgerItemMotion(nextBurgerMotionIndex());
-                              return (
-                                <div className={motion.className} style={motion.style}>
-                                  <a
-                                    href={telegramHref}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={cn(pillBase, "w-auto max-w-full")}
-                                    onClick={handleCloseMenu}
-                                  >
-                                    {telegramLabel}
-                                  </a>
-                                </div>
-                              );
-                            })()
-                          : null}
-                      </div>
+                        const telegramNode = telegramHref ? (
+                          <a
+                            href={telegramHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(pillBase, "w-auto max-w-full")}
+                            onClick={handleCloseMenu}
+                          >
+                            {telegramLabel}
+                          </a>
+                        ) : null;
+
+                        const primaryContent = emailNode ?? telegramNode;
+
+                        return (
+                          <div className={motion.className} style={motion.style}>
+                            <div className="relative h-10 w-full overflow-hidden">
+                              <HeaderWagon
+                                showSecondary={!isSmUp}
+                                hasHydrated={hasHydrated}
+                                inertProps={inertProps}
+                                prefersReducedMotion={prefersReducedMotion}
+                                durationMs={640}
+                                primaryEnterFrom="top"
+                                secondaryExitTo="bottom"
+                                panelBaseClassName="flex h-full w-full items-center gap-2"
+                                ssrPrimaryClassName="hidden sm:flex"
+                                ssrSecondaryClassName="flex sm:hidden"
+                                primary={primaryContent}
+                                secondary={
+                                  <>
+                                    {emailNode}
+                                    {telegramNode}
+                                  </>
+                                }
+                              />
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   ) : null}
                 </div>
