@@ -2,6 +2,10 @@
   "groups": [
     {
       "id": "binders",
+      "slug": {
+        "ru": "binders",
+        "en": "binders"
+      },
       "title": {
         "ru": "Связующие системы",
         "en": "Binder systems"
@@ -151,14 +155,14 @@
           "order": 6,
           "hidden": false
         }
-      ],
-      "slug": {
-        "ru": "binders",
-        "en": "binders"
-      }
+      ]
     },
     {
       "id": "coatings",
+      "slug": {
+        "ru": "coatings",
+        "en": "coatings"
+      },
       "title": {
         "ru": "Противопригарные покрытия",
         "en": "Coatings"
@@ -228,14 +232,14 @@
           "order": 2,
           "hidden": false
         }
-      ],
-      "slug": {
-        "ru": "coatings",
-        "en": "coatings"
-      }
+      ]
     },
     {
       "id": "auxiliaries",
+      "slug": {
+        "ru": "auxiliaries",
+        "en": "auxiliaries"
+      },
       "title": {
         "ru": "Вспомогательные материалы",
         "en": "Auxiliary materials"
@@ -385,11 +389,7 @@
           "order": 6,
           "hidden": false
         }
-      ],
-      "slug": {
-        "ru": "auxiliaries",
-        "en": "auxiliaries"
-      }
+      ]
     }
   ],
   "insights": [

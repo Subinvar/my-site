@@ -140,15 +140,15 @@ export function ContactsLocations({
                 key={location.id}
                 type="button"
                 onClick={() => setSelectedId(location.id)}
-                className={buttonClassNames({
-                  variant: active ? 'primary' : 'secondary',
-                  size: 'md',
-                  fullWidth: true,
-                  className: cn(
-                    // Allow multi-line content (override fixed height / centered layout).
-                    'h-auto items-start justify-start px-3 py-2 text-left',
-                  ),
-                })}
+                  className={buttonClassNames({
+                    variant: active ? 'primary' : 'secondary',
+                    size: 'md',
+                    fullWidth: true,
+                    className: cn(
+                      // Allow multi-line content (override fixed height / centered layout).
+                      'h-auto flex-col items-start justify-start px-3 py-2 text-left',
+                    ),
+                  })}
                 aria-pressed={active}
               >
                 <div className={cn('font-semibold', active ? 'text-white' : 'text-foreground')}>
@@ -156,7 +156,7 @@ export function ContactsLocations({
                 </div>
                 <div
                   className={cn(
-                    'mt-1 line-clamp-2 text-xs',
+                    'mt-1 line-clamp-1 text-xs',
                     active ? 'text-white/85' : 'text-[var(--muted-foreground)]',
                   )}
                 >

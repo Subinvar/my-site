@@ -104,9 +104,9 @@ function HubCard({ item }: { item: ProductsHubCard }) {
           as="article"
           className={cn(
             'flex h-full flex-col overflow-hidden p-0',
-            'border-[var(--header-border)] bg-background/40 shadow-none',
+            'border-[var(--header-border)] bg-background/45 shadow-none',
             'transform-none hover:shadow-none hover:-translate-y-0',
-            'transition-colors duration-200 ease-out hover:bg-background/55',
+            'transition-colors duration-200 ease-out hover:bg-background/60',
           )}
         >
           <div
@@ -878,6 +878,9 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       // 3) если и он не доступен — меряем фактический DOM-элемент шапки.
       const host = navRef.current ?? document.documentElement;
       const hostStyles = window.getComputedStyle(host);
+      const nodes = sectionsRef.current;
+      if (!nodes.length) return;
+
       const headerHeightVar = Number.parseFloat(hostStyles.getPropertyValue('--header-height')) || 0;
       const headerHeightInitial = Number.parseFloat(hostStyles.getPropertyValue('--header-height-initial')) || 0;
 
@@ -893,10 +896,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
       // Это даёт корректную активную вкладку сразу после клика по навигации
       // (scrollIntoView учитывает scroll-margin) и убирает расхождения.
       const extraOffset = rootFontSize * 1; // 1rem
-      const anchorLine = headerHeight + navHeight + extraOffset + 0.5;
-
-      const nodes = sectionsRef.current;
-      if (!nodes.length) return;
+      const fallbackAnchorLine = headerHeight + navHeight + extraOffset + 0.5;
+      const sectionScrollMargin =
+        Number.parseFloat(window.getComputedStyle(nodes[0]).scrollMarginTop) || 0;
+      const anchorLine = sectionScrollMargin > 0 ? sectionScrollMargin + 0.5 : fallbackAnchorLine;
 
       let nextActive: string | null = null;
       let bestTop = -Infinity;
@@ -952,7 +955,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                 ({ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' } as CSSProperties)
               }
             >
-              <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              <div className="grid grid-flow-col auto-cols-fr gap-2">
                 {groups.map((group) => {
                   const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
                   const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
@@ -981,7 +984,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                           ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                       }}
                       className={cn(
-                        'flex w-full items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
+                        'flex w-full min-w-0 items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
                         'bg-background/80 transition-colors duration-150 ease-out',
                         isActive
                           ? cn(
