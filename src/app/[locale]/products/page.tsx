@@ -24,8 +24,8 @@ import { formatTelegramHandle } from '@/lib/contacts';
 import { getSite } from '@/lib/keystatic';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
-import { ContactsLocations } from './contacts-locations';
-import { RequisitesDisclosure } from './requisites-disclosure';
+import { ContactsLocations } from '../contacts/contacts-locations';
+import { RequisitesDisclosure } from '../contacts/requisites-disclosure';
 import { sendContact } from './actions';
 
 export const dynamic = 'force-dynamic';
