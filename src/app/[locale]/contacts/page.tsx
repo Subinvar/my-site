@@ -95,7 +95,7 @@ const COPY = {
     },
     requisites: {
       title: 'Company details & documents',
-      description: 'Tax IDs, registered address and bank details for contracts and accounting.',
+      description: 'INN, OGRN and bank details.',
       copy: 'Copy company details',
       copied: 'Copied',
       download: 'Download company card',

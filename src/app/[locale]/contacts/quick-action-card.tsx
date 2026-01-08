@@ -17,6 +17,10 @@ export type QuickActionCardProps = {
   rel?: string;
 };
 
+function isModifiedEvent(event: MouseEvent<HTMLAnchorElement>) {
+  return event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || event.button !== 0;
+}
+
 function selectionInside(element: HTMLElement, selection: Selection | null): boolean {
   if (!selection) return false;
   if (selection.isCollapsed) return false;
@@ -40,6 +44,26 @@ export function QuickActionCard({
     if (selectionInside(event.currentTarget, selection)) {
       event.preventDefault();
       event.stopPropagation();
+      return;
+    }
+
+    if (isModifiedEvent(event) || target) return;
+
+    if (href.startsWith('#')) {
+      const anchorId = href.slice(1);
+      const anchor = document.getElementById(anchorId);
+      if (!anchor) return;
+
+      event.preventDefault();
+
+      if (window.location.hash !== href) {
+        window.history.pushState(null, '', href);
+      } else {
+        window.history.replaceState(null, '', href);
+      }
+
+      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      anchor.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     }
   }, []);
 
