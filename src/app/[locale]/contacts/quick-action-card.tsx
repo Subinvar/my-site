@@ -55,7 +55,6 @@ export function QuickActionCard({
         <Card
           className={cn(
             'h-full shadow-none',
-            'hover:border-[var(--color-brand-400)]',
           )}
         >
           <CardHeader className="gap-2">

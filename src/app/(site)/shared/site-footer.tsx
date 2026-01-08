@@ -135,7 +135,7 @@ export function SiteFooter({
           <div className="flex flex-col gap-2 sm:gap-3">
             <div className="flex flex-col gap-2 text-[13px] leading-[1.35] sm:text-[14px]">
               {/* ✅ Оптическое выравнивание по тексту (а не по границе пилюли) */}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex w-full flex-wrap items-center justify-end gap-2">
                 {contacts.email ? (
                   <a
                     href={`mailto:${contacts.email}`}
