@@ -304,6 +304,14 @@ html[data-theme="dark"] {
 }
 
 @layer base {
+  .font-body-var {
+    --font-body-var: "Open Sans Variable";
+  }
+
+  .font-heading-var {
+    --font-heading-var: "Montserrat Variable";
+  }
+
   html {
     font-family: var(--font-sans);
     background-color: var(--background);

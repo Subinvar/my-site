@@ -90,7 +90,7 @@ export function SiteFooter({
     </a>
   ) : null;
 
-  const primaryContent = emailNode ?? telegramNode;
+  const primaryContent = telegramNode ?? emailNode;
 
   return (
     <footer className="border-t border-border bg-muted">

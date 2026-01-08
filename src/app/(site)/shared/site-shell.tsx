@@ -1384,7 +1384,7 @@ export function SiteShell({
                   </ul>
 
                   {site.contacts.email || telegramHref ? (
-                    <div className="mt-6 text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
+                    <div className="mt-6 text-right text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]">
                       {/* ✅ Оптическое выравнивание контактов по видимому тексту */}
                       {(() => {
                         const motion = getBurgerItemMotion(nextBurgerMotionIndex());
@@ -1423,7 +1423,7 @@ export function SiteShell({
                                 durationMs={640}
                                 primaryEnterFrom="top"
                                 secondaryExitTo="bottom"
-                                panelBaseClassName="flex h-full w-full items-center gap-2"
+                                panelBaseClassName="flex h-full w-full items-center justify-end gap-2"
                                 ssrPrimaryClassName="hidden sm:flex"
                                 ssrSecondaryClassName="flex sm:hidden"
                                 primary={primaryContent}
