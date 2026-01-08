@@ -311,18 +311,13 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       currentYear={shell.currentYear}
     >
       <div className="space-y-10">
-        <header className="space-y-3">
-          <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
-          <p className="text-base text-muted-foreground">{copy.description}</p>
-        </header>
-
-        <section className="rounded-3xl border border-[var(--header-border)] bg-background p-5 sm:p-6">
+        <section className="rounded-3xl border border-[var(--header-border)] bg-muted p-5 sm:p-6">
           <header className="space-y-3">
             <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
             <p className="text-base text-muted-foreground">{copy.description}</p>
           </header>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {phone ? (
               <QuickActionCard
                 title={copy.actions.call}
