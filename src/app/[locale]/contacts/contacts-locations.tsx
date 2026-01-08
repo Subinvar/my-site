@@ -6,6 +6,7 @@ import { Clock, ExternalLink, MapPin } from 'lucide-react';
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
+import { headerButtonBase } from '@/app/(site)/shared/ui-classes';
 import { cn } from '@/lib/cn';
 import type { Locale } from '@/lib/i18n';
 
@@ -72,6 +73,10 @@ export function ContactsLocations({
   copy: ContactsLocationsCopy;
 }) {
   const hasDescription = copy.description.trim().length > 0;
+  const actionButtonClasses = cn(
+    headerButtonBase,
+    'w-full justify-center text-muted-foreground hover:bg-transparent hover:text-foreground sm:w-[200px]',
+  );
 
   const orderedLocations = useMemo(() => {
     const list = [...locations];
@@ -212,7 +217,7 @@ export function ContactsLocations({
               label={copy.copyAddress}
               copiedLabel={copy.copied}
               variant="ghost"
-              className="text-muted-foreground hover:bg-transparent hover:text-foreground"
+              className={actionButtonClasses}
             />
 
             {urls.yandex ? (
@@ -221,7 +226,7 @@ export function ContactsLocations({
                 variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className="text-muted-foreground hover:bg-transparent hover:text-foreground"
+                className={actionButtonClasses}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -235,7 +240,7 @@ export function ContactsLocations({
                 variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className="text-muted-foreground hover:bg-transparent hover:text-foreground"
+                className={actionButtonClasses}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
