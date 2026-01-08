@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
@@ -31,30 +31,11 @@ export function RequisitesDisclosure({
 }: RequisitesDisclosureProps) {
   const regionId = useId();
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const regionRef = useRef<HTMLDivElement | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [height, setHeight] = useState<string>('0px');
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const mountedRef = useRef(false);
-
-  // Detect reduced motion once after hydration.
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-
-    const handle = () => {
-      setPrefersReducedMotion(mq.matches);
-    };
-
-    // Safari < 14 uses addListener/removeListener.
-    if (mq.addEventListener) {
-      mq.addEventListener('change', handle);
-      return () => mq.removeEventListener('change', handle);
-    }
-
-    mq.addListener(handle);
-    return () => mq.removeListener(handle);
-  }, []);
 
   // Auto-open when the hash matches (clicking the "Requisites" action card).
   useEffect(() => {
@@ -73,36 +54,39 @@ export function RequisitesDisclosure({
 
   // Height animation (burger-like). We animate the outer wrapper's height.
   useLayoutEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
+    const contentEl = contentRef.current;
+    const regionEl = regionRef.current;
+    if (!contentEl || !regionEl) return;
 
     // Prevent a close animation on the initial render.
     if (!mountedRef.current) {
       mountedRef.current = true;
-      setHeight(isOpen ? 'auto' : '0px');
+      regionEl.style.height = isOpen ? 'auto' : '0px';
       return;
     }
 
     if (prefersReducedMotion) {
-      setHeight(isOpen ? 'auto' : '0px');
+      regionEl.style.height = isOpen ? 'auto' : '0px';
       return;
     }
 
-    const currentHeight = el.scrollHeight;
+    const currentHeight = contentEl.scrollHeight;
 
     if (isOpen) {
       // Opening: 0 -> scrollHeight
-      setHeight('0px');
+      regionEl.style.height = '0px';
       const frame = window.requestAnimationFrame(() => {
-        const nextHeight = el.scrollHeight;
-        setHeight(`${nextHeight}px`);
+        const nextHeight = contentEl.scrollHeight;
+        regionEl.style.height = `${nextHeight}px`;
       });
       return () => window.cancelAnimationFrame(frame);
     }
 
     // Closing: scrollHeight -> 0
-    setHeight(`${currentHeight}px`);
-    const frame = window.requestAnimationFrame(() => setHeight('0px'));
+    regionEl.style.height = `${currentHeight}px`;
+    const frame = window.requestAnimationFrame(() => {
+      regionEl.style.height = '0px';
+    });
     return () => window.cancelAnimationFrame(frame);
   }, [isOpen, prefersReducedMotion]);
 
@@ -130,23 +114,24 @@ export function RequisitesDisclosure({
         id={regionId}
         role="region"
         aria-label={title}
+        ref={regionRef}
         className={cn(
           'overflow-hidden will-change-[height]',
           prefersReducedMotion ? 'transition-none' : 'transition-[height]',
         )}
         style={{
-          height,
+          height: isOpen ? 'auto' : '0px',
           transitionDuration: `${isOpen ? BURGER_MENU_OPEN_MS : BURGER_MENU_CLOSE_MS}ms`,
           transitionTimingFunction: EASING,
         }}
         onTransitionEnd={(event) => {
           if (event.propertyName !== 'height') return;
-          if (!contentRef.current) return;
+          if (!regionRef.current) return;
           if (prefersReducedMotion) return;
 
           // After opening finishes, unlock the height to allow responsive reflow.
           if (isOpen) {
-            setHeight('auto');
+            regionRef.current.style.height = 'auto';
           }
         }}
       >
@@ -179,5 +164,30 @@ function PlusMinusIcon({ isOpen }: { isOpen: boolean }) {
         )}
       />
     </span>
+  );
+}
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    (callback) => {
+      if (typeof window === 'undefined') return () => {};
+
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const handle = () => callback();
+
+      // Safari < 14 uses addListener/removeListener.
+      if (mq.addEventListener) {
+        mq.addEventListener('change', handle);
+        return () => mq.removeEventListener('change', handle);
+      }
+
+      mq.addListener(handle);
+      return () => mq.removeListener(handle);
+    },
+    () => {
+      if (typeof window === 'undefined') return false;
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    },
+    () => false,
   );
 }
