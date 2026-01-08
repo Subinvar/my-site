@@ -316,43 +316,50 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           <p className="text-base text-muted-foreground">{copy.description}</p>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {phone ? (
-            <QuickActionCard
-              title={copy.actions.call}
-              description={phone}
-              href={`tel:${normalizeTel(phone)}`}
-              icon={<Phone aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
-            />
-          ) : null}
-          {email ? (
-            <QuickActionCard
-              title={copy.actions.email}
-              description={email}
-              href={`mailto:${email}`}
-              icon={<Mail aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
-            />
-          ) : null}
-          {telegramUrl ? (
-            <QuickActionCard
-              title={copy.actions.telegram}
-              description={telegramLabel || telegramUrl}
-              href={telegramUrl}
-              target="_blank"
-              rel="noreferrer"
-              icon={<Send aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
-            />
-          ) : null}
+        <section className="rounded-3xl border border-[var(--header-border)] bg-background p-5 sm:p-6">
+          <header className="space-y-3">
+            <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
+            <p className="text-base text-muted-foreground">{copy.description}</p>
+          </header>
 
-          {(showRequisites || companyCardFile) ? (
-            <QuickActionCard
-              title={copy.actions.requisites}
-              description={copy.requisites.description}
-              href="#requisites"
-              icon={<FileText aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
-            />
-          ) : null}
-        </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {phone ? (
+              <QuickActionCard
+                title={copy.actions.call}
+                description={phone}
+                href={`tel:${normalizeTel(phone)}`}
+                icon={<Phone aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+              />
+            ) : null}
+            {email ? (
+              <QuickActionCard
+                title={copy.actions.email}
+                description={email}
+                href={`mailto:${email}`}
+                icon={<Mail aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+              />
+            ) : null}
+            {telegramUrl ? (
+              <QuickActionCard
+                title={copy.actions.telegram}
+                description={telegramLabel || telegramUrl}
+                href={telegramUrl}
+                target="_blank"
+                rel="noreferrer"
+                icon={<Send aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+              />
+            ) : null}
+
+            {showRequisites || companyCardFile ? (
+              <QuickActionCard
+                title={copy.actions.requisites}
+                description={copy.requisites.description}
+                href="#requisites"
+                icon={<FileText aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+              />
+            ) : null}
+          </div>
+        </section>
 
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
           <div className="space-y-6">
