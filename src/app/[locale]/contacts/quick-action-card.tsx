@@ -55,15 +55,15 @@ export function QuickActionCard({
         <Card
           className={cn(
             'h-full shadow-none',
-            'hover:border-[var(--color-brand-200)]',
+            'hover:border-[var(--color-brand-400)]',
           )}
         >
           <CardHeader className="gap-2">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-[var(--color-brand-600)] dark:text-[var(--color-brand-200)]">
               {icon}
             </div>
             <CardTitle className="text-base">{title}</CardTitle>
-            <CardDescription className="text-sm select-text break-all cursor-text">
+            <CardDescription className="break-words select-text text-foreground">
               {description}
             </CardDescription>
           </CardHeader>

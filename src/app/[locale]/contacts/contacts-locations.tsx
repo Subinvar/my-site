@@ -63,6 +63,11 @@ function buildYandexMapsUrl(lat: number, lon: number, zoom = 16) {
   return `https://yandex.ru/maps/?ll=${encodeURIComponent(ll)}&z=${zoom}&pt=${encodeURIComponent(pt)}`;
 }
 
+function buildOpenStreetMapUrl(lat: number, lon: number, zoom = 16) {
+  const ll = `${lat.toFixed(6)},${lon.toFixed(6)}`;
+  return `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat.toFixed(6))}&mlon=${encodeURIComponent(lon.toFixed(6))}#map=${encodeURIComponent(`${zoom}/${ll}`)}`;
+}
+
 export function ContactsLocations({
   locale,
   locations,
@@ -73,10 +78,8 @@ export function ContactsLocations({
   copy: ContactsLocationsCopy;
 }) {
   const hasDescription = copy.description.trim().length > 0;
-  const actionButtonBaseClasses =
-    'w-full justify-center text-muted-foreground hover:text-foreground';
-  const copyButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[170px]');
-  const mapButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[140px]');
+  const copyButtonClasses = 'w-full sm:w-[170px]';
+  const mapButtonClasses = 'w-full sm:w-[140px]';
 
   const orderedLocations = useMemo(() => {
     const list = [...locations];
@@ -113,7 +116,8 @@ export function ContactsLocations({
     const google = selectedLocation?.googleMapsUrl?.trim() || (lat && lon ? buildGoogleMapsUrl(lat, lon) : null);
     const yandex = selectedLocation?.yandexMapsUrl?.trim() || (lat && lon ? buildYandexMapsUrl(lat, lon) : null);
     const yandexWidget = selectedLocation?.yandexWidgetUrl?.trim() || (lat && lon ? buildYandexWidgetEmbedUrl(lat, lon, locale) : null);
-    return { google, yandex, yandexWidget };
+    const osm = lat && lon ? buildOpenStreetMapUrl(lat, lon) : null;
+    return { google, yandex, yandexWidget, osm };
   }, [coords.lat, coords.lon, selectedLocation, locale]);
 
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -149,11 +153,7 @@ export function ContactsLocations({
                   fullWidth: true,
                   className: cn(
                     // Allow multi-line content (override fixed height / centered layout).
-                    'h-auto justify-start px-3 py-2 text-left',
-                    // Keep the original brand-focused palette for this selector.
-                    active
-                      ? 'border border-[var(--color-brand-600)] bg-[color:var(--color-brand-600)] text-white hover:bg-[color:var(--color-brand-700)]'
-                      : 'border-[var(--color-brand-200)] bg-[color:var(--color-brand-50)] text-[var(--color-brand-700)] hover:border-[var(--color-brand-400)] hover:bg-[color:var(--color-brand-100)]',
+                    'h-auto items-start justify-start px-3 py-2 text-left',
                   ),
                 })}
                 aria-pressed={active}
@@ -175,7 +175,7 @@ export function ContactsLocations({
         </div>
       ) : null}
 
-      <div className="relative overflow-hidden rounded-xl border border-border bg-muted/30">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30">
         {urls.yandexWidget ? (
           <>
             <div
@@ -210,7 +210,7 @@ export function ContactsLocations({
         <div className="space-y-3">
           <div className="space-y-2">
             <div className="flex items-start gap-3">
-              <MapPin aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" strokeWidth={1.75} />
+              <MapPin aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" strokeWidth={1.75} />
               <div className="space-y-1">
                 <div className="text-sm font-semibold text-foreground">{copy.addressLabel}</div>
                 <div className="whitespace-pre-line text-sm text-foreground">{selectedLocation.address}</div>
@@ -219,7 +219,7 @@ export function ContactsLocations({
 
             {selectedLocation.hours ? (
               <div className="flex items-start gap-3">
-                <Clock aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" strokeWidth={1.75} />
+                <Clock aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                 <div className="space-y-1">
                   <div className="text-sm font-semibold text-foreground">{copy.hoursLabel}</div>
                   <div className="whitespace-pre-line text-sm text-foreground">{selectedLocation.hours}</div>
@@ -261,6 +261,20 @@ export function ContactsLocations({
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
+                </a>
+              </Button>
+            ) : null}
+
+            {urls.osm ? (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
+                className={mapButtonClasses}
+              >
+                <a href={urls.osm} target="_blank" rel="noreferrer">
+                  {copy.openOsm}
                 </a>
               </Button>
             ) : null}

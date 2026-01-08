@@ -37,7 +37,6 @@ const COPY = {
       telegram: 'Написать в Telegram',
       requisites: 'Реквизиты',
     },
-    contactsBlockTitle: 'Контакты',
     locations: {
       title: 'Наши адреса',
       description: '',
@@ -58,7 +57,6 @@ const COPY = {
       download: 'Скачать карточку компании',
       more: 'Дополнительная информация',
     },
-    dryRunNotice: 'Сейчас форма работает в тестовом режиме: данные не отправляются.',
     dryRunSuccess: 'Сообщение принято. Тестовый режим: письмо не отправлялось.',
     name: 'Имя',
     email: 'Email',
@@ -85,7 +83,6 @@ const COPY = {
       telegram: 'Message on Telegram',
       requisites: 'Company details',
     },
-    contactsBlockTitle: 'Contact details',
     locations: {
       title: 'Locations & map',
       description: '',
@@ -106,7 +103,6 @@ const COPY = {
       download: 'Download company card',
       more: 'Additional information',
     },
-    dryRunNotice: 'The form is in test mode right now: submissions are not sent.',
     dryRunSuccess: 'Submission received. Test mode: no email was sent.',
     name: 'Name',
     email: 'Email',
@@ -133,7 +129,6 @@ const COPY = {
     telegram: string;
     requisites: string;
   };
-  contactsBlockTitle: string;
   locations: {
     title: string;
     description: string;
@@ -154,7 +149,6 @@ const COPY = {
     download: string;
     more: string;
   };
-  dryRunNotice: string;
   dryRunSuccess: string;
   name: string;
   email: string;
@@ -384,12 +378,11 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
         </div>
 
         {(showRequisites || companyCardFile) ? (
-          <section id="requisites" className="scroll-mt-28">
-            <RequisitesDisclosure
-              anchorId="requisites"
-              title={copy.requisites.title}
-              description={copy.requisites.description}
-            >
+          <RequisitesDisclosure
+            anchorId="requisites"
+            title={copy.requisites.title}
+            description={copy.requisites.description}
+          >
               {showRequisites || companyCardFile ? (
                 <div className="flex flex-wrap gap-2">
                   {showRequisites && requisites ? (
@@ -397,7 +390,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                       text={buildRequisitesClipboardText(locale, requisites)}
                       label={copy.requisites.copy}
                       copiedLabel={copy.requisites.copied}
-                      variant="primary"
+                      variant="secondary"
                       size="sm"
                     />
                   ) : null}
@@ -449,8 +442,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                   />
                 </div>
               ) : null}
-            </RequisitesDisclosure>
-          </section>
+          </RequisitesDisclosure>
         ) : null}
       </div>
     </SiteShellLayout>

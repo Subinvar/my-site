@@ -14,7 +14,6 @@ import type { Locale } from '@/lib/i18n';
 type Copy = {
   title: string;
   description: string;
-  dryRunNotice: string;
   dryRunSuccess: string;
   name: string;
   email: string;
@@ -91,10 +90,6 @@ export function ContactForm({
       ) : null}
 
       {errorVisible ? <Alert variant="destructive">{copy.error}</Alert> : null}
-
-      {isDryRun && !successVisible && copy.dryRunNotice ? (
-        <Alert variant="brand">{copy.dryRunNotice}</Alert>
-      ) : null}
 
       <Card as="section">
         <form action={onSubmitAction} onSubmit={handleSubmit} className="space-y-6">
