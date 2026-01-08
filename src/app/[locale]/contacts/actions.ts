@@ -11,10 +11,14 @@ export async function sendContact(formData: FormData) {
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
   const contactsPath = buildPath(locale, ['contacts']);
   const product = formData.get('product')?.toString().trim() ?? '';
+  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
   const params = new URLSearchParams();
   params.set('ok', '1');
   if (product) {
     params.set('product', product);
+  }
+  if (isDryRun) {
+    params.set('dry', '1');
   }
   const successRedirect = `${contactsPath}?${params.toString()}`;
 
@@ -23,8 +27,10 @@ export async function sendContact(formData: FormData) {
   if (product) {
     errorParams.set('product', product);
   }
+  if (isDryRun) {
+    errorParams.set('dry', '1');
+  }
   const errorRedirect = `${contactsPath}?${errorParams.toString()}`;
-  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
 
   const honeypot = formData.get('company')?.toString().trim();
   if (honeypot) {
@@ -63,8 +69,6 @@ export async function sendContact(formData: FormData) {
     redirect(errorRedirect);
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 400));
-
   if (isDryRun) {
     redirect(successRedirect);
   }
@@ -93,15 +97,14 @@ export async function sendContact(formData: FormData) {
     await transporter.sendMail({
       from: smtpUser,
       to: leadsTo,
-      subject: `[${locale.toUpperCase()}] ${product ? `Запрос по продукту ${product}` : 'Запрос с сайта intema.ru'}`,
-      text: [
-        `Name: ${name}`,
-        `Email: ${email || '-'}`,
-        `Phone: ${phone || '-'}`,
-        product ? `Product: ${product}` : null,
-        '',
+      subject: buildEmailSubject(locale, product),
+      text: buildEmailBody(locale, {
+        name,
+        email,
+        phone,
+        product,
         message,
-      ].join('\n'),
+      }),
       replyTo: hasEmail ? email : undefined,
     });
   } catch {
@@ -109,4 +112,44 @@ export async function sendContact(formData: FormData) {
   }
 
   redirect(successRedirect);
+}
+
+function buildEmailSubject(locale: Locale, product: string) {
+  const prefix = `[${locale.toUpperCase()}]`;
+  if (locale === 'ru') {
+    return `${prefix} ${product ? `Запрос по продукту ${product}` : 'Запрос с сайта intema.ru'}`;
+  }
+  return `${prefix} ${product ? `Product enquiry: ${product}` : 'Website enquiry: intema.ru'}`;
+}
+
+function buildEmailBody(
+  locale: Locale,
+  data: {
+    name: string;
+    email: string;
+    phone: string;
+    product: string;
+    message: string;
+  },
+) {
+  const lines =
+    locale === 'ru'
+      ? [
+          `Имя: ${data.name}`,
+          `Email: ${data.email || '-'}`,
+          `Телефон: ${data.phone || '-'}`,
+          data.product ? `Продукт: ${data.product}` : null,
+          '',
+          data.message,
+        ]
+      : [
+          `Name: ${data.name}`,
+          `Email: ${data.email || '-'}`,
+          `Phone: ${data.phone || '-'}`,
+          data.product ? `Product: ${data.product}` : null,
+          '',
+          data.message,
+        ];
+
+  return lines.filter((line): line is string => typeof line === 'string').join('\n');
 }

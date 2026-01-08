@@ -375,27 +375,21 @@ html[data-theme="dark"] {
 
   h2 {
     font-size: clamp(2rem, 4vw, 2.5rem);
-    margin-top: 2.5rem;
   }
 
   h3 {
     font-size: clamp(1.5rem, 3vw, 2rem);
-    margin-top: 2rem;
   }
 
-  p,
-  ul,
-  ol,
-  blockquote,
-  figure {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  ul,
-  ol {
-    padding-left: 1.5rem;
-  }
+  /*
+   * Typography spacing
+   *
+   * IMPORTANT:
+   * We DO NOT add global margins to p/ul/ol/h2/h3, because it breaks UI components
+   * (forms, cards, menus) that rely on explicit spacing via utilities.
+   *
+   * Content pages (Markdoc) must use the `.prose-markdoc` scope below.
+   */
 
   a {
     color: var(--color-brand-600);
@@ -410,6 +404,11 @@ html[data-theme="dark"] {
   a:focus-visible {
     outline: 2px solid var(--color-brand-700);
     outline-offset: 2px;
+  }
+
+  /* Prevent embedded maps (iframes) from intercepting clicks when header overlays are open (burger/mega-menu). */
+  html[data-header-overlay='1'] [data-map-embed] {
+    pointer-events: none;
   }
 }
 
@@ -427,9 +426,31 @@ html[data-theme="dark"] {
 
 @layer utilities {
   .prose-markdoc {
-    @apply space-y-4 text-base leading-relaxed text-pretty;
+    @apply text-base leading-relaxed text-pretty;
     color: var(--foreground);
     font-family: var(--font-sans);
+  }
+
+  /* Markdoc typography spacing (scoped, never global). */
+  .prose-markdoc h2 {
+    margin-top: 2.5rem;
+  }
+
+  .prose-markdoc h3 {
+    margin-top: 2rem;
+  }
+
+  .prose-markdoc h4 {
+    margin-top: 1.5rem;
+  }
+
+  .prose-markdoc p,
+  .prose-markdoc ul,
+  .prose-markdoc ol,
+  .prose-markdoc blockquote,
+  .prose-markdoc figure {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .prose-markdoc h1,
@@ -450,10 +471,12 @@ html[data-theme="dark"] {
 
   .prose-markdoc ul {
     @apply list-disc marker:text-foreground/70;
+    padding-left: 1.5rem;
   }
 
   .prose-markdoc ol {
     @apply list-decimal marker:text-foreground/70;
+    padding-left: 1.5rem;
   }
 
   .prose-markdoc strong {

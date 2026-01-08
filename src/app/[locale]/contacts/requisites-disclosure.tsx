@@ -3,9 +3,9 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
+import { Card } from '@/app/(site)/shared/ui/card';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
-import { BURGER_MENU_CLOSE_MS, BURGER_MENU_OPEN_MS } from '@/lib/nav-motion';
 
 type RequisitesDisclosureProps = {
   /**
@@ -19,6 +19,10 @@ type RequisitesDisclosureProps = {
 };
 
 const EASING = 'cubic-bezier(0.16,1,0.3,1)';
+
+// Contacts disclosure should feel snappy; do not reuse the slowed burger timings.
+const OPEN_MS = 320;
+const CLOSE_MS = 240;
 
 /**
  * Contacts page disclosure with burger-like animation timing and a +/− toggle.
@@ -107,7 +111,7 @@ export function RequisitesDisclosure({
   }, [isOpen]);
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <Card as="section">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
@@ -136,7 +140,7 @@ export function RequisitesDisclosure({
         )}
         style={{
           height,
-          transitionDuration: `${isOpen ? BURGER_MENU_OPEN_MS : BURGER_MENU_CLOSE_MS}ms`,
+          transitionDuration: `${isOpen ? OPEN_MS : CLOSE_MS}ms`,
           transitionTimingFunction: EASING,
         }}
         onTransitionEnd={(event) => {
@@ -154,7 +158,7 @@ export function RequisitesDisclosure({
           {children}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

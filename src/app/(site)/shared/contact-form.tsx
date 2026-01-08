@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Alert } from '@/app/(site)/shared/ui/alert';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { Card } from '@/app/(site)/shared/ui/card';
 import { Checkbox } from '@/app/(site)/shared/ui/checkbox';
 import { Field } from '@/app/(site)/shared/ui/field';
 import { Input } from '@/app/(site)/shared/ui/input';
@@ -15,6 +15,7 @@ type Copy = {
   title: string;
   description: string;
   dryRunNotice: string;
+  dryRunSuccess: string;
   name: string;
   email: string;
   phone: string;
@@ -25,7 +26,9 @@ type Copy = {
   productPlaceholder: string;
   message: string;
   agree: string;
+  privacyPolicy: string;
   submit: string;
+  submitting: string;
   success: string;
   error: string;
 };
@@ -33,7 +36,7 @@ type Copy = {
 type ContactFormProps = {
   copy: Copy;
   locale: Locale;
-  contactsPath: string;
+  privacyPolicyHref: string;
   status: 'success' | 'error' | null;
   onSubmitAction: (formData: FormData) => Promise<void>;
   isDryRun: boolean;
@@ -43,15 +46,12 @@ type ContactFormProps = {
 export function ContactForm({
   copy,
   locale,
-  contactsPath,
+  privacyPolicyHref,
   status,
   onSubmitAction,
   isDryRun,
   initialProduct,
 }: ContactFormProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [dryRunStatus, setDryRunStatus] = useState<'success' | 'error' | null>(null);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [product, setProduct] = useState(initialProduct ?? '');
@@ -59,21 +59,8 @@ export function ContactForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
 
-  const currentStatus = isDryRun ? dryRunStatus : status;
-  const successVisible = currentStatus === 'success';
-  const errorVisible = currentStatus === 'error';
-
-  const triggerDryRunSuccess = () => {
-    setDryRunStatus('success');
-    const params = new URLSearchParams(searchParams?.toString() ?? '');
-    params.set('ok', '1');
-    if (product.trim()) {
-      params.set('product', product.trim());
-    } else {
-      params.delete('product');
-    }
-    router.replace(`${contactsPath}?${params.toString()}`, { scroll: false });
-  };
+  const successVisible = status === 'success';
+  const errorVisible = status === 'error';
 
   const validateContacts = () => {
     const hasEmail = email.trim().length > 0;
@@ -92,125 +79,144 @@ export function ContactForm({
       return;
     }
 
-    if (isDryRun) {
-      event.preventDefault();
-      setIsSubmitting(true);
-      triggerDryRunSuccess();
-      setIsSubmitting(false);
-      return;
-    }
-
     setIsSubmitting(true);
   };
 
   return (
     <div className="space-y-6">
       {successVisible ? (
-        <Alert variant="success" className="animate-fade-in-up">
-          {copy.success}
+        <Alert variant={isDryRun ? 'brand' : 'success'}>
+          {isDryRun ? copy.dryRunSuccess : copy.success}
         </Alert>
       ) : null}
-      {errorVisible ? (
-        <Alert variant="destructive">{copy.error}</Alert>
+
+      {errorVisible ? <Alert variant="destructive">{copy.error}</Alert> : null}
+
+      {isDryRun && !successVisible && copy.dryRunNotice ? (
+        <Alert variant="brand">{copy.dryRunNotice}</Alert>
       ) : null}
 
-      {isDryRun && copy.dryRunNotice ? (
-        <Alert>{copy.dryRunNotice}</Alert>
-      ) : null}
+      <Card as="section">
+        <form action={onSubmitAction} onSubmit={handleSubmit} className="space-y-6">
+          <input type="hidden" name="locale" value={locale} />
+          <input
+            type="text"
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+            className="hidden"
+            aria-hidden="true"
+          />
 
-      <form
-        action={onSubmitAction}
-        onSubmit={handleSubmit}
-        className="space-y-6 rounded-xl border border-border bg-background p-6"
-      >
-        <input type="hidden" name="locale" value={locale} />
-        <input
-          type="text"
-          name="company"
-          tabIndex={-1}
-          autoComplete="off"
-          className="hidden"
-          aria-hidden="true"
-        />
+          {initialProduct ? (
+            <div className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+              {productNotice}: <span className="font-medium text-foreground">{initialProduct}</span>
+            </div>
+          ) : null}
 
-        {initialProduct ? (
-          <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-            {productNotice}: <span className="font-medium">{initialProduct}</span>
+          <Field label={copy.name} htmlFor="name" required>
+            <Input
+              id="name"
+              name="name"
+              required
+              minLength={2}
+              maxLength={100}
+              autoComplete="name"
+            />
+          </Field>
+
+          <div className="space-y-2">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label={copy.email} htmlFor="email">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => {
+                    const next = event.target.value;
+                    setEmail(next);
+                    if (contactError && next.trim()) {
+                      setContactError(false);
+                    }
+                  }}
+                  error={contactError ? copy.contactRequired : undefined}
+                />
+              </Field>
+
+              <Field label={copy.phone} htmlFor="phone">
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  pattern="[0-9+()\\s-]{7,}"
+                  value={phone}
+                  onChange={(event) => {
+                    const next = event.target.value;
+                    setPhone(next);
+                    if (contactError && next.trim()) {
+                      setContactError(false);
+                    }
+                  }}
+                  error={contactError ? copy.contactRequired : undefined}
+                />
+              </Field>
+            </div>
+
+            {copy.phoneHint ? <p className="text-xs text-muted-foreground">{copy.phoneHint}</p> : null}
+            {contactError ? (
+              <p className="text-xs text-[var(--destructive)]" role="alert">
+                {copy.contactRequired}
+              </p>
+            ) : null}
           </div>
-        ) : null}
 
-        <Field label={copy.productLabel} htmlFor="product" description={copy.productHint}>
-          <Input
-            id="product"
-            name="product"
-            value={product}
-            onChange={(event) => setProduct(event.target.value)}
-            placeholder={copy.productPlaceholder}
-          />
-        </Field>
-
-        <Field label={copy.name} htmlFor="name" required>
-          <Input id="name" name="name" required minLength={2} maxLength={100} />
-        </Field>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={copy.email} htmlFor="email" error={contactError ? copy.contactRequired : undefined}>
+          <Field label={copy.productLabel} htmlFor="product" description={copy.productHint}>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (contactError && event.target.value.trim()) {
-                  setContactError(false);
-                }
-              }}
-              error={contactError ? copy.contactRequired : undefined}
+              id="product"
+              name="product"
+              value={product}
+              onChange={(event) => setProduct(event.target.value)}
+              placeholder={copy.productPlaceholder}
+              autoComplete="off"
             />
           </Field>
 
-          <Field
-            label={copy.phone}
-            htmlFor="phone"
-            description={copy.phoneHint}
-            error={contactError ? copy.contactRequired : undefined}
-          >
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              pattern="[0-9+()\\s-]{7,}"
-              value={phone}
-              onChange={(event) => {
-                setPhone(event.target.value);
-                if (contactError && event.target.value.trim()) {
-                  setContactError(false);
-                }
-              }}
-              error={contactError ? copy.contactRequired : undefined}
+          <Field label={copy.message} htmlFor="message" required>
+            <Textarea
+              id="message"
+              name="message"
+              required
+              minLength={10}
+              maxLength={2000}
+              rows={6}
             />
           </Field>
-        </div>
 
-        <Field label={copy.message} htmlFor="message" required>
-          <Textarea
-            id="message"
-            name="message"
+          <Checkbox
+            name="agree"
             required
-            minLength={10}
-            maxLength={2000}
-            rows={6}
+            label={
+              <span className="text-muted-foreground">
+                {copy.agree}{' '}
+                <a
+                  href={privacyPolicyHref}
+                  className="underline underline-offset-4 hover:no-underline"
+                >
+                  {copy.privacyPolicy}
+                </a>
+              </span>
+            }
           />
-        </Field>
 
-        <Checkbox label={<span className="text-muted-foreground">{copy.agree}</span>} name="agree" required />
-
-        <Button type="submit" disabled={isSubmitting} fullWidth>
-          {isSubmitting ? 'Отправка…' : copy.submit}
-        </Button>
-      </form>
+          <Button type="submit" disabled={isSubmitting} fullWidth>
+            {isSubmitting ? copy.submitting : copy.submit}
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 }

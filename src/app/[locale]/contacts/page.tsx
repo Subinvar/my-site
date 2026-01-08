@@ -48,7 +48,7 @@ const COPY = {
       openGoogle: 'Google Maps',
       openYandex: 'Яндекс Карты',
       openOsm: 'OpenStreetMap',
-      mapFallback: 'Карта временно недоступна — откройте адрес в приложении карт.',
+      mapFallback: 'Если карта не загрузится, откройте адрес в приложении карт.',
     },
     requisites: {
       title: 'Реквизиты и документы',
@@ -59,6 +59,7 @@ const COPY = {
       more: 'Дополнительная информация',
     },
     dryRunNotice: 'Сейчас форма работает в тестовом режиме: данные не отправляются.',
+    dryRunSuccess: 'Сообщение принято. Тестовый режим: письмо не отправлялось.',
     name: 'Имя',
     email: 'Email',
     phone: 'Телефон',
@@ -69,7 +70,9 @@ const COPY = {
     productPlaceholder: 'Например: ФС-03',
     message: 'Сообщение',
     agree: 'Я согласен на обработку персональных данных',
+    privacyPolicy: 'Политика ПДн',
     submit: 'Отправить',
+    submitting: 'Отправка…',
     success: 'Спасибо! Ваше сообщение отправлено.',
     error: 'Не удалось отправить сообщение. Попробуйте ещё раз.',
   },
@@ -93,7 +96,7 @@ const COPY = {
       openGoogle: 'Google Maps',
       openYandex: 'Yandex Maps',
       openOsm: 'OpenStreetMap',
-      mapFallback: 'Map is temporarily unavailable — open the address in a maps app.',
+      mapFallback: 'If the map does not load, open the address in a maps app.',
     },
     requisites: {
       title: 'Company details & documents',
@@ -104,6 +107,7 @@ const COPY = {
       more: 'Additional information',
     },
     dryRunNotice: 'The form is in test mode right now: submissions are not sent.',
+    dryRunSuccess: 'Submission received. Test mode: no email was sent.',
     name: 'Name',
     email: 'Email',
     phone: 'Phone',
@@ -114,7 +118,9 @@ const COPY = {
     productPlaceholder: 'e.g. FS-03',
     message: 'Message',
     agree: 'I agree to the processing of personal data',
+    privacyPolicy: 'Privacy Policy',
     submit: 'Send',
+    submitting: 'Sending…',
     success: 'Thank you! Your message has been sent.',
     error: 'We could not send your message. Please try again.',
   },
@@ -149,6 +155,7 @@ const COPY = {
     more: string;
   };
   dryRunNotice: string;
+  dryRunSuccess: string;
   name: string;
   email: string;
   phone: string;
@@ -159,7 +166,9 @@ const COPY = {
   productPlaceholder: string;
   message: string;
   agree: string;
+  privacyPolicy: string;
   submit: string;
+  submitting: string;
   success: string;
   error: string;
 }>;
@@ -168,6 +177,7 @@ type PageParams = { locale: Locale };
 
 type ContactSearchParams = {
   ok?: string | string[] | undefined;
+  dry?: string | string[] | undefined;
   product?: string | string[] | undefined;
 };
 
@@ -282,12 +292,13 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
 
   const locale = rawLocale;
   const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
-  const isDryRun = process.env.LEADS_DRY_RUN === '1';
-  const status = isDryRun ? null : resolveStatus(rawSearchParams.ok);
+  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
+  const status = resolveStatus(rawSearchParams.ok);
   const shell = await getSiteShellData(locale);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['contacts']);
   const currentPath = buildPath(locale, ['contacts']);
+  const privacyPolicyHref = buildPath(locale, ['privacy-policy']);
   const copy = COPY[locale];
   const phone = shell.site.contacts.phone ?? '';
   const email = shell.site.contacts.email ?? '';
@@ -357,7 +368,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             <ContactForm
               copy={copy}
               locale={locale}
-              contactsPath={currentPath}
+              privacyPolicyHref={privacyPolicyHref}
               status={status}
               onSubmitAction={sendContact}
               isDryRun={isDryRun}

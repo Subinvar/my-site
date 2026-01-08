@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Clock, ExternalLink, MapPin } from 'lucide-react';
 
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { Card } from '@/app/(site)/shared/ui/card';
 import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
-import { headerButtonBase } from '@/app/(site)/shared/ui-classes';
 import { cn } from '@/lib/cn';
 import type { Locale } from '@/lib/i18n';
 
@@ -73,10 +73,8 @@ export function ContactsLocations({
   copy: ContactsLocationsCopy;
 }) {
   const hasDescription = copy.description.trim().length > 0;
-  const actionButtonBaseClasses = cn(
-    headerButtonBase,
-    'w-full justify-center text-muted-foreground hover:bg-transparent hover:text-foreground',
-  );
+  const actionButtonBaseClasses =
+    'w-full justify-center text-muted-foreground hover:text-foreground';
   const copyButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[170px]');
   const mapButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[140px]');
 
@@ -118,15 +116,19 @@ export function ContactsLocations({
     return { google, yandex, yandexWidget };
   }, [coords.lat, coords.lon, selectedLocation, locale]);
 
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  useEffect(() => {
+    // Reset the "loaded" state when switching locations.
+    setIsMapLoaded(false);
+  }, [selectedLocation?.id, urls.yandexWidget]);
+
   if (!locations.length) {
     return null;
   }
 
   return (
-    <section
-      aria-label={copy.title}
-      className="space-y-4 rounded-xl border border-border bg-background px-4 pb-4 pt-0 sm:px-5 sm:pb-5 sm:pt-0"
-    >
+    <Card as="section" aria-label={copy.title} className="space-y-4">
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2>
         {hasDescription ? <p className="text-sm text-muted-foreground">{copy.description}</p> : null}
@@ -173,17 +175,30 @@ export function ContactsLocations({
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-border bg-muted/30">
+      <div className="relative overflow-hidden rounded-xl border border-border bg-muted/30">
         {urls.yandexWidget ? (
-          <iframe
-            key={selectedLocation?.id}
-            src={urls.yandexWidget}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="h-72 w-full border-0"
-            title={copy.title}
-            allowFullScreen
-          />
+          <>
+            <div
+              className={cn(
+                'absolute inset-0 z-0 flex items-center justify-center px-6 text-center text-sm text-muted-foreground transition-opacity duration-200',
+                isMapLoaded ? 'pointer-events-none opacity-0' : 'opacity-100',
+              )}
+            >
+              {copy.mapFallback}
+            </div>
+
+            <iframe
+              key={selectedLocation?.id}
+              src={urls.yandexWidget}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="relative z-10 h-72 w-full border-0"
+              title={copy.title}
+              allowFullScreen
+              onLoad={() => setIsMapLoaded(true)}
+              data-map-embed="1"
+            />
+          </>
         ) : (
           <div className="flex h-72 items-center justify-center px-6 text-center text-sm text-muted-foreground">
             {copy.mapFallback}
@@ -259,6 +274,6 @@ export function ContactsLocations({
           ) : null}
         </div>
       ) : null}
-    </section>
+    </Card>
   );
 }
