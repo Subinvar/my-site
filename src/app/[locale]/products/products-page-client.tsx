@@ -1021,7 +1021,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                         {icon}
                       </span>
 
-                      <span className="relative z-10 min-w-0 flex-1 whitespace-normal break-words leading-snug">
+                      <span className="relative z-10 min-w-0 flex-1 whitespace-normal break-normal leading-snug">
                         {label}
                       </span>
                       <span
