@@ -38,7 +38,6 @@ import {
 
 import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
-import { cardClassNames } from '@/app/(site)/shared/ui/card-classes';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
@@ -103,8 +102,12 @@ function HubCard({ item }: { item: ProductsHubCard }) {
       <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
         <Card
           as="article"
-          variant="productGroup"
-          className="flex h-full flex-col overflow-hidden"
+          className={cn(
+            'flex h-full flex-col overflow-hidden p-0',
+            'border-[var(--header-border)] bg-background/40 shadow-none',
+            'transform-none hover:shadow-none hover:-translate-y-0',
+            'transition-colors duration-200 ease-out hover:bg-background/55',
+          )}
         >
           <div
             className="relative aspect-[16/6] w-full overflow-hidden bg-muted/40"
@@ -1068,9 +1071,9 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
         </div>
 
         {/* Блок с преимуществами — ниже каталога, чтобы не мешать поиску раздела */}
-        <Card as="section" variant="panel">
+        <section className="rounded-3xl border border-[var(--header-border)] bg-muted p-5 sm:p-6">
           <InsightTilesCarousel title={whyTitle} tiles={whyTiles} isRu={isRu} onOpen={openTileModal} />
-        </Card>
+        </section>
       </div>
 
       {/* Модалка для плиток */}
@@ -1112,14 +1115,20 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
             onClick={closeTileModal}
           />
 
-          <div
+          <Card
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby={modalTitleId}
             aria-describedby={modalBodyId}
             tabIndex={-1}
-            className={cardClassNames({ variant: 'modal', className: 'relative w-full max-w-2xl' })}
+            className={cn(
+              'relative w-full max-w-2xl',
+              // Use the shared Card shell, but override radius/padding to match the modal design.
+              'rounded-3xl border-[var(--header-border)] bg-background p-5 shadow-none sm:p-6',
+              // Keep modal text readable in both themes.
+              'text-foreground',
+            )}
             style={
               prefersReducedMotion
                 ? {
@@ -1176,7 +1185,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                 ))}
               </ul>
             </div>
-          </div>
+          </Card>
         </div>
       ) : null}
     </>

@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
@@ -31,11 +31,30 @@ export function RequisitesDisclosure({
 }: RequisitesDisclosureProps) {
   const regionId = useId();
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const regionRef = useRef<HTMLDivElement | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const [height, setHeight] = useState<string>('0px');
+  const prefersReducedMotionRef = useRef(false);
   const mountedRef = useRef(false);
+
+  // Detect reduced motion once after hydration.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    prefersReducedMotionRef.current = mq.matches;
+
+    const handle = () => {
+      prefersReducedMotionRef.current = mq.matches;
+    };
+
+    // Safari < 14 uses addListener/removeListener.
+    if (mq.addEventListener) {
+      mq.addEventListener('change', handle);
+      return () => mq.removeEventListener('change', handle);
+    }
+
+    mq.addListener(handle);
+    return () => mq.removeListener(handle);
+  }, []);
 
   // Auto-open when the hash matches (clicking the "Requisites" action card).
   useEffect(() => {
@@ -54,41 +73,38 @@ export function RequisitesDisclosure({
 
   // Height animation (burger-like). We animate the outer wrapper's height.
   useLayoutEffect(() => {
-    const contentEl = contentRef.current;
-    const regionEl = regionRef.current;
-    if (!contentEl || !regionEl) return;
+    const el = contentRef.current;
+    if (!el) return;
 
     // Prevent a close animation on the initial render.
     if (!mountedRef.current) {
       mountedRef.current = true;
-      regionEl.style.height = isOpen ? 'auto' : '0px';
+      setHeight(isOpen ? 'auto' : '0px');
       return;
     }
 
-    if (prefersReducedMotion) {
-      regionEl.style.height = isOpen ? 'auto' : '0px';
+    if (prefersReducedMotionRef.current) {
+      setHeight(isOpen ? 'auto' : '0px');
       return;
     }
 
-    const currentHeight = contentEl.scrollHeight;
+    const currentHeight = el.scrollHeight;
 
     if (isOpen) {
       // Opening: 0 -> scrollHeight
-      regionEl.style.height = '0px';
+      setHeight('0px');
       const frame = window.requestAnimationFrame(() => {
-        const nextHeight = contentEl.scrollHeight;
-        regionEl.style.height = `${nextHeight}px`;
+        const nextHeight = el.scrollHeight;
+        setHeight(`${nextHeight}px`);
       });
       return () => window.cancelAnimationFrame(frame);
     }
 
     // Closing: scrollHeight -> 0
-    regionEl.style.height = `${currentHeight}px`;
-    const frame = window.requestAnimationFrame(() => {
-      regionEl.style.height = '0px';
-    });
+    setHeight(`${currentHeight}px`);
+    const frame = window.requestAnimationFrame(() => setHeight('0px'));
     return () => window.cancelAnimationFrame(frame);
-  }, [isOpen, prefersReducedMotion]);
+  }, [isOpen]);
 
   return (
     <div className="rounded-xl border border-border bg-background p-6">
@@ -114,24 +130,23 @@ export function RequisitesDisclosure({
         id={regionId}
         role="region"
         aria-label={title}
-        ref={regionRef}
         className={cn(
           'overflow-hidden will-change-[height]',
-          prefersReducedMotion ? 'transition-none' : 'transition-[height]',
+          prefersReducedMotionRef.current ? 'transition-none' : 'transition-[height]',
         )}
         style={{
-          height: isOpen ? 'auto' : '0px',
+          height,
           transitionDuration: `${isOpen ? BURGER_MENU_OPEN_MS : BURGER_MENU_CLOSE_MS}ms`,
           transitionTimingFunction: EASING,
         }}
         onTransitionEnd={(event) => {
           if (event.propertyName !== 'height') return;
-          if (!regionRef.current) return;
-          if (prefersReducedMotion) return;
+          if (!contentRef.current) return;
+          if (prefersReducedMotionRef.current) return;
 
           // After opening finishes, unlock the height to allow responsive reflow.
           if (isOpen) {
-            regionRef.current.style.height = 'auto';
+            setHeight('auto');
           }
         }}
       >
@@ -164,30 +179,5 @@ function PlusMinusIcon({ isOpen }: { isOpen: boolean }) {
         )}
       />
     </span>
-  );
-}
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    (callback) => {
-      if (typeof window === 'undefined') return () => {};
-
-      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const handle = () => callback();
-
-      // Safari < 14 uses addListener/removeListener.
-      if (mq.addEventListener) {
-        mq.addEventListener('change', handle);
-        return () => mq.removeEventListener('change', handle);
-      }
-
-      mq.addListener(handle);
-      return () => mq.removeListener(handle);
-    },
-    () => {
-      if (typeof window === 'undefined') return false;
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    },
-    () => false,
   );
 }

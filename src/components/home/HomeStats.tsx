@@ -1,5 +1,6 @@
 "use client";
 
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Card } from '@/app/(site)/shared/ui/card';
 import type { Locale } from '@/lib/i18n';
 import { useCountUp } from '@/lib/use-count-up';
@@ -64,20 +65,22 @@ function StatItem({
   const isNumeric = number !== null && inView;
 
   return (
-    <Card className="flex flex-col gap-2 bg-[var(--background)]/80 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg">
-      <div className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl">
-        {isNumeric ? (
-          <>
-            {prefix}
-            {animated}
-            {suffix}
-          </>
-        ) : (
-          value
-        )}
-      </div>
-      <div className="text-sm text-[var(--muted-foreground)]">{label}</div>
-    </Card>
+    <AppleHoverLift strength="xs">
+      <Card className="flex flex-col gap-2 bg-[var(--background)]/80">
+        <div className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl">
+          {isNumeric ? (
+            <>
+              {prefix}
+              {animated}
+              {suffix}
+            </>
+          ) : (
+            value
+          )}
+        </div>
+        <div className="text-sm text-[var(--muted-foreground)]">{label}</div>
+      </Card>
+    </AppleHoverLift>
   );
 }
 

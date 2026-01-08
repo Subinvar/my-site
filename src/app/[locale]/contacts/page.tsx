@@ -1,15 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Download, FileText, Mail, Phone, Send } from 'lucide-react';
-import type { ReactNode } from 'react';
 
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
-import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Button } from '@/app/(site)/shared/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { findTargetLocale, buildPath } from '@/lib/paths';
 import {
@@ -22,9 +19,8 @@ import {
 } from '@/lib/seo';
 import { formatTelegramHandle } from '@/lib/contacts';
 import { getSite } from '@/lib/keystatic';
-import { cn } from '@/lib/cn';
-import { focusRingBase } from '@/lib/focus-ring';
 import { ContactsLocations } from './contacts-locations';
+import { QuickActionCard } from './quick-action-card';
 import { RequisitesDisclosure } from './requisites-disclosure';
 import { sendContact } from './actions';
 
@@ -447,43 +443,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
         ) : null}
       </div>
     </SiteShellLayout>
-  );
-}
-
-function QuickActionCard({
-  title,
-  description,
-  href,
-  icon,
-  target,
-  rel,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  icon: ReactNode;
-  target?: string;
-  rel?: string;
-}) {
-  return (
-    <AppleHoverLift className="h-full">
-      <a href={href} target={target} rel={rel} className={cn('group block h-full rounded-2xl', focusRingBase)}>
-        <Card
-          className={cn(
-            'h-full border-[var(--header-border)] bg-background/40 shadow-none',
-            'transition-colors duration-200 ease-out hover:bg-background/55',
-          )}
-        >
-          <CardHeader className="gap-2">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-              {icon}
-            </div>
-            <CardTitle className="text-base">{title}</CardTitle>
-            <CardDescription className="text-sm select-text break-all">{description}</CardDescription>
-          </CardHeader>
-        </Card>
-      </a>
-    </AppleHoverLift>
   );
 }
 

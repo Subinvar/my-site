@@ -22,18 +22,18 @@ const sizeClasses: Record<ButtonSize, string> = {
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
     [
-      'bg-[var(--color-brand-600)] text-white shadow-sm',
-      'hover:bg-[var(--color-brand-700)] hover:shadow-md',
-      'dark:bg-[var(--color-brand-500)] dark:hover:bg-[var(--color-brand-400)]',
+      'bg-[color:var(--color-brand-600)] text-white shadow-sm',
+      'hover:bg-[color:var(--color-brand-700)] hover:shadow-md',
+      'dark:bg-[color:var(--color-brand-600)] dark:hover:bg-[color:var(--color-brand-700)]',
     ].join(' '),
   secondary:
     [
-      'border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]',
+      'border border-[var(--border)] bg-[color:var(--card)] text-[var(--foreground)]',
       'hover:border-[var(--color-brand-400)] hover:text-[var(--color-brand-700)]',
       'hover:shadow-sm',
     ].join(' '),
   ghost:
-    'bg-transparent text-[var(--foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+    'bg-transparent text-[var(--foreground)] hover:bg-[color:var(--muted)] hover:text-[var(--foreground)]',
   link: 'p-0 h-auto text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] underline-offset-4 hover:underline',
 };
 

@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/cn';
 import { useInView } from '@/lib/use-in-view';
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
+import { Card } from '@/app/(site)/shared/ui/card';
 import type { PostPreview } from './NewsPreview';
 
 export type NewsPreviewContentProps = {
@@ -51,28 +53,39 @@ export function NewsPreviewContent({
             const displayDate = post.formattedDate ?? post.date;
 
             return (
-              <article
-                key={post.id}
-                className="card flex flex-col gap-2 transform-gpu transition-shadow transition-transform duration-200 motion-fade-in-up sm:flex-row sm:items-center sm:justify-between hover:-translate-y-0.5 hover:shadow-md"
-                data-in-view={inView ? 'true' : 'false'}
-              >
-                <div>
-                  {displayDate ? (
-                    <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
-                      {displayDate}
-                    </div>
-                  ) : null}
-                  <Link href={post.href} className="text-base font-medium hover:text-primary">
-                    {post.title}
+              <AppleHoverLift key={post.id} strength="xs">
+                <Card
+                  as="article"
+                  className={cn(
+                    'flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between',
+                    // Keep the preview list airy, but still “card-like”.
+                    'bg-[var(--card)]/80',
+                    'motion-fade-in-up',
+                  )}
+                  data-in-view={inView ? 'true' : 'false'}
+                >
+                  <div>
+                    {displayDate ? (
+                      <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
+                        {displayDate}
+                      </div>
+                    ) : null}
+                    <Link href={post.href} className="text-base font-medium hover:text-primary">
+                      {post.title}
+                    </Link>
+                    {post.excerpt ? (
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
+                    ) : null}
+                  </div>
+
+                  <Link
+                    href={post.href}
+                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    {viewPostLabel}
                   </Link>
-                  {post.excerpt ? (
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
-                  ) : null}
-                </div>
-                <Link href={post.href} className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-                  {viewPostLabel}
-                </Link>
-              </article>
+                </Card>
+              </AppleHoverLift>
             );
           })}
         </div>

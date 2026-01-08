@@ -5,8 +5,8 @@ import { Clock, ExternalLink, MapPin } from 'lucide-react';
 
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
 import { Button } from '@/app/(site)/shared/ui/button';
+import { buttonClassNames } from '@/app/(site)/shared/ui/button-classes';
 import { cn } from '@/lib/cn';
-import { focusRingBase } from '@/lib/focus-ring';
 import type { Locale } from '@/lib/i18n';
 
 type ContactsLocation = {
@@ -118,7 +118,7 @@ export function ContactsLocations({
   return (
     <section
       aria-label={copy.title}
-      className="space-y-4 rounded-xl border border-border bg-background p-4 sm:p-5"
+      className="space-y-4 rounded-xl border border-border bg-background px-4 pb-4 pt-0 sm:px-5 sm:pb-5 sm:pt-0"
     >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2>
@@ -134,14 +134,19 @@ export function ContactsLocations({
                 key={location.id}
                 type="button"
                 onClick={() => setSelectedId(location.id)}
-                className={cn(
-                  'w-full rounded-lg border px-3 py-2 text-left transition-colors',
-                  // CTA-like styling (same palette as the primary CTA button)
-                  active
-                    ? 'border-[var(--color-brand-600)] bg-[var(--color-brand-600)] text-white hover:bg-[var(--color-brand-700)]'
-                    : 'border-[var(--color-brand-200)] bg-[var(--color-brand-50)] text-[var(--color-brand-700)] hover:border-[var(--color-brand-400)] hover:bg-[var(--color-brand-100)]',
-                  focusRingBase,
-                )}
+                className={buttonClassNames({
+                  variant: active ? 'primary' : 'secondary',
+                  size: 'md',
+                  fullWidth: true,
+                  className: cn(
+                    // Allow multi-line content (override fixed height / centered layout).
+                    'h-auto justify-start px-3 py-2 text-left',
+                    // Keep the original brand-focused palette for this selector.
+                    active
+                      ? 'border border-[var(--color-brand-600)] bg-[color:var(--color-brand-600)] text-white hover:bg-[color:var(--color-brand-700)]'
+                      : 'border-[var(--color-brand-200)] bg-[color:var(--color-brand-50)] text-[var(--color-brand-700)] hover:border-[var(--color-brand-400)] hover:bg-[color:var(--color-brand-100)]',
+                  ),
+                })}
                 aria-pressed={active}
               >
                 <div className={cn('font-semibold', active ? 'text-white' : 'text-foreground')}>

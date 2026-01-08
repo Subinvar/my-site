@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { ReactElement } from 'react';
 
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
 import { Card, CardDescription } from '@/app/(site)/shared/ui/card';
 import { SectionHeading } from '@/app/(site)/shared/ui/section-heading';
 import { buildPath } from '@/lib/paths';
@@ -129,30 +130,31 @@ export function ProductDirections({ locale, items }: ProductDirectionsProps) {
         {visibleItems.map((item) => {
           const href = item.href ?? basePath;
           return (
-            <Card
-              key={item.key}
-              as="article"
-              className="group flex h-full flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg motion-fade-in-up"
-              data-in-view={inView ? 'true' : 'false'}
-            >
-              <div className="flex h-full flex-col gap-3">
-                <div className="text-3xl">
-                  {directionIcons[item.key] ?? <span className="inline-block text-2xl">⚙️</span>}
+            <AppleHoverLift key={item.key} strength="xs" className="h-full">
+              <Card
+                as="article"
+                className={cn('group flex h-full flex-col', 'motion-fade-in-up')}
+                data-in-view={inView ? 'true' : 'false'}
+              >
+                <div className="flex h-full flex-col gap-3">
+                  <div className="text-3xl">
+                    {directionIcons[item.key] ?? <span className="inline-block text-2xl">⚙️</span>}
+                  </div>
+                  <h3 className="text-lg font-semibold transition-colors group-hover:text-[var(--primary)]">
+                    {item.title}
+                  </h3>
+                  <CardDescription className="flex-1 text-sm leading-relaxed">
+                    {item.description}
+                  </CardDescription>
+                  <Link
+                    href={href}
+                    className="text-sm font-semibold text-[var(--primary)] underline-offset-4 hover:underline"
+                  >
+                    {locale === 'ru' ? 'Смотреть продукты' : 'View products'}
+                  </Link>
                 </div>
-                <h3 className="text-lg font-semibold transition-colors group-hover:text-[var(--primary)]">
-                  {item.title}
-                </h3>
-                <CardDescription className="flex-1 text-sm leading-relaxed">
-                  {item.description}
-                </CardDescription>
-                <Link
-                  href={href}
-                  className="text-sm font-semibold text-[var(--primary)] underline-offset-4 hover:underline"
-                >
-                  {locale === 'ru' ? 'Смотреть продукты' : 'View products'}
-                </Link>
-              </div>
-            </Card>
+              </Card>
+            </AppleHoverLift>
           );
         })}
       </div>
