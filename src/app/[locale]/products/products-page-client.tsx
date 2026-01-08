@@ -103,14 +103,22 @@ function HubCard({ item }: { item: ProductsHubCard }) {
         <Card
           as="article"
           className={cn(
-            'flex h-full flex-col overflow-hidden p-0',
-            'border-[var(--header-border)] bg-background/45 shadow-none',
+            'relative flex h-full flex-col overflow-hidden p-0',
+            'border-[var(--header-border)] bg-muted shadow-none',
             'transform-none hover:shadow-none hover:-translate-y-0',
-            'transition-colors duration-200 ease-out hover:bg-background/60',
           )}
         >
+          <span
+            className={cn(
+              'pointer-events-none absolute inset-0 z-0',
+              'bg-background/45 backdrop-blur-sm',
+              'transition-colors duration-200 ease-out',
+              'group-hover:bg-background/60',
+            )}
+            aria-hidden
+          />
           <div
-            className="relative aspect-[16/6] w-full overflow-hidden bg-muted/40"
+            className="relative z-10 aspect-[16/6] w-full overflow-hidden bg-muted/40"
             // Inline aspect-ratio eliminates the initial "small image" flash on hard reload
             // before Tailwind styles are applied.
             style={{ aspectRatio: '16 / 6' }}
@@ -138,7 +146,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
             />
           </div>
 
-          <div className="p-4 sm:p-5">
+          <div className="relative z-10 p-4 sm:p-5">
             <CardHeader className="mb-0 gap-1.5">
               <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
                 <span className="break-words">{item.title}</span>
@@ -984,8 +992,8 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                           ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                       }}
                       className={cn(
-                        'flex w-full min-w-0 items-start gap-2 rounded-xl px-3 py-3 text-sm font-medium text-left',
-                        'bg-background/80 transition-colors duration-150 ease-out',
+                        'group relative flex w-full min-w-0 items-start gap-2 overflow-hidden rounded-xl px-3 py-3 text-sm font-medium text-left',
+                        'bg-muted',
                         isActive
                           ? cn(
                               'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
@@ -1000,14 +1008,25 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                         focusRingBase,
                       )}
                     >
-                      <span className="mt-0.5 shrink-0" aria-hidden>
+                      <span
+                        className={cn(
+                          'pointer-events-none absolute inset-0 z-0',
+                          'bg-background/45 backdrop-blur-sm',
+                          'transition-colors duration-200 ease-out',
+                          'group-hover:bg-background/60',
+                        )}
+                        aria-hidden
+                      />
+                      <span className="relative z-10 mt-0.5 shrink-0" aria-hidden>
                         {icon}
                       </span>
 
-                      <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">{label}</span>
+                      <span className="relative z-10 min-w-0 flex-1 whitespace-normal break-words leading-snug">
+                        {label}
+                      </span>
                       <span
                         className={cn(
-                          'ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
+                          'relative z-10 ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
                           isActive
                             ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
                             : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
