@@ -29,7 +29,16 @@ export function RequisitesDisclosure({
   className,
 }: RequisitesDisclosureProps) {
   return (
-    <Card as="section" id={anchorId} className={cn('scroll-mt-28 space-y-6', className)}>
+    <Card
+      as="section"
+      id={anchorId}
+      className={cn(
+        'scroll-mt-28 space-y-6 rounded-2xl border-[var(--header-border)] bg-background/45',
+        'p-5 shadow-none sm:p-6',
+        'transition-colors duration-200 ease-out hover:bg-background/60',
+        className,
+      )}
+    >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>

@@ -54,15 +54,21 @@ export function QuickActionCard({
       >
         <Card
           className={cn(
-            'h-full shadow-none',
+            'h-full border-[var(--header-border)] bg-background/45 p-4 shadow-none',
+            'transition-colors duration-200 ease-out hover:bg-background/60',
           )}
         >
           <CardHeader className="gap-2">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-[var(--color-brand-600)] dark:text-[var(--color-brand-200)]">
+            <div
+              className={cn(
+                'inline-flex h-9 w-9 items-center justify-center rounded-xl',
+                'border border-[var(--header-border)] bg-muted/60 text-foreground',
+              )}
+            >
               {icon}
             </div>
-            <CardTitle className="text-base">{title}</CardTitle>
-            <CardDescription className="break-words select-text text-foreground">
+            <CardTitle className="text-sm font-semibold leading-snug">{title}</CardTitle>
+            <CardDescription className="break-words select-text text-[var(--muted-foreground)] leading-normal">
               {description}
             </CardDescription>
           </CardHeader>

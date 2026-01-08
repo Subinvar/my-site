@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env TURBOPACK=0 next dev",
     "build": "cross-env TURBOPACK=0 next build && node scripts/ensure-middleware-trace.mjs && node scripts/cleanup-build-artifacts.mjs",
     "start": "next start",
     "lint": "eslint",
