@@ -120,7 +120,7 @@ export const HeaderNav = memo(function HeaderNav({
               headerButtonBase={headerButtonBase}
               href={contactsHref}
               label={ctaLabel}
-              className="hidden h-10 min-w-[180px] max-w-[260px] justify-center lg:inline-flex"
+              className="hidden h-10 w-[216px] justify-center lg:inline-flex"
             />
 
             <button

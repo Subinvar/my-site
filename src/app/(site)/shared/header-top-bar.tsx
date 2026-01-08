@@ -72,7 +72,7 @@ export const HEADER_TOP_STABLE_SLOTS: Record<string, number> = {
   telegram: 140,
   theme: 40,
   lang: 40,
-  cta: 200,
+  cta: 216,
 };
 
 function HeaderTopSlot({
@@ -121,7 +121,7 @@ function HeaderTopPillLink({ href, label, pillBase, className }: HeaderTopPillLi
   );
 }
 
-const DESKTOP_TOP_GAP_PX = 36; // соответствует tailwind gap-9 (2.25rem)
+const DESKTOP_TOP_GAP_PX = 32; // соответствует tailwind gap-8 (2rem)
 const DESKTOP_TOP_TARGET_INSET_SUM_PX = 24;
 
 const DESKTOP_TOP_EDGE_INSETS: Record<

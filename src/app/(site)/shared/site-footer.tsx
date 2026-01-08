@@ -32,7 +32,7 @@ export function SiteFooter({
   contacts,
   tagline,
 }: SiteFooterProps) {
-  const { hasHydrated, isSmUp, prefersReducedMotion } = useMediaBreakpoints();
+  const { hasHydrated, isSmUp, isBurgerMode, prefersReducedMotion } = useMediaBreakpoints();
   const normalizedCurrent = normalizePathname(currentPath);
 
   const footerLinks = navigation.footer ?? [];
@@ -91,6 +91,13 @@ export function SiteFooter({
   ) : null;
 
   const primaryContent = telegramNode ?? emailNode;
+  const burgerPrimaryContent = emailNode ?? telegramNode;
+  const burgerSecondaryContent = (
+    <>
+      {emailNode}
+      {telegramNode}
+    </>
+  );
 
   return (
     <footer className="border-t border-border bg-muted">
@@ -167,7 +174,7 @@ export function SiteFooter({
               {primaryContent ? (
                 <div className="relative h-10 w-full overflow-hidden">
                   <HeaderWagon
-                    showSecondary={!isSmUp}
+                    showSecondary={isBurgerMode}
                     hasHydrated={hasHydrated}
                     inertProps={inertProps}
                     prefersReducedMotion={prefersReducedMotion}
@@ -175,14 +182,26 @@ export function SiteFooter({
                     primaryEnterFrom="top"
                     secondaryExitTo="bottom"
                     panelBaseClassName="flex h-full w-full items-center justify-end gap-2"
-                    ssrPrimaryClassName="hidden sm:flex"
-                    ssrSecondaryClassName="flex sm:hidden"
+                    ssrPrimaryClassName="hidden lg:flex"
+                    ssrSecondaryClassName="flex lg:hidden"
                     primary={primaryContent}
                     secondary={
-                      <>
-                        {emailNode}
-                        {telegramNode}
-                      </>
+                      <div className="relative h-full w-full">
+                        <HeaderWagon
+                          showSecondary={!isSmUp}
+                          hasHydrated={hasHydrated}
+                          inertProps={inertProps}
+                          prefersReducedMotion={prefersReducedMotion}
+                          durationMs={640}
+                          primaryEnterFrom="top"
+                          secondaryExitTo="bottom"
+                          panelBaseClassName="flex h-full w-full items-center justify-end gap-2"
+                          ssrPrimaryClassName="hidden sm:flex"
+                          ssrSecondaryClassName="flex sm:hidden"
+                          primary={burgerPrimaryContent}
+                          secondary={burgerSecondaryContent}
+                        />
+                      </div>
                     }
                   />
                 </div>
