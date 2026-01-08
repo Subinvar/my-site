@@ -293,7 +293,7 @@ export default async function ProductsPage({ params }: PageProps) {
         locale === 'ru'
           ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
           : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.',
-      icon: 'sparkles',
+      icon: 'wrench',
       order: 2,
       cards: auxiliaries,
     },

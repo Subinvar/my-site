@@ -140,7 +140,7 @@ html {
   --background: #ffffff;
   --foreground: #111827;
 
-  --muted: #f3f4f6;
+  --muted: #f7f8fa;
   --muted-foreground: #4b5563;
 
   --card: #f9fafb;
@@ -169,7 +169,7 @@ html {
     --background: #020617;
     --foreground: #f9fafb;
 
-    --muted: #0b1220;
+    --muted: #151d2c;
     --muted-foreground: #9ca3af;
 
     --card: #020617;
@@ -201,7 +201,7 @@ html[data-theme="light"] {
   --background: #ffffff;
   --foreground: #111827;
 
-  --muted: #f3f4f6;
+  --muted: #f7f8fa;
   --muted-foreground: #4b5563;
 
   --card: #f9fafb;
@@ -227,7 +227,7 @@ html[data-theme="dark"] {
   --background: #191613;
   --foreground: #f5f2ed;
 
-  --muted: #221e1a;
+  --muted: #2b2622;
   --muted-foreground: #c2bbb1;
 
   --card: #1d1915;

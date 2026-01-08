@@ -963,7 +963,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                 ({ position: 'sticky', top: 'var(--header-height, var(--header-height-initial))' } as CSSProperties)
               }
             >
-              <div className="grid grid-flow-col auto-cols-fr gap-2">
+              <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
                 {groups.map((group) => {
                   const icon = ICONS[group.icon ?? 'sparkles'] ?? <Sparkles className="h-4 w-4" aria-hidden />;
                   const label = group.title ?? (isRu ? 'Раздел продукции' : 'Product section');
@@ -992,7 +992,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                           ?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
                       }}
                       className={cn(
-                        'group relative flex w-full min-w-0 items-start gap-2 overflow-hidden rounded-xl px-3 py-3 text-sm font-medium text-left',
+                        'group relative flex w-full items-start gap-2 overflow-hidden rounded-xl px-3 py-3 text-[15px] font-medium text-left sm:text-base',
                         'bg-muted',
                         isActive
                           ? cn(
@@ -1011,9 +1011,9 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                       <span
                         className={cn(
                           'pointer-events-none absolute inset-0 z-0',
-                          'bg-background/45 backdrop-blur-sm',
+                          'bg-background',
                           'transition-colors duration-200 ease-out',
-                          'group-hover:bg-background/60',
+                          'group-hover:bg-background',
                         )}
                         aria-hidden
                       />
@@ -1026,10 +1026,10 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                       </span>
                       <span
                         className={cn(
-                          'relative z-10 ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium sm:text-sm',
+                          'relative z-10 ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-[13px] font-medium sm:text-sm',
                           isActive
                             ? 'border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))] bg-[color:color-mix(in_srgb,var(--color-brand-600)_16%,transparent)] text-foreground'
-                            : 'border-[var(--header-border)] bg-muted/80 text-[var(--muted-foreground)]',
+                            : 'border-[var(--header-border)] bg-muted text-[var(--muted-foreground)]',
                         )}
                         aria-label={isRu ? `Карточек: ${count}` : `Cards: ${count}`}
                       >
