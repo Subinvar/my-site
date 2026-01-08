@@ -932,7 +932,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
     <>
       <div
         ref={pageRef}
-        className="space-y-12 lg:space-y-14 -mt-2 sm:-mt-6 lg:-mt-8"
+        className="space-y-12 lg:space-y-14"
       >
         {/* Навигация по секциям */}
         {groups.length > 1 ? (

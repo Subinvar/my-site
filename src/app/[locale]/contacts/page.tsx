@@ -356,7 +356,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           </div>
         </section>
 
-        <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-2">
           <div className="space-y-6">
             <ContactForm
               copy={copy}
