@@ -121,7 +121,7 @@ export function ContactForm({
       <form
         action={onSubmitAction}
         onSubmit={handleSubmit}
-        className="space-y-6 rounded-xl border border-border bg-background p-6 shadow-sm"
+        className="space-y-6 rounded-xl border border-border bg-background p-6"
       >
         <input type="hidden" name="locale" value={locale} />
         <input

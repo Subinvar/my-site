@@ -1,310 +1,306 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Download, FileText, Mail, Phone, Send } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
-import { getCatalogTaxonomyOptions } from '@/lib/catalog/constants';
-import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n';
-import { getProductsPage, getSite } from '@/lib/keystatic';
-import { buildPath, findTargetLocale } from '@/lib/paths';
+import { ContactForm } from '@/app/(site)/shared/contact-form';
+import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
+import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
+import { Button } from '@/app/(site)/shared/ui/button';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
+import { isLocale, locales, type Locale } from '@/lib/i18n';
+import { findTargetLocale, buildPath } from '@/lib/paths';
 import {
   HREFLANG_CODE,
   OPEN_GRAPH_LOCALE,
   buildAlternates,
   mergeSeo,
-  resolveAlternateOgLocales,
   resolveOpenGraphImage,
   resolveRobotsMeta,
 } from '@/lib/seo';
-import {
-  getProductsHubContent,
-  type ProductsHubCard,
-  type ProductsHubGroup,
-  type ProductsHubInsight,
-} from '@/lib/content/products-hub';
+import { formatTelegramHandle } from '@/lib/contacts';
+import { getSite } from '@/lib/keystatic';
+import { cn } from '@/lib/cn';
+import { focusRingBase } from '@/lib/focus-ring';
+import { ContactsLocations } from './contacts-locations';
+import { RequisitesDisclosure } from './requisites-disclosure';
+import { sendContact } from './actions';
 
-import { ALLOWED_AUXILIARIES, ALLOWED_BINDER_PROCESSES, ALLOWED_COATING_BASES } from './constants';
-import { sortByOrderAndLabel, toSlug } from './helpers';
-import { ProductsPageClient } from './products-page-client';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-const normalizeSlug = (value: string): string => value.trim().replace(/^\/+|\/+$/g, '');
-
-const splitSlug = (value: string): string[] =>
-  normalizeSlug(value)
-    .split('/')
-    .map((segment) => segment.trim())
-    .filter(Boolean);
-
-const resolveProductsBaseSegments = (slugByLocale: Partial<Record<Locale, string>>, locale: Locale): string[] => {
-  const raw = slugByLocale[locale] ?? slugByLocale[defaultLocale] ?? 'products';
-  const normalized = normalizeSlug(raw);
-  return splitSlug(normalized.length ? normalized : 'products');
-};
+const COPY = {
+  ru: {
+    title: 'Свяжитесь с нами',
+    description: 'Заполните форму или воспользуйтесь контактами — мы ответим на ваш запрос в ближайшее время.',
+    actions: {
+      call: 'Позвонить',
+      email: 'Написать на email',
+      telegram: 'Написать в Telegram',
+      requisites: 'Реквизиты',
+    },
+    contactsBlockTitle: 'Контакты',
+    locations: {
+      title: 'Наши адреса',
+      description: '',
+      addressLabel: 'Адрес',
+      hoursLabel: 'Режим работы',
+      copyAddress: 'Скопировать адрес',
+      copied: 'Скопировано',
+      openGoogle: 'Google Maps',
+      openYandex: 'Яндекс Карты',
+      openOsm: 'OpenStreetMap',
+      mapFallback: 'Карта временно недоступна — откройте адрес в приложении карт.',
+    },
+    requisites: {
+      title: 'Реквизиты и документы',
+      description: 'ИНН, ОГРН и банковские реквизиты',
+      copy: 'Скопировать реквизиты',
+      copied: 'Скопировано',
+      download: 'Скачать карточку компании',
+      more: 'Дополнительная информация',
+    },
+    dryRunNotice: 'Сейчас форма работает в тестовом режиме: данные не отправляются.',
+    name: 'Имя',
+    email: 'Email',
+    phone: 'Телефон',
+    phoneHint: 'Можно оставить телефон или email — достаточно одного контакта.',
+    contactRequired: 'Укажите хотя бы email или телефон.',
+    productLabel: 'Продукт',
+    productHint: 'Если нужно, уточните название продукта или оставьте поле пустым.',
+    productPlaceholder: 'Например: ФС-03',
+    message: 'Сообщение',
+    agree: 'Я согласен на обработку персональных данных',
+    submit: 'Отправить',
+    success: 'Спасибо! Ваше сообщение отправлено.',
+    error: 'Не удалось отправить сообщение. Попробуйте ещё раз.',
+  },
+  en: {
+    title: 'Contact us',
+    description: 'Fill out the form or use the details — we will get back to you shortly.',
+    actions: {
+      call: 'Call',
+      email: 'Send an email',
+      telegram: 'Message on Telegram',
+      requisites: 'Company details',
+    },
+    contactsBlockTitle: 'Contact details',
+    locations: {
+      title: 'Locations & map',
+      description: '',
+      addressLabel: 'Address',
+      hoursLabel: 'Working hours',
+      copyAddress: 'Copy address',
+      copied: 'Copied',
+      openGoogle: 'Google Maps',
+      openYandex: 'Yandex Maps',
+      openOsm: 'OpenStreetMap',
+      mapFallback: 'Map is temporarily unavailable — open the address in a maps app.',
+    },
+    requisites: {
+      title: 'Company details & documents',
+      description: 'Tax IDs, registered address and bank details for contracts and accounting.',
+      copy: 'Copy company details',
+      copied: 'Copied',
+      download: 'Download company card',
+      more: 'Additional information',
+    },
+    dryRunNotice: 'The form is in test mode right now: submissions are not sent.',
+    name: 'Name',
+    email: 'Email',
+    phone: 'Phone',
+    phoneHint: 'You can leave either a phone number or an email — one contact is enough.',
+    contactRequired: 'Please provide at least an email or a phone number.',
+    productLabel: 'Product',
+    productHint: 'You can adjust the product name or leave this field empty.',
+    productPlaceholder: 'e.g. FS-03',
+    message: 'Message',
+    agree: 'I agree to the processing of personal data',
+    submit: 'Send',
+    success: 'Thank you! Your message has been sent.',
+    error: 'We could not send your message. Please try again.',
+  },
+} satisfies Record<Locale, {
+  title: string;
+  description: string;
+  actions: {
+    call: string;
+    email: string;
+    telegram: string;
+    requisites: string;
+  };
+  contactsBlockTitle: string;
+  locations: {
+    title: string;
+    description: string;
+    addressLabel: string;
+    hoursLabel: string;
+    copyAddress: string;
+    copied: string;
+    openGoogle: string;
+    openYandex: string;
+    openOsm: string;
+    mapFallback: string;
+  };
+  requisites: {
+    title: string;
+    description: string;
+    copy: string;
+    copied: string;
+    download: string;
+    more: string;
+  };
+  dryRunNotice: string;
+  name: string;
+  email: string;
+  phone: string;
+  phoneHint: string;
+  contactRequired: string;
+  productLabel: string;
+  productHint: string;
+  productPlaceholder: string;
+  message: string;
+  agree: string;
+  submit: string;
+  success: string;
+  error: string;
+}>;
 
 type PageParams = { locale: Locale };
 
+type ContactSearchParams = {
+  ok?: string | string[] | undefined;
+  product?: string | string[] | undefined;
+};
+
 type PageProps = {
   params: Promise<PageParams>;
+  searchParams?: Promise<ContactSearchParams>;
 };
 
-const CARD_PLACEHOLDER = {
-  src: '/placeholders/product-card.svg',
-  alt: '',
-} as const;
+function normalizeTel(phone: string) {
+  return phone.replace(/[^\d+]/g, '');
+}
 
-const BINDER_CARD_DESCRIPTIONS_RU: Record<string, string> = {
-  // Короткие, «технологичные» описания — чтобы карточки читались быстро.
-  // Ключ = raw taxonomy value (важно: используется в URL).
-  'Альфа-сет':
-    'Щелочные фенолформальдегидные связующие, отверждаемые сложными эфирами (различная живучесть).',
-  ЖСС: 'Жидкостекольные системы: жидкое стекло, добавки и отвердители под режимы участка.',
-  'Колд-Бокс':
-    'Полиуретановые cold-box системы: смола/изоцианат и отверждение газообразным амином.',
-  Кронинг:
-    'Термореактивные смолы и добавки для оболочковых форм и стержней (процесс Кронинга).',
-  'Пеп-сет':
-    'Кислотно-отверждаемые системы (PEP-SET): связующие и катализаторы для форм и стержней.',
-  'Резол-CO₂':
-    'Резольные (щелочные фенольные) связующие, отверждаемые CO₂; материалы под стабильную прочность.',
-  Фуран: 'Фурановые смолы и кислотные отвердители для форм и стержней; настройка под требования литья.',
-};
+function buildRequisitesClipboardText(locale: Locale, requisites: NonNullable<ReturnType<typeof getRequisites>>) {
+  const labels =
+    locale === 'ru'
+      ? {
+          fullName: 'Полное наименование',
+          shortName: 'Сокращённое наименование',
+          legalAddress: 'Юридический адрес',
+          mailingAddress: 'Адрес для корреспонденции',
+          inn: 'ИНН',
+          kpp: 'КПП',
+          ogrn: 'ОГРН',
+          okpo: 'ОКПО',
+          okato: 'ОКАТО',
+          bankAccount: 'Р/с',
+          bankName: 'Банк',
+          correspondentAccount: 'К/с',
+          bik: 'БИК',
+          bankInn: 'ИНН банка',
+          bankAddress: 'Адрес банка',
+          director: 'Генеральный директор',
+          authorityBasis: 'Основание',
+        }
+      : {
+          fullName: 'Legal name',
+          shortName: 'Short name',
+          legalAddress: 'Registered address',
+          mailingAddress: 'Mailing address',
+          inn: 'INN',
+          kpp: 'KPP',
+          ogrn: 'OGRN',
+          okpo: 'OKPO',
+          okato: 'OKATO',
+          bankAccount: 'Account',
+          bankName: 'Bank',
+          correspondentAccount: 'Correspondent account',
+          bik: 'BIC',
+          bankInn: 'Bank INN',
+          bankAddress: 'Bank address',
+          director: 'Director',
+          authorityBasis: 'Authority basis',
+        };
 
-const COATING_CARD_DESCRIPTIONS_RU: Record<string, string> = {
-  Спиртовое: 'Быстросохнущие покрытия для форм и стержней; выбираются по наполнителю и условиям нанесения.',
-  Водное: 'Покрытия на водной основе; подбор по наполнителю, вязкости и условиям сушки.',
-};
+  const rows: Array<[string, string | null | undefined]> = [
+    [labels.fullName, requisites.fullName],
+    [labels.shortName, requisites.shortName],
+    [labels.inn, requisites.inn],
+    [labels.kpp, requisites.kpp],
+    [labels.ogrn, requisites.ogrn],
+    [labels.okpo, requisites.okpo],
+    [labels.okato, requisites.okato],
+    [labels.legalAddress, requisites.legalAddress],
+    [labels.mailingAddress, requisites.mailingAddress],
+    [labels.bankAccount, requisites.bankAccount],
+    [labels.bankName, requisites.bankName],
+    [labels.correspondentAccount, requisites.correspondentAccount],
+    [labels.bik, requisites.bik],
+    [labels.bankInn, requisites.bankInn],
+    [labels.bankAddress, requisites.bankAddress],
+    [labels.director, requisites.director],
+    [labels.authorityBasis, requisites.authorityBasis],
+  ];
 
-const AUXILIARY_CARD_DESCRIPTIONS_RU: Record<string, string> = {
-  'Разделительный состав':
-    'Разделительные составы для оснастки и поверхностей: стабильный съём и защита в процессе работы.',
-  Клей: 'Клеи для сборки стержней и ремонта форм; подбор по вязкости и скорости схватывания.',
-  'Ремонтная паста': 'Пасты для локального ремонта форм/стержней: заделка сколов, раковин и дефектов.',
-  'Уплотнительный шнур': 'Шнуры для герметизации разъёмов и стыков; стойкость к температуре и газам.',
-  'Отмывающий состав': 'Составы для очистки инструмента и оборудования от смол и покрытий; выбор по загрязнению.',
-  'Экзотермическая смесь':
-    'Экзотермические смеси для питания отливок и узлов; формы поставки под конкретную задачу.',
-  Модификатор: 'Модификаторы для корректировки свойств смеси и качества поверхности; подбор под рецептуру.',
-};
+  return rows
+    .filter(([, value]) => Boolean(value))
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('\n');
+}
 
-const WHY_TILES_RU: ProductsHubInsight[] = [
-  {
-    id: 'process',
-    icon: 'target',
-    title: 'Подбор под процесс',
-    lead: 'Отталкиваемся от технологии, а не от “любимого продукта”.',
-    details: [
-      'Учитываем процесс формовки/стержневой, тип смеси, режимы, требования к поверхности и прочности.',
-      'Помогаем сузить выбор до рабочих вариантов и объясняем, почему они подходят.',
-      'Если нужно — согласуем контрольные параметры для стабильного результата.',
-    ],
-    order: 0,
-    hidden: false,
-  },
-  {
-    id: 'docs',
-    icon: 'file-text',
-    title: 'Документы и рекомендации',
-    lead: 'Техданные и безопасное применение — без лишней бюрократии.',
-    details: [
-      'По запросу предоставим технические данные (TDS) и паспорт безопасности (SDS), а также рекомендации по применению.',
-      'Подскажем, какие параметры важны на участке (вязкость, плотность, режимы сушки/отверждения и т.д.).',
-    ],
-    order: 1,
-    hidden: false,
-  },
-  {
-    id: 'stability',
-    icon: 'repeat-2',
-    title: 'Повторяемость на производстве',
-    lead: 'Цель — стабильность в партии, а не разовый “идеальный” тест.',
-    details: [
-      'Смотрим на внедрение как на процесс: проба → корректировки → закрепление режима.',
-      'Обсуждаем типовые риски (сушка, газование, нанесение, хранение, смешивание) заранее.',
-    ],
-    order: 2,
-    hidden: false,
-  },
-  {
-    id: 'support',
-    icon: 'hand-helping',
-    title: 'Сопровождение внедрения',
-    lead: 'Помогаем перейти на новый материал или процесс без хаоса.',
-    details: [
-      'Согласуем план внедрения: что замеряем, какие критерии “успеха”, в каком порядке меняем параметры.',
-      'На старте даём “короткие правила” для участка: что критично, а что вторично.',
-    ],
-    order: 3,
-    hidden: false,
-  },
-];
+function getRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
+  return shell.site.contacts.requisites;
+}
 
-const WHY_TILES_EN: ProductsHubInsight[] = [
-  {
-    id: 'process',
-    icon: 'target',
-    title: 'Process-first selection',
-    lead: 'We start from your technology, not from a “favorite product”.',
-    details: [
-      'We consider the process, sand mix, modes, surface requirements and strength targets.',
-      'We help narrow down options and explain why they fit.',
-      'If needed, we agree on control points for stable results.',
-    ],
-    order: 0,
-    hidden: false,
-  },
-  {
-    id: 'docs',
-    icon: 'file-text',
-    title: 'Documents & guidance',
-    lead: 'Technical and safe application without extra friction.',
-    details: [
-      'On request, we provide TDS/SDS and practical application recommendations.',
-      'We highlight key shop-floor parameters: viscosity, density, curing/drying modes, etc.',
-    ],
-    order: 1,
-    hidden: false,
-  },
-  {
-    id: 'stability',
-    icon: 'repeat-2',
-    title: 'Production repeatability',
-    lead: 'Stable batches matter more than a one-off perfect trial.',
-    details: [
-      'We treat implementation as a process: trial → adjustments → stabilized modes.',
-      'We discuss typical risks (drying, gassing, application, storage, mixing) upfront.',
-    ],
-    order: 2,
-    hidden: false,
-  },
-  {
-    id: 'support',
-    icon: 'hand-helping',
-    title: 'Implementation support',
-    lead: 'A controlled transition to a new material or process.',
-    details: [
-      'We align the plan: what to measure, success criteria, and the order of changes.',
-      'We provide shop-floor “quick rules”: what is critical and what is secondary.',
-    ],
-    order: 3,
-    hidden: false,
-  },
-];
+function hasRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
+  const requisites = getRequisites(shell);
+  if (!requisites) return false;
+  return Boolean(
+    requisites.fullName ||
+      requisites.inn ||
+      requisites.ogrn ||
+      requisites.legalAddress ||
+      requisites.bankAccount ||
+      requisites.bankName
+  );
+}
 
-export default async function ProductsPage({ params }: PageProps) {
+function resolveStatus(rawStatus: string | string[] | undefined): 'success' | 'error' | null {
+  const status = Array.isArray(rawStatus) ? rawStatus[0] : rawStatus;
+  if (status === '1') return 'success';
+  if (status === '0') return 'error';
+  return null;
+}
+
+export default async function ContactsPage({ params, searchParams }: PageProps) {
   const { locale: rawLocale } = await params;
+  const rawSearchParams = await (searchParams ?? Promise.resolve<ContactSearchParams>({}));
 
   if (!isLocale(rawLocale)) {
     notFound();
   }
 
   const locale = rawLocale;
-  const [shell, productsPage] = await Promise.all([getSiteShellData(locale), getProductsPage(locale)]);
-
-  if (!productsPage.published) {
-    notFound();
-  }
-
-  const taxonomyOptions = getCatalogTaxonomyOptions(locale);
-
+  const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
+  const isDryRun = process.env.LEADS_DRY_RUN === '1';
+  const status = isDryRun ? null : resolveStatus(rawSearchParams.ok);
+  const shell = await getSiteShellData(locale);
   const targetLocale = findTargetLocale(locale);
-  const baseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, locale);
-  const targetBaseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, targetLocale);
-  const switcherHref = buildPath(targetLocale, targetBaseSegments);
-  const currentPath = buildPath(locale, baseSegments);
-
-  const pageTitle =
-    productsPage.title[locale] ?? (locale === 'ru' ? 'Продукция' : 'Products');
-
-  const binders: ProductsHubCard[] = taxonomyOptions.processes
-    .filter((option) => ALLOWED_BINDER_PROCESSES.includes(option.value))
-    .sort(sortByOrderAndLabel)
-    .map((option, index) => ({
-      id: `binders-${option.value}`,
-      title: option.label,
-      description:
-        locale === 'ru'
-          ? (BINDER_CARD_DESCRIPTIONS_RU[option.value] ?? `Связующие для процесса «${option.label}».`)
-          : `Binders for “${option.label}”.`,
-      image: CARD_PLACEHOLDER,
-      href: buildPath(locale, [...baseSegments, 'binders', toSlug(option.value)]),
-      order: index,
-    }));
-
-  const coatings: ProductsHubCard[] = taxonomyOptions.bases
-    .filter((option) => ALLOWED_COATING_BASES.includes(option.value))
-    .sort(sortByOrderAndLabel)
-    .map((option, index) => ({
-      id: `coatings-${option.value}`,
-      title: option.label,
-      description:
-        locale === 'ru'
-          ? (COATING_CARD_DESCRIPTIONS_RU[option.value] ?? `Покрытия на ${option.label.toLowerCase()} основе.`)
-          : `${option.label} coatings.`,
-      image: CARD_PLACEHOLDER,
-      href: buildPath(locale, [...baseSegments, 'coatings', toSlug(option.value)]),
-      order: index,
-    }));
-
-  const auxiliaries: ProductsHubCard[] = taxonomyOptions.auxiliaries
-    .filter((option) => ALLOWED_AUXILIARIES.includes(option.value))
-    .sort(sortByOrderAndLabel)
-    .map((option, index) => ({
-      id: `auxiliaries-${option.value}`,
-      title: option.label,
-      description:
-        locale === 'ru'
-          ? (AUXILIARY_CARD_DESCRIPTIONS_RU[option.value] ?? `Вспомогательные материалы: ${option.label.toLowerCase()}.`)
-          : `Auxiliary materials: ${option.label.toLowerCase()}.`,
-      image: CARD_PLACEHOLDER,
-      href: buildPath(locale, [...baseSegments, 'auxiliaries', toSlug(option.value)]),
-      order: index,
-    }));
-
-  const fallbackGroups: ProductsHubGroup[] = [
-    {
-      id: 'binders',
-      slug: 'binders',
-      title: locale === 'ru' ? 'Связующие системы' : 'Binder systems',
-      description:
-        locale === 'ru'
-          ? 'Связующие и отвердители для основных процессов формовки и стержневого производства.'
-          : 'Binders and hardeners for the main moulding and core-making processes.',
-      icon: 'beaker',
-      order: 0,
-      cards: binders,
-    },
-    {
-      id: 'coatings',
-      slug: 'coatings',
-      title: locale === 'ru' ? 'Противопригарные покрытия' : 'Coatings',
-      description:
-        locale === 'ru'
-          ? 'Спиртовые покрытия и покрытия на водной основе с широкой линейкой наполнителей.'
-          : 'Alcohol- and water-based coatings with a wide range of fillers.',
-      icon: 'roller',
-      order: 1,
-      cards: coatings,
-    },
-    {
-      id: 'auxiliaries',
-      slug: 'auxiliaries',
-      title: locale === 'ru' ? 'Вспомогательные материалы' : 'Auxiliary materials',
-      description:
-        locale === 'ru'
-          ? 'Сервисные материалы для участка: разделительные составы, клеи, ремонтные пасты, шнуры, отмывающие составы, экзотермика, модификаторы.'
-          : 'Service supplies: release compounds, glues, repair pastes, sealing cords, cleaners, exothermics, modifiers.',
-      icon: 'sparkles',
-      order: 2,
-      cards: auxiliaries,
-    },
-  ];
-
-  const hubContent = await getProductsHubContent(locale);
-  const groups = hubContent.groups?.length ? hubContent.groups : fallbackGroups;
-
-  const insightsFallback = locale === 'ru' ? WHY_TILES_RU : WHY_TILES_EN;
-  const insights = hubContent.insights?.length ? hubContent.insights : insightsFallback;
-  const sortedInsights = [...insights].sort((a, b) => a.order - b.order);
+  const switcherHref = buildPath(targetLocale, ['contacts']);
+  const currentPath = buildPath(locale, ['contacts']);
+  const copy = COPY[locale];
+  const phone = shell.site.contacts.phone ?? '';
+  const email = shell.site.contacts.email ?? '';
+  const telegramUrl = shell.site.contacts.telegramUrl ?? '';
+  const telegramLabel = formatTelegramHandle(telegramUrl) ?? telegramUrl;
+  const locations = shell.site.contacts.locations ?? [];
+  const requisites = shell.site.contacts.requisites;
+  const companyCardFile = shell.site.contacts.companyCardFile ?? '';
+  const showRequisites = hasRequisites(shell);
 
   return (
     <SiteShellLayout
@@ -316,86 +312,236 @@ export default async function ProductsPage({ params }: PageProps) {
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <main id="main" className="page-shell">
-        {/* Визуально H1 скрываем (просили убрать заголовок со страницы),
-            но оставляем для семантики/доступности. */}
-        <h1 className="sr-only">{pageTitle}</h1>
+      <div className="space-y-10">
+        <header className="space-y-3">
+          <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
+          <p className="text-base text-muted-foreground">{copy.description}</p>
+        </header>
 
-        <ProductsPageClient locale={locale} groups={groups} insights={sortedInsights} />
-      </main>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {phone ? (
+            <QuickActionCard
+              title={copy.actions.call}
+              description={phone}
+              href={`tel:${normalizeTel(phone)}`}
+              icon={<Phone aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+          {email ? (
+            <QuickActionCard
+              title={copy.actions.email}
+              description={email}
+              href={`mailto:${email}`}
+              icon={<Mail aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+          {telegramUrl ? (
+            <QuickActionCard
+              title={copy.actions.telegram}
+              description={telegramLabel || telegramUrl}
+              href={telegramUrl}
+              target="_blank"
+              rel="noreferrer"
+              icon={<Send aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+
+          {(showRequisites || companyCardFile) ? (
+            <QuickActionCard
+              title={copy.actions.requisites}
+              description={copy.requisites.description}
+              href="#requisites"
+              icon={<FileText aria-hidden className="h-5 w-5" strokeWidth={1.75} />}
+            />
+          ) : null}
+        </div>
+
+        <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+          <div className="space-y-6">
+            <ContactForm
+              copy={copy}
+              locale={locale}
+              contactsPath={currentPath}
+              status={status}
+              onSubmitAction={sendContact}
+              isDryRun={isDryRun}
+              initialProduct={product}
+            />
+          </div>
+
+          <div className="space-y-4">
+            {locations.length ? (
+              <ContactsLocations locale={locale} locations={locations} copy={copy.locations} />
+            ) : null}
+          </div>
+        </div>
+
+        {(showRequisites || companyCardFile) ? (
+          <section id="requisites" className="scroll-mt-28">
+            <RequisitesDisclosure
+              anchorId="requisites"
+              title={copy.requisites.title}
+              description={copy.requisites.description}
+            >
+              {showRequisites || companyCardFile ? (
+                <div className="flex flex-wrap gap-2">
+                  {showRequisites && requisites ? (
+                    <CopyButton
+                      text={buildRequisitesClipboardText(locale, requisites)}
+                      label={copy.requisites.copy}
+                      copiedLabel={copy.requisites.copied}
+                      variant="primary"
+                      size="sm"
+                    />
+                  ) : null}
+
+                  {companyCardFile ? (
+                    <Button
+                      asChild
+                      variant="primary"
+                      size="sm"
+                      leftIcon={<Download aria-hidden className="h-4 w-4" />}
+                    >
+                      <a href={companyCardFile} download>
+                        {copy.requisites.download}
+                      </a>
+                    </Button>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {showRequisites && requisites ? (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <RequisitesList
+                    title={locale === 'ru' ? 'Организация' : 'Company'}
+                    items={[
+                      [locale === 'ru' ? 'Полное наименование' : 'Legal name', requisites.fullName],
+                      [locale === 'ru' ? 'Сокращённое' : 'Short name', requisites.shortName],
+                      [locale === 'ru' ? 'ИНН' : 'INN', requisites.inn],
+                      [locale === 'ru' ? 'КПП' : 'KPP', requisites.kpp],
+                      [locale === 'ru' ? 'ОГРН' : 'OGRN', requisites.ogrn],
+                      [locale === 'ru' ? 'ОКПО' : 'OKPO', requisites.okpo],
+                      [locale === 'ru' ? 'ОКАТО' : 'OKATO', requisites.okato],
+                      [locale === 'ru' ? 'Юридический адрес' : 'Registered address', requisites.legalAddress],
+                      [locale === 'ru' ? 'Адрес для корреспонденции' : 'Mailing address', requisites.mailingAddress],
+                      [locale === 'ru' ? 'Генеральный директор' : 'Director', requisites.director],
+                      [locale === 'ru' ? 'Основание' : 'Authority basis', requisites.authorityBasis],
+                    ]}
+                  />
+
+                  <RequisitesList
+                    title={locale === 'ru' ? 'Банк' : 'Bank'}
+                    items={[
+                      [locale === 'ru' ? 'Р/с' : 'Account', requisites.bankAccount],
+                      [locale === 'ru' ? 'Банк' : 'Bank', requisites.bankName],
+                      [locale === 'ru' ? 'К/с' : 'Correspondent', requisites.correspondentAccount],
+                      [locale === 'ru' ? 'БИК' : 'BIC', requisites.bik],
+                      [locale === 'ru' ? 'ИНН банка' : 'Bank INN', requisites.bankInn],
+                      [locale === 'ru' ? 'Адрес банка' : 'Bank address', requisites.bankAddress],
+                    ]}
+                  />
+                </div>
+              ) : null}
+            </RequisitesDisclosure>
+          </section>
+        ) : null}
+      </div>
     </SiteShellLayout>
   );
 }
 
+function QuickActionCard({
+  title,
+  description,
+  href,
+  icon,
+  target,
+  rel,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  icon: ReactNode;
+  target?: string;
+  rel?: string;
+}) {
+  return (
+    <AppleHoverLift className="h-full">
+      <a href={href} target={target} rel={rel} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+        <Card
+          variant="productGroup"
+          padding="md"
+          className="h-full"
+        >
+          <CardHeader className="gap-2">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+              {icon}
+            </div>
+            <CardTitle className="text-base">{title}</CardTitle>
+            <CardDescription className="text-sm select-text break-all">{description}</CardDescription>
+          </CardHeader>
+        </Card>
+      </a>
+    </AppleHoverLift>
+  );
+}
+
+function RequisitesList({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<[label: string, value: string | null | undefined]>;
+}) {
+  const filtered = items.filter(([, value]) => Boolean(value));
+  if (!filtered.length) return null;
+
+  return (
+    <section className="space-y-3">
+      <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+      <dl className="grid gap-3">
+        {filtered.map(([label, value]) => (
+          <div key={label} className="space-y-1">
+            <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+            <dd className="whitespace-pre-line text-sm font-medium text-foreground">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale: rawLocale } = await params;
+  const { locale: rawLocale } = await Promise.resolve(params);
 
   if (!isLocale(rawLocale)) {
     return {};
   }
 
   const locale = rawLocale;
-  const [site, productsPage] = await Promise.all([getSite(locale), getProductsPage(locale)]);
+  const site = await getSite(locale);
+  const defaults = { title: COPY[locale].title, description: COPY[locale].description };
+  const mergedSeo = mergeSeo({ site: site.seo, defaults });
 
-  if (!productsPage.published) {
-    return {};
-  }
-
-  const pageSeo = productsPage.seo;
-
-  const slugMap: Partial<Record<Locale, string>> = {};
-  for (const candidateLocale of locales) {
-    const baseSegments = resolveProductsBaseSegments(productsPage.slugByLocale, candidateLocale);
-    slugMap[candidateLocale] = buildPath(candidateLocale, baseSegments);
-  }
-
-  const alternates = buildAlternates({
-    locale,
-    slugMap,
-    canonicalBase: site.seo.canonicalBase,
-  });
-
-  const fallbackTitle = productsPage.title[locale] ?? (locale === 'ru' ? 'Продукция' : 'Products');
-  const fallbackDescription =
-    productsPage.description[locale] ??
-    (locale === 'ru'
-      ? 'Продукты и решения Интема Групп для литейного производства.'
-      : 'Intema Group products and solutions for foundry production.');
-
-  const merged = mergeSeo({
-    site: site.seo,
-    page: pageSeo,
-    defaults: { title: fallbackTitle, description: fallbackDescription },
-  });
-
-  const canonicalUrl = merged.canonicalOverride ?? alternates.canonical;
-  const alternatesData: Metadata['alternates'] = {
-    languages: alternates.languages,
-  };
-  if (canonicalUrl) {
-    alternatesData.canonical = canonicalUrl;
-  }
-
-  const currentHrefLang = HREFLANG_CODE[locale];
-  const preferredUrl = canonicalUrl ?? alternates.languages[currentHrefLang];
-  const ogImage = resolveOpenGraphImage(merged.ogImage, site.seo.canonicalBase);
-  const alternateOgLocales = resolveAlternateOgLocales(locale, slugMap);
-  const descriptionFallback = merged.description ?? undefined;
-  const ogDescriptionFallback = merged.ogDescription ?? descriptionFallback;
-  const ogTitleFallback = merged.ogTitle ?? merged.title ?? fallbackTitle;
+  const slugMap = locales.reduce<Partial<Record<Locale, string>>>((acc, currentLocale) => {
+    acc[currentLocale] = buildPath(currentLocale, ['contacts']);
+    return acc;
+  }, {});
+  const alternates = buildAlternates({ locale, slugMap, canonicalBase: site.seo.canonicalBase });
+  const pageUrl = alternates.languages[HREFLANG_CODE[locale]] ?? alternates.canonical;
+  const ogImage = resolveOpenGraphImage(mergedSeo.ogImage, site.seo.canonicalBase);
 
   return {
-    title: merged.title ?? fallbackTitle,
-    description: descriptionFallback,
-    alternates: alternatesData,
+    title: mergedSeo.title,
+    description: mergedSeo.description,
+    alternates,
     robots: resolveRobotsMeta(site.robots),
     openGraph: {
       type: 'website',
       locale: OPEN_GRAPH_LOCALE[locale],
-      url: preferredUrl,
-      title: ogTitleFallback,
-      description: ogDescriptionFallback,
-      alternateLocale: alternateOgLocales.length ? alternateOgLocales : undefined,
+      url: pageUrl,
+      title: mergedSeo.ogTitle ?? mergedSeo.title,
+      description: mergedSeo.ogDescription ?? mergedSeo.description,
       images: ogImage ? [ogImage] : undefined,
     },
   } satisfies Metadata;

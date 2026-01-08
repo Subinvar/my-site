@@ -1,23 +1,36 @@
 import type { HTMLAttributes } from 'react';
 
 import { cn } from '@/lib/cn';
+import { cardClassNames, type CardPadding, type CardVariant } from './card-classes';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div' | 'article' | 'section';
+  /**
+   * Card surface styling preset.
+   * - default: base card surface
+   * - productGroup: product group cards on the "Продукция" page
+   * - modal: dialog container surface
+   * - panel: neutral panel surface
+   */
+  variant?: CardVariant;
+  /**
+   * Card padding preset. If omitted, it is derived from the variant.
+   */
+  padding?: CardPadding;
 }
 
-export function Card({ as = 'div', className, children, ...rest }: CardProps) {
+export function Card({
+  as = 'div',
+  variant = 'default',
+  padding,
+  className,
+  children,
+  ...rest
+}: CardProps) {
   const Component = as;
   return (
     <Component
-      className={cn(
-        'group rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]',
-        'shadow-sm transition-transform transition-shadow duration-200 ease-out transform-gpu',
-        'hover:-translate-y-0.5 hover:shadow-lg/10',
-        'focus-within:-translate-y-0.5 focus-within:shadow-lg/10',
-        'p-4 sm:p-5',
-        className,
-      )}
+      className={cn(cardClassNames({ variant, padding }), className)}
       {...rest}
     >
       {children}

@@ -73,16 +73,27 @@ export function ContactsLocations({
 }) {
   const hasDescription = copy.description.trim().length > 0;
 
+  const orderedLocations = useMemo(() => {
+    const list = [...locations];
+    // Always show the primary location first ("Склад / производство" by default)
+    // to keep the UI stable regardless of CMS ordering.
+    list.sort((a, b) => {
+      if (a.isPrimary !== b.isPrimary) return a.isPrimary ? -1 : 1;
+      return a.title.localeCompare(b.title, locale === 'ru' ? 'ru' : 'en');
+    });
+    return list;
+  }, [locations, locale]);
+
   const initialLocationId = useMemo(() => {
-    const primary = locations.find((location) => location.isPrimary) ?? locations[0];
+    const primary = orderedLocations.find((location) => location.isPrimary) ?? orderedLocations[0];
     return primary?.id ?? '';
-  }, [locations]);
+  }, [orderedLocations]);
 
   const [selectedId, setSelectedId] = useState(initialLocationId);
 
   const selectedLocation = useMemo(() => {
-    return locations.find((location) => location.id === selectedId) ?? locations[0] ?? null;
-  }, [locations, selectedId]);
+    return orderedLocations.find((location) => location.id === selectedId) ?? orderedLocations[0] ?? null;
+  }, [orderedLocations, selectedId]);
 
   const coords = useMemo(() => {
     if (!selectedLocation) return { lat: null, lon: null };
@@ -98,7 +109,7 @@ export function ContactsLocations({
     const yandex = selectedLocation?.yandexMapsUrl?.trim() || (lat && lon ? buildYandexMapsUrl(lat, lon) : null);
     const yandexWidget = selectedLocation?.yandexWidgetUrl?.trim() || (lat && lon ? buildYandexWidgetEmbedUrl(lat, lon, locale) : null);
     return { google, yandex, yandexWidget };
-  }, [coords.lat, coords.lon, selectedLocation]);
+  }, [coords.lat, coords.lon, selectedLocation, locale]);
 
   if (!locations.length) {
     return null;
@@ -107,7 +118,7 @@ export function ContactsLocations({
   return (
     <section
       aria-label={copy.title}
-      className="space-y-4 rounded-xl border border-border bg-background p-6 shadow-sm"
+      className="space-y-4 rounded-xl border border-border bg-background p-4 sm:p-5"
     >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2>
@@ -115,38 +126,42 @@ export function ContactsLocations({
       </header>
 
       {locations.length > 1 ? (
-        <div className="-mx-2 overflow-x-auto px-2 no-scrollbar">
-          <div className="flex min-w-max gap-2">
-            {locations.map((location) => {
-              const active = location.id === selectedLocation?.id;
-              return (
-                <button
-                  key={location.id}
-                  type="button"
-                  onClick={() => setSelectedId(location.id)}
+        <div className="grid gap-2 sm:grid-cols-2">
+          {orderedLocations.map((location) => {
+            const active = location.id === selectedLocation?.id;
+            return (
+              <button
+                key={location.id}
+                type="button"
+                onClick={() => setSelectedId(location.id)}
+                className={cn(
+                  'w-full rounded-lg border px-3 py-2 text-left transition-colors',
+                  // CTA-like styling (same palette as the primary CTA button)
+                  active
+                    ? 'border-[var(--color-brand-600)] bg-[var(--color-brand-600)] text-white hover:bg-[var(--color-brand-700)]'
+                    : 'border-[var(--color-brand-200)] bg-[var(--color-brand-50)] text-[var(--color-brand-700)] hover:border-[var(--color-brand-400)] hover:bg-[var(--color-brand-100)]',
+                  focusRingBase,
+                )}
+                aria-pressed={active}
+              >
+                <div className={cn('font-semibold', active ? 'text-white' : 'text-foreground')}>
+                  {location.title || location.id}
+                </div>
+                <div
                   className={cn(
-                    'min-w-[220px] rounded-lg border px-3 py-2 text-left text-sm transition-colors',
-                    'border-[var(--border)] bg-[var(--card)]',
-                    'hover:border-[var(--color-brand-400)] hover:bg-[var(--muted)]',
-                    focusRingBase,
-                    active
-                      ? 'border-[var(--color-brand-500)] bg-[var(--muted)] text-foreground'
-                      : 'text-[var(--muted-foreground)]'
+                    'mt-1 line-clamp-2 text-xs',
+                    active ? 'text-white/85' : 'text-[var(--muted-foreground)]',
                   )}
-                  aria-pressed={active}
                 >
-                  <div className="font-semibold text-foreground">{location.title || location.id}</div>
-                  <div className="mt-1 line-clamp-2 text-xs text-[var(--muted-foreground)]">
-                    {location.address}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  {location.address}
+                </div>
+              </button>
+            );
+          })}
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-border bg-muted/30 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-border bg-muted/30">
         {urls.yandexWidget ? (
           <iframe
             key={selectedLocation?.id}
@@ -191,12 +206,13 @@ export function ContactsLocations({
               text={selectedLocation.address}
               label={copy.copyAddress}
               copiedLabel={copy.copied}
+              variant="primary"
             />
 
             {urls.yandex ? (
               <Button
                 asChild
-                variant="secondary"
+                variant="primary"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
               >
@@ -209,7 +225,7 @@ export function ContactsLocations({
             {urls.google ? (
               <Button
                 asChild
-                variant="secondary"
+                variant="primary"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
               >
@@ -223,7 +239,6 @@ export function ContactsLocations({
           {/* Small hint for locales that have different map ecosystems */}
           {locale === 'en' && urls.google && !selectedLocation.googleMapsUrl ? (
             <p className="text-xs text-muted-foreground">
-              {/* eslint-disable-next-line react/no-unescaped-entities -- UX hint */}
               Tip: Google Maps link is generated automatically from coordinates.
             </p>
           ) : null}

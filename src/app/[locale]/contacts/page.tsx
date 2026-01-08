@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ChevronDown, Download, FileText, Mail, Phone, Send } from 'lucide-react';
+import { Download, FileText, Mail, Phone, Send } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
@@ -8,6 +8,7 @@ import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
 import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
 import { AppleHoverLift } from '@/app/(site)/shared/ui/apple-hover-lift';
+import { Button } from '@/app/(site)/shared/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/(site)/shared/ui/card';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { findTargetLocale, buildPath } from '@/lib/paths';
@@ -24,6 +25,7 @@ import { getSite } from '@/lib/keystatic';
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 import { ContactsLocations } from './contacts-locations';
+import { RequisitesDisclosure } from './requisites-disclosure';
 import { sendContact } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -54,7 +56,7 @@ const COPY = {
     },
     requisites: {
       title: 'Реквизиты и документы',
-      description: 'ИНН, ОГРН и банковские реквизиты.',
+      description: 'ИНН, ОГРН и банковские реквизиты',
       copy: 'Скопировать реквизиты',
       copied: 'Скопировано',
       download: 'Скачать карточку компании',
@@ -376,83 +378,71 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
 
         {(showRequisites || companyCardFile) ? (
           <section id="requisites" className="scroll-mt-28">
-            <div className="rounded-xl border border-border bg-background p-6 shadow-sm">
-              <details className="details-no-marker group">
-                <summary className={cn('flex cursor-pointer items-start justify-between gap-4 rounded-lg px-2 py-2', focusRingBase)}>
-                  <span className="space-y-1">
-                    <span className="block text-lg font-semibold text-foreground">{copy.requisites.title}</span>
-                    <span className="block text-sm text-muted-foreground">{copy.requisites.description}</span>
-                  </span>
-                  <ChevronDown
-                    aria-hidden
-                    className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
-                  />
-                </summary>
-
-                <div className="mt-5 space-y-6 px-2">
-                  {showRequisites || companyCardFile ? (
-                    <div className="flex flex-wrap gap-2">
-                      {showRequisites && requisites ? (
-                        <CopyButton
-                          text={buildRequisitesClipboardText(locale, requisites)}
-                          label={copy.requisites.copy}
-                          copiedLabel={copy.requisites.copied}
-                        />
-                      ) : null}
-
-                      {companyCardFile ? (
-                        <a
-                          href={companyCardFile}
-                          download
-                          className={cn(
-                            'inline-flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-semibold text-foreground transition-colors',
-                            'hover:bg-muted/70',
-                            focusRingBase,
-                          )}
-                        >
-                          <Download aria-hidden className="h-4 w-4" />
-                          {copy.requisites.download}
-                        </a>
-                      ) : null}
-                    </div>
-                  ) : null}
-
+            <RequisitesDisclosure
+              anchorId="requisites"
+              title={copy.requisites.title}
+              description={copy.requisites.description}
+            >
+              {showRequisites || companyCardFile ? (
+                <div className="flex flex-wrap gap-2">
                   {showRequisites && requisites ? (
-                    <div className="grid gap-6 lg:grid-cols-2">
-                      <RequisitesList
-                        title={locale === 'ru' ? 'Организация' : 'Company'}
-                        items={[
-                          [locale === 'ru' ? 'Полное наименование' : 'Legal name', requisites.fullName],
-                          [locale === 'ru' ? 'Сокращённое' : 'Short name', requisites.shortName],
-                          [locale === 'ru' ? 'ИНН' : 'INN', requisites.inn],
-                          [locale === 'ru' ? 'КПП' : 'KPP', requisites.kpp],
-                          [locale === 'ru' ? 'ОГРН' : 'OGRN', requisites.ogrn],
-                          [locale === 'ru' ? 'ОКПО' : 'OKPO', requisites.okpo],
-                          [locale === 'ru' ? 'ОКАТО' : 'OKATO', requisites.okato],
-                          [locale === 'ru' ? 'Юридический адрес' : 'Registered address', requisites.legalAddress],
-                          [locale === 'ru' ? 'Адрес для корреспонденции' : 'Mailing address', requisites.mailingAddress],
-                          [locale === 'ru' ? 'Генеральный директор' : 'Director', requisites.director],
-                          [locale === 'ru' ? 'Основание' : 'Authority basis', requisites.authorityBasis],
-                        ]}
-                      />
-
-                      <RequisitesList
-                        title={locale === 'ru' ? 'Банк' : 'Bank'}
-                        items={[
-                          [locale === 'ru' ? 'Р/с' : 'Account', requisites.bankAccount],
-                          [locale === 'ru' ? 'Банк' : 'Bank', requisites.bankName],
-                          [locale === 'ru' ? 'К/с' : 'Correspondent', requisites.correspondentAccount],
-                          [locale === 'ru' ? 'БИК' : 'BIC', requisites.bik],
-                          [locale === 'ru' ? 'ИНН банка' : 'Bank INN', requisites.bankInn],
-                          [locale === 'ru' ? 'Адрес банка' : 'Bank address', requisites.bankAddress],
-                        ]}
-                      />
-                    </div>
+                    <CopyButton
+                      text={buildRequisitesClipboardText(locale, requisites)}
+                      label={copy.requisites.copy}
+                      copiedLabel={copy.requisites.copied}
+                      variant="primary"
+                      size="sm"
+                    />
                   ) : null}
 
+                  {companyCardFile ? (
+                    <Button
+                      asChild
+                      variant="primary"
+                      size="sm"
+                      leftIcon={<Download aria-hidden className="h-4 w-4" />}
+                    >
+                      <a href={companyCardFile} download>
+                        {copy.requisites.download}
+                      </a>
+                    </Button>
+                  ) : null}
                 </div>
-              </details>
-            </div>
+              ) : null}
+
+              {showRequisites && requisites ? (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <RequisitesList
+                    title={locale === 'ru' ? 'Организация' : 'Company'}
+                    items={[
+                      [locale === 'ru' ? 'Полное наименование' : 'Legal name', requisites.fullName],
+                      [locale === 'ru' ? 'Сокращённое' : 'Short name', requisites.shortName],
+                      [locale === 'ru' ? 'ИНН' : 'INN', requisites.inn],
+                      [locale === 'ru' ? 'КПП' : 'KPP', requisites.kpp],
+                      [locale === 'ru' ? 'ОГРН' : 'OGRN', requisites.ogrn],
+                      [locale === 'ru' ? 'ОКПО' : 'OKPO', requisites.okpo],
+                      [locale === 'ru' ? 'ОКАТО' : 'OKATO', requisites.okato],
+                      [locale === 'ru' ? 'Юридический адрес' : 'Registered address', requisites.legalAddress],
+                      [locale === 'ru' ? 'Адрес для корреспонденции' : 'Mailing address', requisites.mailingAddress],
+                      [locale === 'ru' ? 'Генеральный директор' : 'Director', requisites.director],
+                      [locale === 'ru' ? 'Основание' : 'Authority basis', requisites.authorityBasis],
+                    ]}
+                  />
+
+                  <RequisitesList
+                    title={locale === 'ru' ? 'Банк' : 'Bank'}
+                    items={[
+                      [locale === 'ru' ? 'Р/с' : 'Account', requisites.bankAccount],
+                      [locale === 'ru' ? 'Банк' : 'Bank', requisites.bankName],
+                      [locale === 'ru' ? 'К/с' : 'Correspondent', requisites.correspondentAccount],
+                      [locale === 'ru' ? 'БИК' : 'BIC', requisites.bik],
+                      [locale === 'ru' ? 'ИНН банка' : 'Bank INN', requisites.bankInn],
+                      [locale === 'ru' ? 'Адрес банка' : 'Bank address', requisites.bankAddress],
+                    ]}
+                  />
+                </div>
+              ) : null}
+            </RequisitesDisclosure>
           </section>
         ) : null}
       </div>
@@ -481,8 +471,6 @@ function QuickActionCard({
         <Card
           className={cn(
             'h-full border-[var(--header-border)] bg-background/40 shadow-none',
-            // Lift is handled by <AppleHoverLift /> (keep cards consistent with products hub tiles)
-            'transform-none hover:shadow-none hover:-translate-y-0',
             'transition-colors duration-200 ease-out hover:bg-background/55',
           )}
         >
@@ -491,7 +479,7 @@ function QuickActionCard({
               {icon}
             </div>
             <CardTitle className="text-base">{title}</CardTitle>
-            <CardDescription className="text-sm">{description}</CardDescription>
+            <CardDescription className="text-sm select-text break-all">{description}</CardDescription>
           </CardHeader>
         </Card>
       </a>

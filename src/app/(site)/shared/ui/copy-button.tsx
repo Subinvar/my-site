@@ -53,23 +53,25 @@ export function CopyButton({
     };
   }, []);
 
-  const handleClick = useCallback(async () => {
+  const handleClick = useCallback(() => {
     if (!text) return;
 
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        await fallbackCopy(text);
+    void (async () => {
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          await fallbackCopy(text);
+        }
+        setCopied(true);
+        if (timeoutRef.current) {
+          window.clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = window.setTimeout(() => setCopied(false), timeoutMs);
+      } catch {
+        // no-op (quiet failure)
       }
-      setCopied(true);
-      if (timeoutRef.current) {
-        window.clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = window.setTimeout(() => setCopied(false), timeoutMs);
-    } catch {
-      // no-op (quiet failure)
-    }
+    })();
   }, [text, timeoutMs]);
 
   const successLabel = copiedLabel ?? label;
