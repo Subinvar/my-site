@@ -73,10 +73,12 @@ export function ContactsLocations({
   copy: ContactsLocationsCopy;
 }) {
   const hasDescription = copy.description.trim().length > 0;
-  const actionButtonClasses = cn(
+  const actionButtonBaseClasses = cn(
     headerButtonBase,
-    'w-full justify-center text-muted-foreground hover:bg-transparent hover:text-foreground sm:w-[200px]',
+    'w-full justify-center text-muted-foreground hover:bg-transparent hover:text-foreground',
   );
+  const copyButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[170px]');
+  const mapButtonClasses = cn(actionButtonBaseClasses, 'sm:w-[140px]');
 
   const orderedLocations = useMemo(() => {
     const list = [...locations];
@@ -217,7 +219,7 @@ export function ContactsLocations({
               label={copy.copyAddress}
               copiedLabel={copy.copied}
               variant="ghost"
-              className={actionButtonClasses}
+              className={copyButtonClasses}
             />
 
             {urls.yandex ? (
@@ -226,7 +228,7 @@ export function ContactsLocations({
                 variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={actionButtonClasses}
+                className={mapButtonClasses}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -240,7 +242,7 @@ export function ContactsLocations({
                 variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={actionButtonClasses}
+                className={mapButtonClasses}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
