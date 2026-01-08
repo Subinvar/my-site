@@ -144,6 +144,23 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Canonical URLs: the default locale (ru) should not be present in the path.
+  // Examples:
+  // - /ru/o-kompanii -> /o-kompanii
+  // - /ru -> /
+  if (pathname === `/${defaultLocale}` || pathname.startsWith(`/${defaultLocale}/`)) {
+    const url = request.nextUrl.clone();
+    url.pathname = removeDefaultLocalePrefix(pathname);
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Legacy alias: keep old /about URL in the default locale.
+  if (pathname === '/about') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/o-kompanii';
+    return NextResponse.redirect(url, 301);
+  }
+
   const locale = extractLocale(pathname);
   const isFileRequest = hasFileExtension(pathname);
 
