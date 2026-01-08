@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn';
 import { focusRingBase } from '@/lib/focus-ring';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'link';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'link' | 'cta';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const baseClasses =
@@ -35,6 +35,14 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost:
     'bg-transparent text-[var(--foreground)] hover:bg-[color:var(--muted)] hover:text-[var(--foreground)]',
   link: 'p-0 h-auto text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] underline-offset-4 hover:underline',
+  cta: [
+    'relative border border-transparent bg-transparent text-[var(--header-border)] shadow-none',
+    "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-[var(--header-border)] after:content-['']",
+    'after:transition-colors after:duration-200 after:ease-out',
+    'no-underline hover:no-underline',
+    'hover:text-foreground',
+    'focus-visible:after:border-[var(--header-border)]',
+  ].join(' '),
 };
 
 export type ButtonClassNamesOptions = {

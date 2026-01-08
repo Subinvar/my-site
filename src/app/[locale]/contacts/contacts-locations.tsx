@@ -211,15 +211,17 @@ export function ContactsLocations({
               text={selectedLocation.address}
               label={copy.copyAddress}
               copiedLabel={copy.copied}
-              variant="primary"
+              variant="ghost"
+              className="text-muted-foreground hover:bg-transparent hover:text-foreground"
             />
 
             {urls.yandex ? (
               <Button
                 asChild
-                variant="primary"
+                variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
+                className="text-muted-foreground hover:bg-transparent hover:text-foreground"
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -230,9 +232,10 @@ export function ContactsLocations({
             {urls.google ? (
               <Button
                 asChild
-                variant="primary"
+                variant="ghost"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
+                className="text-muted-foreground hover:bg-transparent hover:text-foreground"
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
