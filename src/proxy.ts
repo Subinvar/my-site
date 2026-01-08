@@ -9,7 +9,6 @@ const self = "'self'";
 const data = 'data:';
 const blob = 'blob:';
 const vercelApps = 'https://*.vercel.app';
-const openStreetMap = 'https://www.openstreetmap.org https://tile.openstreetmap.org';
 const github = 'https://github.com https://api.github.com';
 
 type SecurityOptions = {
@@ -31,10 +30,9 @@ const buildCsp = (options: SecurityOptions = {}): string => {
 
   return [
     `default-src ${self}`,
-    `img-src ${self} ${data} ${blob} ${vercelApps} ${openStreetMap}`,
+    `img-src ${self} ${data} ${blob} ${vercelApps}`,
     `font-src ${self} ${data}`,
     `connect-src ${self} ${vercelApps} ${github} https://vitals.vercel-insights.com`,
-    `frame-src https://www.openstreetmap.org`,
     `style-src ${styleSrc}`,
     `script-src ${scriptSrc}`,
     `base-uri ${self}`,

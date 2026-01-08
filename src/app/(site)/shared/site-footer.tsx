@@ -159,7 +159,7 @@ export function SiteFooter({
               </div>
             </div>
 
-            <p className="m-0 self-end text-right text-[12px] leading-[1.4] sm:text-[13px]">
+            <p className="m-0 w-full text-right text-[12px] leading-[1.4] sm:w-auto sm:self-end sm:text-[13px]">
               {resolvedCopyright}
             </p>
           </div>

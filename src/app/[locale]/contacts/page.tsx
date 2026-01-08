@@ -46,7 +46,6 @@ const COPY = {
       copied: 'Скопировано',
       openGoogle: 'Google Maps',
       openYandex: 'Яндекс Карты',
-      openOsm: 'OpenStreetMap',
       mapFallback: 'Если карта не загрузится, откройте адрес в приложении карт.',
     },
     requisites: {
@@ -92,7 +91,6 @@ const COPY = {
       copied: 'Copied',
       openGoogle: 'Google Maps',
       openYandex: 'Yandex Maps',
-      openOsm: 'OpenStreetMap',
       mapFallback: 'If the map does not load, open the address in a maps app.',
     },
     requisites: {
@@ -138,7 +136,6 @@ const COPY = {
     copied: string;
     openGoogle: string;
     openYandex: string;
-    openOsm: string;
     mapFallback: string;
   };
   requisites: {

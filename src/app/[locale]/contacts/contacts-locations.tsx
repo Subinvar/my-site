@@ -32,7 +32,6 @@ type ContactsLocationsCopy = {
   copied: string;
   openGoogle: string;
   openYandex: string;
-  openOsm: string;
   mapFallback: string;
 };
 
@@ -61,11 +60,6 @@ function buildYandexMapsUrl(lat: number, lon: number, zoom = 16) {
   const ll = `${lon.toFixed(6)},${lat.toFixed(6)}`;
   const pt = `${lon.toFixed(6)},${lat.toFixed(6)}`;
   return `https://yandex.ru/maps/?ll=${encodeURIComponent(ll)}&z=${zoom}&pt=${encodeURIComponent(pt)}`;
-}
-
-function buildOpenStreetMapUrl(lat: number, lon: number, zoom = 16) {
-  const ll = `${lat.toFixed(6)},${lon.toFixed(6)}`;
-  return `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat.toFixed(6))}&mlon=${encodeURIComponent(lon.toFixed(6))}#map=${encodeURIComponent(`${zoom}/${ll}`)}`;
 }
 
 export function ContactsLocations({
@@ -116,8 +110,7 @@ export function ContactsLocations({
     const google = selectedLocation?.googleMapsUrl?.trim() || (lat && lon ? buildGoogleMapsUrl(lat, lon) : null);
     const yandex = selectedLocation?.yandexMapsUrl?.trim() || (lat && lon ? buildYandexMapsUrl(lat, lon) : null);
     const yandexWidget = selectedLocation?.yandexWidgetUrl?.trim() || (lat && lon ? buildYandexWidgetEmbedUrl(lat, lon, locale) : null);
-    const osm = lat && lon ? buildOpenStreetMapUrl(lat, lon) : null;
-    return { google, yandex, yandexWidget, osm };
+    return { google, yandex, yandexWidget };
   }, [coords.lat, coords.lon, selectedLocation, locale]);
 
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -261,20 +254,6 @@ export function ContactsLocations({
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
-                </a>
-              </Button>
-            ) : null}
-
-            {urls.osm ? (
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={mapButtonClasses}
-              >
-                <a href={urls.osm} target="_blank" rel="noreferrer">
-                  {copy.openOsm}
                 </a>
               </Button>
             ) : null}
