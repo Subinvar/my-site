@@ -59,10 +59,17 @@ export function ContactForm({
   const [phone, setPhone] = useState('');
   const [product, setProduct] = useState(initialProduct ?? '');
   const [contactError, setContactError] = useState(false);
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [messageError, setMessageError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
   const fieldClassName =
-    'bg-[var(--card)] shadow-sm shadow-black/5 focus-visible:shadow-[0_10px_24px_-16px_rgba(15,23,42,0.35)]';
+    'bg-[var(--background)] shadow-sm shadow-black/5 ' +
+    'hover:border-[var(--foreground)]/20 hover:bg-[var(--background)] ' +
+    'focus-visible:border-[var(--focus-ring)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]/20 ' +
+    'focus-visible:shadow-[0_12px_24px_-16px_rgba(15,23,42,0.45)]';
 
   const successVisible = status === 'success';
   const errorVisible = status === 'error';
@@ -77,40 +84,45 @@ export function ContactForm({
     return isValid;
   };
 
+  const validateName = () => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setNameError(copy.nameRequired);
+      return false;
+    }
+    if (trimmed.length < 2) {
+      setNameError(copy.nameTooShort);
+      return false;
+    }
+    setNameError(null);
+    return true;
+  };
+
+  const validateMessage = () => {
+    const trimmed = message.trim();
+    if (!trimmed) {
+      setMessageError(copy.messageRequired);
+      return false;
+    }
+    if (trimmed.length < 10) {
+      setMessageError(copy.messageTooShort);
+      return false;
+    }
+    setMessageError(null);
+    return true;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    const isValid = validateContacts();
-    if (!isValid) {
+    const isContactsValid = validateContacts();
+    const isNameValid = validateName();
+    const isMessageValid = validateMessage();
+
+    if (!isContactsValid || !isNameValid || !isMessageValid) {
       event.preventDefault();
       return;
     }
 
     setIsSubmitting(true);
-  };
-
-  const handleNameInvalid = (event: React.InvalidEvent<HTMLInputElement>) => {
-    const input = event.currentTarget;
-    if (input.validity.valueMissing) {
-      input.setCustomValidity(copy.nameRequired);
-      return;
-    }
-    if (input.validity.tooShort) {
-      input.setCustomValidity(copy.nameTooShort);
-      return;
-    }
-    input.setCustomValidity('');
-  };
-
-  const handleMessageInvalid = (event: React.InvalidEvent<HTMLTextAreaElement>) => {
-    const textarea = event.currentTarget;
-    if (textarea.validity.valueMissing) {
-      textarea.setCustomValidity(copy.messageRequired);
-      return;
-    }
-    if (textarea.validity.tooShort) {
-      textarea.setCustomValidity(copy.messageTooShort);
-      return;
-    }
-    textarea.setCustomValidity('');
   };
 
   return (
@@ -127,7 +139,12 @@ export function ContactForm({
         as="section"
         className="flex min-h-0 flex-1 flex-col border-[var(--border)]/70 bg-[var(--card)] shadow-sm"
       >
-        <form action={onSubmitAction} onSubmit={handleSubmit} className="space-y-6">
+        <form
+          action={onSubmitAction}
+          onSubmit={handleSubmit}
+          noValidate
+          className="space-y-6"
+        >
           <input type="hidden" name="locale" value={locale} />
           <input
             type="text"
@@ -144,7 +161,7 @@ export function ContactForm({
             </div>
           ) : null}
 
-          <Field label={copy.name} htmlFor="name" required>
+          <Field label={copy.name} htmlFor="name" required error={nameError ?? undefined}>
             <Input
               id="name"
               name="name"
@@ -153,8 +170,23 @@ export function ContactForm({
               maxLength={100}
               autoComplete="name"
               className={fieldClassName}
-              onInvalid={handleNameInvalid}
-              onInput={(event) => event.currentTarget.setCustomValidity('')}
+              value={name}
+              error={nameError ?? undefined}
+              onChange={(event) => {
+                const next = event.target.value;
+                setName(next);
+                if (nameError) {
+                  const trimmed = next.trim();
+                  if (!trimmed) {
+                    setNameError(copy.nameRequired);
+                  } else if (trimmed.length < 2) {
+                    setNameError(copy.nameTooShort);
+                  } else {
+                    setNameError(null);
+                  }
+                }
+              }}
+              onBlur={validateName}
             />
           </Field>
 
@@ -221,7 +253,7 @@ export function ContactForm({
             />
           </Field>
 
-          <Field label={copy.message} htmlFor="message" required>
+          <Field label={copy.message} htmlFor="message" required error={messageError ?? undefined}>
             <Textarea
               id="message"
               name="message"
@@ -230,8 +262,23 @@ export function ContactForm({
               maxLength={2000}
               rows={6}
               className={fieldClassName}
-              onInvalid={handleMessageInvalid}
-              onInput={(event) => event.currentTarget.setCustomValidity('')}
+              value={message}
+              error={messageError ?? undefined}
+              onChange={(event) => {
+                const next = event.target.value;
+                setMessage(next);
+                if (messageError) {
+                  const trimmed = next.trim();
+                  if (!trimmed) {
+                    setMessageError(copy.messageRequired);
+                  } else if (trimmed.length < 10) {
+                    setMessageError(copy.messageTooShort);
+                  } else {
+                    setMessageError(null);
+                  }
+                }
+              }}
+              onBlur={validateMessage}
             />
           </Field>
 

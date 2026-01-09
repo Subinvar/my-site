@@ -21,7 +21,6 @@ export function Textarea({ className, error, ...props }: TextareaProps) {
       className={cn(
         base,
         'min-h-[120px]',
-        error && 'border-[var(--destructive)]',
         className,
       )}
       aria-invalid={Boolean(error) || undefined}

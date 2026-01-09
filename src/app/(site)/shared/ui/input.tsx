@@ -18,11 +18,7 @@ export function Input({ className, error, ...props }: InputProps) {
   return (
     <input
       {...props}
-      className={cn(
-        base,
-        error && 'border-[var(--destructive)]',
-        className,
-      )}
+      className={cn(base, className)}
       aria-invalid={Boolean(error) || undefined}
     />
   );
