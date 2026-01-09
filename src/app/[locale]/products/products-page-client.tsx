@@ -398,7 +398,7 @@ function InsightTilesCarousel({
                     <p className="m-0 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.6rem]">
                       {tile.title}
                     </p>
-                    <p className="m-0 mt-1 text-sm leading-normal text-[var(--muted-foreground)] line-clamp-4">
+                    <p className="m-0 mt-1 min-h-[5.25rem] text-sm leading-normal text-[var(--muted-foreground)] line-clamp-4">
                       {tile.lead}
                     </p>
                   </div>
