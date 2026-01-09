@@ -98,12 +98,12 @@ function HubCard({ item }: { item: ProductsHubCard }) {
   const href = item.href ?? '#';
 
   return (
-    <AppleHoverLift className="h-full">
-      <Link href={href} className={cn('group block h-full rounded-2xl', focusRingBase)}>
+    <AppleHoverLift className="h-auto">
+      <Link href={href} className={cn('group block rounded-2xl', focusRingBase)}>
         <Card
           as="article"
           className={cn(
-            'relative flex h-full flex-col overflow-hidden p-0',
+            'relative flex flex-col overflow-hidden p-0',
             'border-[var(--header-border)] bg-muted shadow-none',
             'transform-none hover:shadow-none hover:-translate-y-0',
           )}
@@ -146,7 +146,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
             />
           </div>
 
-          <div className="relative z-10 p-4 sm:p-5">
+          <div className="relative z-10 px-4 pb-0 pt-4 sm:px-5 sm:pb-0 sm:pt-5">
             <CardHeader className="gap-1.5 !mb-0">
               <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
                 <span className="break-words">{item.title}</span>
@@ -191,7 +191,7 @@ function ProductsSection({
         ) : null}
       </header>
 
-      <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <HubCard key={item.id} item={item} />
         ))}
