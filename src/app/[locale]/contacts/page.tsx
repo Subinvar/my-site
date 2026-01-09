@@ -243,7 +243,10 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const companyCardFile = shell.site.contacts.companyCardFile ?? '';
   const showRequisites = hasRequisites(shell);
   const requisitesActionClasses =
-    'text-muted-foreground hover:text-foreground after:!border-[var(--header-border)] hover:after:!border-current';
+    '!text-[var(--muted-foreground)] hover:!text-foreground after:!border-[var(--header-border)] hover:after:!border-current';
+  const requisitesSurfaceClasses = 'bg-background/45 hover:bg-background/60';
+  const requisitesStaticClasses = 'transition-none shadow-none active:translate-y-0';
+  const requisitesButtonClasses = `${requisitesActionClasses} ${requisitesSurfaceClasses} ${requisitesStaticClasses}`;
 
   return (
     <SiteShellLayout
@@ -255,7 +258,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
       currentPath={currentPath}
       currentYear={shell.currentYear}
     >
-      <div className="space-y-10">
+      <div className="space-y-10 [--header-border:var(--border)]">
         <section className="rounded-3xl border border-[var(--header-border)] bg-muted p-5 sm:p-6">
           <header className="space-y-3">
             <h1 className="text-3xl font-semibold text-foreground">{copy.title}</h1>
@@ -335,7 +338,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                       variant="cta"
                       size="sm"
                       leftIcon={<Download aria-hidden className="h-4 w-4" />}
-                      className={requisitesActionClasses}
+                      className={requisitesButtonClasses}
                     >
                       <a href={companyCardFile} download>
                         {copy.requisites.download}

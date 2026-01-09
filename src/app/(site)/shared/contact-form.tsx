@@ -67,8 +67,8 @@ export function ContactForm({
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
   const fieldClassName =
     'bg-[var(--background)] ' +
-    'hover:border-[var(--foreground)]/20 hover:bg-[var(--background)] ' +
-    'focus-visible:border-[var(--foreground)]/40 focus-visible:ring-0 focus-visible:ring-offset-0';
+    'hover:border-[var(--foreground)]/40 hover:bg-[var(--background)] ' +
+    'focus-visible:border-[var(--foreground)] focus-visible:ring-0 focus-visible:ring-offset-0';
 
   const successVisible = status === 'success';
   const errorVisible = status === 'error';
@@ -136,7 +136,7 @@ export function ContactForm({
 
       <Card
         as="section"
-        className="flex min-h-0 flex-1 flex-col border-[var(--border)]/70 bg-muted"
+        className="flex min-h-0 flex-1 flex-col border-[var(--header-border)] bg-muted"
       >
         <form
           action={onSubmitAction}
