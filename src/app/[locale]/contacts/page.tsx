@@ -5,7 +5,6 @@ import { Download, FileText, Mail, Phone, Send } from 'lucide-react';
 import { SiteShellLayout } from '@/app/(site)/shared/site-shell-layout';
 import { getSiteShellData } from '@/app/(site)/shared/site-shell-data';
 import { ContactForm } from '@/app/(site)/shared/contact-form';
-import { CopyButton } from '@/app/(site)/shared/ui/copy-button';
 import { Button } from '@/app/(site)/shared/ui/button';
 import { isLocale, locales, type Locale } from '@/lib/i18n';
 import { findTargetLocale, buildPath } from '@/lib/paths';
@@ -181,74 +180,6 @@ function normalizeTel(phone: string) {
   return phone.replace(/[^\d+]/g, '');
 }
 
-function buildRequisitesClipboardText(locale: Locale, requisites: NonNullable<ReturnType<typeof getRequisites>>) {
-  const labels =
-    locale === 'ru'
-      ? {
-          fullName: 'Полное наименование',
-          shortName: 'Сокращённое наименование',
-          legalAddress: 'Юридический адрес',
-          mailingAddress: 'Адрес для корреспонденции',
-          inn: 'ИНН',
-          kpp: 'КПП',
-          ogrn: 'ОГРН',
-          okpo: 'ОКПО',
-          okato: 'ОКАТО',
-          bankAccount: 'Р/с',
-          bankName: 'Банк',
-          correspondentAccount: 'К/с',
-          bik: 'БИК',
-          bankInn: 'ИНН банка',
-          bankAddress: 'Адрес банка',
-          director: 'Генеральный директор',
-          authorityBasis: 'Основание',
-        }
-      : {
-          fullName: 'Legal name',
-          shortName: 'Short name',
-          legalAddress: 'Registered address',
-          mailingAddress: 'Mailing address',
-          inn: 'INN',
-          kpp: 'KPP',
-          ogrn: 'OGRN',
-          okpo: 'OKPO',
-          okato: 'OKATO',
-          bankAccount: 'Account',
-          bankName: 'Bank',
-          correspondentAccount: 'Correspondent account',
-          bik: 'BIC',
-          bankInn: 'Bank INN',
-          bankAddress: 'Bank address',
-          director: 'Director',
-          authorityBasis: 'Authority basis',
-        };
-
-  const rows: Array<[string, string | null | undefined]> = [
-    [labels.fullName, requisites.fullName],
-    [labels.shortName, requisites.shortName],
-    [labels.inn, requisites.inn],
-    [labels.kpp, requisites.kpp],
-    [labels.ogrn, requisites.ogrn],
-    [labels.okpo, requisites.okpo],
-    [labels.okato, requisites.okato],
-    [labels.legalAddress, requisites.legalAddress],
-    [labels.mailingAddress, requisites.mailingAddress],
-    [labels.bankAccount, requisites.bankAccount],
-    [labels.bankName, requisites.bankName],
-    [labels.correspondentAccount, requisites.correspondentAccount],
-    [labels.bik, requisites.bik],
-    [labels.bankInn, requisites.bankInn],
-    [labels.bankAddress, requisites.bankAddress],
-    [labels.director, requisites.director],
-    [labels.authorityBasis, requisites.authorityBasis],
-  ];
-
-  return rows
-    .filter(([, value]) => Boolean(value))
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
-}
-
 function getRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
   return shell.site.contacts.requisites;
 }
@@ -299,6 +230,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const requisites = shell.site.contacts.requisites;
   const companyCardFile = shell.site.contacts.companyCardFile ?? '';
   const showRequisites = hasRequisites(shell);
+  const requisitesActionClasses = 'text-muted-foreground hover:text-foreground';
 
   return (
     <SiteShellLayout
@@ -384,22 +316,13 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
           >
               {showRequisites || companyCardFile ? (
                 <div className="flex flex-wrap gap-2">
-                  {showRequisites && requisites ? (
-                    <CopyButton
-                      text={buildRequisitesClipboardText(locale, requisites)}
-                      label={copy.requisites.copy}
-                      copiedLabel={copy.requisites.copied}
-                      variant="secondary"
-                      size="sm"
-                    />
-                  ) : null}
-
                   {companyCardFile ? (
                     <Button
                       asChild
-                      variant="primary"
+                      variant="cta"
                       size="sm"
                       leftIcon={<Download aria-hidden className="h-4 w-4" />}
+                      className={requisitesActionClasses}
                     >
                       <a href={companyCardFile} download>
                         {copy.requisites.download}

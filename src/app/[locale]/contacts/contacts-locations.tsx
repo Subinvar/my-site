@@ -74,6 +74,7 @@ export function ContactsLocations({
   const hasDescription = copy.description.trim().length > 0;
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
+  const ctaActionClasses = 'text-muted-foreground hover:text-foreground';
 
   const orderedLocations = useMemo(() => {
     const list = [...locations];
@@ -140,24 +141,26 @@ export function ContactsLocations({
                 key={location.id}
                 type="button"
                 onClick={() => setSelectedId(location.id)}
-                  className={buttonClassNames({
-                    variant: active ? 'primary' : 'secondary',
-                    size: 'md',
-                    fullWidth: true,
-                    className: cn(
-                      // Allow multi-line content (override fixed height / centered layout).
-                      'h-auto flex-col items-start justify-start px-3 py-2 text-left',
-                    ),
-                  })}
+                className={buttonClassNames({
+                  variant: 'cta',
+                  size: 'md',
+                  fullWidth: true,
+                  className: cn(
+                    // Allow multi-line content (override fixed height / centered layout).
+                    'h-auto flex-col items-start justify-start px-3 py-2 text-left',
+                    ctaActionClasses,
+                    active && 'text-foreground after:border-[var(--color-brand-600)]',
+                  ),
+                })}
                 aria-pressed={active}
               >
-                <div className={cn('font-semibold', active ? 'text-white' : 'text-foreground')}>
+                <div className={cn('font-semibold', active ? 'text-foreground' : 'text-foreground')}>
                   {location.title || location.id}
                 </div>
                 <div
                   className={cn(
                     'mt-1 line-clamp-1 text-xs',
-                    active ? 'text-white/85' : 'text-[var(--muted-foreground)]',
+                    active ? 'text-muted-foreground' : 'text-[var(--muted-foreground)]',
                   )}
                 >
                   {location.address}
@@ -226,17 +229,18 @@ export function ContactsLocations({
               text={selectedLocation.address}
               label={copy.copyAddress}
               copiedLabel={copy.copied}
-              variant="ghost"
-              className={copyButtonClasses}
+              variant="cta"
+              size="sm"
+              className={cn(copyButtonClasses, ctaActionClasses)}
             />
 
             {urls.yandex ? (
               <Button
                 asChild
-                variant="ghost"
+                variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={mapButtonClasses}
+                className={cn(mapButtonClasses, ctaActionClasses)}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -247,10 +251,10 @@ export function ContactsLocations({
             {urls.google ? (
               <Button
                 asChild
-                variant="ghost"
+                variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={mapButtonClasses}
+                className={cn(mapButtonClasses, ctaActionClasses)}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
