@@ -82,7 +82,7 @@ export function QuickActionCard({
             'transition-colors duration-200 ease-out hover:bg-background/60',
           )}
         >
-          <CardHeader className="gap-2">
+          <CardHeader className="gap-1.5 !mb-0">
             <div
               className={cn(
                 'inline-flex h-9 w-9 items-center justify-center rounded-xl',

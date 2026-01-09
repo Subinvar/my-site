@@ -147,7 +147,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
           </div>
 
           <div className="relative z-10 p-4 sm:p-5">
-            <CardHeader className="mb-0 gap-1.5">
+            <CardHeader className="gap-1.5 !mb-0">
               <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
                 <span className="break-words">{item.title}</span>
               </CardTitle>
@@ -376,7 +376,7 @@ function InsightTilesCarousel({
                   aria-label={isRu ? `Открыть: ${tile.title}` : `Open: ${tile.title}`}
                   aria-haspopup="dialog"
                   className={cn(
-                    'group relative w-full h-[240px] sm:h-[248px] cursor-pointer rounded-2xl border border-[var(--header-border)]',
+                    'group relative w-full cursor-pointer rounded-2xl border border-[var(--header-border)]',
                     'bg-background/45 p-4 text-left flex flex-col',
                     'transition-colors duration-200 ease-out hover:bg-background/60',
                     focusRingBase,

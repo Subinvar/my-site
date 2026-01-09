@@ -158,7 +158,7 @@ export function ContactsLocations({
                   fullWidth: true,
                   className: cn(
                     // Allow multi-line content (override fixed height / centered layout).
-                    'h-auto cursor-pointer flex-col items-start justify-start px-3 py-2 text-left',
+                    'h-auto min-h-[72px] cursor-pointer flex-col items-start justify-start px-3 py-2 text-left',
                     'active:!translate-y-0',
                     ctaActionClasses,
                     ctaSurfaceClasses,
@@ -173,7 +173,7 @@ export function ContactsLocations({
                 </div>
                 <div
                   className={cn(
-                    'mt-1 line-clamp-1 text-sm',
+                    'mt-1 whitespace-normal break-words text-sm',
                     active ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >

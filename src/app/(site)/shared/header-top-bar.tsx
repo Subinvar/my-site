@@ -115,7 +115,7 @@ function HeaderTopFlexSlot({ id, basisPx, className, children }: HeaderTopFlexSl
 
 function HeaderTopPillLink({ href, label, pillBase, className }: HeaderTopPillLinkProps) {
   return (
-    <a href={href} className={cn(pillBase, className)} title={label}>
+    <a href={href} className={cn(pillBase, className)}>
       {label}
     </a>
   );
