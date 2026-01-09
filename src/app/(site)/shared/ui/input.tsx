@@ -7,11 +7,11 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const base =
-  'block w-full rounded-lg border bg-[var(--input)] px-3 py-2 text-sm ' +
+  'block w-full rounded-lg border border-[var(--header-border)] bg-[var(--background)] px-3 py-2 text-sm ' +
   'transition-colors transition-shadow transition-transform duration-150 ' +
   'placeholder:text-[var(--muted-foreground)] ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] ' +
-  'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ' +
+  'focus-visible:outline-none focus-visible:border-[var(--foreground)] ' +
+  'focus-visible:ring-0 focus-visible:ring-offset-0 ' +
   'disabled:cursor-not-allowed disabled:opacity-60';
 
 export function Input({ className, error, ...props }: InputProps) {
@@ -20,7 +20,7 @@ export function Input({ className, error, ...props }: InputProps) {
       {...props}
       className={cn(
         base,
-        error && 'border-[var(--destructive)] shadow-[0_0_0_1px_var(--destructive)]',
+        error && 'border-[var(--destructive)]',
         className,
       )}
       aria-invalid={Boolean(error) || undefined}

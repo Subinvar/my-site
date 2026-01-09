@@ -37,7 +37,7 @@ const COPY = {
       requisites: 'Реквизиты',
     },
     locations: {
-      title: 'Наши адреса',
+      title: '',
       description: '',
       addressLabel: 'Адрес',
       hoursLabel: 'Режим работы',
@@ -57,16 +57,20 @@ const COPY = {
     },
     dryRunSuccess: 'Сообщение принято. Тестовый режим: письмо не отправлялось.',
     name: 'Имя',
+    nameRequired: 'Введите имя.',
+    nameTooShort: 'Введите минимум 2 символа.',
     email: 'Email',
     phone: 'Телефон',
     phoneHint: 'Можно оставить телефон или email — достаточно одного контакта.',
     contactRequired: 'Укажите хотя бы email или телефон.',
-    productLabel: 'Продукт',
-    productHint: 'Если нужно, уточните название продукта или оставьте поле пустым.',
-    productPlaceholder: 'Например: ФС-03',
+    productLabel: 'Тема сообщения',
+    productHint: '',
+    productPlaceholder: 'Например: ФК-30',
     message: 'Сообщение',
-    agree: 'Я согласен на обработку персональных данных',
-    privacyPolicy: 'Политика ПДн',
+    messageRequired: 'Введите сообщение.',
+    messageTooShort: 'Сообщение должно содержать минимум 10 символов.',
+    agree: 'Я согласен на',
+    privacyPolicy: 'обработку персональных данных',
     submit: 'Отправить',
     submitting: 'Отправка…',
     success: 'Спасибо! Ваше сообщение отправлено.',
@@ -82,7 +86,7 @@ const COPY = {
       requisites: 'Company details',
     },
     locations: {
-      title: 'Locations & map',
+      title: '',
       description: '',
       addressLabel: 'Address',
       hoursLabel: 'Working hours',
@@ -102,16 +106,20 @@ const COPY = {
     },
     dryRunSuccess: 'Submission received. Test mode: no email was sent.',
     name: 'Name',
+    nameRequired: 'Please enter your name.',
+    nameTooShort: 'Please enter at least 2 characters.',
     email: 'Email',
     phone: 'Phone',
     phoneHint: 'You can leave either a phone number or an email — one contact is enough.',
     contactRequired: 'Please provide at least an email or a phone number.',
-    productLabel: 'Product',
-    productHint: 'You can adjust the product name or leave this field empty.',
-    productPlaceholder: 'e.g. FS-03',
+    productLabel: 'Message subject',
+    productHint: '',
+    productPlaceholder: 'e.g. FK-30',
     message: 'Message',
-    agree: 'I agree to the processing of personal data',
-    privacyPolicy: 'Privacy Policy',
+    messageRequired: 'Please enter a message.',
+    messageTooShort: 'Please enter at least 10 characters.',
+    agree: 'I agree to the',
+    privacyPolicy: 'processing of personal data',
     submit: 'Send',
     submitting: 'Sending…',
     success: 'Thank you! Your message has been sent.',
@@ -147,6 +155,8 @@ const COPY = {
   };
   dryRunSuccess: string;
   name: string;
+  nameRequired: string;
+  nameTooShort: string;
   email: string;
   phone: string;
   phoneHint: string;
@@ -155,6 +165,8 @@ const COPY = {
   productHint: string;
   productPlaceholder: string;
   message: string;
+  messageRequired: string;
+  messageTooShort: string;
   agree: string;
   privacyPolicy: string;
   submit: string;

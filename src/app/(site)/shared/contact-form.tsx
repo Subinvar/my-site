@@ -16,6 +16,8 @@ type Copy = {
   description: string;
   dryRunSuccess: string;
   name: string;
+  nameRequired: string;
+  nameTooShort: string;
   email: string;
   phone: string;
   phoneHint: string;
@@ -24,6 +26,8 @@ type Copy = {
   productHint: string;
   productPlaceholder: string;
   message: string;
+  messageRequired: string;
+  messageTooShort: string;
   agree: string;
   privacyPolicy: string;
   submit: string;
@@ -57,6 +61,8 @@ export function ContactForm({
   const [contactError, setContactError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
+  const fieldClassName =
+    'bg-[var(--card)] shadow-sm shadow-black/5 focus-visible:shadow-[0_10px_24px_-16px_rgba(15,23,42,0.35)]';
 
   const successVisible = status === 'success';
   const errorVisible = status === 'error';
@@ -81,6 +87,32 @@ export function ContactForm({
     setIsSubmitting(true);
   };
 
+  const handleNameInvalid = (event: React.InvalidEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    if (input.validity.valueMissing) {
+      input.setCustomValidity(copy.nameRequired);
+      return;
+    }
+    if (input.validity.tooShort) {
+      input.setCustomValidity(copy.nameTooShort);
+      return;
+    }
+    input.setCustomValidity('');
+  };
+
+  const handleMessageInvalid = (event: React.InvalidEvent<HTMLTextAreaElement>) => {
+    const textarea = event.currentTarget;
+    if (textarea.validity.valueMissing) {
+      textarea.setCustomValidity(copy.messageRequired);
+      return;
+    }
+    if (textarea.validity.tooShort) {
+      textarea.setCustomValidity(copy.messageTooShort);
+      return;
+    }
+    textarea.setCustomValidity('');
+  };
+
   return (
     <div className="flex h-full flex-col space-y-6">
       {successVisible ? (
@@ -91,7 +123,10 @@ export function ContactForm({
 
       {errorVisible ? <Alert variant="destructive">{copy.error}</Alert> : null}
 
-      <Card as="section" className="flex min-h-0 flex-1 flex-col bg-muted">
+      <Card
+        as="section"
+        className="flex min-h-0 flex-1 flex-col border-[var(--border)]/70 bg-[var(--card)] shadow-sm"
+      >
         <form action={onSubmitAction} onSubmit={handleSubmit} className="space-y-6">
           <input type="hidden" name="locale" value={locale} />
           <input
@@ -117,6 +152,9 @@ export function ContactForm({
               minLength={2}
               maxLength={100}
               autoComplete="name"
+              className={fieldClassName}
+              onInvalid={handleNameInvalid}
+              onInput={(event) => event.currentTarget.setCustomValidity('')}
             />
           </Field>
 
@@ -128,6 +166,7 @@ export function ContactForm({
                   name="email"
                   type="email"
                   autoComplete="email"
+                  className={fieldClassName}
                   value={email}
                   onChange={(event) => {
                     const next = event.target.value;
@@ -148,6 +187,7 @@ export function ContactForm({
                   inputMode="tel"
                   autoComplete="tel"
                   pattern="[0-9+()\\s-]{7,}"
+                  className={fieldClassName}
                   value={phone}
                   onChange={(event) => {
                     const next = event.target.value;
@@ -177,6 +217,7 @@ export function ContactForm({
               onChange={(event) => setProduct(event.target.value)}
               placeholder={copy.productPlaceholder}
               autoComplete="off"
+              className={fieldClassName}
             />
           </Field>
 
@@ -188,6 +229,9 @@ export function ContactForm({
               minLength={10}
               maxLength={2000}
               rows={6}
+              className={fieldClassName}
+              onInvalid={handleMessageInvalid}
+              onInput={(event) => event.currentTarget.setCustomValidity('')}
             />
           </Field>
 
