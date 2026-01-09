@@ -12,8 +12,8 @@ export function Checkbox({ label, className, ...rest }: CheckboxProps) {
       <input
         type="checkbox"
         className={cn(
-          'h-4 w-4 rounded border border-[var(--border)] bg-[var(--background)]',
-          'accent-[var(--foreground)]',
+          'h-4 w-4 rounded border border-[var(--border)] bg-white',
+          'text-[var(--color-brand-600)] accent-[var(--color-brand-600)]',
           className,
         )}
         {...rest}
