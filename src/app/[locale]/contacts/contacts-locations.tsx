@@ -76,6 +76,7 @@ export function ContactsLocations({
   const mapButtonClasses = 'w-full sm:w-[140px]';
   const ctaActionClasses = 'text-[var(--header-border)] hover:text-foreground';
   const ctaSurfaceClasses = 'bg-background/45 hover:bg-background/60';
+  const staticButtonClasses = 'transition-none shadow-none active:translate-y-0';
   const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
 
   const orderedLocations = useMemo(() => {
@@ -156,8 +157,10 @@ export function ContactsLocations({
                   className: cn(
                     // Allow multi-line content (override fixed height / centered layout).
                     'h-auto cursor-pointer flex-col items-start justify-start px-3 py-2 text-left',
+                    'active:!translate-y-0',
                     ctaActionClasses,
                     ctaSurfaceClasses,
+                    staticButtonClasses,
                     active && 'text-foreground after:border-[var(--color-brand-600)]',
                   ),
                 })}
@@ -240,7 +243,7 @@ export function ContactsLocations({
               copiedLabel={copy.copied}
               variant="cta"
               size="sm"
-              className={cn(copyButtonClasses, 'cursor-pointer', ctaActionClasses, ctaSurfaceClasses)}
+              className={cn(copyButtonClasses, 'cursor-pointer', ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
             />
 
             {urls.yandex ? (
@@ -249,7 +252,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
+                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -263,7 +266,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
+                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
