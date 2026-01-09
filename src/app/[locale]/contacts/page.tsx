@@ -230,7 +230,8 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const requisites = shell.site.contacts.requisites;
   const companyCardFile = shell.site.contacts.companyCardFile ?? '';
   const showRequisites = hasRequisites(shell);
-  const requisitesActionClasses = 'text-muted-foreground hover:text-foreground';
+  const requisitesActionClasses =
+    'text-muted-foreground hover:text-foreground after:!border-[var(--header-border)] hover:after:!border-current';
 
   return (
     <SiteShellLayout

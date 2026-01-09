@@ -75,6 +75,8 @@ export function ContactsLocations({
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
   const ctaActionClasses = 'text-[var(--header-border)] hover:text-foreground';
+  const ctaMutedTextClasses =
+    'text-muted-foreground hover:text-foreground after:!border-[var(--header-border)] hover:after:!border-current';
   const ctaSurfaceClasses = 'bg-background/45 hover:bg-background/60';
   const staticButtonClasses = 'transition-none shadow-none active:translate-y-0';
   const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
@@ -243,7 +245,13 @@ export function ContactsLocations({
               copiedLabel={copy.copied}
               variant="cta"
               size="sm"
-              className={cn(copyButtonClasses, 'cursor-pointer', ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
+              className={cn(
+                copyButtonClasses,
+                'cursor-pointer',
+                ctaMutedTextClasses,
+                ctaSurfaceClasses,
+                staticButtonClasses,
+              )}
             />
 
             {urls.yandex ? (
@@ -252,7 +260,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
+                className={cn(mapButtonClasses, ctaMutedTextClasses, ctaSurfaceClasses, staticButtonClasses)}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -266,7 +274,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses, staticButtonClasses)}
+                className={cn(mapButtonClasses, ctaMutedTextClasses, ctaSurfaceClasses, staticButtonClasses)}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
