@@ -207,7 +207,7 @@ export function ContactForm({
             }
           />
 
-          <Button type="submit" disabled={isSubmitting} fullWidth>
+          <Button type="submit" disabled={isSubmitting} fullWidth className="cursor-pointer">
             {isSubmitting ? copy.submitting : copy.submit}
           </Button>
         </form>

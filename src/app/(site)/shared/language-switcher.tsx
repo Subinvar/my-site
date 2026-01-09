@@ -47,8 +47,8 @@ export function LanguageSwitcher({
     "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
     'after:transition-colors after:duration-150 after:ease-out',
     'text-[length:var(--header-ui-fs)] leading-[var(--header-ui-leading)] font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline select-none',
-    'hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
-    'focus-visible:after:border-[var(--header-border)]',
+    'hover:after:border-current hover:bg-transparent hover:text-foreground',
+    'focus-visible:after:border-current',
     focusRingBase,
   );
 

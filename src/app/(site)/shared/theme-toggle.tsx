@@ -117,8 +117,8 @@ export function ThemeToggle({
     "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-transparent after:content-['']",
     'text-muted-foreground transition-colors duration-150',
     'after:transition-colors after:duration-150 after:ease-out',
-    'hover:after:border-[var(--header-border)] hover:bg-transparent hover:text-foreground',
-    'focus-visible:after:border-[var(--header-border)]',
+    'hover:after:border-current hover:bg-transparent hover:text-foreground',
+    'focus-visible:after:border-current',
     focusRingBase,
     isMounted
       ? 'cursor-pointer'

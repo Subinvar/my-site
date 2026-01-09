@@ -111,7 +111,7 @@ function HubCard({ item }: { item: ProductsHubCard }) {
           <span
             className={cn(
               'pointer-events-none absolute inset-0 z-0',
-              'bg-background/45 backdrop-blur-sm',
+              'bg-background/45',
               'transition-colors duration-200 ease-out',
               'group-hover:bg-background/60',
             )}
@@ -996,13 +996,13 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                         'bg-muted',
                         isActive
                           ? cn(
-                              'border border-[color:color-mix(in_srgb,var(--color-brand-600)_35%,var(--header-border))]',
+                              'border border-[color:var(--color-brand-600)]',
                               'bg-[color:color-mix(in_srgb,var(--color-brand-600)_18%,var(--background))]',
                               'text-foreground',
                             )
                           : cn(
                               'border border-[var(--header-border)] text-[var(--muted-foreground)]',
-                              'hover:border-[color:color-mix(in_srgb,var(--color-brand-600)_22%,var(--header-border))]',
+                              'hover:border-[color:var(--color-brand-300)]',
                               'hover:text-foreground',
                             ),
                         focusRingBase,

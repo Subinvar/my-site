@@ -137,10 +137,10 @@ export const HeaderNav = memo(function HeaderNav({
                 "text-muted-foreground transition-colors duration-150",
                 "after:transition-colors after:duration-150 after:ease-out",
                 isMenuOpen
-                  ? "bg-background/70 text-foreground after:border-[var(--header-border)]"
+                  ? "bg-background/70 text-foreground after:border-current"
                   : "bg-transparent",
-                "hover:bg-transparent hover:text-foreground hover:after:border-[var(--header-border)]",
-                "focus-visible:after:border-[var(--header-border)]",
+                "hover:bg-transparent hover:text-foreground hover:after:border-current",
+                "focus-visible:after:border-current",
                 focusRingBase,
               )}
             >

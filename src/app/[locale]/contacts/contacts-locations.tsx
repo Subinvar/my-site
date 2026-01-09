@@ -75,7 +75,7 @@ export function ContactsLocations({
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
   const ctaActionClasses = 'text-muted-foreground hover:text-foreground';
-  const ctaSurfaceClasses = 'bg-background/60 backdrop-blur-sm';
+  const ctaSurfaceClasses = 'bg-background/45 hover:bg-background/60';
   const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
 
   const orderedLocations = useMemo(() => {
@@ -155,7 +155,7 @@ export function ContactsLocations({
                   fullWidth: true,
                   className: cn(
                     // Allow multi-line content (override fixed height / centered layout).
-                    'h-auto flex-col items-start justify-start px-3 py-2 text-left',
+                    'h-auto cursor-pointer flex-col items-start justify-start px-3 py-2 text-left',
                     ctaActionClasses,
                     ctaSurfaceClasses,
                     active && 'text-foreground after:border-[var(--color-brand-600)]',
@@ -163,13 +163,13 @@ export function ContactsLocations({
                 })}
                 aria-pressed={active}
               >
-                <div className={cn('font-semibold', active ? 'text-foreground' : 'text-foreground')}>
+                <div className={cn('font-semibold', active ? 'text-foreground' : 'text-muted-foreground')}>
                   {location.title || location.id}
                 </div>
                 <div
                   className={cn(
-                    'mt-1 line-clamp-1 text-xs',
-                    active ? 'text-muted-foreground' : 'text-[var(--muted-foreground)]',
+                    'mt-1 line-clamp-1 text-sm',
+                    active ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >
                   {location.address}
@@ -218,7 +218,7 @@ export function ContactsLocations({
               <MapPin aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" strokeWidth={1.75} />
               <div className="space-y-1">
                 <div className="text-sm font-semibold text-foreground">{copy.addressLabel}</div>
-                <div className="whitespace-pre-line text-sm text-foreground">{selectedLocation.address}</div>
+                <div className="whitespace-pre-line text-base text-foreground">{selectedLocation.address}</div>
               </div>
             </div>
 
@@ -240,7 +240,7 @@ export function ContactsLocations({
               copiedLabel={copy.copied}
               variant="cta"
               size="sm"
-              className={cn(copyButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
+              className={cn(copyButtonClasses, 'cursor-pointer', ctaActionClasses, ctaSurfaceClasses)}
             />
 
             {urls.yandex ? (
