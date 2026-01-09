@@ -142,7 +142,7 @@ export function ContactForm({
           action={onSubmitAction}
           onSubmit={handleSubmit}
           noValidate
-          className="space-y-6"
+          className="space-y-3"
         >
           <input type="hidden" name="locale" value={locale} />
           <input
@@ -195,7 +195,7 @@ export function ContactForm({
             />
           </Field>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={copy.email} htmlFor="email">
                 <Input
