@@ -289,7 +289,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
         </section>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          <div className="space-y-6">
+          <div className="flex h-full flex-col">
             <ContactForm
               copy={copy}
               locale={locale}
@@ -301,7 +301,7 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="flex h-full flex-col">
             {locations.length ? (
               <ContactsLocations locale={locale} locations={locations} copy={copy.locations} />
             ) : null}

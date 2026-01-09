@@ -75,6 +75,7 @@ export function ContactsLocations({
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
   const ctaActionClasses = 'text-muted-foreground hover:text-foreground';
+  const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
 
   const orderedLocations = useMemo(() => {
     const list = [...locations];
@@ -126,11 +127,17 @@ export function ContactsLocations({
   }
 
   return (
-    <Card as="section" aria-label={copy.title} className="space-y-4">
-      <header className="space-y-1">
-        <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2>
-        {hasDescription ? <p className="text-sm text-muted-foreground">{copy.description}</p> : null}
-      </header>
+    <Card
+      as="section"
+      aria-label={copy.title || copy.addressLabel}
+      className="flex min-h-0 flex-1 flex-col space-y-4"
+    >
+      {hasHeader ? (
+        <header className="space-y-1">
+          {copy.title ? <h2 className="text-lg font-semibold text-foreground">{copy.title}</h2> : null}
+          {hasDescription ? <p className="text-sm text-muted-foreground">{copy.description}</p> : null}
+        </header>
+      ) : null}
 
       {locations.length > 1 ? (
         <div className="grid gap-2 sm:grid-cols-2">
