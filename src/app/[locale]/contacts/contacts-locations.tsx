@@ -173,7 +173,7 @@ export function ContactsLocations({
                 </div>
                 <div
                   className={cn(
-                    'mt-1 whitespace-normal break-words text-sm',
+                    'mt-1 min-h-[2.6rem] whitespace-normal break-words text-sm line-clamp-2',
                     active ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >

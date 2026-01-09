@@ -91,8 +91,10 @@ export function QuickActionCard({
             >
               {icon}
             </div>
-            <CardTitle className="text-sm font-semibold leading-snug">{title}</CardTitle>
-            <CardDescription className="break-words select-text text-[var(--muted-foreground)] leading-normal">
+            <CardTitle className="min-h-[3.1rem] text-sm font-semibold leading-snug">
+              {title}
+            </CardTitle>
+            <CardDescription className="min-h-[2.75rem] break-words select-text text-[var(--muted-foreground)] leading-normal">
               {description}
             </CardDescription>
           </CardHeader>

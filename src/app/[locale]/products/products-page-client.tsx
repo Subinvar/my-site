@@ -151,7 +151,9 @@ function HubCard({ item }: { item: ProductsHubCard }) {
               <CardTitle className="m-0 text-base font-semibold leading-snug sm:text-lg">
                 <span className="break-words">{item.title}</span>
               </CardTitle>
-              <CardDescription className="break-words">{item.description}</CardDescription>
+              <CardDescription className="min-h-[5.75rem] break-words line-clamp-4">
+                {item.description}
+              </CardDescription>
             </CardHeader>
           </div>
         </Card>
