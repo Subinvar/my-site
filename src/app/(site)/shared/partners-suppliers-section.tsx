@@ -106,7 +106,7 @@ export function PartnersSuppliersSection({ locale }: { locale: Locale }): JSX.El
                   href={supplier.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs font-medium text-primary hover:underline"
+                  className="text-xs font-medium text-primary"
                 >
                   {locale === 'ru' ? 'Сайт партнёра' : 'Partner website'}
                 </Link>

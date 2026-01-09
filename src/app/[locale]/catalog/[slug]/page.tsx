@@ -144,7 +144,7 @@ export default async function CatalogProductPage({ params }: CatalogProductPageP
                   <li key={doc.slug}>
                     <a
                       href={doc.file}
-                      className="inline-flex items-center gap-2 text-[15px] font-medium text-[var(--color-brand-700)] hover:underline"
+                      className="inline-flex items-center gap-2 text-[15px] font-medium text-[var(--color-brand-700)]"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

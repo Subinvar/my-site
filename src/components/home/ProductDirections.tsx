@@ -148,7 +148,7 @@ export function ProductDirections({ locale, items }: ProductDirectionsProps) {
                   </CardDescription>
                   <Link
                     href={href}
-                    className="text-sm font-semibold text-[var(--primary)] underline-offset-4 hover:underline"
+                    className="text-sm font-semibold text-[var(--primary)]"
                   >
                     {locale === 'ru' ? 'Смотреть продукты' : 'View products'}
                   </Link>

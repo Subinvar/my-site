@@ -41,7 +41,7 @@ export function NewsPreviewContent({
           </div>
           <Link
             href={viewAllHref}
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline motion-fade-in-up"
+            className="text-sm font-medium text-primary motion-fade-in-up"
             data-in-view={inView ? 'true' : 'false'}
           >
             {viewAllLabel}
@@ -80,7 +80,7 @@ export function NewsPreviewContent({
 
                   <Link
                     href={post.href}
-                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    className="text-sm font-medium text-primary"
                   >
                     {viewPostLabel}
                   </Link>

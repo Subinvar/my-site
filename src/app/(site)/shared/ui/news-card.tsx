@@ -56,7 +56,7 @@ export function NewsCard({
       <CardFooter className="mt-auto justify-start">
         <Link
           href={href}
-          className="inline-flex items-center text-sm font-semibold text-[var(--color-brand-600)] underline-offset-4 transition-colors duration-150 hover:text-[var(--color-brand-700)] hover:underline"
+          className="inline-flex items-center text-sm font-semibold text-[var(--color-brand-600)] transition-colors duration-150 hover:text-[var(--color-brand-700)]"
         >
           {readMoreLabel}
           <span

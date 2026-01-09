@@ -68,7 +68,7 @@ export function ContactForm({
   const fieldClassName =
     'bg-[var(--background)] ' +
     'hover:border-[var(--foreground)]/20 hover:bg-[var(--background)] ' +
-    'focus-visible:border-[var(--focus-ring)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]/20';
+    'focus-visible:border-[var(--foreground)]/40 focus-visible:ring-0 focus-visible:ring-offset-0';
 
   const successVisible = status === 'success';
   const errorVisible = status === 'error';
@@ -289,7 +289,7 @@ export function ContactForm({
                 {copy.agree}{' '}
                 <a
                   href={privacyPolicyHref}
-                  className="underline underline-offset-4 hover:no-underline"
+                  className="no-underline hover:no-underline"
                 >
                   {copy.privacyPolicy}
                 </a>

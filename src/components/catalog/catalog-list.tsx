@@ -109,9 +109,7 @@ export function CatalogList({
                   {headerChips}
                   <div className="space-y-1">
                     <h3 className="text-base font-semibold leading-snug">
-                      <Link href={href} className="hover:underline">
-                        {item.title}
-                      </Link>
+                      <Link href={href}>{item.title}</Link>
                     </h3>
                     {summary ? (
                       <p className="text-sm text-muted-foreground line-clamp-2">{summary}</p>
@@ -140,9 +138,7 @@ export function CatalogList({
 
               <div className="space-y-1">
                 <CardTitle className="text-base leading-snug">
-                  <Link href={href} className="hover:underline">
-                    {item.title}
-                  </Link>
+                  <Link href={href}>{item.title}</Link>
                 </CardTitle>
                 {summary ? (
                   <CardDescription className="line-clamp-2">{summary}</CardDescription>
