@@ -91,7 +91,7 @@ export function ContactForm({
 
       {errorVisible ? <Alert variant="destructive">{copy.error}</Alert> : null}
 
-      <Card as="section" className="flex min-h-0 flex-1 flex-col">
+      <Card as="section" className="flex min-h-0 flex-1 flex-col bg-muted">
         <form action={onSubmitAction} onSubmit={handleSubmit} className="space-y-6">
           <input type="hidden" name="locale" value={locale} />
           <input

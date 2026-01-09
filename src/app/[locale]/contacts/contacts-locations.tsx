@@ -75,6 +75,7 @@ export function ContactsLocations({
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
   const ctaActionClasses = 'text-muted-foreground hover:text-foreground';
+  const ctaSurfaceClasses = 'bg-background/60 backdrop-blur-sm';
   const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
 
   const orderedLocations = useMemo(() => {
@@ -130,7 +131,7 @@ export function ContactsLocations({
     <Card
       as="section"
       aria-label={copy.title || copy.addressLabel}
-      className="flex min-h-0 flex-1 flex-col space-y-4"
+      className="flex min-h-0 flex-1 flex-col space-y-4 bg-muted"
     >
       {hasHeader ? (
         <header className="space-y-1">
@@ -156,6 +157,7 @@ export function ContactsLocations({
                     // Allow multi-line content (override fixed height / centered layout).
                     'h-auto flex-col items-start justify-start px-3 py-2 text-left',
                     ctaActionClasses,
+                    ctaSurfaceClasses,
                     active && 'text-foreground after:border-[var(--color-brand-600)]',
                   ),
                 })}
@@ -238,7 +240,7 @@ export function ContactsLocations({
               copiedLabel={copy.copied}
               variant="cta"
               size="sm"
-              className={cn(copyButtonClasses, ctaActionClasses)}
+              className={cn(copyButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
             />
 
             {urls.yandex ? (
@@ -247,7 +249,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses)}
+                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
               >
                 <a href={urls.yandex} target="_blank" rel="noreferrer">
                   {copy.openYandex}
@@ -261,7 +263,7 @@ export function ContactsLocations({
                 variant="cta"
                 size="sm"
                 leftIcon={<ExternalLink aria-hidden className="h-4 w-4" />}
-                className={cn(mapButtonClasses, ctaActionClasses)}
+                className={cn(mapButtonClasses, ctaActionClasses, ctaSurfaceClasses)}
               >
                 <a href={urls.google} target="_blank" rel="noreferrer">
                   {copy.openGoogle}
