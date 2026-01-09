@@ -8,6 +8,7 @@ interface FieldProps {
   required?: boolean;
   description?: string;
   error?: string;
+  reserveErrorSpace?: boolean;
   children: ReactNode;
   className?: string;
 }
@@ -18,9 +19,11 @@ export function Field({
   required,
   description,
   error,
+  reserveErrorSpace = false,
   children,
   className,
 }: FieldProps) {
+  const shouldRenderError = reserveErrorSpace || Boolean(error);
   return (
     <div className={cn('space-y-1', className)}>
       <label
@@ -41,9 +44,16 @@ export function Field({
 
       {children}
 
-      {error ? (
-        <p className="text-xs text-[var(--destructive)]" role="alert">
-          {error}
+      {shouldRenderError ? (
+        <p
+          className={cn(
+            'text-xs leading-4',
+            error ? 'text-[var(--destructive)]' : 'text-transparent'
+          )}
+          role={error ? 'alert' : undefined}
+          aria-hidden={error ? undefined : true}
+        >
+          {error ?? '\u00A0'}
         </p>
       ) : null}
     </div>

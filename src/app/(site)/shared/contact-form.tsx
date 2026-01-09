@@ -160,7 +160,13 @@ export function ContactForm({
             </div>
           ) : null}
 
-          <Field label={copy.name} htmlFor="name" required error={nameError ?? undefined}>
+          <Field
+            label={copy.name}
+            htmlFor="name"
+            required
+            error={nameError ?? undefined}
+            reserveErrorSpace
+          >
             <Input
               id="name"
               name="name"
@@ -233,14 +239,21 @@ export function ContactForm({
             </div>
 
             {copy.phoneHint ? <p className="text-xs text-muted-foreground">{copy.phoneHint}</p> : null}
-            {contactError ? (
-              <p className="text-xs text-[var(--destructive)]" role="alert">
-                {copy.contactRequired}
-              </p>
-            ) : null}
+            <p
+              className={`text-xs leading-4 ${contactError ? 'text-[var(--destructive)]' : 'text-transparent'}`}
+              role={contactError ? 'alert' : undefined}
+              aria-hidden={contactError ? undefined : true}
+            >
+              {contactError ? copy.contactRequired : '\u00A0'}
+            </p>
           </div>
 
-          <Field label={copy.productLabel} htmlFor="product" description={copy.productHint}>
+          <Field
+            label={copy.productLabel}
+            htmlFor="product"
+            description={copy.productHint}
+            reserveErrorSpace
+          >
             <Input
               id="product"
               name="product"
@@ -252,7 +265,13 @@ export function ContactForm({
             />
           </Field>
 
-          <Field label={copy.message} htmlFor="message" required error={messageError ?? undefined}>
+          <Field
+            label={copy.message}
+            htmlFor="message"
+            required
+            error={messageError ?? undefined}
+            reserveErrorSpace
+          >
             <Textarea
               id="message"
               name="message"
