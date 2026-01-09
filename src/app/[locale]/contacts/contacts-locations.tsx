@@ -74,7 +74,7 @@ export function ContactsLocations({
   const hasDescription = copy.description.trim().length > 0;
   const copyButtonClasses = 'w-full sm:w-[170px]';
   const mapButtonClasses = 'w-full sm:w-[140px]';
-  const ctaActionClasses = 'text-muted-foreground hover:text-foreground';
+  const ctaActionClasses = 'text-[var(--header-border)] hover:text-foreground';
   const ctaSurfaceClasses = 'bg-background/45 hover:bg-background/60';
   const hasHeader = copy.title.trim().length > 0 || copy.description.trim().length > 0;
 

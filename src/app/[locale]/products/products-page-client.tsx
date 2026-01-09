@@ -1002,7 +1002,7 @@ export function ProductsPageClient({ locale, groups, insights }: ProductsPageCli
                             )
                           : cn(
                               'border border-[var(--header-border)] text-[var(--muted-foreground)]',
-                              'hover:border-[color:var(--color-brand-300)]',
+                              'hover:border-current',
                               'hover:text-foreground',
                             ),
                         focusRingBase,
