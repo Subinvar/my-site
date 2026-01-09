@@ -340,7 +340,11 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
                       leftIcon={<Download aria-hidden className="h-4 w-4" />}
                       className={requisitesButtonClasses}
                     >
-                      <a href={companyCardFile} download>
+                      <a
+                        href={companyCardFile}
+                        download
+                        className="!text-[var(--muted-foreground)] hover:!text-foreground"
+                      >
                         {copy.requisites.download}
                       </a>
                     </Button>
