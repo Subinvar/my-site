@@ -211,7 +211,7 @@ html[data-theme="light"] {
   --header-border: rgba(17, 24, 39, 0.08);
   --input: #e5e7eb;
 
-  --success: #16a34a;
+  --success: ;
   --success-foreground: #14532d;
   --success-surface: #f0fdf4;
   --success-border: #bbf7d0;
