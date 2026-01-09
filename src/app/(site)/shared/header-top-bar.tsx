@@ -162,7 +162,8 @@ export const HeaderCta = memo(function HeaderCta({
       className={cn(
         headerButtonBase,
         "group h-10 justify-center px-4",
-        "text-muted-foreground hover:text-foreground",
+        "text-[var(--muted-foreground)] hover:text-foreground",
+        "after:!border-[var(--header-border)]",
         "no-underline hover:no-underline",
         "text-[length:var(--header-ui-fs)] font-medium leading-[var(--header-ui-leading)]",
         className,
