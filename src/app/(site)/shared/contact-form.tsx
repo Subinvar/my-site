@@ -151,7 +151,7 @@ export function ContactForm({
     noticeTimerRef.current = window.setTimeout(() => {
       setNotice(null);
       noticeTimerRef.current = null;
-    }, 8000);
+    }, 12000);
   };
 
   const markDirty = () => {

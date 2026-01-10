@@ -163,7 +163,7 @@ export function ContactsLocations({
                     ctaActionClasses,
                     ctaSurfaceClasses,
                     staticButtonClasses,
-                    active && 'text-foreground after:border-[var(--color-brand-600)]',
+                    active && 'text-foreground after:border-current',
                   ),
                 })}
                 aria-pressed={active}
