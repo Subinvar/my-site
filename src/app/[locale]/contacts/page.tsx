@@ -223,7 +223,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
 
   const locale = rawLocale;
   const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
-  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
   const shell = await getSiteShellData(locale);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['contacts']);
@@ -307,7 +306,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
               locale={locale}
               privacyPolicyHref={privacyPolicyHref}
               onSubmitAction={sendContact}
-              isDryRun={isDryRun}
               initialProduct={product}
             />
           </div>

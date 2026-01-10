@@ -5,12 +5,14 @@ import { cn } from '@/lib/cn';
 export type AlertVariant = 'success' | 'destructive' | 'brand';
 
 const variantClasses: Record<AlertVariant, string> = {
+  // IMPORTANT: these alerts are used in toast notifications on top of the page.
+  // Using `transparent` makes them look "washed out". Mix with `--background` instead.
   success:
-    'border-[var(--success-border)] bg-[var(--success-surface)] text-[var(--success-foreground)]',
+    'border-[var(--success-border)] bg-[color-mix(in_srgb,var(--success)_14%,var(--background))] text-[var(--success-foreground)]',
   destructive:
-    'border-[var(--destructive-border)] bg-[var(--destructive-surface)] text-[var(--destructive-foreground)]',
+    'border-[var(--destructive-border)] bg-[color-mix(in_srgb,var(--destructive)_14%,var(--background))] text-[var(--destructive-foreground)]',
   brand:
-    'border-[var(--color-brand-200)] bg-[color-mix(in_srgb,var(--color-brand-600)_12%,transparent)] text-[var(--color-brand-700)] dark:text-[var(--color-brand-50)]',
+    'border-[var(--color-brand-200)] bg-[color-mix(in_srgb,var(--color-brand-600)_14%,var(--background))] text-[var(--color-brand-700)] dark:text-[var(--color-brand-50)]',
 };
 
 export type AlertProps = {

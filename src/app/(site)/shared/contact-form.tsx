@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, Info, X } from 'lucide-react';
 
 import { Alert } from '@/app/(site)/shared/ui/alert';
 import { Button } from '@/app/(site)/shared/ui/button';
@@ -41,14 +41,17 @@ type Copy = {
 
 type SubmitResult =
   | { ok: true; dryRun: boolean }
-  | { ok: false; reason: 'honeypot' | 'validation' | 'config' | 'smtp' };
+  | {
+      ok: false;
+      reason: 'honeypot' | 'validation' | 'config' | 'smtp';
+      detail?: string;
+    };
 
 type ContactFormProps = {
   copy: Copy;
   locale: Locale;
   privacyPolicyHref: string;
   onSubmitAction: (formData: FormData) => Promise<SubmitResult>;
-  isDryRun: boolean;
   initialProduct?: string;
 };
 
@@ -57,7 +60,6 @@ export function ContactForm({
   locale,
   privacyPolicyHref,
   onSubmitAction,
-  isDryRun,
   initialProduct,
 }: ContactFormProps) {
   const [email, setEmail] = useState('');
@@ -72,7 +74,14 @@ export function ContactForm({
   const [agreeError, setAgreeError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  const [notice, setNotice] = useState<{ variant: 'success' | 'destructive' | 'brand'; message: string } | null>(null);
+  type Notice = {
+    variant: 'success' | 'destructive' | 'brand';
+    message: string;
+    detail?: string;
+  };
+
+  const [notice, setNotice] = useState<Notice | null>(null);
+  const [isNoticeDetailsOpen, setIsNoticeDetailsOpen] = useState(false);
   const noticeTimerRef = useRef<number | null>(null);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
   const fieldClassName =
@@ -145,11 +154,13 @@ export function ContactForm({
     }
   };
 
-  const showNotice = (payload: { variant: 'success' | 'destructive' | 'brand'; message: string }) => {
+  const showNotice = (payload: Notice) => {
     resetNoticeTimer();
     setNotice(payload);
+    setIsNoticeDetailsOpen(false);
     noticeTimerRef.current = window.setTimeout(() => {
       setNotice(null);
+      setIsNoticeDetailsOpen(false);
       noticeTimerRef.current = null;
     }, 12000);
   };
@@ -192,7 +203,7 @@ export function ContactForm({
         setIsSubmitting(false);
 
         // В тестовом режиме письма не отправляются — показываем отдельное уведомление.
-        if (result.dryRun || isDryRun) {
+        if (result.dryRun) {
           showNotice({ variant: 'brand', message: copy.dryRunSuccess });
         }
 
@@ -213,7 +224,7 @@ export function ContactForm({
         // Не ломаем вёрстку — показываем всплывающее уведомление.
         // Для пользователя текст один (без технических деталей),
         // а подробности пишем в серверные логи (см. actions.ts).
-        showNotice({ variant: 'destructive', message: copy.error });
+        showNotice({ variant: 'destructive', message: copy.error, detail: result.detail });
       }
     } catch {
       setIsSubmitting(false);
@@ -228,21 +239,46 @@ export function ContactForm({
           <div className="relative">
             <Alert
               variant={notice.variant}
-              className="pr-10 shadow-lg"
+              className="pr-20 shadow-lg"
             >
-              {notice.message}
+              <div className="space-y-2">
+                <div>{notice.message}</div>
+                {notice.variant === 'destructive' && notice.detail && isNoticeDetailsOpen ? (
+                  <pre className="max-h-44 overflow-auto whitespace-pre-wrap rounded-md bg-background/60 p-2 text-xs text-foreground">
+                    {notice.detail}
+                  </pre>
+                ) : null}
+              </div>
             </Alert>
-            <button
-              type="button"
-              onClick={() => {
-                resetNoticeTimer();
-                setNotice(null);
-              }}
-              className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
-              aria-label={locale === 'ru' ? 'Закрыть уведомление' : 'Dismiss notification'}
-            >
-              <X aria-hidden className="h-4 w-4" strokeWidth={1.75} />
-            </button>
+            <div className="absolute right-2 top-2 flex items-center gap-1">
+              {notice.variant === 'destructive' && notice.detail ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Если пользователь хочет посмотреть детали, не прячем тост по таймеру.
+                    resetNoticeTimer();
+                    setIsNoticeDetailsOpen((current) => !current);
+                  }}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={locale === 'ru' ? 'Показать детали ошибки' : 'Show error details'}
+                >
+                  <Info aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={() => {
+                  resetNoticeTimer();
+                  setNotice(null);
+                  setIsNoticeDetailsOpen(false);
+                }}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={locale === 'ru' ? 'Закрыть уведомление' : 'Dismiss notification'}
+              >
+                <X aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
@@ -457,16 +493,14 @@ export function ContactForm({
             leftIcon={isSent ? <Check aria-hidden className="h-4 w-4" strokeWidth={2} /> : undefined}
             className={
               [
-                'cursor-pointer',
-                'disabled:cursor-wait',
+                isSubmitting ? 'disabled:cursor-wait' : null,
                 isSent &&
                   [
                     'disabled:opacity-100',
-                    'disabled:cursor-default',
-                    'bg-[color:var(--success)] text-white',
-                    'hover:bg-[color:var(--success)] hover:text-white',
-                    'after:border-transparent',
-                    'focus-visible:after:border-transparent',
+                    '!bg-[color:var(--success)] !text-white',
+                    'hover:!bg-[color:var(--success)] hover:!text-white',
+                    'after:!border-transparent',
+                    'focus-visible:after:!border-transparent',
                   ].join(' '),
               ]
                 .filter(Boolean)

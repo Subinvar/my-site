@@ -211,7 +211,9 @@ html[data-theme="light"] {
   --header-border: rgba(17, 24, 39, 0.08);
   --input: #e5e7eb;
 
-  --success: ;
+  /* Was accidentally left blank, which breaks success UI tokens (e.g. "Отправлено" button).
+     Keep it consistent with the default light theme value. */
+  --success: #16a34a;
   --success-foreground: #14532d;
   --success-surface: #f0fdf4;
   --success-border: #bbf7d0;

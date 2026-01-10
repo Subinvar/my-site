@@ -6,13 +6,25 @@ import { isLocale, type Locale } from '@/lib/i18n';
 
 export type SendContactResult =
   | { ok: true; dryRun: boolean }
-  | { ok: false; reason: 'honeypot' | 'validation' | 'config' | 'smtp' };
+  | {
+      ok: false;
+      reason: 'honeypot' | 'validation' | 'config' | 'smtp';
+      /**
+       * Safe-to-show technical details for debugging.
+       * Must NOT contain secrets (passwords, full SMTP config, etc.).
+       */
+      detail?: string;
+    };
 
 export async function sendContact(formData: FormData): Promise<SendContactResult> {
   const rawLocale = formData.get('locale')?.toString() ?? 'ru';
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
   const product = formData.get('product')?.toString().trim() ?? '';
-  const isDryRun = process.env.LEADS_DRY_RUN !== '0';
+  // In production we should send emails by default.
+  // In dev/test we default to dry-run unless explicitly disabled.
+  const isProd = process.env.NODE_ENV === 'production';
+  const dryRunEnv = process.env.LEADS_DRY_RUN;
+  const isDryRun = dryRunEnv === '1' || (!isProd && dryRunEnv !== '0');
 
   const honeypot = formData.get('company')?.toString().trim();
   if (honeypot) {
@@ -62,6 +74,13 @@ export async function sendContact(formData: FormData): Promise<SendContactResult
   const leadsTo = process.env.LEADS_TO;
 
   if (!smtpHost || !smtpUser || !smtpPass || !leadsTo || Number.isNaN(smtpPort)) {
+    const missing: string[] = [];
+    if (!smtpHost) missing.push('SMTP_HOST');
+    if (!smtpUser) missing.push('SMTP_USER');
+    if (!smtpPass) missing.push('SMTP_PASS');
+    if (!leadsTo) missing.push('LEADS_TO');
+    if (Number.isNaN(smtpPort)) missing.push('SMTP_PORT');
+
     console.error('sendContact: missing SMTP env config', {
       hasHost: Boolean(smtpHost),
       hasUser: Boolean(smtpUser),
@@ -69,7 +88,12 @@ export async function sendContact(formData: FormData): Promise<SendContactResult
       hasTo: Boolean(leadsTo),
       smtpPort,
     });
-    return { ok: false, reason: 'config' };
+
+    return {
+      ok: false,
+      reason: 'config',
+      detail: missing.length ? `Missing env: ${missing.join(', ')}` : 'Missing/invalid SMTP configuration.',
+    };
   }
 
   try {
@@ -112,7 +136,17 @@ export async function sendContact(formData: FormData): Promise<SendContactResult
       response: asAny.response,
       responseCode: asAny.responseCode,
     });
-    return { ok: false, reason: 'smtp' };
+
+    const detailParts: string[] = [];
+    if (asAny.code) detailParts.push(`code=${String(asAny.code)}`);
+    if (asAny.responseCode) detailParts.push(`responseCode=${String(asAny.responseCode)}`);
+    detailParts.push(message);
+
+    return {
+      ok: false,
+      reason: 'smtp',
+      detail: `SMTP error: ${detailParts.join(' | ')}`,
+    };
   }
 
   return { ok: true, dryRun: false };
