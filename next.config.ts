@@ -19,7 +19,7 @@ const buildContentSecurityPolicy = (options: ContentSecurityPolicyOptions = {}):
     `img-src ${self} ${data} ${blob} ${vercelApps} ${openStreetMap}`,
     `font-src ${self} ${data}`,
     `connect-src ${self} ${vercelApps} ${github} https://vitals.vercel-insights.com`,
-    `frame-src https://www.openstreetmap.org`,
+    `frame-src https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com`,
     `style-src ${self}${options.allowInlineStyles ? " 'unsafe-inline'" : ''}`,
     `script-src ${options.allowInlineScripts ? `${self} 'unsafe-inline' 'unsafe-eval'` : self}`,
     `base-uri ${self}`,

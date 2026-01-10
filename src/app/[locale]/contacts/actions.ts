@@ -34,24 +34,28 @@ export async function sendContact(formData: FormData): Promise<SendContactResult
   const name = formData.get('name')?.toString().trim() ?? '';
   const email = formData.get('email')?.toString().trim() ?? '';
   const phoneRaw = formData.get('phone')?.toString() ?? '';
-  const phone = phoneRaw.replace(/[^\d+]/g, '');
   const message = formData.get('message')?.toString().trim() ?? '';
   const agree = formData.get('agree') === 'on';
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const hasAnyContact = email.length > 0 || phoneRaw.trim().length > 0;
-  const hasEmail = email.length > 0 && emailPattern.test(email);
-  const hasPhone = phone.length >= 7 && phone.length <= 15;
+  const hasEmail = email.length > 0;
+  const hasPhone = phoneRaw.trim().length > 0;
+  const normalizedPhone = normalizePhone(phoneRaw);
 
   if (name.length < 2 || name.length > 100) {
     return { ok: false, reason: 'validation' };
   }
 
-  if (!hasAnyContact) {
+  // At least one contact method is required.
+  if (!hasEmail && !hasPhone) {
     return { ok: false, reason: 'validation' };
   }
 
-  if (!(hasEmail || hasPhone)) {
+  // If user filled a field — it must be valid.
+  if (hasEmail && !isEmailValid(email)) {
+    return { ok: false, reason: 'validation' };
+  }
+
+  if (hasPhone && !normalizedPhone.isValid) {
     return { ok: false, reason: 'validation' };
   }
 
@@ -63,6 +67,11 @@ export async function sendContact(formData: FormData): Promise<SendContactResult
     return { ok: false, reason: 'validation' };
   }
 
+  const phone = hasPhone
+    ? normalizedPhone.isKnown
+      ? normalizedPhone.formatted
+      : normalizedPhone.e164 ?? phoneRaw.trim()
+    : '';
   if (isDryRun) {
     return { ok: true, dryRun: true };
   }
@@ -190,4 +199,129 @@ function buildEmailBody(
         ];
 
   return lines.filter((line): line is string => typeof line === 'string').join('\n');
+}
+
+const EMAIL_MAX_LENGTH = 254;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function isEmailValid(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (trimmed.length > EMAIL_MAX_LENGTH) return false;
+  return EMAIL_PATTERN.test(trimmed);
+}
+
+type PhoneNormalization = {
+  digits: string;
+  e164: string | null;
+  formatted: string;
+  isKnown: boolean;
+  isValid: boolean;
+};
+
+function formatPhoneE164(e164: string): { formatted: string; isKnown: boolean } {
+  const ru = e164.match(/^\+7(\d{10})$/);
+  if (ru) {
+    const d = ru[1];
+    return {
+      formatted: `+7 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 8)} ${d.slice(8, 10)}`,
+      isKnown: true,
+    };
+  }
+
+  const by = e164.match(/^\+375(\d{9})$/);
+  if (by) {
+    const d = by[1];
+    return {
+      formatted: `+375 ${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 7)} ${d.slice(7, 9)}`,
+      isKnown: true,
+    };
+  }
+
+  const am = e164.match(/^\+374(\d{8})$/);
+  if (am) {
+    const d = am[1];
+    return {
+      formatted: `+374 ${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)}`,
+      isKnown: true,
+    };
+  }
+
+  const kg = e164.match(/^\+996(\d{9})$/);
+  if (kg) {
+    const d = kg[1];
+    return {
+      formatted: `+996 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 9)}`,
+      isKnown: true,
+    };
+  }
+
+  const cn = e164.match(/^\+86(\d{11})$/);
+  if (cn) {
+    const d = cn[1];
+    return {
+      formatted: `+86 ${d.slice(0, 3)} ${d.slice(3, 7)} ${d.slice(7, 11)}`,
+      isKnown: true,
+    };
+  }
+
+  return { formatted: e164, isKnown: false };
+}
+
+function normalizePhone(value: string): PhoneNormalization {
+  const raw = value.trim();
+  if (!raw) {
+    return { digits: '', e164: null, formatted: '', isKnown: false, isValid: true };
+  }
+
+  const normalizedPrefix = raw.replace(/^00/, '+');
+  const digits = normalizedPrefix.replace(/\D/g, '');
+  const digitCount = digits.length;
+  const isValid = digitCount >= 7 && digitCount <= 15;
+
+  let e164: string | null = null;
+
+  if (normalizedPrefix.trim().startsWith('+')) {
+    e164 = digits ? `+${digits}` : null;
+  } else {
+    // EAEU + China smart defaults
+    if (digitCount === 11 && digits.startsWith('8')) {
+      e164 = `+7${digits.slice(1)}`;
+    } else if (digitCount === 11 && digits.startsWith('7')) {
+      e164 = `+${digits}`;
+    } else if (digitCount === 10) {
+      // Most of our users are in RU/KZ (+7). If someone types 10 digits — assume +7.
+      e164 = `+7${digits}`;
+    } else if (digitCount === 12 && digits.startsWith('375')) {
+      e164 = `+${digits}`;
+    } else if (digitCount === 11 && digits.startsWith('374')) {
+      e164 = `+${digits}`;
+    } else if (digitCount === 12 && digits.startsWith('996')) {
+      e164 = `+${digits}`;
+    } else if (digitCount === 13 && digits.startsWith('86')) {
+      e164 = `+${digits}`;
+    } else if (
+      digitCount === 11 &&
+      digits.startsWith('1') &&
+      /^[3-9]$/.test(digits[1] ?? '')
+    ) {
+      // Likely CN mobile (11 digits starting with 13–19) — assume +86.
+      e164 = `+86${digits}`;
+    }
+  }
+
+  if (!e164) {
+    return { digits, e164: null, formatted: raw, isKnown: false, isValid };
+  }
+
+  const formattedInfo = formatPhoneE164(e164);
+  const formatted = formattedInfo.isKnown ? formattedInfo.formatted : raw;
+
+  return {
+    digits,
+    e164,
+    formatted,
+    isKnown: formattedInfo.isKnown,
+    isValid,
+  };
 }

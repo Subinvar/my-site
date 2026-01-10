@@ -20,7 +20,9 @@ type Copy = {
   nameRequired: string;
   nameTooShort: string;
   email: string;
+  emailInvalid: string;
   phone: string;
+  phoneInvalid: string;
   phoneHint: string;
   contactRequired: string;
   productLabel: string;
@@ -66,6 +68,8 @@ export function ContactForm({
   const [phone, setPhone] = useState('');
   const [product, setProduct] = useState(initialProduct ?? '');
   const [contactError, setContactError] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [agree, setAgree] = useState(false);
@@ -93,6 +97,7 @@ export function ContactForm({
     'active:translate-y-[1px]';
 
   const canSubmit = !isSubmitting && !isSent;
+  const isDisabled = isSubmitting;
 
   const buttonLabel = useMemo(() => {
     if (isSent) return copy.sent;
@@ -100,6 +105,133 @@ export function ContactForm({
     return copy.submit;
   }, [copy.sent, copy.submitting, copy.submit, isSent, isSubmitting]);
 
+
+  const EMAIL_MAX_LENGTH = 254;
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  const isEmailValueValid = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return true;
+    if (trimmed.length > EMAIL_MAX_LENGTH) return false;
+    return EMAIL_PATTERN.test(trimmed);
+  };
+
+  const sanitizePhoneInput = (value: string) => value.replace(/[^\d+()\s-]/g, '');
+
+  type PhoneNormalization = {
+    digits: string;
+    e164: string | null;
+    formatted: string;
+    isKnown: boolean;
+    isValid: boolean;
+  };
+
+  const formatPhoneE164 = (e164: string): { formatted: string; isKnown: boolean } => {
+    const ru = e164.match(/^\+7(\d{10})$/);
+    if (ru) {
+      const d = ru[1];
+      return {
+        formatted: `+7 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 8)} ${d.slice(8, 10)}`,
+        isKnown: true,
+      };
+    }
+
+    const by = e164.match(/^\+375(\d{9})$/);
+    if (by) {
+      const d = by[1];
+      return {
+        formatted: `+375 ${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 7)} ${d.slice(7, 9)}`,
+        isKnown: true,
+      };
+    }
+
+    const am = e164.match(/^\+374(\d{8})$/);
+    if (am) {
+      const d = am[1];
+      return {
+        formatted: `+374 ${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)}`,
+        isKnown: true,
+      };
+    }
+
+    const kg = e164.match(/^\+996(\d{9})$/);
+    if (kg) {
+      const d = kg[1];
+      return {
+        formatted: `+996 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 9)}`,
+        isKnown: true,
+      };
+    }
+
+    const cn = e164.match(/^\+86(\d{11})$/);
+    if (cn) {
+      const d = cn[1];
+      return {
+        formatted: `+86 ${d.slice(0, 3)} ${d.slice(3, 7)} ${d.slice(7, 11)}`,
+        isKnown: true,
+      };
+    }
+
+    return { formatted: e164, isKnown: false };
+  };
+
+  const normalizePhone = (value: string): PhoneNormalization => {
+    const raw = value.trim();
+    if (!raw) {
+      return { digits: '', e164: null, formatted: '', isKnown: false, isValid: true };
+    }
+
+    const normalizedPrefix = raw.replace(/^00/, '+');
+    const digits = normalizedPrefix.replace(/\D/g, '');
+    const digitCount = digits.length;
+    const isValid = digitCount >= 7 && digitCount <= 15;
+
+    let e164: string | null = null;
+
+    if (normalizedPrefix.trim().startsWith('+')) {
+      e164 = digits ? `+${digits}` : null;
+    } else {
+      // EAEU + China smart defaults
+      if (digitCount === 11 && digits.startsWith('8')) {
+        e164 = `+7${digits.slice(1)}`;
+      } else if (digitCount === 11 && digits.startsWith('7')) {
+        e164 = `+${digits}`;
+      } else if (digitCount === 10) {
+        // Most of our users are in RU/KZ (+7). If someone types 10 digits — assume +7.
+        e164 = `+7${digits}`;
+      } else if (digitCount === 12 && digits.startsWith('375')) {
+        e164 = `+${digits}`;
+      } else if (digitCount === 11 && digits.startsWith('374')) {
+        e164 = `+${digits}`;
+      } else if (digitCount === 12 && digits.startsWith('996')) {
+        e164 = `+${digits}`;
+      } else if (digitCount === 13 && digits.startsWith('86')) {
+        e164 = `+${digits}`;
+      } else if (
+        digitCount === 11 &&
+        digits.startsWith('1') &&
+        /^[3-9]$/.test(digits[1] ?? '')
+      ) {
+        // Likely CN mobile (11 digits starting with 13–19) — assume +86.
+        e164 = `+86${digits}`;
+      }
+    }
+
+    if (!e164) {
+      return { digits, e164: null, formatted: raw, isKnown: false, isValid };
+    }
+
+    const formattedInfo = formatPhoneE164(e164);
+    const formatted = formattedInfo.isKnown ? formattedInfo.formatted : raw;
+
+    return {
+      digits,
+      e164,
+      formatted,
+      isKnown: formattedInfo.isKnown,
+      isValid,
+    };
+  };
   const validateContacts = () => {
     const hasEmail = email.trim().length > 0;
     const hasPhone = phone.trim().length > 0;
@@ -110,6 +242,47 @@ export function ContactForm({
     return isValid;
   };
 
+
+  const validateEmail = () => {
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setEmailError(null);
+      return true;
+    }
+
+    const isValid = isEmailValueValid(trimmed);
+    setEmailError(isValid ? null : copy.emailInvalid);
+    return isValid;
+  };
+
+  const validatePhone = () => {
+    const trimmed = phone.trim();
+    if (!trimmed) {
+      setPhoneError(null);
+      return true;
+    }
+
+    const normalized = normalizePhone(trimmed);
+    const isValid = normalized.isValid;
+    setPhoneError(isValid ? null : copy.phoneInvalid);
+    return isValid;
+  };
+
+  const handlePhoneBlur = () => {
+    const trimmed = phone.trim();
+    if (!trimmed) {
+      setPhoneError(null);
+      return;
+    }
+
+    const normalized = normalizePhone(trimmed);
+
+    if (normalized.isKnown && normalized.isValid && normalized.formatted !== phone) {
+      setPhone(normalized.formatted);
+    }
+
+    setPhoneError(normalized.isValid ? null : copy.phoneInvalid);
+  };
   const validateName = () => {
     const trimmed = name.trim();
     if (!trimmed) {
@@ -184,10 +357,19 @@ export function ContactForm({
     // Client-side validation (noValidate отключает встроенную браузерную валидацию).
     const isContactsValid = validateContacts();
     const isNameValid = validateName();
+    const isEmailValid = validateEmail();
+    const isPhoneValid = validatePhone();
     const isMessageValid = validateMessage();
     const isAgreeValid = validateAgree();
 
-    if (!isContactsValid || !isNameValid || !isMessageValid || !isAgreeValid) {
+    if (
+      !isContactsValid ||
+      !isNameValid ||
+      !isEmailValid ||
+      !isPhoneValid ||
+      !isMessageValid ||
+      !isAgreeValid
+    ) {
       return;
     }
 
@@ -215,6 +397,8 @@ export function ContactForm({
         setMessage('');
         setAgree(false);
         setContactError(false);
+        setEmailError(null);
+        setPhoneError(null);
         setNameError(null);
         setMessageError(null);
         setAgreeError(null);
@@ -346,7 +530,12 @@ export function ContactForm({
 
           <div className="space-y-1">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label={copy.email} htmlFor="email">
+              <Field
+                label={copy.email}
+                htmlFor="email"
+                error={emailError ?? undefined}
+                reserveErrorSpace
+              >
                 <Input
                   id="email"
                   name="email"
@@ -361,30 +550,45 @@ export function ContactForm({
                     if (contactError && next.trim()) {
                       setContactError(false);
                     }
+                    if (emailError) {
+                      const isValid = isEmailValueValid(next);
+                      setEmailError(isValid ? null : copy.emailInvalid);
+                    }
                   }}
-                  error={contactError ? copy.contactRequired : undefined}
+                  onBlur={validateEmail}
+                  error={emailError ?? (contactError ? copy.contactRequired : undefined)}
                 />
               </Field>
 
-              <Field label={copy.phone} htmlFor="phone">
+              <Field
+                label={copy.phone}
+                htmlFor="phone"
+                error={phoneError ?? undefined}
+                reserveErrorSpace
+              >
                 <Input
                   id="phone"
                   name="phone"
                   type="tel"
                   inputMode="tel"
                   autoComplete="tel"
-                  pattern="[0-9+()\\s-]{7,}"
+                  pattern="[0-9+()\s-]{7,}"
                   className={fieldClassName}
                   value={phone}
                   onChange={(event) => {
-                    const next = event.target.value;
+                    const next = sanitizePhoneInput(event.target.value);
                     setPhone(next);
                     markDirty();
                     if (contactError && next.trim()) {
                       setContactError(false);
                     }
+                    if (phoneError) {
+                      const normalized = normalizePhone(next);
+                      setPhoneError(normalized.isValid ? null : copy.phoneInvalid);
+                    }
                   }}
-                  error={contactError ? copy.contactRequired : undefined}
+                  onBlur={handlePhoneBlur}
+                  error={phoneError ?? (contactError ? copy.contactRequired : undefined)}
                 />
               </Field>
             </div>
@@ -488,15 +692,17 @@ export function ContactForm({
           <Button
             type="submit"
             variant="cta"
-            disabled={!canSubmit}
+            disabled={isDisabled}
+            aria-disabled={!canSubmit}
             fullWidth
             leftIcon={isSent ? <Check aria-hidden className="h-4 w-4" strokeWidth={2} /> : undefined}
             className={
               [
                 isSubmitting ? 'disabled:cursor-wait' : null,
+                !isSent ? 'cursor-pointer' : null,
                 isSent &&
                   [
-                    'disabled:opacity-100',
+                    'cursor-default',
                     '!bg-[color:var(--success)] !text-white',
                     'hover:!bg-[color:var(--success)] hover:!text-white',
                     'after:!border-transparent',

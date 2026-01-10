@@ -60,7 +60,9 @@ const COPY = {
     nameRequired: 'Введите имя.',
     nameTooShort: 'Введите минимум 2 символа.',
     email: 'Email',
+    emailInvalid: 'Введите корректный email.',
     phone: 'Телефон',
+    phoneInvalid: 'Введите корректный номер телефона.',
     phoneHint: 'Можно оставить телефон или email — достаточно одного контакта.',
     contactRequired: 'Укажите хотя бы email или телефон.',
     productLabel: 'Тема сообщения',
@@ -111,7 +113,9 @@ const COPY = {
     nameRequired: 'Please enter your name.',
     nameTooShort: 'Please enter at least 2 characters.',
     email: 'Email',
+    emailInvalid: 'Please enter a valid email address.',
     phone: 'Phone',
+    phoneInvalid: 'Please enter a valid phone number.',
     phoneHint: 'You can leave either a phone number or an email — one contact is enough.',
     contactRequired: 'Please provide at least an email or a phone number.',
     productLabel: 'Message subject',
@@ -162,7 +166,9 @@ const COPY = {
   nameRequired: string;
   nameTooShort: string;
   email: string;
+  emailInvalid: string;
   phone: string;
+  phoneInvalid: string;
   phoneHint: string;
   contactRequired: string;
   productLabel: string;
