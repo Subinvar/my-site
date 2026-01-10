@@ -61,7 +61,7 @@ export async function sendContact(formData: FormData) {
     redirect(errorRedirect);
   }
 
-  if (message.length < 10 || message.length > 2000) {
+  if (message.length < 6 || message.length > 2000) {
     redirect(errorRedirect);
   }
 

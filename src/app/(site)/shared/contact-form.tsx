@@ -106,7 +106,7 @@ export function ContactForm({
       setMessageError(copy.messageRequired);
       return false;
     }
-    if (trimmed.length < 10) {
+    if (trimmed.length < 6) {
       setMessageError(copy.messageTooShort);
       return false;
     }
@@ -278,8 +278,6 @@ export function ContactForm({
             <Textarea
               id="message"
               name="message"
-              required
-              minLength={10}
               maxLength={2000}
               rows={6}
               className={fieldClassName}
@@ -292,7 +290,7 @@ export function ContactForm({
                   const trimmed = next.trim();
                   if (!trimmed) {
                     setMessageError(copy.messageRequired);
-                  } else if (trimmed.length < 10) {
+                  } else if (trimmed.length < 6) {
                     setMessageError(copy.messageTooShort);
                   } else {
                     setMessageError(null);
