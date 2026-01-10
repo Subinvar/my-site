@@ -66,9 +66,12 @@ export function ContactForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
   const fieldClassName =
-    'bg-[var(--background)] ' +
-    'hover:border-[var(--foreground)]/40 hover:bg-[var(--background)] ' +
-    'focus-visible:border-[var(--foreground)] focus-visible:ring-0 focus-visible:ring-offset-0';
+    'bg-background/45 text-muted-foreground ' +
+    'border border-[var(--header-border)] ' +
+    'hover:bg-background/60 hover:text-foreground hover:border-current ' +
+    'focus-visible:bg-background/60 focus-visible:text-foreground focus-visible:border-current ' +
+    'focus-visible:ring-0 focus-visible:ring-offset-0 ' +
+    'active:translate-y-[1px]';
 
   const successVisible = status === 'success';
   const errorVisible = status === 'error';
@@ -316,7 +319,7 @@ export function ContactForm({
             }
           />
 
-          <Button type="submit" disabled={isSubmitting} fullWidth className="cursor-pointer">
+          <Button type="submit" variant="cta" disabled={isSubmitting} fullWidth className="cursor-pointer">
             {isSubmitting ? copy.submitting : copy.submit}
           </Button>
         </form>
