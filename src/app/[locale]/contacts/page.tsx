@@ -71,8 +71,10 @@ const COPY = {
     messageTooShort: 'Сообщение должно содержать минимум 6 символов.',
     agree: 'Я согласен на',
     privacyPolicy: 'обработку персональных данных',
+    agreeRequired: 'Нужно согласиться на обработку персональных данных.',
     submit: 'Отправить',
     submitting: 'Отправка…',
+    sent: 'Отправлено',
     success: 'Спасибо! Ваше сообщение отправлено.',
     error: 'Не удалось отправить сообщение. Попробуйте ещё раз.',
   },
@@ -120,8 +122,10 @@ const COPY = {
     messageTooShort: 'Please enter at least 6 characters.',
     agree: 'I agree to the',
     privacyPolicy: 'processing of personal data',
+    agreeRequired: 'Please agree to the processing of personal data.',
     submit: 'Send',
     submitting: 'Sending…',
+    sent: 'Sent',
     success: 'Thank you! Your message has been sent.',
     error: 'We could not send your message. Please try again.',
   },
@@ -169,8 +173,10 @@ const COPY = {
   messageTooShort: string;
   agree: string;
   privacyPolicy: string;
+  agreeRequired: string;
   submit: string;
   submitting: string;
+  sent: string;
   success: string;
   error: string;
 }>;
@@ -178,8 +184,6 @@ const COPY = {
 type PageParams = { locale: Locale };
 
 type ContactSearchParams = {
-  ok?: string | string[] | undefined;
-  dry?: string | string[] | undefined;
   product?: string | string[] | undefined;
 };
 
@@ -209,13 +213,6 @@ function hasRequisites(shell: Awaited<ReturnType<typeof getSiteShellData>>) {
   );
 }
 
-function resolveStatus(rawStatus: string | string[] | undefined): 'success' | 'error' | null {
-  const status = Array.isArray(rawStatus) ? rawStatus[0] : rawStatus;
-  if (status === '1') return 'success';
-  if (status === '0') return 'error';
-  return null;
-}
-
 export default async function ContactsPage({ params, searchParams }: PageProps) {
   const { locale: rawLocale } = await params;
   const rawSearchParams = await (searchParams ?? Promise.resolve<ContactSearchParams>({}));
@@ -227,7 +224,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
   const locale = rawLocale;
   const product = typeof rawSearchParams.product === 'string' ? rawSearchParams.product : undefined;
   const isDryRun = process.env.LEADS_DRY_RUN !== '0';
-  const status = resolveStatus(rawSearchParams.ok);
   const shell = await getSiteShellData(locale);
   const targetLocale = findTargetLocale(locale);
   const switcherHref = buildPath(targetLocale, ['contacts']);
@@ -310,7 +306,6 @@ export default async function ContactsPage({ params, searchParams }: PageProps) 
               copy={copy}
               locale={locale}
               privacyPolicyHref={privacyPolicyHref}
-              status={status}
               onSubmitAction={sendContact}
               isDryRun={isDryRun}
               initialProduct={product}

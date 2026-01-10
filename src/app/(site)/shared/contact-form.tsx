@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, X } from 'lucide-react';
 
 import { Alert } from '@/app/(site)/shared/ui/alert';
 import { Button } from '@/app/(site)/shared/ui/button';
@@ -30,18 +31,23 @@ type Copy = {
   messageTooShort: string;
   agree: string;
   privacyPolicy: string;
+  agreeRequired: string;
   submit: string;
   submitting: string;
+  sent: string;
   success: string;
   error: string;
 };
+
+type SubmitResult =
+  | { ok: true; dryRun: boolean }
+  | { ok: false; reason: 'honeypot' | 'validation' | 'config' | 'smtp' };
 
 type ContactFormProps = {
   copy: Copy;
   locale: Locale;
   privacyPolicyHref: string;
-  status: 'success' | 'error' | null;
-  onSubmitAction: (formData: FormData) => Promise<void>;
+  onSubmitAction: (formData: FormData) => Promise<SubmitResult>;
   isDryRun: boolean;
   initialProduct?: string;
 };
@@ -50,7 +56,6 @@ export function ContactForm({
   copy,
   locale,
   privacyPolicyHref,
-  status,
   onSubmitAction,
   isDryRun,
   initialProduct,
@@ -61,9 +66,14 @@ export function ContactForm({
   const [contactError, setContactError] = useState(false);
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
+  const [agree, setAgree] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
   const [messageError, setMessageError] = useState<string | null>(null);
+  const [agreeError, setAgreeError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSent, setIsSent] = useState(false);
+  const [notice, setNotice] = useState<{ variant: 'success' | 'destructive' | 'brand'; message: string } | null>(null);
+  const noticeTimerRef = useRef<number | null>(null);
   const productNotice = locale === 'ru' ? 'Запрос по продукту' : 'Product inquiry';
   const fieldClassName =
     'bg-background/45 text-muted-foreground ' +
@@ -73,8 +83,13 @@ export function ContactForm({
     'focus-visible:ring-0 focus-visible:ring-offset-0 ' +
     'active:translate-y-[1px]';
 
-  const successVisible = status === 'success';
-  const errorVisible = status === 'error';
+  const canSubmit = !isSubmitting && !isSent;
+
+  const buttonLabel = useMemo(() => {
+    if (isSent) return copy.sent;
+    if (isSubmitting) return copy.submitting;
+    return copy.submit;
+  }, [copy.sent, copy.submitting, copy.submit, isSent, isSubmitting]);
 
   const validateContacts = () => {
     const hasEmail = email.trim().length > 0;
@@ -114,35 +129,129 @@ export function ContactForm({
     return true;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const validateAgree = () => {
+    if (!agree) {
+      setAgreeError(copy.agreeRequired);
+      return false;
+    }
+    setAgreeError(null);
+    return true;
+  };
+
+  const resetNoticeTimer = () => {
+    if (noticeTimerRef.current) {
+      window.clearTimeout(noticeTimerRef.current);
+      noticeTimerRef.current = null;
+    }
+  };
+
+  const showNotice = (payload: { variant: 'success' | 'destructive' | 'brand'; message: string }) => {
+    resetNoticeTimer();
+    setNotice(payload);
+    noticeTimerRef.current = window.setTimeout(() => {
+      setNotice(null);
+      noticeTimerRef.current = null;
+    }, 8000);
+  };
+
+  const markDirty = () => {
+    if (isSent) {
+      setIsSent(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      resetNoticeTimer();
+    };
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canSubmit) return;
+
+    // Client-side validation (noValidate отключает встроенную браузерную валидацию).
     const isContactsValid = validateContacts();
     const isNameValid = validateName();
     const isMessageValid = validateMessage();
+    const isAgreeValid = validateAgree();
 
-    if (!isContactsValid || !isNameValid || !isMessageValid) {
-      event.preventDefault();
+    if (!isContactsValid || !isNameValid || !isMessageValid || !isAgreeValid) {
       return;
     }
 
     setIsSubmitting(true);
+    setNotice(null);
+
+    try {
+      const form = event.currentTarget;
+      const result = await onSubmitAction(new FormData(form));
+
+      if (result.ok) {
+        setIsSent(true);
+        setIsSubmitting(false);
+
+        // В тестовом режиме письма не отправляются — показываем отдельное уведомление.
+        if (result.dryRun || isDryRun) {
+          showNotice({ variant: 'brand', message: copy.dryRunSuccess });
+        }
+
+        // По UX: очищаем форму после успешной отправки.
+        setName('');
+        setEmail('');
+        setPhone('');
+        setProduct(initialProduct ?? '');
+        setMessage('');
+        setAgree(false);
+        setContactError(false);
+        setNameError(null);
+        setMessageError(null);
+        setAgreeError(null);
+      } else {
+        setIsSubmitting(false);
+
+        // Не ломаем вёрстку — показываем всплывающее уведомление.
+        // Для пользователя текст один (без технических деталей),
+        // а подробности пишем в серверные логи (см. actions.ts).
+        showNotice({ variant: 'destructive', message: copy.error });
+      }
+    } catch {
+      setIsSubmitting(false);
+      showNotice({ variant: 'destructive', message: copy.error });
+    }
   };
 
   return (
     <div className="flex h-full flex-col space-y-6">
-      {successVisible ? (
-        <Alert variant={isDryRun ? 'brand' : 'success'}>
-          {isDryRun ? copy.dryRunSuccess : copy.success}
-        </Alert>
+      {notice ? (
+        <div className="fixed bottom-4 right-4 z-50 w-[min(420px,calc(100vw-2rem))]">
+          <div className="relative">
+            <Alert
+              variant={notice.variant}
+              className="pr-10 shadow-lg"
+            >
+              {notice.message}
+            </Alert>
+            <button
+              type="button"
+              onClick={() => {
+                resetNoticeTimer();
+                setNotice(null);
+              }}
+              className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+              aria-label={locale === 'ru' ? 'Закрыть уведомление' : 'Dismiss notification'}
+            >
+              <X aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+          </div>
+        </div>
       ) : null}
-
-      {errorVisible ? <Alert variant="destructive">{copy.error}</Alert> : null}
 
       <Card
         as="section"
         className="flex min-h-0 flex-1 flex-col border-[var(--header-border)] bg-muted"
       >
         <form
-          action={onSubmitAction}
           onSubmit={handleSubmit}
           noValidate
           className="space-y-3"
@@ -183,6 +292,7 @@ export function ContactForm({
               onChange={(event) => {
                 const next = event.target.value;
                 setName(next);
+                markDirty();
                 if (nameError) {
                   const trimmed = next.trim();
                   if (!trimmed) {
@@ -211,6 +321,7 @@ export function ContactForm({
                   onChange={(event) => {
                     const next = event.target.value;
                     setEmail(next);
+                    markDirty();
                     if (contactError && next.trim()) {
                       setContactError(false);
                     }
@@ -232,6 +343,7 @@ export function ContactForm({
                   onChange={(event) => {
                     const next = event.target.value;
                     setPhone(next);
+                    markDirty();
                     if (contactError && next.trim()) {
                       setContactError(false);
                     }
@@ -261,7 +373,10 @@ export function ContactForm({
               id="product"
               name="product"
               value={product}
-              onChange={(event) => setProduct(event.target.value)}
+              onChange={(event) => {
+                setProduct(event.target.value);
+                markDirty();
+              }}
               placeholder={copy.productPlaceholder}
               autoComplete="off"
               className={fieldClassName}
@@ -286,6 +401,7 @@ export function ContactForm({
               onChange={(event) => {
                 const next = event.target.value;
                 setMessage(next);
+                markDirty();
                 if (messageError) {
                   const trimmed = next.trim();
                   if (!trimmed) {
@@ -304,6 +420,14 @@ export function ContactForm({
           <Checkbox
             name="agree"
             required
+            checked={agree}
+            onChange={(event) => {
+              setAgree(event.target.checked);
+              markDirty();
+              if (agreeError && event.target.checked) {
+                setAgreeError(null);
+              }
+            }}
             label={
               <span className="text-muted-foreground">
                 {copy.agree}{' '}
@@ -317,8 +441,39 @@ export function ContactForm({
             }
           />
 
-          <Button type="submit" variant="cta" disabled={isSubmitting} fullWidth className="cursor-pointer">
-            {isSubmitting ? copy.submitting : copy.submit}
+          <p
+            className={`text-xs leading-4 ${agreeError ? 'text-[var(--destructive)]' : 'text-transparent'}`}
+            role={agreeError ? 'alert' : undefined}
+            aria-hidden={agreeError ? undefined : true}
+          >
+            {agreeError ? agreeError : '\u00A0'}
+          </p>
+
+          <Button
+            type="submit"
+            variant="cta"
+            disabled={!canSubmit}
+            fullWidth
+            leftIcon={isSent ? <Check aria-hidden className="h-4 w-4" strokeWidth={2} /> : undefined}
+            className={
+              [
+                'cursor-pointer',
+                'disabled:cursor-wait',
+                isSent &&
+                  [
+                    'disabled:opacity-100',
+                    'disabled:cursor-default',
+                    'bg-[color:var(--success)] text-white',
+                    'hover:bg-[color:var(--success)] hover:text-white',
+                    'after:border-transparent',
+                    'focus-visible:after:border-transparent',
+                  ].join(' '),
+              ]
+                .filter(Boolean)
+                .join(' ')
+            }
+          >
+            {buttonLabel}
           </Button>
         </form>
       </Card>

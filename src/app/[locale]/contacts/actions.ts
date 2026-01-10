@@ -1,40 +1,22 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { createTransport } from 'nodemailer';
 
 import { isLocale, type Locale } from '@/lib/i18n';
-import { buildPath } from '@/lib/paths';
 
-export async function sendContact(formData: FormData) {
+export type SendContactResult =
+  | { ok: true; dryRun: boolean }
+  | { ok: false; reason: 'honeypot' | 'validation' | 'config' | 'smtp' };
+
+export async function sendContact(formData: FormData): Promise<SendContactResult> {
   const rawLocale = formData.get('locale')?.toString() ?? 'ru';
   const locale: Locale = isLocale(rawLocale) ? rawLocale : 'ru';
-  const contactsPath = buildPath(locale, ['contacts']);
   const product = formData.get('product')?.toString().trim() ?? '';
   const isDryRun = process.env.LEADS_DRY_RUN !== '0';
-  const params = new URLSearchParams();
-  params.set('ok', '1');
-  if (product) {
-    params.set('product', product);
-  }
-  if (isDryRun) {
-    params.set('dry', '1');
-  }
-  const successRedirect = `${contactsPath}?${params.toString()}`;
-
-  const errorParams = new URLSearchParams();
-  errorParams.set('ok', '0');
-  if (product) {
-    errorParams.set('product', product);
-  }
-  if (isDryRun) {
-    errorParams.set('dry', '1');
-  }
-  const errorRedirect = `${contactsPath}?${errorParams.toString()}`;
 
   const honeypot = formData.get('company')?.toString().trim();
   if (honeypot) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'honeypot' };
   }
 
   const name = formData.get('name')?.toString().trim() ?? '';
@@ -50,27 +32,27 @@ export async function sendContact(formData: FormData) {
   const hasPhone = phone.length >= 7 && phone.length <= 15;
 
   if (name.length < 2 || name.length > 100) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'validation' };
   }
 
   if (!hasAnyContact) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'validation' };
   }
 
   if (!(hasEmail || hasPhone)) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'validation' };
   }
 
   if (message.length < 6 || message.length > 2000) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'validation' };
   }
 
   if (!agree) {
-    redirect(errorRedirect);
+    return { ok: false, reason: 'validation' };
   }
 
   if (isDryRun) {
-    redirect(successRedirect);
+    return { ok: true, dryRun: true };
   }
 
   const smtpHost = process.env.SMTP_HOST;
@@ -80,7 +62,14 @@ export async function sendContact(formData: FormData) {
   const leadsTo = process.env.LEADS_TO;
 
   if (!smtpHost || !smtpUser || !smtpPass || !leadsTo || Number.isNaN(smtpPort)) {
-    redirect(errorRedirect);
+    console.error('sendContact: missing SMTP env config', {
+      hasHost: Boolean(smtpHost),
+      hasUser: Boolean(smtpUser),
+      hasPass: Boolean(smtpPass),
+      hasTo: Boolean(leadsTo),
+      smtpPort,
+    });
+    return { ok: false, reason: 'config' };
   }
 
   try {
@@ -92,6 +81,10 @@ export async function sendContact(formData: FormData) {
         user: smtpUser,
         pass: smtpPass,
       },
+      // Fail fast instead of hanging the UI for 1–2 minutes if SMTP is unreachable.
+      connectionTimeout: 12_000,
+      greetingTimeout: 12_000,
+      socketTimeout: 20_000,
     });
 
     await transporter.sendMail({
@@ -107,11 +100,22 @@ export async function sendContact(formData: FormData) {
       }),
       replyTo: hasEmail ? email : undefined,
     });
-  } catch {
-    redirect(errorRedirect);
+  } catch (error) {
+    // IMPORTANT: log the real reason in server logs for debugging.
+    const err = error as unknown;
+    const asAny = err as Record<string, unknown>;
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('sendContact: SMTP send failed', {
+      message,
+      code: asAny.code,
+      command: asAny.command,
+      response: asAny.response,
+      responseCode: asAny.responseCode,
+    });
+    return { ok: false, reason: 'smtp' };
   }
 
-  redirect(successRedirect);
+  return { ok: true, dryRun: false };
 }
 
 function buildEmailSubject(locale: Locale, product: string) {
