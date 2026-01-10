@@ -36,11 +36,11 @@ const variantClasses: Record<ButtonVariant, string> = {
     'bg-transparent text-[var(--foreground)] hover:bg-[color:var(--muted)] hover:text-[var(--foreground)]',
   link: 'p-0 h-auto text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)]',
   cta: [
-    'relative border border-transparent bg-background/45 text-[var(--header-border)] shadow-none',
-    "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-current after:content-['']",
+    'relative border border-transparent bg-background/45 text-[var(--muted-foreground)] shadow-none',
+    "after:pointer-events-none after:absolute after:inset-px after:rounded-[11px] after:border after:border-[var(--header-border)] after:content-['']",
     'after:transition-colors after:duration-200 after:ease-out',
     'no-underline hover:no-underline',
-    'hover:bg-background/60 hover:text-foreground',
+    'hover:bg-background/60 hover:text-foreground hover:after:border-current',
     'focus-visible:after:border-current',
   ].join(' '),
 };
